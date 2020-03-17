@@ -1,0 +1,62 @@
+terraform {
+  required_version = ">= 0.12"
+
+  backend "s3" {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-analytical-environment-app.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+provider "aws" {
+  region = "eu-west-2"
+
+  assume_role {
+    role_arn = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
+  }
+}
+
+provider "aws" {
+  alias  = "management"
+  region = "eu-west-2"
+
+  assume_role {
+    role_arn = "arn:aws:iam::${local.account["management"]}:role/${var.assume_role}"
+  }
+}
+
+locals {
+  name        = "aws-analytical-env"
+  environment = terraform.workspace == "default" ? "development" : terraform.workspace
+
+  account = {
+    {% for key, value in accounts.items() %}
+      {{key}} = "{{value}}"
+    {% endfor %}
+  }
+
+  management_account = {
+    development = "management-dev"
+    qa          = "management-dev"
+    integration = "management-dev"
+    preprod     = "management"
+    production  = "management"
+  }
+
+  crypto_workspace = {
+    management-dev = "management-dev"
+    management     = "management"
+  }
+
+  management_workspace = {
+    management-dev = "default"
+    management     = "management"
+  }
+
+  whitelist_cidr_blocks = [
+    "{{ucfs["team_cidr_block"]}}"
+    ]
+}

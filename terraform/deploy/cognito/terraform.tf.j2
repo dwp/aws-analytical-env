@@ -1,0 +1,77 @@
+terraform {
+  required_version = "{{terraform_12_version}}"
+
+  backend "s3" {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-analytical-environment_cognito.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+provider "aws" {
+  version = "~> 2.48.0"
+  region = "{{provider_region}}"
+
+  assume_role {
+    role_arn = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
+  }
+}
+
+locals {
+  name        = "aws-analytical-env"
+  environment = terraform.workspace == "default" ? "development" : terraform.workspace
+
+  root_dns_name = {
+    development = "dev.wip.{{dataworks_domain_name}}"
+    qa          = "qa.wip.{{dataworks_domain_name}}"
+    integration = "int.wip.{{dataworks_domain_name}}"
+    preprod     = "pre.{{dataworks_domain_name}}"
+    production  = "{{dataworks_domain_name}}"
+  }
+
+  account = {
+    {% for key, value in accounts.items() %}
+      {{key}} = "{{value}}"
+    {% endfor %}
+  }
+
+  management_account = {
+    development = "management-dev"
+    qa          = "management-dev"
+    integration = "management-dev"
+    preprod     = "management"
+    production  = "management"
+  }
+
+  crypto_workspace = {
+    management-dev = "management-dev"
+    management     = "management"
+  }
+
+  management_workspace = {
+    management-dev = "default"
+    management     = "management"
+  }
+
+  common_tags = {
+    {% for key, value in common_tags.items() %}
+      {{key}} = "{{value}}"
+    {% endfor %}
+    Name         = local.name
+    Environment  = local.environment
+    Application  = local.name
+    Persistence  = "True"
+    AutoShutdown = "False"
+  }
+
+  cidr_block = {
+  {% for environment, ranges in cidr_block.items() %}
+      {{ environment }} = {
+        {% for key, value in ranges.items() %}
+          {{ key }} = "{{ value }}"{% endfor %}
+      } {% endfor %}
+  }
+}
