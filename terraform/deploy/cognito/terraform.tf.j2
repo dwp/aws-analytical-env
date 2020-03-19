@@ -69,4 +69,6 @@ locals {
           {{ key }} = "{{ value }}"{% endfor %}
       } {% endfor %}
   }
+
+  cognito_domain = local.management_account[local.environment] == "management" ? "dataworks" : "dataworks-dev"
 }

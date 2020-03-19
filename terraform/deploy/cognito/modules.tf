@@ -8,6 +8,5 @@ module "cognito" {
   ]
 
   root_dns_names = values(local.root_dns_name)
-
-  domain = local.management_account[local.environment] == "management" ? "dataworks" : "dataworks-dev"
+  domain         = local.cognito_domain
 }
