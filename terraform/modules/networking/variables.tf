@@ -64,3 +64,7 @@ variable "proxy_route_table" {
 variable "proxy_subnet" {
   description = "Internet Egress subnet ranges"
 }
+
+variable "region" {
+  type = string
+}

@@ -51,11 +51,6 @@ locals {
     management     = "management"
   }
 
-  management_workspace = {
-    management-dev = "default"
-    management     = "management"
-  }
-
   common_tags = {
     {% for key, value in common_tags.items() %}
       {{key}} = "{{value}}"

@@ -12,7 +12,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "eu-west-2"
+  region = var.region
 
   assume_role {
     role_arn = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
@@ -21,7 +21,7 @@ provider "aws" {
 
 provider "aws" {
   alias  = "management"
-  region = "eu-west-2"
+  region = var.region
 
   assume_role {
     role_arn = "arn:aws:iam::${local.account["management"]}:role/${var.assume_role}"
@@ -48,11 +48,6 @@ locals {
 
   crypto_workspace = {
     management-dev = "management-dev"
-    management     = "management"
-  }
-
-  management_workspace = {
-    management-dev = "default"
     management     = "management"
   }
 

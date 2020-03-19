@@ -1,7 +1,3 @@
-variable "assume_role" {
-  default = "ci"
-}
+variable "assume_role" {}
 
-variable "region" {
-  default = "eu-west-2"
-}
+variable "region" {}

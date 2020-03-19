@@ -6,6 +6,7 @@ import jinja2
 import os
 import sys
 import yaml
+import glob
 
 
 def main():
@@ -28,21 +29,14 @@ def main():
 
     config_data = yaml.load(parameter['Parameter']['Value'], Loader=yaml.FullLoader)
     
-    with open('terraform/deploy/app/terraform.tf.j2') as in_template:
-        template = jinja2.Template(in_template.read())
-    with open('terraform/deploy/app/terraform.tf', 'w+') as terraform_tf_app:
-        terraform_tf_app.write(template.render(config_data))
+    j2_files = glob.glob('**/*.j2', recursive=True)
 
-    with open('terraform/deploy/cognito/terraform.tf.j2') as in_template:
-        template = jinja2.Template(in_template.read())
-    with open('terraform/deploy/cognito/terraform.tf', 'w+') as terraform_tf_cognito:
-        terraform_tf_cognito.write(template.render(config_data))
-        
-    with open('terraform/deploy/infra/terraform.tf.j2') as in_template:
-        template = jinja2.Template(in_template.read())
-    with open('terraform/deploy/infra/terraform.tf', 'w+') as terraform_tf_infra:
-        terraform_tf_infra.write(template.render(config_data))
-
+    for template_path in j2_files:
+        out_path = template_path.replace('.j2', '')
+        with open(template_path) as in_template:
+            template = jinja2.Template(in_template.read())
+        with open(out_path, 'w+') as out_file:
+            out_file.write(template.render(config_data))
 
     print("Terraform config successfully created")
 
