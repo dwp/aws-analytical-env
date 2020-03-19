@@ -1,6 +1,6 @@
 module analytical_env_vpc {
   source  = "dwp/vpc/aws"
-  version = "1.0.8"
+  version = "2.0.1"
 
   common_tags                                = local.common_tags
   gateway_vpce_route_table_ids               = module.networking.outputs.aws_route_table_private_ids
@@ -37,9 +37,9 @@ module networking {
   }
 
   vpc = {
-    cidr_block          = module.analytical_env_vpc.vpc_cidr_block
-    id                  = module.analytical_env_vpc.vpc_id,
-    main_route_table_id = module.analytical_env_vpc.main_route_table_id
+    cidr_block          = module.analytical_env_vpc.vpc.cidr_block
+    id                  = module.analytical_env_vpc.vpc.id,
+    main_route_table_id = module.analytical_env_vpc.vpc.main_route_table_id
   }
 
   crypto_vpc                        = data.terraform_remote_state.crypto.outputs.crypto_vpc
