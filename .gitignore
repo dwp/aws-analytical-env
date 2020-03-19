@@ -1,0 +1,14 @@
+# Terraform
+ci/terraform.tf
+*.tfvars
+rad/
+out/
+.idea/*
+**/.terraform/
+**/*.tfvars
+**/*.tfstate
+**/*.tfstate*
+**/terraform.tf
+
+# IDEs
+.idea
