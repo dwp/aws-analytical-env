@@ -1,9 +1,9 @@
-name: 'Terraform App GitHub Actions'
+name: 'Terraform GitHub Actions'
 on:
   - pull_request
 jobs:
   terraform:
-    name: 'Terraform app fmt'
+    name: 'Terraform fmt'
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout'
@@ -13,7 +13,7 @@ jobs:
         with:
           tf_actions_version: 0.12.19
           tf_actions_subcommand: 'fmt'
-          tf_actions_working_dir: './terraform/deploy/app'
+          tf_actions_working_dir: './terraform'
           tf_actions_comment: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
