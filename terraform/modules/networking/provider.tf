@@ -1,5 +1,5 @@
 provider "aws" {
-  alias = "management-internet-egress"
+  alias   = "management-internet-egress"
   version = ">= 2.23.0"
 
   assume_role {
@@ -8,7 +8,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias = "management-crypto"
+  alias   = "management-crypto"
   version = ">= 2.23.0"
 
   assume_role {
