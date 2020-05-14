@@ -9,6 +9,9 @@ jobs:
       - get: emp-release
         version: { tag: '0.0.6' }
         trigger: true
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: infra
       - .: (( inject meta.plan.terraform-apply ))
         config:
           run:
@@ -21,6 +24,9 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/infra'
         params:
           TF_WORKSPACE: 'qa'
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: app
       - .: (( inject meta.plan.terraform-apply ))
         config:
           run:

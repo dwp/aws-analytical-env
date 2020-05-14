@@ -12,6 +12,9 @@ jobs:
           context: $BUILD_JOB_NAME
           path: aws-analytical-env
           status: pending
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: infra
       - .: (( inject meta.plan.terraform-plan ))
         config:
           run:
@@ -19,6 +22,9 @@ jobs:
         params:
           TF_WORKSPACE: 'qa'
           TF_CLI_ARGS_plan: -lock-timeout=300s # overwrite removes -detailed-exitcode
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: app
       - .: (( inject meta.plan.terraform-plan ))
         config:
           run:

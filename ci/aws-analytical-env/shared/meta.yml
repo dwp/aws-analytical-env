@@ -40,6 +40,34 @@ meta:
                 addressing_style = virtual
               EOF
 
+    terraform-bootstrap:
+      task: terraform-bootstrap
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: dwpdigital/jinja-yaml-aws
+            version: 0.0.5
+            tag: 0.0.5
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              python bootstrap_terraform.py
+              cp terraform/deploy/$DEPLOY_PATH/terraform.tf ../terraform-config
+              cp terraform/deploy/$DEPLOY_PATH/terraform.tfvars ../terraform-config
+          dir: aws-analytical-env
+        inputs:
+          - name: aws-analytical-env
+        outputs:
+          - name: terraform-config
+      params:
+        AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
+        AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
+        AWS_REGION: eu-west-2
+
     terraform-apply:
       task: terraform-apply
       config:
@@ -55,12 +83,14 @@ meta:
           args:
             - -exc
             - |
+              cp ../../../../terraform-config/terraform.tf .
+              cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
-              terraform apply -auto-approve
+              terraform apply -auto-approve -var assume_role=ci
         inputs:
           - name: aws-analytical-env
-            optional: false
+          - name: terraform-config
       params:
         TF_CLI_ARGS_apply: -lock-timeout=300s
         TF_INPUT: "false"
@@ -82,12 +112,14 @@ meta:
           args:
             - -exc
             - |
+              cp ../../../../terraform-config/terraform.tf .
+              cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
-              terraform plan
+              terraform plan -var assume_role=ci
         inputs:
           - name: aws-analytical-env
-            optional: false
+          - name: terraform-config
       params:
         TF_CLI_ARGS_plan: -lock-timeout=300s -detailed-exitcode
         TF_INPUT: "false"
@@ -110,12 +142,15 @@ meta:
           args:
             - -exc
             - |
+              cp ../../../../terraform-config/terraform.tf .
+              cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
               terraform output --json > ../../../../terraform-output-app/outputs.json
           dir: aws-analytical-env/terraform/deploy/app
         inputs:
           - name: aws-analytical-env
+          - name: terraform-config
         outputs:
           - name: terraform-output-app
       params:

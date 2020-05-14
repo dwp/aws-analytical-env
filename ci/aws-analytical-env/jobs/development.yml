@@ -11,6 +11,9 @@ jobs:
         trigger: true
       - get: aws-dataworks-e2e-framework
         trigger: false
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: infra
       - .: (( inject meta.plan.terraform-apply ))
         config:
           run:
@@ -19,6 +22,9 @@ jobs:
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: app
       - .: (( inject meta.plan.terraform-apply ))
         config:
           run:
