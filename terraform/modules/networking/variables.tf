@@ -3,6 +3,10 @@ variable "name" {
   type        = string
 }
 
+variable "region" {
+  description = "Region to deploy resources into"
+}
+
 variable "common_tags" {
   description = "common tags to apply to aws resources"
   type        = map(string)

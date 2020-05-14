@@ -57,4 +57,5 @@ module networking {
   proxy_route_table                 = data.terraform_remote_state.internet_egress.outputs.proxy_route_table
   proxy_subnet                      = data.terraform_remote_state.internet_egress.outputs.proxy_subnet
   clusterbroker_vpc                 = data.terraform_remote_state.emr-cluster-broker-infra.outputs.vpc.aws_vpc.id
+  region                            = var.region
 }
