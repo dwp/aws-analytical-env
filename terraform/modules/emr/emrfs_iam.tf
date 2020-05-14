@@ -51,9 +51,18 @@ data "aws_iam_policy_document" "emrfs_iam" {
       ],
       [
         for path_tuple in var.dataset_s3_paths :
-        format("arn:aws:s3:::%s/*", path_tuple[0])
+        format("arn:aws:s3:::%s/%s", path_tuple[0], path_tuple[1])
       ],
       var.emrfs_kms_key_arns
     )
+
+    condition {
+      test     = "StringEquals"
+      variable = "s3:ExistingObjectTag/collection_tag"
+
+      values = [
+        "crown"
+      ]
+    }
   }
 }
