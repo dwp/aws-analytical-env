@@ -5,7 +5,7 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_subnet" "public" {
   count                   = local.zone_count
-  cidr_block              = cidrsubnet(var.vpc.cidr_block, 4, count.index)
+  cidr_block              = cidrsubnet(var.vpc.cidr_block, 3, count.index + local.zone_count)
   vpc_id                  = var.vpc.id
   availability_zone_id    = data.aws_availability_zones.current.zone_ids[count.index]
   map_public_ip_on_launch = true

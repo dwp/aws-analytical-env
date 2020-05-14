@@ -19,6 +19,76 @@ provider "aws" {
   }
 }
 
+data "terraform_remote_state" "aws_analytical_environment_infra" {
+  backend   = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-analytical-environment_infra.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "cognito" {
+  backend   = "s3"
+  workspace = local.management_workspace[local.management_account[local.environment]]
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-analytical-environment_cognito.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "crypto" {
+  backend   = "s3"
+  workspace = local.crypto_workspace[local.management_account[local.environment]]
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-crypto.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "internet_egress" {
+  backend   = "s3"
+  workspace = local.management_workspace[local.management_account[local.environment]]
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-internet-egress.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "certificate_authority" {
+  backend   = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-certificate-authority.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
 provider "aws" {
   alias  = "management"
   region = var.region
@@ -46,6 +116,11 @@ locals {
     production  = "management"
   }
 
+  management_workspace = {
+      management-dev = "default"
+      management     = "management"
+  }
+
   crypto_workspace = {
     management-dev = "management-dev"
     management     = "management"
@@ -54,4 +129,34 @@ locals {
   whitelist_cidr_blocks = [
     "{{ucfs["team_cidr_block"]}}"
     ]
+
+  env_certificate_bucket = "dw-${local.environment}-public-certificates"
+
+  root_dns_prefix = {
+    development = "dev"
+    qa          = "qa"
+    integration = "int"
+    preprod     = "pre"
+    production  = "" # no prefix in prod
+  }
+
+  parent_domain_name = {
+    development = "wip.dataworks.dwp.gov.uk"
+    qa          = "wip.dataworks.dwp.gov.uk"
+    integration = "wip.dataworks.dwp.gov.uk"
+    preprod     = "dataworks.dwp.gov.uk"
+    production  = "dataworks.dwp.gov.uk"
+  }
+
+  common_tags = {
+    {% for key, value in common_tags.items() %}
+      {{key}} = "{{value}}"
+    {% endfor %}
+    Name         = local.name
+    Environment  = local.environment
+    Application  = local.name
+    Persistence  = "True"
+    AutoShutdown = "False"
+  }
+
 }
