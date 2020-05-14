@@ -1,6 +1,6 @@
 module analytical_env_vpc {
   source  = "dwp/vpc/aws"
-  version = "2.0.1"
+  version = "2.0.5"
 
   common_tags                                = local.common_tags
   gateway_vpce_route_table_ids               = module.networking.outputs.aws_route_table_private_ids
@@ -11,18 +11,21 @@ module analytical_env_vpc {
   vpc_cidr_block                             = local.cidr_block[local.environment]["aws-analytical-env-vpc"]
   vpc_name                                   = local.name
 
-  dynamodb_endpoint    = true
-  ecrapi_endpoint      = true
-  ecrdkr_endpoint      = true
-  ec2_endpoint         = true
-  ec2messages_endpoint = true
-  glue_endpoint        = true
-  kms_endpoint         = true
-  logs_endpoint        = true
-  monitoring_endpoint  = true
-  s3_endpoint          = true
-  ssm_endpoint         = true
-  ssmmessages_endpoint = true
+  dynamodb_endpoint      = true
+  ecs_endpoint           = true
+  ecs-agent_endpoint     = true
+  ecs-telemetry_endpoint = true
+  ecrapi_endpoint        = true
+  ecrdkr_endpoint        = true
+  ec2_endpoint           = true
+  ec2messages_endpoint   = true
+  glue_endpoint          = true
+  kms_endpoint           = true
+  logs_endpoint          = true
+  monitoring_endpoint    = true
+  s3_endpoint            = true
+  ssm_endpoint           = true
+  ssmmessages_endpoint   = true
 }
 
 module networking {
@@ -38,7 +41,7 @@ module networking {
 
   vpc = {
     cidr_block          = module.analytical_env_vpc.vpc.cidr_block
-    id                  = module.analytical_env_vpc.vpc.id,
+    id                  = module.analytical_env_vpc.vpc.id
     main_route_table_id = module.analytical_env_vpc.vpc.main_route_table_id
   }
 
@@ -53,5 +56,5 @@ module networking {
   tgw_rtb_internet_egress           = data.terraform_remote_state.internet_egress.outputs.tgw_rtb_internet_egress
   proxy_route_table                 = data.terraform_remote_state.internet_egress.outputs.proxy_route_table
   proxy_subnet                      = data.terraform_remote_state.internet_egress.outputs.proxy_subnet
-  region                            = var.region
+  clusterbroker_vpc                 = data.terraform_remote_state.emr-cluster-broker-infra.outputs.vpc.aws_vpc.id
 }
