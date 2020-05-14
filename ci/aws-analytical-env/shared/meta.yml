@@ -1,0 +1,156 @@
+meta:
+  plan:
+    create-aws-profiles:
+      task: create-aws-profiles
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source: 
+            repository: ((docker-awscli.repository))
+            version: ((docker-awscli.version))
+            tag: ((docker-awscli.version))
+        outputs:
+          - name: .aws
+        params:
+          AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
+          AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
+          AWS_ROLE: ci
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              cat <<EOF> .aws/credentials
+              [default]
+              aws_access_key_id = $AWS_ACCESS_KEY_ID
+              aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
+              [$AWS_ROLE]
+              role_arn = arn:aws:iam::$AWS_ACC:role/$AWS_ROLE
+              source_profile = default
+              EOF
+              cat <<EOF> .aws/config
+              [default]
+              region = eu-west-2
+              [profile $AWS_ROLE]
+              region = eu-west-2
+              s3 =
+                max_concurrent_requests = 5
+                signature_version = s3v4
+                addressing_style = virtual
+              EOF
+
+    terraform-apply:
+      task: terraform-apply
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((terraform.repository))
+            version: ((terraform12.version))
+            tag: ((terraform12.version))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              terraform workspace show
+              terraform init
+              terraform apply -auto-approve
+        inputs:
+          - name: aws-analytical-env
+            optional: false
+      params:
+        TF_CLI_ARGS_apply: -lock-timeout=300s
+        TF_INPUT: "false"
+        AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
+        AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
+
+    terraform-plan:
+      task: terraform-plan
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((terraform.repository))
+            version: ((terraform12.version))
+            tag: ((terraform12.version))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              terraform workspace show
+              terraform init
+              terraform plan
+        inputs:
+          - name: aws-analytical-env
+            optional: false
+      params:
+        TF_CLI_ARGS_plan: -lock-timeout=300s -detailed-exitcode
+        TF_INPUT: "false"
+        TF_VAR_slack_webhook_url: ((slack.webhook_url))
+        AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
+        AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
+
+    terraform-output-app:
+      task: terraform-output-app
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((terraform.repository))
+            version: ((terraform12.version))
+            tag: ((terraform12.version))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              terraform workspace show
+              terraform init
+              terraform output --json > ../../../../terraform-output-app/outputs.json
+          dir: aws-analytical-env/terraform/deploy/app
+        inputs:
+          - name: aws-analytical-env
+        outputs:
+          - name: terraform-output-app
+      params:
+        TF_CLI_ARGS_plan: -lock-timeout=300s
+        TF_INPUT: "false"
+        TF_VAR_slack_webhook_url: ((slack.webhook_url))
+        AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
+        AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
+
+    analytical-env-e2e-tests:
+      task: analytical-env-e2e-tests
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((docker-python-boto-behave.repository))
+            version: ((docker-python-boto-behave.version))
+            tag: ((docker-python-boto-behave.version))
+        params:
+          AWS_DEFAULT_PROFILE: ci
+          AWS_SHARED_CREDENTIALS_FILE: ../../.aws/credentials
+          AWS_CONFIG_FILE: ../../.aws/config
+          E2E_TEST_TIMEOUT: 300
+          E2E_FEATURE_TAG_FILTER: '@analytical'
+        run:
+          dir: aws-dataworks-e2e-framework
+          path: sh
+          args:
+            - -exc
+            - |
+              cd src/runners
+              ./run-dev-analytical-tests.sh
+
+        inputs:
+          - name: aws-dataworks-e2e-framework
+          - name: .aws
+          - name: meta

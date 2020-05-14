@@ -1,0 +1,55 @@
+resources:
+  - name: aws-analytical-env
+    type: git
+    source:
+      branch: master
+      private_key: ((svc-dip.private_key))
+      uri: git@github.ucds.io:dip/aws-analytical-env.git
+    check_every: 720h
+    webhook_token: ((ucfs-github.webhook-token))
+
+  - name: aws-dataworks-e2e-framework
+    type: git
+    source:
+      branch: master
+      private_key: ((svc-dip.private_key))
+      uri: git@github.ucds.io:dip/aws-dataworks-e2e-framework.git
+    check_every: 720h
+    webhook_token: ((ucfs-github.webhook-token))
+
+  - name: aws-analytical-env-pr
+    type: pull-request
+    source:
+      access_token: ((svc-dip.pat))
+      api_endpoint: https://github.ucds.io/api/v3/
+      private_key: ((svc-dip.private_key))
+      repo: dip/aws-analytical-env
+      uri: git@github.ucds.io:dip/aws-analytical-env.git
+    check_every: 720h
+    webhook_token: ((ucfs-github.webhook-token))
+
+  - name: emp-release
+    type: github-release
+    source:
+      owner: dwp
+      repository: emr-encryption-materials-provider
+      access_token: ((github_com.token))
+    check_every: 1h
+
+  - name: meta-development
+    type: meta
+
+  - name: meta-qa
+    type: meta
+
+  - name: meta-integration
+    type: meta
+
+  # - name: meta-management-dev
+  #   type: meta
+
+#  - name: meta-preprod
+#    type: meta
+
+#  - name: meta-production
+#    type: meta

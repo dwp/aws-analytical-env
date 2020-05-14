@@ -1,0 +1,42 @@
+jobs:
+  - name: development
+    max_in_flight: 1
+    plan:
+      - put: meta
+        resource: meta-development
+      - get: emp-release
+        version: { tag: '0.0.6' }
+        trigger: true  
+      - get: aws-analytical-env
+        trigger: true
+      - get: aws-dataworks-e2e-framework
+        trigger: false
+      - .: (( inject meta.plan.terraform-apply ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/infra'
+      - .: (( inject meta.plan.terraform-plan ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/infra'
+      - .: (( inject meta.plan.terraform-apply ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/app'
+          inputs:
+            - name: emp-release
+        params:
+          TF_VAR_emp_dir_path: ../../../../emp-release 
+      - .: (( inject meta.plan.terraform-plan ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/app'
+          inputs:
+            - name: emp-release
+        params:
+          TF_VAR_emp_dir_path: ../../../../emp-release
+      - .: (( inject meta.plan.create-aws-profiles ))
+        config:
+          params:
+            AWS_ACC: ((aws_account.development))
+      - .: (( inject meta.plan.analytical-env-e2e-tests ))

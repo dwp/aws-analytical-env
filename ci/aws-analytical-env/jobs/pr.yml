@@ -1,0 +1,43 @@
+jobs:
+  - name: pull-request
+    max_in_flight: 1
+    plan:
+      - get: aws-analytical-env
+        resource: aws-analytical-env-pr
+        trigger: true
+        version: every
+      - put: aws-analytical-env
+        resource: aws-analytical-env-pr
+        params:
+          context: $BUILD_JOB_NAME
+          path: aws-analytical-env
+          status: pending
+      - .: (( inject meta.plan.terraform-plan ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/infra'
+        params:
+          TF_WORKSPACE: 'qa'
+          TF_CLI_ARGS_plan: -lock-timeout=300s # overwrite removes -detailed-exitcode
+      - .: (( inject meta.plan.terraform-plan ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/app'
+        params:
+          TF_WORKSPACE: 'qa'
+          TF_CLI_ARGS_plan: -lock-timeout=300s # overwrite removes -detailed-exitcode
+          TF_VAR_emp_dir_path: ../../../../emp-release
+        on_failure:
+          put: aws-analytical-env
+          resource: aws-analytical-env-pr
+          params:
+            context: $BUILD_JOB_NAME
+            path: aws-analytical-env
+            status: failure
+        on_success:
+          put: aws-analytical-env
+          resource: aws-analytical-env-pr
+          params:
+            context: $BUILD_JOB_NAME
+            path: aws-analytical-env
+            status: success

@@ -1,0 +1,11 @@
+resource_types:
+  - name: pull-request
+    type: docker-image
+    source:
+      repository: jtarchie/pr
+
+  - name: meta
+    type: docker-image
+    source:
+      repository: olhtbr/metadata-resource
+      tag: 2.0.1

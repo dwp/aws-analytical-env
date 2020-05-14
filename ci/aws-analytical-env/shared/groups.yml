@@ -1,0 +1,9 @@
+groups:
+  - name: master
+    jobs:
+      - development
+      - qa
+      - integration
+  - name: pull-request
+    jobs:
+      - pull-request
