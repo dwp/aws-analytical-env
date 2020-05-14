@@ -3,10 +3,18 @@ resources:
     type: git
     source:
       branch: master
-      private_key: ((svc-dip.private_key))
-      uri: git@github.ucds.io:dip/aws-analytical-env.git
-    check_every: 720h
-    webhook_token: ((ucfs-github.webhook-token))
+      username: ((github_com.username))
+      password: ((github_com.token))
+      uri: https://github.com/dwp/aws-analytical-env.git
+    check_every: 30m
+
+  - name: aws-analytical-env-pr
+    type: pull-request
+    source:
+      access_token: ((github_com.token))
+      repo: dwp/aws-analytical-env
+      uri: https://github.com/dwp/aws-analytical-env.git
+    check_every: 30m
 
   - name: aws-dataworks-e2e-framework
     type: git
@@ -14,17 +22,6 @@ resources:
       branch: master
       private_key: ((svc-dip.private_key))
       uri: git@github.ucds.io:dip/aws-dataworks-e2e-framework.git
-    check_every: 720h
-    webhook_token: ((ucfs-github.webhook-token))
-
-  - name: aws-analytical-env-pr
-    type: pull-request
-    source:
-      access_token: ((svc-dip.pat))
-      api_endpoint: https://github.ucds.io/api/v3/
-      private_key: ((svc-dip.private_key))
-      repo: dip/aws-analytical-env
-      uri: git@github.ucds.io:dip/aws-analytical-env.git
     check_every: 720h
     webhook_token: ((ucfs-github.webhook-token))
 
