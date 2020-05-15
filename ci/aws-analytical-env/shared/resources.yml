@@ -42,8 +42,11 @@ resources:
   - name: meta-integration
     type: meta
 
-  # - name: meta-management-dev
-  #   type: meta
+  - name: meta-management-dev
+    type: meta
+
+  - name: meta-management
+    type: meta
 
 #  - name: meta-preprod
 #    type: meta
