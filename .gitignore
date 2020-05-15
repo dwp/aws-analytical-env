@@ -12,3 +12,6 @@ out/
 
 # IDEs
 .idea
+
+# Concourse
+aviator_pipeline.yml
