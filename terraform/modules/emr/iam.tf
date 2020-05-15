@@ -67,7 +67,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:DescribeVolumeStatus",
       "ec2:DescribeVolumes",
       "ec2:DetachVolume",
-#### DW-4076 Pemissions no longer required
+      #### DW-4076 Pemissions no longer required
       # "iam:GetRole",
       # "iam:GetRolePolicy",
       # "iam:ListInstanceProfiles",
@@ -92,7 +92,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
     resources = ["*"]
 
     condition {
-      test = "StringEquals"
+      test     = "StringEquals"
       variable = "ec2:ResourceTag/Application"
       values = [
         "aws-analytical-env"
@@ -206,7 +206,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "kms:GenerateDataKey*",
       "kms:DescribeKey",
       "kms:CreateGrant"
-### DW-4076 Permissions no longer required
+      ### DW-4076 Permissions no longer required
       # "cloudwatch:*",
       # "ec2:Describe*",
       # "elasticmapreduce:Describe*",
