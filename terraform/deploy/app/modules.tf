@@ -35,5 +35,5 @@ module "emr" {
   emp_dir_path               = var.emp_dir_path
   emrfs_kms_key_arns         = []
   # element[0] = bucket_name, element[1] = path (if required)
-  dataset_s3_paths           = [[data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket.id, "*"]]
+  dataset_s3_paths = [[data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket.id, "*"]]
 }
