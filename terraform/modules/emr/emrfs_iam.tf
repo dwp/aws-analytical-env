@@ -58,10 +58,10 @@ data "aws_iam_policy_document" "emrfs_iam" {
 
     condition {
       test     = "StringEquals"
-      variable = "s3:ExistingObjectTag/collection_tag"
+      variable = format("s3:ExistingObjectTag/%s", var.dataset_s3_tags[0])
 
       values = [
-        "crown"
+        var.dataset_s3_tags[1]
       ]
     }
   }
