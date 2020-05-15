@@ -1,3 +1,3 @@
 output "cognito" {
-  value = module.cognito.outputs
+  value = module.cognito-fs.outputs
 }
