@@ -104,4 +104,9 @@ variable "dataset_s3_paths" {
   description = "List of [bucket_name, bucket_path] tuples that emrfs users can access"
 }
 
+variable "dataset_s3_tags" {
+  type        = tuple([string, string])
+  description = "Tuple of [tag_key, tag_value] that determine which s3 objects emrfs can access"
+}
+
 variable "cognito_user_pool_id" {}
