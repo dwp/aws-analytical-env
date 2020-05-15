@@ -16,3 +16,7 @@ variable root_dns_names {
   description = "Root dns names to use for cognito callback URLs"
   type        = list(string)
 }
+
+variable pre_auth_lambda {
+  description = "Pre Authentication Lambda"
+}

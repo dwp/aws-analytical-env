@@ -23,4 +23,8 @@ resource aws_cognito_user_pool emr {
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
   }
+
+  lambda_config {
+    pre_authentication = var.pre_auth_lambda
+  }
 }
