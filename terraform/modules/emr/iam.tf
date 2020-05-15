@@ -67,26 +67,42 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:DescribeVolumeStatus",
       "ec2:DescribeVolumes",
       "ec2:DetachVolume",
-      "iam:GetRole",
-      "iam:GetRolePolicy",
-      "iam:ListInstanceProfiles",
-      "iam:ListRolePolicies",
-      "iam:PassRole",
-      "sdb:BatchPutAttributes",
-      "sdb:Select",
-      "sqs:CreateQueue",
-      "sqs:Delete*",
-      "sqs:GetQueue*",
-      "sqs:PurgeQueue",
-      "sqs:ReceiveMessage",
-      "cloudwatch:PutMetricAlarm",
-      "cloudwatch:DescribeAlarms",
-      "cloudwatch:DeleteAlarms",
-      "application-autoscaling:RegisterScalableTarget",
-      "application-autoscaling:DeregisterScalableTarget",
-      "application-autoscaling:PutScalingPolicy",
-      "application-autoscaling:DeleteScalingPolicy",
-      "application-autoscaling:Describe*",
+#### DW-4076 Pemissions no longer required
+      # "iam:GetRole",
+      # "iam:GetRolePolicy",
+      # "iam:ListInstanceProfiles",
+      # "iam:ListRolePolicies",
+      # "iam:PassRole",
+      # "sdb:BatchPutAttributes",
+      # "sdb:Select",
+      # "sqs:CreateQueue",
+      # "sqs:Delete*",
+      # "sqs:GetQueue*",
+      # "sqs:PurgeQueue",
+      # "sqs:ReceiveMessage",
+      # "cloudwatch:PutMetricAlarm",
+      # "cloudwatch:DescribeAlarms",
+      # "cloudwatch:DeleteAlarms",
+      # "application-autoscaling:RegisterScalableTarget",
+      # "application-autoscaling:DeregisterScalableTarget",
+      # "application-autoscaling:PutScalingPolicy",
+      # "application-autoscaling:DeleteScalingPolicy",
+      # "application-autoscaling:Describe*"
+    ]
+    resources = ["*"]
+
+    condition {
+      test = "StringEquals"
+      variable = "ec2:ResourceTag/Application"
+      values = [
+        "aws-analytical-env"
+      ]
+    }
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
       "kms:Encrypt",
       "kms:Decrypt",
       "kms:ReEncrypt*",
@@ -94,7 +110,10 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "kms:DescribeKey",
       "kms:CreateGrant"
     ]
-    resources = ["*"]
+    resources = [
+      aws_kms_key.emr_ebs.arn,
+      aws_kms_key.emr_s3.arn
+    ]
   }
 
   statement {
@@ -156,27 +175,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     // TODO restrict
     actions = [
       "acm:ExportCertificate",
-      "cloudwatch:*",
       "dynamodb:*",
-      "ec2:Describe*",
-      "elasticmapreduce:Describe*",
-      "elasticmapreduce:ListBootstrapActions",
-      "elasticmapreduce:ListClusters",
-      "elasticmapreduce:ListInstanceGroups",
-      "elasticmapreduce:ListInstances",
-      "elasticmapreduce:ListSteps",
-      "kinesis:CreateStream",
-      "kinesis:DeleteStream",
-      "kinesis:DescribeStream",
-      "kinesis:GetRecords",
-      "kinesis:GetShardIterator",
-      "kinesis:MergeShards",
-      "kinesis:PutRecord",
-      "kinesis:SplitShard",
-      "rds:Describe*",
-      "sdb:*",
-      "sns:*",
-      "sqs:*",
       "glue:CreateDatabase",
       "glue:UpdateDatabase",
       "glue:DeleteDatabase",
@@ -207,6 +206,27 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "kms:GenerateDataKey*",
       "kms:DescribeKey",
       "kms:CreateGrant"
+### DW-4076 Permissions no longer required
+      # "cloudwatch:*",
+      # "ec2:Describe*",
+      # "elasticmapreduce:Describe*",
+      # "elasticmapreduce:ListBootstrapActions",
+      # "elasticmapreduce:ListClusters",
+      # "elasticmapreduce:ListInstanceGroups",
+      # "elasticmapreduce:ListInstances",
+      # "elasticmapreduce:ListSteps",
+      # "kinesis:CreateStream",
+      # "kinesis:DeleteStream",
+      # "kinesis:DescribeStream",
+      # "kinesis:GetRecords",
+      # "kinesis:GetShardIterator",
+      # "kinesis:MergeShards",
+      # "kinesis:PutRecord",
+      # "kinesis:SplitShard",
+      # "rds:Describe*",
+      # "sdb:*",
+      # "sns:*",
+      # "sqs:*",
     ]
     resources = ["*"]
   }
