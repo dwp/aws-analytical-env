@@ -240,7 +240,9 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "dynamodb:DeleteTable",
       "dynamodb:UpdateTable"
     ]
-    resource = "arn:aws:dynamodb:*:*:table/EmrFSMetadata"
+    resources = [
+      "arn:aws:dynamodb:*:*:table/EmrFSMetadata"
+    ]
   }
 
   statement {
@@ -254,7 +256,9 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "sqs:SendMessage",
       "sqs:CreateQueue"
     ]
-    Resource = "arn:aws:sqs:*:*:EMRFS-Inconsistency-*"
+    resources = [
+      "arn:aws:sqs:*:*:EMRFS-Inconsistency-*"
+    ]
   }
 
   statement {
