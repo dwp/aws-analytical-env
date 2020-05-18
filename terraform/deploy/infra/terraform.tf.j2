@@ -48,13 +48,13 @@ data "terraform_remote_state" "crypto" {
   }
 }
 
-data "terraform_remote_state" "emr-cluster-broker-infra" {
+data "terraform_remote_state" "analytical_service_infra" {
   backend   = "s3"
   workspace = terraform.workspace
 
   config = {
     bucket         = "{{state_file_bucket}}"
-    key            = "terraform/dataworks/emr-cluster-broker-infra.tfstate"
+    key            = "terraform/dataworks/analytical-service-infra.tfstate"
     region         = "{{state_file_region}}"
     encrypt        = true
     kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
