@@ -33,9 +33,6 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:CreateNetworkInterface",
       "ec2:CreateSecurityGroup",
       "ec2:CreateTags",
-      "ec2:DeleteNetworkInterface",
-      "ec2:DeleteSecurityGroup",
-      "ec2:DeleteTags",
       "ec2:DescribeAvailabilityZones",
       "ec2:DescribeAccountAttributes",
       "ec2:DescribeDhcpOptions",
@@ -56,20 +53,30 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:DescribeVpcEndpoints",
       "ec2:DescribeVpcEndpointServices",
       "ec2:DescribeVpcs",
-      "ec2:DetachNetworkInterface",
       "ec2:ModifyImageAttribute",
       "ec2:ModifyInstanceAttribute",
       "ec2:RequestSpotInstances",
-      "ec2:RevokeSecurityGroupEgress",
       "ec2:RunInstances",
-      "ec2:TerminateInstances",
-      "ec2:DeleteVolume",
       "ec2:DescribeVolumeStatus",
       "ec2:DescribeVolumes",
-      "ec2:DetachVolume",
     ]
     resources = ["*"]
+  }
 
+  statement {
+    sid    = "EC2DestroyAllow"
+    effect = "Allow"
+    actions = [
+      "ec2:DetachVolume",
+      "ec2:DeleteVolume",
+      "ec2:RevokeSecurityGroupEgress",
+      "ec2:DeleteNetworkInterface",
+      "ec2:DeleteSecurityGroup",
+      "ec2:DeleteTags",
+      "ec2:DetachNetworkInterface",
+      "ec2:TerminateInstances",
+    ]
+    resources = ["*"]   
     condition {
       test     = "StringEquals"
       variable = "ec2:ResourceTag/Application"
@@ -78,6 +85,22 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       ]
     }
   }
+
+  statement {
+    sid    = "IAMRolesAndPoliciesAllow"
+    effect = "Allow"
+    actions = [
+      "iam:GetRole",
+      "iam:GetRolePolicy",
+      "iam:ListInstanceProfiles",
+      "iam:ListRolePolicies",
+      "iam:PassRole"
+    ]
+    resources = [
+      aws_iam_role.emr_ec2_role.arn,
+      aws_iam_instance_profile.emr_ec2_role.arn
+    ]
+  }      
 
   statement {
     sid    = "CloudwatchAllow"
