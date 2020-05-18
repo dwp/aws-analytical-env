@@ -8,7 +8,7 @@ locals {
   ebs_config_size                 = 250
   ebs_config_type                 = "gp2"
   ebs_config_volumes_per_instance = 1
-  autoscaling_min_capacity        = 0
+  autoscaling_min_capacity        = 1
   autoscaling_max_capacity        = 5
   dks_port                        = 8443
   full_proxy                      = var.internet_proxy["http_address"]
