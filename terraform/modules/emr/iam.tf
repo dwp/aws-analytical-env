@@ -23,24 +23,6 @@ resource "aws_iam_role_policy" "elastic_map_reduce_role" {
 }
 
 data "aws_iam_policy_document" "elastic_map_reduce_role" {
-  #### DW-4076 Pemissions no longer required
-  # "iam:GetRole",
-  # "iam:GetRolePolicy",
-  # "iam:ListInstanceProfiles",
-  # "iam:ListRolePolicies",
-  # "iam:PassRole",
-  # "sdb:BatchPutAttributes",
-  # "sdb:Select",
-  # "sqs:CreateQueue",
-  # "sqs:Delete*",
-  # "sqs:GetQueue*",
-  # "sqs:PurgeQueue",
-  # "sqs:ReceiveMessage",
-  # "application-autoscaling:RegisterScalableTarget",
-  # "application-autoscaling:DeregisterScalableTarget",
-  # "application-autoscaling:PutScalingPolicy",
-  # "application-autoscaling:DeleteScalingPolicy",
-  # "application-autoscaling:Describe*"
   statement {
     sid    = "EC2-Allow"
     effect = "Allow"
@@ -183,27 +165,6 @@ resource "aws_iam_role_policy" "elastic_map_reduce_for_ec2_role" {
 }
 
 data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
-  ### DW-4076 Permissions no longer required
-  # "cloudwatch:*",
-  # "ec2:Describe*",
-  # "elasticmapreduce:Describe*",
-  # "elasticmapreduce:ListBootstrapActions",
-  # "elasticmapreduce:ListClusters",
-  # "elasticmapreduce:ListInstanceGroups",
-  # "elasticmapreduce:ListInstances",
-  # "elasticmapreduce:ListSteps",
-  # "kinesis:CreateStream",
-  # "kinesis:DeleteStream",
-  # "kinesis:DescribeStream",
-  # "kinesis:GetRecords",
-  # "kinesis:GetShardIterator",
-  # "kinesis:MergeShards",
-  # "kinesis:PutRecord",
-  # "kinesis:SplitShard",
-  # "rds:Describe*",
-  # "sdb:*",
-  # "sns:*",
-  # "sqs:*",
   statement {
     sid    = "Cloudwatch-Allow"
     effect = "Allow"
