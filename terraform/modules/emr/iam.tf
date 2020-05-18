@@ -23,7 +23,29 @@ resource "aws_iam_role_policy" "elastic_map_reduce_role" {
 }
 
 data "aws_iam_policy_document" "elastic_map_reduce_role" {
+  #### DW-4076 Pemissions no longer required
+  # "iam:GetRole",
+  # "iam:GetRolePolicy",
+  # "iam:ListInstanceProfiles",
+  # "iam:ListRolePolicies",
+  # "iam:PassRole",
+  # "sdb:BatchPutAttributes",
+  # "sdb:Select",
+  # "sqs:CreateQueue",
+  # "sqs:Delete*",
+  # "sqs:GetQueue*",
+  # "sqs:PurgeQueue",
+  # "sqs:ReceiveMessage",
+  # "cloudwatch:PutMetricAlarm",
+  # "cloudwatch:DescribeAlarms",
+  # "cloudwatch:DeleteAlarms",
+  # "application-autoscaling:RegisterScalableTarget",
+  # "application-autoscaling:DeregisterScalableTarget",
+  # "application-autoscaling:PutScalingPolicy",
+  # "application-autoscaling:DeleteScalingPolicy",
+  # "application-autoscaling:Describe*"
   statement {
+    sid    = "EC2-Allow"
     effect = "Allow"
     // TODO restrict globs
     actions = [
@@ -67,27 +89,6 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:DescribeVolumeStatus",
       "ec2:DescribeVolumes",
       "ec2:DetachVolume",
-      #### DW-4076 Pemissions no longer required
-      # "iam:GetRole",
-      # "iam:GetRolePolicy",
-      # "iam:ListInstanceProfiles",
-      # "iam:ListRolePolicies",
-      # "iam:PassRole",
-      # "sdb:BatchPutAttributes",
-      # "sdb:Select",
-      # "sqs:CreateQueue",
-      # "sqs:Delete*",
-      # "sqs:GetQueue*",
-      # "sqs:PurgeQueue",
-      # "sqs:ReceiveMessage",
-      # "cloudwatch:PutMetricAlarm",
-      # "cloudwatch:DescribeAlarms",
-      # "cloudwatch:DeleteAlarms",
-      # "application-autoscaling:RegisterScalableTarget",
-      # "application-autoscaling:DeregisterScalableTarget",
-      # "application-autoscaling:PutScalingPolicy",
-      # "application-autoscaling:DeleteScalingPolicy",
-      # "application-autoscaling:Describe*"
     ]
     resources = ["*"]
 
@@ -101,6 +102,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
+    sid    = "KMS-Allow"
     effect = "Allow"
     actions = [
       "kms:Encrypt",
@@ -117,6 +119,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
+    sid    = "S3-Allow"
     effect = "Allow"
     // TODO restrict
     actions = [
@@ -129,6 +132,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
+    sid       = "Create-service-linked-role-allow"
     effect    = "Allow"
     actions   = ["iam:CreateServiceLinkedRole"]
     resources = ["arn:aws:iam::*:role/aws-service-role/spot.amazonaws.com/AWSServiceRoleForEC2Spot*"]
@@ -139,6 +143,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
     }
   }
 }
+
 
 resource "aws_iam_role" "emr_ec2_role" {
   name               = "AE_EMR_EC2_Role"
@@ -170,12 +175,31 @@ resource "aws_iam_role_policy" "elastic_map_reduce_for_ec2_role" {
 }
 
 data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
+  ### DW-4076 Permissions no longer required
+  # "cloudwatch:*",
+  # "ec2:Describe*",
+  # "elasticmapreduce:Describe*",
+  # "elasticmapreduce:ListBootstrapActions",
+  # "elasticmapreduce:ListClusters",
+  # "elasticmapreduce:ListInstanceGroups",
+  # "elasticmapreduce:ListInstances",
+  # "elasticmapreduce:ListSteps",
+  # "kinesis:CreateStream",
+  # "kinesis:DeleteStream",
+  # "kinesis:DescribeStream",
+  # "kinesis:GetRecords",
+  # "kinesis:GetShardIterator",
+  # "kinesis:MergeShards",
+  # "kinesis:PutRecord",
+  # "kinesis:SplitShard",
+  # "rds:Describe*",
+  # "sdb:*",
+  # "sns:*",
+  # "sqs:*",
   statement {
+    sid    = "Glue-Allow"
     effect = "Allow"
-    // TODO restrict
     actions = [
-      "acm:ExportCertificate",
-      "dynamodb:*",
       "glue:CreateDatabase",
       "glue:UpdateDatabase",
       "glue:DeleteDatabase",
@@ -199,39 +223,20 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "glue:UpdateUserDefinedFunction",
       "glue:DeleteUserDefinedFunction",
       "glue:GetUserDefinedFunction",
-      "glue:GetUserDefinedFunctions",
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey",
-      "kms:CreateGrant"
-      ### DW-4076 Permissions no longer required
-      # "cloudwatch:*",
-      # "ec2:Describe*",
-      # "elasticmapreduce:Describe*",
-      # "elasticmapreduce:ListBootstrapActions",
-      # "elasticmapreduce:ListClusters",
-      # "elasticmapreduce:ListInstanceGroups",
-      # "elasticmapreduce:ListInstances",
-      # "elasticmapreduce:ListSteps",
-      # "kinesis:CreateStream",
-      # "kinesis:DeleteStream",
-      # "kinesis:DescribeStream",
-      # "kinesis:GetRecords",
-      # "kinesis:GetShardIterator",
-      # "kinesis:MergeShards",
-      # "kinesis:PutRecord",
-      # "kinesis:SplitShard",
-      # "rds:Describe*",
-      # "sdb:*",
-      # "sns:*",
-      # "sqs:*",
+      "glue:GetUserDefinedFunctions"
     ]
     resources = ["*"]
+    condition {
+      test     = "StringEquals"
+      variable = "glue:ResourceTag/Application"
+      values = [
+        "aws-analytical-env"
+      ]
+    }
   }
 
   statement {
+    sid    = "Glue-Deny"
     effect = "Deny"
     actions = [
       "glue:*"
@@ -242,6 +247,54 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
+    sid    = "Dynamodb-Allow"
+    effect = "Allow"
+    actions = [
+      "dynamodb:*",
+    ]
+    ## TODO restrict
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "Acm-export-allow"
+    effect = "Allow"
+    actions = [
+      "acm:ExportCertificate",
+    ]
+    resources = [
+      aws_acm_certificate.emr.arn
+    ]
+  }
+
+  statement {
+    sid    = "PrivateCA-get-certificate-allow"
+    effect = "Allow"
+    actions = [
+      "acm-pca:GetCertficate"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "KMS-Allow"
+    effect = "Allow"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+      "kms:CreateGrant"
+    ]
+    resources = [
+      aws_kms_key.emr_ebs.arn,
+      aws_kms_key.emr_s3.arn
+    ]
+  }
+
+  statement {
+    sid    = "S3-Allow"
     effect = "Allow"
     // TODO restrict
     actions = [
@@ -249,18 +302,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
     resources = [
       "arn:aws:s3:::${aws_s3_bucket.emr.id}",
-      "arn:aws:s3:::${aws_s3_bucket.emr.id}/*"
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-    // TODO restrict
-    actions = [
-      "s3:*"
-    ]
-    // TODO un-hardcode
-    resources = [
+      "arn:aws:s3:::${aws_s3_bucket.emr.id}/*",
       "arn:aws:s3:::eu-west-2.elasticmapreduce",
       "arn:aws:s3:::eu-west-2.elasticmapreduce/*",
       "arn:aws:s3:::${var.env_certificate_bucket}",
@@ -271,22 +313,11 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    effect = "Allow"
-    actions = [
-      "acm-pca:GetCertficate"
-    ]
-    resources = [
-      "arn:aws:acm:*:*:certificate/*"
-    ]
-  }
-
-  statement {
     sid    = "AllowAssumeReadOnlyCognitoRole"
     effect = "Allow"
     actions = [
       "sts:AssumeRole"
     ]
-
     resources = [aws_iam_role.cogntio_read_only_role.arn]
   }
 
