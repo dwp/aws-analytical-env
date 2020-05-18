@@ -24,7 +24,7 @@ resource "aws_iam_role_policy" "elastic_map_reduce_role" {
 
 data "aws_iam_policy_document" "elastic_map_reduce_role" {
   statement {
-    sid    = "EC2-Allow"
+    sid    = "EC2Allow"
     effect = "Allow"
     actions = [
       "ec2:AuthorizeSecurityGroupEgress",
@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
-    sid    = "Cloudwatch-Allow"
+    sid    = "CloudwatchAllow"
     effect = "Allow"
     actions = [
       "cloudwatch:PutMetricAlarm",
@@ -91,7 +91,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
-    sid    = "KMS-Allow"
+    sid    = "KMSAllow"
     effect = "Allow"
     actions = [
       "kms:Encrypt",
@@ -108,7 +108,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
-    sid    = "S3-Allow"
+    sid    = "S3Allow"
     effect = "Allow"
     actions = [
       "s3:Get*",
@@ -121,7 +121,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
-    sid       = "Create-service-linked-role-allow"
+    sid       = "CreateServiceLinkedRoleAllow"
     effect    = "Allow"
     actions   = ["iam:CreateServiceLinkedRole"]
     resources = ["arn:aws:iam::*:role/aws-service-role/spot.amazonaws.com/AWSServiceRoleForEC2Spot*"]
@@ -165,7 +165,7 @@ resource "aws_iam_role_policy" "elastic_map_reduce_for_ec2_role" {
 
 data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   statement {
-    sid    = "Cloudwatch-Allow"
+    sid    = "CloudwatchAllow"
     effect = "Allow"
     actions = [
       "cloudwatch:PutMetricData"
@@ -174,7 +174,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "Glue-Allow"
+    sid    = "GlueAllow"
     effect = "Allow"
     actions = [
       "glue:CreateDatabase",
@@ -213,7 +213,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "Glue-Deny"
+    sid    = "GlueDeny"
     effect = "Deny"
     actions = [
       "glue:*"
@@ -224,7 +224,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "Dynamodb-Allow"
+    sid    = "DynamodbAllow"
     effect = "Allow"
     actions = [
       "dynamodb:CreateTable",
@@ -246,7 +246,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "EMRFS-Inconsitenecy-SQS-Allow"
+    sid    = "EMRFSInconsitenecySQSAllow"
     effect = "Allow"
     actions = [
       "sqs:GetQueueUrl",
@@ -262,7 +262,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "Acm-export-allow"
+    sid    = "ACMExportAllow"
     effect = "Allow"
     actions = [
       "acm:ExportCertificate",
@@ -273,7 +273,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "PrivateCA-get-certificate-allow"
+    sid    = "PrivateCAGetCertificateAllow"
     effect = "Allow"
     actions = [
       "acm-pca:GetCertficate"
@@ -282,7 +282,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "KMS-Allow"
+    sid    = "KMSAllow"
     effect = "Allow"
     actions = [
       "kms:Encrypt",
@@ -299,7 +299,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "S3-Allow"
+    sid    = "S3Allow"
     effect = "Allow"
     actions = [
       "s3:AbortMultipartUpload",
