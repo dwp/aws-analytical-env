@@ -46,10 +46,10 @@ resource "aws_emr_cluster" "cluster" {
       volumes_per_instance = local.ebs_config_volumes_per_instance
     }
 
-      autoscaling_policy = templatefile(format("%s/templates/emr/autoscaling_policy.json", path.module), {
-        autoscaling_min_capacity = local.autoscaling_min_capacity,
-        autoscaling_max_capacity = local.autoscaling_max_capacity,
-      })
+    autoscaling_policy = templatefile(format("%s/templates/emr/autoscaling_policy.json", path.module), {
+      autoscaling_min_capacity = local.autoscaling_min_capacity,
+      autoscaling_max_capacity = local.autoscaling_max_capacity,
+    })
   }
 
   configurations_json = templatefile(format("%s/templates/emr/configuration.json", path.module), {
