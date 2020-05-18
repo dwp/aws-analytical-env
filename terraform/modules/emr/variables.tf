@@ -110,3 +110,7 @@ variable "dataset_s3_tags" {
 }
 
 variable "cognito_user_pool_id" {}
+
+variable "dataset_glue_db" {
+  description = "Glue database where data generation metadata is stored"
+}

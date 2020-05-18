@@ -1,3 +1,4 @@
+# EMR Service Role
 resource "aws_iam_role" "emr_role" {
   name               = "AE_EMR_Role"
   assume_role_policy = data.aws_iam_policy_document.emr_role_assume_role.json
@@ -24,7 +25,7 @@ resource "aws_iam_role_policy" "elastic_map_reduce_role" {
 
 data "aws_iam_policy_document" "elastic_map_reduce_role" {
   statement {
-    sid    = "EC2Allow"
+    sid    = "EC2ReadAndCreateAllow"
     effect = "Allow"
     actions = [
       "ec2:AuthorizeSecurityGroupEgress",
@@ -76,7 +77,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:DetachNetworkInterface",
       "ec2:TerminateInstances",
     ]
-    resources = ["*"]   
+    resources = ["*"]
     condition {
       test     = "StringEquals"
       variable = "ec2:ResourceTag/Application"
@@ -87,7 +88,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
-    sid    = "IAMRolesAndPoliciesAllow"
+    sid    = "IAMReadRolesAndPoliciesAllow"
     effect = "Allow"
     actions = [
       "iam:GetRole",
@@ -100,7 +101,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       aws_iam_role.emr_ec2_role.arn,
       aws_iam_instance_profile.emr_ec2_role.arn
     ]
-  }      
+  }
 
   statement {
     sid    = "CloudwatchAllow"
@@ -156,7 +157,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 }
 
-
+# EMR Cluster EC2 Role
 resource "aws_iam_role" "emr_ec2_role" {
   name               = "AE_EMR_EC2_Role"
   assume_role_policy = data.aws_iam_policy_document.emr_ec2_role_assume_role.json
@@ -197,42 +198,46 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "GlueAllow"
+    sid    = "GlueAllowAll"
+    effect = "Allow"
+    actions = [
+      "glue:GetDatabase",
+      "glue:GetDatabases",
+      "glue:GetTable",
+      "glue:GetTables",
+      "glue:GetTableVersions",
+      "glue:GetPartition",
+      "glue:GetPartitions",
+      "glue:BatchGetPartition",
+      "glue:GetUserDefinedFunction",
+      "glue:GetUserDefinedFunctions"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "GlueAllowRestricted"
     effect = "Allow"
     actions = [
       "glue:CreateDatabase",
       "glue:UpdateDatabase",
       "glue:DeleteDatabase",
-      "glue:GetDatabase",
-      "glue:GetDatabases",
       "glue:CreateTable",
       "glue:UpdateTable",
       "glue:DeleteTable",
-      "glue:GetTable",
-      "glue:GetTables",
-      "glue:GetTableVersions",
       "glue:CreatePartition",
       "glue:BatchCreatePartition",
       "glue:UpdatePartition",
       "glue:DeletePartition",
       "glue:BatchDeletePartition",
-      "glue:GetPartition",
-      "glue:GetPartitions",
-      "glue:BatchGetPartition",
       "glue:CreateUserDefinedFunction",
       "glue:UpdateUserDefinedFunction",
-      "glue:DeleteUserDefinedFunction",
-      "glue:GetUserDefinedFunction",
-      "glue:GetUserDefinedFunctions"
+      "glue:DeleteUserDefinedFunction"
     ]
-    resources = ["*"]
-    condition {
-      test     = "StringEquals"
-      variable = "glue:ResourceTag/Application"
-      values = [
-        "aws-analytical-env"
-      ]
-    }
+    resources = [
+      "arn:aws:glue:*:*:${var.dataset_glue_db}",
+      "arn:aws:glue:*:*:${var.dataset_glue_db}_staging"
+    ]
   }
 
   statement {
@@ -363,6 +368,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
 
 }
 
+# EMR SSM Policy
 resource "aws_iam_role_policy_attachment" "amazon_ssm_managed_instance_core" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   role       = aws_iam_role.emr_ec2_role.name
@@ -474,6 +480,7 @@ data "aws_iam_policy_document" "emr_to_ecr" {
   }
 }
 
+# EMR Autoscaling Role
 resource "aws_iam_role" "emr_autoscaling_role" {
   name               = "AE_EMR_AutoScaling_Role"
   assume_role_policy = data.aws_iam_policy_document.emr_autoscaling_role_assume_role.json
