@@ -111,9 +111,9 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   statement {
     sid    = "S3-Allow"
     effect = "Allow"
-    // TODO restrict
     actions = [
-      "s3:*"
+      "s3:Get*",
+      "s3:List*",
     ]
     resources = [
       "arn:aws:s3:::${aws_s3_bucket.emr.id}",
