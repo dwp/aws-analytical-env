@@ -26,7 +26,6 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   statement {
     sid    = "EC2-Allow"
     effect = "Allow"
-    // TODO restrict globs
     actions = [
       "ec2:AuthorizeSecurityGroupEgress",
       "ec2:AuthorizeSecurityGroupIngress",
