@@ -36,9 +36,6 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   # "sqs:GetQueue*",
   # "sqs:PurgeQueue",
   # "sqs:ReceiveMessage",
-  # "cloudwatch:PutMetricAlarm",
-  # "cloudwatch:DescribeAlarms",
-  # "cloudwatch:DeleteAlarms",
   # "application-autoscaling:RegisterScalableTarget",
   # "application-autoscaling:DeregisterScalableTarget",
   # "application-autoscaling:PutScalingPolicy",
@@ -99,6 +96,17 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
         "aws-analytical-env"
       ]
     }
+  }
+
+  statement {
+    sid    = "Cloudwatch-Allow"
+    effect = "Allow"
+    actions = [
+      "cloudwatch:PutMetricAlarm",
+      "cloudwatch:DescribeAlarms",
+      "cloudwatch:DeleteAlarms",
+    ]
+    resources = ["*"]
   }
 
   statement {
@@ -197,6 +205,15 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   # "sns:*",
   # "sqs:*",
   statement {
+    sid    = "Cloudwatch-Allow"
+    effect = "Allow"
+    actions = [
+      "cloudwatch:PutMetricData"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
     sid    = "Glue-Allow"
     effect = "Allow"
     actions = [
@@ -250,10 +267,34 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     sid    = "Dynamodb-Allow"
     effect = "Allow"
     actions = [
-      "dynamodb:*",
+      "dynamodb:CreateTable",
+      "dynamodb:BatchGetItem",
+      "dynamodb:BatchWriteItem",
+      "dynamodb:PutItem",
+      "dynamodb:DescribeTable",
+      "dynamodb:DeleteItem",
+      "dynamodb:GetItem",
+      "dynamodb:Scan",
+      "dynamodb:Query",
+      "dynamodb:UpdateItem",
+      "dynamodb:DeleteTable",
+      "dynamodb:UpdateTable"
     ]
-    ## TODO restrict
-    resources = ["*"]
+    resource = "arn:aws:dynamodb:*:*:table/EmrFSMetadata"
+  }
+
+  statement {
+    sid    = "EMRFS-Inconsitenecy-SQS-Allow"
+    effect = "Allow"
+    actions = [
+      "sqs:GetQueueUrl",
+      "sqs:DeleteMessageBatch",
+      "sqs:ReceiveMessage",
+      "sqs:DeleteQueue",
+      "sqs:SendMessage",
+      "sqs:CreateQueue"
+    ]
+    Resource = "arn:aws:sqs:*:*:EMRFS-Inconsistency-*"
   }
 
   statement {
@@ -296,9 +337,21 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   statement {
     sid    = "S3-Allow"
     effect = "Allow"
-    // TODO restrict
     actions = [
-      "s3:*"
+      "s3:AbortMultipartUpload",
+      "s3:CreateBucket",
+      "s3:DeleteObject",
+      "s3:GetBucketVersioning",
+      "s3:GetObject",
+      "s3:GetObjectTagging",
+      "s3:GetObjectVersion",
+      "s3:ListBucket",
+      "s3:ListBucketMultipartUploads",
+      "s3:ListBucketVersions",
+      "s3:ListMultipartUploadParts",
+      "s3:PutBucketVersioning",
+      "s3:PutObject",
+      "s3:PutObjectTagging"
     ]
     resources = [
       "arn:aws:s3:::${aws_s3_bucket.emr.id}",
@@ -382,7 +435,12 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
   statement {
     effect = "Allow"
     actions = [
-      "cloudwatch:PutMetricData"
+      "cloudwatch:PutMetricData",
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams",
+      "logs:PutLogEvents"
     ]
     resources = ["*"]
   }
@@ -400,18 +458,6 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
     actions = [
       "ds:CreateComputer",
       "ds:DescribeDirectories"
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:DescribeLogGroups",
-      "logs:DescribeLogStreams",
-      "logs:PutLogEvents"
     ]
     resources = ["*"]
   }
