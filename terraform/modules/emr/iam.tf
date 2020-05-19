@@ -1,3 +1,4 @@
+# EMR Service Role
 resource "aws_iam_role" "emr_role" {
   name               = "AE_EMR_Role"
   assume_role_policy = data.aws_iam_policy_document.emr_role_assume_role.json
@@ -24,8 +25,8 @@ resource "aws_iam_role_policy" "elastic_map_reduce_role" {
 
 data "aws_iam_policy_document" "elastic_map_reduce_role" {
   statement {
+    sid    = "EC2ReadAndCreateAllow"
     effect = "Allow"
-    // TODO restrict globs
     actions = [
       "ec2:AuthorizeSecurityGroupEgress",
       "ec2:AuthorizeSecurityGroupIngress",
@@ -33,9 +34,6 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:CreateNetworkInterface",
       "ec2:CreateSecurityGroup",
       "ec2:CreateTags",
-      "ec2:DeleteNetworkInterface",
-      "ec2:DeleteSecurityGroup",
-      "ec2:DeleteTags",
       "ec2:DescribeAvailabilityZones",
       "ec2:DescribeAccountAttributes",
       "ec2:DescribeDhcpOptions",
@@ -56,37 +54,70 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:DescribeVpcEndpoints",
       "ec2:DescribeVpcEndpointServices",
       "ec2:DescribeVpcs",
-      "ec2:DetachNetworkInterface",
       "ec2:ModifyImageAttribute",
       "ec2:ModifyInstanceAttribute",
       "ec2:RequestSpotInstances",
-      "ec2:RevokeSecurityGroupEgress",
       "ec2:RunInstances",
-      "ec2:TerminateInstances",
-      "ec2:DeleteVolume",
       "ec2:DescribeVolumeStatus",
       "ec2:DescribeVolumes",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "EC2DestroyAllow"
+    effect = "Allow"
+    actions = [
       "ec2:DetachVolume",
+      "ec2:DeleteVolume",
+      "ec2:RevokeSecurityGroupEgress",
+      "ec2:DeleteNetworkInterface",
+      "ec2:DeleteSecurityGroup",
+      "ec2:DeleteTags",
+      "ec2:DetachNetworkInterface",
+      "ec2:TerminateInstances",
+    ]
+    resources = ["*"]
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:ResourceTag/Application"
+      values = [
+        "aws-analytical-env"
+      ]
+    }
+  }
+
+  statement {
+    sid    = "IAMReadRolesAndPoliciesAllow"
+    effect = "Allow"
+    actions = [
       "iam:GetRole",
       "iam:GetRolePolicy",
       "iam:ListInstanceProfiles",
       "iam:ListRolePolicies",
-      "iam:PassRole",
-      "sdb:BatchPutAttributes",
-      "sdb:Select",
-      "sqs:CreateQueue",
-      "sqs:Delete*",
-      "sqs:GetQueue*",
-      "sqs:PurgeQueue",
-      "sqs:ReceiveMessage",
+      "iam:PassRole"
+    ]
+    resources = [
+      aws_iam_role.emr_ec2_role.arn,
+      aws_iam_instance_profile.emr_ec2_role.arn
+    ]
+  }
+
+  statement {
+    sid    = "CloudwatchAllow"
+    effect = "Allow"
+    actions = [
       "cloudwatch:PutMetricAlarm",
       "cloudwatch:DescribeAlarms",
       "cloudwatch:DeleteAlarms",
-      "application-autoscaling:RegisterScalableTarget",
-      "application-autoscaling:DeregisterScalableTarget",
-      "application-autoscaling:PutScalingPolicy",
-      "application-autoscaling:DeleteScalingPolicy",
-      "application-autoscaling:Describe*",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "KMSAllow"
+    effect = "Allow"
+    actions = [
       "kms:Encrypt",
       "kms:Decrypt",
       "kms:ReEncrypt*",
@@ -94,14 +125,18 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "kms:DescribeKey",
       "kms:CreateGrant"
     ]
-    resources = ["*"]
+    resources = [
+      aws_kms_key.emr_ebs.arn,
+      aws_kms_key.emr_s3.arn
+    ]
   }
 
   statement {
+    sid    = "S3Allow"
     effect = "Allow"
-    // TODO restrict
     actions = [
-      "s3:*"
+      "s3:Get*",
+      "s3:List*",
     ]
     resources = [
       "arn:aws:s3:::${aws_s3_bucket.emr.id}",
@@ -110,6 +145,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
+    sid       = "CreateServiceLinkedRoleAllow"
     effect    = "Allow"
     actions   = ["iam:CreateServiceLinkedRole"]
     resources = ["arn:aws:iam::*:role/aws-service-role/spot.amazonaws.com/AWSServiceRoleForEC2Spot*"]
@@ -121,6 +157,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 }
 
+# EMR Cluster EC2 Role
 resource "aws_iam_role" "emr_ec2_role" {
   name               = "AE_EMR_EC2_Role"
   assume_role_policy = data.aws_iam_policy_document.emr_ec2_role_assume_role.json
@@ -152,66 +189,33 @@ resource "aws_iam_role_policy" "elastic_map_reduce_for_ec2_role" {
 
 data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   statement {
+    sid    = "CloudwatchAllow"
     effect = "Allow"
-    // TODO restrict
     actions = [
-      "acm:ExportCertificate",
-      "cloudwatch:*",
-      "dynamodb:*",
-      "ec2:Describe*",
-      "elasticmapreduce:Describe*",
-      "elasticmapreduce:ListBootstrapActions",
-      "elasticmapreduce:ListClusters",
-      "elasticmapreduce:ListInstanceGroups",
-      "elasticmapreduce:ListInstances",
-      "elasticmapreduce:ListSteps",
-      "kinesis:CreateStream",
-      "kinesis:DeleteStream",
-      "kinesis:DescribeStream",
-      "kinesis:GetRecords",
-      "kinesis:GetShardIterator",
-      "kinesis:MergeShards",
-      "kinesis:PutRecord",
-      "kinesis:SplitShard",
-      "rds:Describe*",
-      "sdb:*",
-      "sns:*",
-      "sqs:*",
-      "glue:CreateDatabase",
-      "glue:UpdateDatabase",
-      "glue:DeleteDatabase",
-      "glue:GetDatabase",
-      "glue:GetDatabases",
-      "glue:CreateTable",
-      "glue:UpdateTable",
-      "glue:DeleteTable",
-      "glue:GetTable",
-      "glue:GetTables",
-      "glue:GetTableVersions",
-      "glue:CreatePartition",
-      "glue:BatchCreatePartition",
-      "glue:UpdatePartition",
-      "glue:DeletePartition",
-      "glue:BatchDeletePartition",
-      "glue:GetPartition",
-      "glue:GetPartitions",
-      "glue:BatchGetPartition",
-      "glue:CreateUserDefinedFunction",
-      "glue:UpdateUserDefinedFunction",
-      "glue:DeleteUserDefinedFunction",
-      "glue:GetUserDefinedFunction",
-      "glue:GetUserDefinedFunctions",
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey",
-      "kms:CreateGrant"
+      "cloudwatch:PutMetricData"
     ]
     resources = ["*"]
   }
 
   statement {
+    sid    = "GlueAllowReadOnly"
+    effect = "Allow"
+    actions = [
+      "glue:Get*",
+      "glue:List*",
+      "glue:BatchGet*"
+    ]
+    resources = [
+      "arn:aws:glue:*:*:catalog",
+      "arn:aws:glue:*:*:database/${var.dataset_glue_db}",
+      "arn:aws:glue:*:*:database/${var.dataset_glue_db}_staging",
+      "arn:aws:glue:*:*:table/${var.dataset_glue_db}/*",
+      "arn:aws:glue:*:*:table/${var.dataset_glue_db}_staging/*"
+    ]
+  }
+
+  statement {
+    sid    = "GlueDeny"
     effect = "Deny"
     actions = [
       "glue:*"
@@ -222,25 +226,102 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
+    sid    = "DynamodbAllow"
     effect = "Allow"
-    // TODO restrict
     actions = [
-      "s3:*"
+      "dynamodb:CreateTable",
+      "dynamodb:BatchGetItem",
+      "dynamodb:BatchWriteItem",
+      "dynamodb:PutItem",
+      "dynamodb:DescribeTable",
+      "dynamodb:DeleteItem",
+      "dynamodb:GetItem",
+      "dynamodb:Scan",
+      "dynamodb:Query",
+      "dynamodb:UpdateItem",
+      "dynamodb:DeleteTable",
+      "dynamodb:UpdateTable"
     ]
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.emr.id}",
-      "arn:aws:s3:::${aws_s3_bucket.emr.id}/*"
+      "arn:aws:dynamodb:*:*:table/EmrFSMetadata"
     ]
   }
 
   statement {
+    sid    = "EMRFSInconsitenecySQSAllow"
     effect = "Allow"
-    // TODO restrict
     actions = [
-      "s3:*"
+      "sqs:GetQueueUrl",
+      "sqs:DeleteMessageBatch",
+      "sqs:ReceiveMessage",
+      "sqs:DeleteQueue",
+      "sqs:SendMessage",
+      "sqs:CreateQueue"
     ]
-    // TODO un-hardcode
     resources = [
+      "arn:aws:sqs:*:*:EMRFS-Inconsistency-*"
+    ]
+  }
+
+  statement {
+    sid    = "ACMExportAllow"
+    effect = "Allow"
+    actions = [
+      "acm:ExportCertificate",
+    ]
+    resources = [
+      aws_acm_certificate.emr.arn
+    ]
+  }
+
+  statement {
+    sid    = "PrivateCAGetCertificateAllow"
+    effect = "Allow"
+    actions = [
+      "acm-pca:GetCertficate"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "KMSAllow"
+    effect = "Allow"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+      "kms:CreateGrant"
+    ]
+    resources = [
+      aws_kms_key.emr_ebs.arn,
+      aws_kms_key.emr_s3.arn
+    ]
+  }
+
+  statement {
+    sid    = "S3Allow"
+    effect = "Allow"
+    actions = [
+      "s3:AbortMultipartUpload",
+      "s3:CreateBucket",
+      "s3:DeleteObject",
+      "s3:GetBucketVersioning",
+      "s3:GetObject",
+      "s3:GetObjectTagging",
+      "s3:GetObjectVersion",
+      "s3:ListBucket",
+      "s3:ListBucketMultipartUploads",
+      "s3:ListBucketVersions",
+      "s3:ListMultipartUploadParts",
+      "s3:PutBucketVersioning",
+      "s3:PutObject",
+      "s3:PutObjectTagging"
+    ]
+    resources = [
+      "arn:aws:s3:::${aws_s3_bucket.emr.id}",
+      "arn:aws:s3:::${aws_s3_bucket.emr.id}/*",
       "arn:aws:s3:::eu-west-2.elasticmapreduce",
       "arn:aws:s3:::eu-west-2.elasticmapreduce/*",
       "arn:aws:s3:::${var.env_certificate_bucket}",
@@ -251,27 +332,17 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    effect = "Allow"
-    actions = [
-      "acm-pca:GetCertficate"
-    ]
-    resources = [
-      "arn:aws:acm:*:*:certificate/*"
-    ]
-  }
-
-  statement {
     sid    = "AllowAssumeReadOnlyCognitoRole"
     effect = "Allow"
     actions = [
       "sts:AssumeRole"
     ]
-
     resources = [aws_iam_role.cogntio_read_only_role.arn]
   }
 
 }
 
+# EMR SSM Policy
 resource "aws_iam_role_policy_attachment" "amazon_ssm_managed_instance_core" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   role       = aws_iam_role.emr_ec2_role.name
@@ -331,7 +402,12 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
   statement {
     effect = "Allow"
     actions = [
-      "cloudwatch:PutMetricData"
+      "cloudwatch:PutMetricData",
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams",
+      "logs:PutLogEvents"
     ]
     resources = ["*"]
   }
@@ -349,18 +425,6 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
     actions = [
       "ds:CreateComputer",
       "ds:DescribeDirectories"
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:DescribeLogGroups",
-      "logs:DescribeLogStreams",
-      "logs:PutLogEvents"
     ]
     resources = ["*"]
   }
@@ -390,6 +454,7 @@ data "aws_iam_policy_document" "emr_to_ecr" {
   }
 }
 
+# EMR Autoscaling Role
 resource "aws_iam_role" "emr_autoscaling_role" {
   name               = "AE_EMR_AutoScaling_Role"
   assume_role_policy = data.aws_iam_policy_document.emr_autoscaling_role_assume_role.json
