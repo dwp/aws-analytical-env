@@ -198,45 +198,19 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "GlueAllowAll"
+    sid    = "GlueAllowReadOnly"
     effect = "Allow"
     actions = [
-      "glue:GetDatabase",
-      "glue:GetDatabases",
-      "glue:GetTable",
-      "glue:GetTables",
-      "glue:GetTableVersions",
-      "glue:GetPartition",
-      "glue:GetPartitions",
-      "glue:BatchGetPartition",
-      "glue:GetUserDefinedFunction",
-      "glue:GetUserDefinedFunctions"
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    sid    = "GlueAllowRestricted"
-    effect = "Allow"
-    actions = [
-      "glue:CreateDatabase",
-      "glue:UpdateDatabase",
-      "glue:DeleteDatabase",
-      "glue:CreateTable",
-      "glue:UpdateTable",
-      "glue:DeleteTable",
-      "glue:CreatePartition",
-      "glue:BatchCreatePartition",
-      "glue:UpdatePartition",
-      "glue:DeletePartition",
-      "glue:BatchDeletePartition",
-      "glue:CreateUserDefinedFunction",
-      "glue:UpdateUserDefinedFunction",
-      "glue:DeleteUserDefinedFunction"
+      "glue:Get*",
+      "glue:List*",
+      "glue:BatchGet*"
     ]
     resources = [
-      "arn:aws:glue:*:*:${var.dataset_glue_db}",
-      "arn:aws:glue:*:*:${var.dataset_glue_db}_staging"
+      "arn:aws:glue:*:*:catalog",
+      "arn:aws:glue:*:*:database/${var.dataset_glue_db}",
+      "arn:aws:glue:*:*:database/${var.dataset_glue_db}_staging",
+      "arn:aws:glue:*:*:table/${var.dataset_glue_db}/*",
+      "arn:aws:glue:*:*:table/${var.dataset_glue_db}_staging/*"
     ]
   }
 
