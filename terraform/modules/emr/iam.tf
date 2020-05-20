@@ -327,7 +327,9 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "arn:aws:s3:::${var.env_certificate_bucket}",
       "arn:aws:s3:::${var.env_certificate_bucket}/*",
       "arn:aws:s3:::dw-management-dev-public-certificates",
-      "arn:aws:s3:::dw-management-dev-public-certificates/*"
+      "arn:aws:s3:::dw-management-dev-public-certificates/*",
+      "arn:aws:s3:::${var.log_bucket}",
+      "arn:aws:s3:::${var.log_bucket}/*"
     ]
   }
 

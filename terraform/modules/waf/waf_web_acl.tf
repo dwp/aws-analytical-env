@@ -2,6 +2,10 @@ resource "aws_wafregional_web_acl" "acl" {
   name        = local.name
   metric_name = local.name
 
+  logging_configuration {
+    log_destination = aws_kinesis_firehose_delivery_stream.extended_s3_stream.arn
+  }
+
   default_action {
     type = "ALLOW"
   }
@@ -42,26 +46,6 @@ resource "aws_wafregional_web_acl" "acl" {
     }
 
     priority = 4
-    rule_id  = aws_wafregional_rule.detect_large_file_uploads.id
-    type     = "REGULAR"
-  }
-
-  rule {
-    action {
-      type = "BLOCK"
-    }
-
-    priority = 5
-    rule_id  = aws_wafregional_rate_based_rule.detect_sequential_file_uploads.id
-    type     = "RATE_BASED"
-  }
-
-  rule {
-    action {
-      type = "BLOCK"
-    }
-
-    priority = 6
     rule_id  = aws_wafregional_rule.mitigate_xss.id
     type     = "REGULAR"
   }
@@ -71,7 +55,7 @@ resource "aws_wafregional_web_acl" "acl" {
       type = "BLOCK"
     }
 
-    priority = 7
+    priority = 5
     rule_id  = aws_wafregional_rule.detect_rfi_lfi_traversal.id
     type     = "REGULAR"
   }
@@ -82,7 +66,7 @@ resource "aws_wafregional_web_acl" "acl" {
       type = "COUNT"
     }
 
-    priority = 8
+    priority = 6
     rule_id  = aws_wafregional_rule.enforce_csrf.id
     type     = "REGULAR"
   }
@@ -92,7 +76,7 @@ resource "aws_wafregional_web_acl" "acl" {
       type = "BLOCK"
     }
 
-    priority = 9
+    priority = 7
     rule_id  = aws_wafregional_rule.detect_ssi.id
     type     = "REGULAR"
   }
@@ -102,7 +86,7 @@ resource "aws_wafregional_web_acl" "acl" {
       type = "ALLOW"
     }
 
-    priority = 10
+    priority = 8
     rule_id  = aws_wafregional_rule.detect_admin_access.id
     type     = "REGULAR"
   }

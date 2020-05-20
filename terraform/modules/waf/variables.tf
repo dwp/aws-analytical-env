@@ -5,11 +5,7 @@ variable "name" {
 
 variable "whitelist_cidr_blocks" {}
 
-variable "file_upload_rate_limit" {
-  type = number
-}
-
-variable "file_upload_max_size" {
-  type        = number
-  description = "Max file upload size in bytes"
+variable log_bucket {
+  type        = string
+  description = "Bucket used for Firehose Logging"
 }

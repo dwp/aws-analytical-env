@@ -1,6 +1,6 @@
 module analytical_env_vpc {
   source  = "dwp/vpc/aws"
-  version = "2.0.5"
+  version = "2.0.7"
 
   common_tags                                = local.common_tags
   gateway_vpce_route_table_ids               = module.networking.outputs.aws_route_table_private_ids
@@ -56,6 +56,38 @@ module networking {
   tgw_rtb_internet_egress           = data.terraform_remote_state.internet_egress.outputs.tgw_rtb_internet_egress
   proxy_route_table                 = data.terraform_remote_state.internet_egress.outputs.proxy_route_table
   proxy_subnet                      = data.terraform_remote_state.internet_egress.outputs.proxy_subnet
-  analytical_service_vpc            = data.terraform_remote_state.analytical_service_infra.outputs.vpc.aws_vpc.id
   region                            = var.region
+}
+
+module waf {
+  source = "../../modules/waf"
+
+  name       = local.name
+  log_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.arn
+
+  whitelist_cidr_blocks = local.whitelist_cidr_blocks
+
+}
+
+module alb {
+  source = "../../modules/alb"
+
+  vpc_id = module.networking.outputs.aws_vpc
+
+  name_prefix = local.name
+
+  cert_authority_arn = data.terraform_remote_state.aws_certificate_authority.outputs.root_ca.arn
+  internal_lb        = false
+  parent_domain_name = local.parent_domain_name[local.environment]
+  root_dns_prefix    = local.root_dns_prefix[local.environment]
+  alb_subnets        = module.networking.outputs.aws_subnets_public.*.id
+  common_tags        = local.common_tags
+
+  wafregional_web_acl_id = module.waf.wafregional_web_acl_id
+  whitelist_cidr_blocks  = local.whitelist_cidr_blocks
+
+  role_arn = {
+    management-dns = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
+  }
+
 }

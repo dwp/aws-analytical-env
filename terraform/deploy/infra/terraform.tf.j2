@@ -48,13 +48,27 @@ data "terraform_remote_state" "crypto" {
   }
 }
 
-data "terraform_remote_state" "analytical_service_infra" {
+data "terraform_remote_state" "aws_certificate_authority" {
+  backend = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-certificate-authority.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "security-tools" {
   backend   = "s3"
   workspace = terraform.workspace
 
   config = {
     bucket         = "{{state_file_bucket}}"
-    key            = "terraform/dataworks/analytical-service-infra.tfstate"
+    key            = "terraform/dataworks/aws-security-tools.tfstate"
     region         = "{{state_file_region}}"
     encrypt        = true
     kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
@@ -66,11 +80,27 @@ locals {
   name        = "aws-analytical-env"
   environment = terraform.workspace == "default" ? "development" : terraform.workspace
 
+  root_dns_prefix = {
+    development = "dev"
+    qa          = "qa"
+    integration = "int"
+    preprod     = "pre"
+    production  = "" # no prefix in prod
+  }
+  
   root_dns_name = {
     development = "dev.wip.{{dataworks_domain_name}}"
     qa          = "qa.wip.{{dataworks_domain_name}}"
     integration = "int.wip.{{dataworks_domain_name}}"
     preprod     = "pre{{dataworks_domain_name}}"
+    production  = "{{dataworks_domain_name}}"
+  }
+
+  parent_domain_name = {
+    development = "wip.{{dataworks_domain_name}}"
+    qa          = "wip.{{dataworks_domain_name}}"
+    integration = "wip.{{dataworks_domain_name}}"
+    preprod     = "{{dataworks_domain_name}}"
     production  = "{{dataworks_domain_name}}"
   }
 
@@ -118,4 +148,12 @@ locals {
           {{ key }} = "{{ value }}"{% endfor %}
       } {% endfor %}
   }
+  
+  whitelist_cidr_blocks = [
+    {% set doiranges = doi["cidr_blocks"].split(',') %}
+    {% for cidr in doiranges %}
+    "{{ cidr }}",
+    {% endfor %} 
+    "{{ucfs["team_cidr_block"]}}"
+  ]
 }
