@@ -68,7 +68,3 @@ variable "proxy_route_table" {
 variable "proxy_subnet" {
   description = "Internet Egress subnet ranges"
 }
-
-variable "analytical_service_vpc" {
-  description = "VPC ID Peering to analytical-service vpc"
-}

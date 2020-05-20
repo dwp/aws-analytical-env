@@ -1,7 +1,6 @@
 locals {
   emrfs_em = {
     EncryptionConfiguration = {
-      // TODO generate certs?
       EnableInTransitEncryption = false
 
       EnableAtRestEncryption = true

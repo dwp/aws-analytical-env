@@ -6,7 +6,7 @@ resource "aws_emr_cluster" "cluster" {
   keep_job_flow_alive_when_no_steps = var.keep_flow_alive
   security_configuration            = aws_emr_security_configuration.emrfs_em.id
   service_role                      = aws_iam_role.emr_role.arn
-  log_uri                           = format("s3n://%s/logs/", aws_s3_bucket.emr.id)
+  log_uri                           = format("s3n://%s/logs/", var.log_bucket)
   ebs_root_volume_size              = local.ebs_root_volume_size
   autoscaling_role                  = aws_iam_role.emr_autoscaling_role.arn
   tags                              = merge({ "Name" = var.emr_cluster_name, "SSMEnabled" = "True" }, var.common_tags)
@@ -23,7 +23,6 @@ resource "aws_emr_cluster" "cluster" {
     name           = "MASTER"
     instance_count = 1
     instance_type  = local.master_instance_type
-    # bid_price      = local.master_bid_price
 
     ebs_config {
       size                 = local.ebs_config_size
@@ -37,7 +36,6 @@ resource "aws_emr_cluster" "cluster" {
     name           = "CORE"
     instance_count = local.core_instance_count
     instance_type  = local.core_instance_type
-    # bid_price      = local.core_bid_price
 
     ebs_config {
       size                 = local.ebs_config_size
@@ -53,7 +51,7 @@ resource "aws_emr_cluster" "cluster" {
   }
 
   configurations_json = templatefile(format("%s/templates/emr/configuration.json", path.module), {
-    logs_bucket_path     = format("s3://%s/logs", aws_s3_bucket.emr.id)
+    logs_bucket_path     = format("s3://%s/logs", var.log_bucket)
     data_bucket_path     = format("s3://%s/data", aws_s3_bucket.emr.id)
     notebook_bucket_path = format("%s/data", aws_s3_bucket.emr.id)
     proxy_host           = var.internet_proxy["dns_name"]
@@ -72,7 +70,7 @@ resource "aws_emr_cluster" "cluster" {
 
   step {
     name              = "hdfs-setup"
-    action_on_failure = "TERMINATE_CLUSTER"
+    action_on_failure = "CONTINUE"
     hadoop_jar_step {
       jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
       args = [
@@ -83,7 +81,7 @@ resource "aws_emr_cluster" "cluster" {
 
   step {
     name              = "livy-client-conf"
-    action_on_failure = "TERMINATE_CLUSTER"
+    action_on_failure = "CONTINUE"
     hadoop_jar_step {
       jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
       args = [
@@ -105,20 +103,3 @@ resource "aws_emr_cluster" "cluster" {
     ]
   }
 }
-
-//resource "aws_emr_instance_group" "task" {
-//  name           = "TASK"
-//  cluster_id     = aws_emr_cluster.cluster.id
-//  instance_count = 0
-//  instance_type  = local.task_instance_type
-//  # bid_price      = local.task_bid_price
-//  ebs_optimized = false
-//
-//
-//  ebs_config {
-//    size                 = local.ebs_config_size
-//    type                 = local.ebs_config_type
-//    iops                 = 0
-//    volumes_per_instance = local.ebs_config_volumes_per_instance
-//  }
-//}
