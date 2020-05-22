@@ -1,6 +1,6 @@
-resource aws_vpc_peering_connection cluster-broker {
-  count       = length(regexall("^vpc-", var.clusterbroker_vpc)) > 0 ? 1 : 0
-  peer_vpc_id = var.clusterbroker_vpc
+resource aws_vpc_peering_connection analytical-service {
+  count       = length(regexall("^vpc-", var.analytical_service_vpc)) > 0 ? 1 : 0
+  peer_vpc_id = var.analytical_service_vpc
   vpc_id      = var.vpc.id
   auto_accept = true
   tags        = merge(var.common_tags, { Name = "${var.name}-peering" })
@@ -12,6 +12,6 @@ resource aws_vpc_peering_connection cluster-broker {
   }
 }
 
-data aws_vpc clusterbroker {
-  id = var.clusterbroker_vpc
+data aws_vpc analytical_service_vpc {
+  id = var.analytical_service_vpc
 }

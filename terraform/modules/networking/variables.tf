@@ -69,6 +69,6 @@ variable "proxy_subnet" {
   description = "Internet Egress subnet ranges"
 }
 
-variable "clusterbroker_vpc" {
-  description = "VPC ID Peering to cluster-broker vpc"
+variable "analytical_service_vpc" {
+  description = "VPC ID Peering to analytical-service vpc"
 }
