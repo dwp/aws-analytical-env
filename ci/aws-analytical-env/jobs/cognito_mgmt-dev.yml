@@ -1,0 +1,19 @@
+jobs:
+  - name: management-dev
+    max_in_flight: 1
+    plan:
+      - put: meta
+        resource: meta-management-dev
+      - get: aws-analytical-env
+        trigger: true
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: cognito
+      - .: (( inject meta.plan.terraform-apply ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/cognito'
+      - .: (( inject meta.plan.terraform-plan ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/cognito'
