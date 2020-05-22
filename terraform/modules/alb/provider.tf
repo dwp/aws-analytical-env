@@ -1,6 +1,6 @@
 provider "aws" {
   alias  = "management-dns"
-  region = "eu-west-2"
+  region = var.region
 
   assume_role {
     role_arn = var.role_arn.management-dns

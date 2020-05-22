@@ -75,6 +75,7 @@ module alb {
   vpc_id = module.networking.outputs.aws_vpc
 
   name_prefix = local.name
+  region      = var.region
 
   cert_authority_arn = data.terraform_remote_state.aws_certificate_authority.outputs.root_ca.arn
   internal_lb        = false

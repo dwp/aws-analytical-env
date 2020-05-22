@@ -53,3 +53,8 @@ variable role_arn {
   type        = map
   description = "(Required) The role used for creating DNS/ACM"
 }
+
+variable "region" {
+  type        = string
+  description = "(Required) AWS Region"
+}
