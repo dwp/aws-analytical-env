@@ -119,3 +119,11 @@ variable log_bucket {
   description = "(Required) The EMR Log bucket"
   type        = string
 }
+
+variable artefact_bucket {
+  description = "(Required) S3 artefacts bucket"
+  type = object({
+    id      = string
+    kms_arn = string
+  })
+}

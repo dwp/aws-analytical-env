@@ -39,4 +39,9 @@ module "emr" {
   dataset_s3_paths           = [[data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket.id, "*"]]
   dataset_s3_tags            = ["collection_tag", "crown"]
   dataset_glue_db            = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.analytical_dataset_generation.job_name
+
+  artefact_bucket = {
+    id      = data.terraform_remote_state.management.outputs.artefact_bucket.id
+    kms_arn = data.terraform_remote_state.management.outputs.artefact_bucket.cmk_arn
+  }
 }

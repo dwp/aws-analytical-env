@@ -7,7 +7,7 @@ locals {
       AtRestEncryptionConfiguration = {
         S3EncryptionConfiguration = {
           EncryptionMode             = "CSE-Custom"
-          S3Object                   = "s3://${aws_s3_bucket.emr.id}/${aws_s3_bucket_object.emrfs_emp.id}"
+          S3Object                   = "s3://${var.artefact_bucket.id}/emr-encryption-materials-provider/encryption-materials-provider-0.0.7-all.jar"
           EncryptionKeyProviderClass = "uk.gov.dwp.dataworks.dks.encryptionmaterialsprovider.DKSEncryptionMaterialsProvider"
         }
         LocalDiskEncryptionConfiguration = {
