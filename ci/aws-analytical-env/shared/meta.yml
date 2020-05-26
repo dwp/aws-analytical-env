@@ -56,6 +56,7 @@ meta:
             - -exc
             - |
               python bootstrap_terraform.py
+              sed -i '/^assume_role/ d' terraform/deploy/$DEPLOY_PATH/terraform.tfvars
               cp terraform/deploy/$DEPLOY_PATH/terraform.tf ../terraform-config
               cp terraform/deploy/$DEPLOY_PATH/terraform.tfvars ../terraform-config
           dir: aws-analytical-env
@@ -118,14 +119,14 @@ meta:
               cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
-              terraform plan -var assume_role=ci
+              terraform plan
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
       params:
         TF_CLI_ARGS_plan: -lock-timeout=300s -detailed-exitcode
         TF_INPUT: "false"
-        TF_VAR_slack_webhook_url: ((slack.webhook_url))
+        TF_VAR_assume_role: ci
         AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
         AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
 
