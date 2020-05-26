@@ -4,6 +4,7 @@ resource "aws_lambda_function" "lambda_create_challenge" {
   role             = aws_iam_role.role_for_lambda_create_auth_challenge.arn
   handler          = "lambda.createAuthChallenge"
   runtime          = "nodejs12.x"
+  timeout          = 6
   source_code_hash = filebase64sha256(var.custom_auth_file_path)
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-create-challenge" })
 }
@@ -14,6 +15,7 @@ resource "aws_lambda_function" "lambda_define_challenge" {
   role             = aws_iam_role.role_for_lambda_define_auth_challenge.arn
   handler          = "lambda.defineAuthChallenge"
   runtime          = "nodejs12.x"
+  timeout          = 6
   source_code_hash = filebase64sha256(var.custom_auth_file_path)
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-define-challenge" })
 }
@@ -24,6 +26,7 @@ resource "aws_lambda_function" "lambda_verify_challenge" {
   role             = aws_iam_role.role_for_lambda_verify_auth_challenge.arn
   handler          = "lambda.verifyAuthChallenge"
   runtime          = "nodejs12.x"
+  timeout          = 6
   source_code_hash = filebase64sha256(var.custom_auth_file_path)
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-verify-challenge" })
 }
