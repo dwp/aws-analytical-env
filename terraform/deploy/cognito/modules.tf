@@ -28,6 +28,7 @@ module "custom-auth-flow" {
 module "pre-auth-lambda" {
   source = "../../modules/pre-auth-lambda"
 
-  name_prefix = local.name
-  common_tags = local.common_tags
+  name_prefix   = local.name
+  common_tags   = local.common_tags
+  user_pool_arn = module.cognito-fs.outputs.user_pool_arn
 }
