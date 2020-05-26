@@ -87,13 +87,15 @@ meta:
               cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
-              terraform apply -auto-approve -var assume_role=ci
+              terraform plan -out terraform.plan
+              terraform apply -auto-approve terraform.plan
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
       params:
         TF_CLI_ARGS_apply: -lock-timeout=300s
         TF_INPUT: "false"
+        TF_VAR_assume_role: ci
         AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
         AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
 
