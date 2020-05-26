@@ -20,7 +20,7 @@ variable "internal_lb" {
 }
 
 variable "alb_subnets" {
-  type        = list
+  type        = list(string)
   description = "(Required) The subnets associated with the application load balancer."
 }
 
@@ -45,16 +45,17 @@ variable "vpc_id" {
 }
 
 variable "whitelist_cidr_blocks" {
-  type        = list
+  type        = list(string)
   description = "(Required) Rangese we will accept traffic from"
 }
 
 variable role_arn {
-  type        = map
+  type        = map(string)
   description = "(Required) The role used for creating DNS/ACM"
 }
 
 variable "region" {
   type        = string
   description = "(Required) AWS Region"
+  default     = "eu-west-2"
 }
