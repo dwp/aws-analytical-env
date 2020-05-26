@@ -19,8 +19,7 @@ module "emr" {
     management = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
   }
 
-  log_bucket   = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
-  emp_dir_path = var.emp_dir_path
+  log_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
 
   ami_id                     = module.emr_ami.ami_id
   cognito_user_pool_id       = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id

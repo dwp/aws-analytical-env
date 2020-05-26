@@ -111,10 +111,6 @@ variable "dataset_glue_db" {
   description = "Glue database where data generation metadata is stored"
 }
 
-variable "emp_dir_path" {
-  description = "Local path pointing to the Encryption Materials Provider dir"
-}
-
 variable log_bucket {
   description = "(Required) The EMR Log bucket"
   type        = string
