@@ -20,7 +20,7 @@ provider "aws" {
 }
 
 locals {
-  name        = "aws-analytical-env"
+  name        = "aws-analytical-env-cognito"
   environment = terraform.workspace == "default" ? "development" : terraform.workspace
 
   root_dns_name = {
