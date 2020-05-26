@@ -16,6 +16,11 @@ data aws_iam_policy_document policy_assume_role_lambda_pre_auth {
   }
 }
 
+resource aws_iam_role_policy_attachment lambda_basic_execution_role {
+  role       = aws_iam_role.role_for_lambda_pre_auth.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
 resource aws_iam_role_policy role_policy_dynamodb_read_write_pre_auth {
   name   = "Policy-DynamoDB-Table-User-Read-Write"
   role   = aws_iam_role.role_for_lambda_pre_auth.id
