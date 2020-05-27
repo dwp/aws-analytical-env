@@ -58,7 +58,7 @@ data aws_iam_policy_document policy_cognito_check_user_expiry {
     actions = [
       "cognito-idp:AdminGetUser"
     ]
-    resources = [var.cognito_user_pool_id]
+    resources = [var.cognito_user_pool_arn]
   }
 }
 

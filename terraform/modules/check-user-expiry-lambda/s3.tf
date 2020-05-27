@@ -27,20 +27,20 @@ resource "aws_s3_bucket_public_access_block" "check_user_expiry_email" {
 }
 
 resource "aws_s3_bucket_object" "check_user_expiry_email_from" {
-  bucket  = aws_s3_bucket.check_user_expiry_email
+  bucket  = aws_s3_bucket.check_user_expiry_email.bucket
   key     = "email_from.txt"
   content = templatefile("${path.module}/s3_objects/email_from.txt.tpl", { email_address_dataworks_access_management = var.from_email_address })
 }
 
 resource "aws_s3_bucket_object" "check_user_expiry_email_subject" {
-  bucket = aws_s3_bucket.check_user_expiry_email
+  bucket = aws_s3_bucket.check_user_expiry_email.bucket
   key    = "email_subject.txt"
   source = "${path.module}/s3_objects/email_subject.txt"
   etag   = filemd5("${path.module}/s3_objects/email_subject.txt")
 }
 
 resource "aws_s3_bucket_object" "check_user_expiry_email_body" {
-  bucket = aws_s3_bucket.check_user_expiry_email
+  bucket = aws_s3_bucket.check_user_expiry_email.bucket
   key    = "email_body.txt"
   source = "${path.module}/s3_objects/email_body.txt"
   etag   = filemd5("${path.module}/s3_objects/email_body.txt")

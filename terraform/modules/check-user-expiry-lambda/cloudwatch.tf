@@ -6,7 +6,7 @@ resource "aws_cloudwatch_log_group" "check_user_expiry_lambda_logs" {
 resource "aws_cloudwatch_event_rule" "rule_for_check_user_expiry_lambda" {
   name                = "Rule-For-Check-User-Expiry-Lambda"
   description         = "Trigger the lambda check user expiry once a day"
-  schedule_expression = "cron(0 10 * * * *)"
+  schedule_expression = "cron(0 10 * * ? *)"
   tags                = merge(var.common_tags, { Name = "${var.name_prefix}-check-user-expiry" })
 }
 

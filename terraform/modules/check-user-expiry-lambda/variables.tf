@@ -13,6 +13,11 @@ variable "cognito_user_pool_id" {
   type        = string
 }
 
+variable "cognito_user_pool_arn" {
+  description = "(Required) Cognito user pool arn"
+  type        = string
+}
+
 variable "dynamodb_table_user_arn" {
   description = "(Required) DynamoDB Table User arn"
   type        = string

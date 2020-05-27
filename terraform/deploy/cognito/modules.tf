@@ -39,7 +39,8 @@ module "check-user-expiry-lambda" {
 
   name_prefix              = var.name_prefix
   common_tags              = local.common_tags
-  cognito_user_pool_id     = data.terraform_remote_state.aws_analytical_env_cognito.outputs.cognito-fs.user_pool_id
+  cognito_user_pool_id     = module.cognito-fs.outputs.user_pool_id
+  cognito_user_pool_arn    = module.cognito-fs.outputs.user_pool_arn
   dynamodb_table_user_arn  = module.pre-auth-lambda.dynamodb_table_user.arn
   dynamodb_table_user_name = module.pre-auth-lambda.dynamodb_table_user.name
   from_email_address       = "DataWorks Access Management <access-management@${data.terraform_remote_state.aws_common_infrastructure.outputs.domain_identity}>"
