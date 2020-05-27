@@ -12,6 +12,7 @@ module "cognito-fs" {
     define_auth_challenge          = module.custom-auth-flow.define-auth-challenge-lambda.arn
     verify_auth_challenge_response = module.custom-auth-flow.verify-auth-challenge-lambda.arn
     pre_authentication             = module.pre-auth-lambda.pre_auth_lambda.arn
+    pre_token_generation           = module.custom-auth-flow.pre-token-generation-lambda.arn
   }
 }
 
