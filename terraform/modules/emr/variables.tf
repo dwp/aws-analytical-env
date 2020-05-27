@@ -89,10 +89,6 @@ variable "env_certificate_bucket" {
   description = "Bucket that contains environment public certificates"
 }
 
-variable "emp_dir_path" {
-  description = "Local path pointing to the Encryption Materials Provider dir"
-}
-
 variable "emrfs_kms_key_arns" {
   type        = list(string)
   default     = []
@@ -113,4 +109,17 @@ variable "cognito_user_pool_id" {}
 
 variable "dataset_glue_db" {
   description = "Glue database where data generation metadata is stored"
+}
+
+variable log_bucket {
+  description = "(Required) The EMR Log bucket"
+  type        = string
+}
+
+variable artefact_bucket {
+  description = "(Required) S3 artefacts bucket"
+  type = object({
+    id      = string
+    kms_arn = string
+  })
 }

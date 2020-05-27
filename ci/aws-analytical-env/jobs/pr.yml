@@ -60,6 +60,9 @@ jobs:
           context: $BUILD_JOB_NAME
           path: aws-analytical-env
           status: pending
+      - get: custom-auth-lambda-release
+        version: { tag: '0.0.15' }
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: cognito
@@ -67,8 +70,11 @@ jobs:
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/cognito'
+          inputs:
+            - name: custom-auth-lambda-release
         params:
           TF_CLI_ARGS_plan: -lock-timeout=300s # overwrite removes -detailed-exitcode
+          TF_VAR_custom_auth_file_path: ../../../../custom-auth-lambda-release/lambda.zip
         on_failure:
           put: aws-analytical-env
           resource: aws-analytical-env-pr

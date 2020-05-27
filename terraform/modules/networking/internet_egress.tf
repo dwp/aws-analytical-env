@@ -35,7 +35,6 @@ resource aws_ec2_transit_gateway_route_table_association internet_egress {
   depends_on = [aws_ec2_transit_gateway_vpc_attachment_accepter.internet_egress]
 }
 
-// TODO fix resource name
 resource aws_ec2_transit_gateway_route management_internet_egress_to_internet_egress_a {
   provider = aws.management-internet-egress
 
@@ -46,7 +45,6 @@ resource aws_ec2_transit_gateway_route management_internet_egress_to_internet_eg
   depends_on = [aws_ec2_transit_gateway_vpc_attachment_accepter.internet_egress]
 }
 
-// TODO fix resource name
 resource aws_ec2_transit_gateway_route management_internet_egress_to_internet_egress_b {
   provider = aws.management-internet-egress
 
@@ -57,7 +55,6 @@ resource aws_ec2_transit_gateway_route management_internet_egress_to_internet_eg
   depends_on = [aws_ec2_transit_gateway_vpc_attachment_accepter.internet_egress]
 }
 
-// TODO fix resource name
 resource aws_ec2_transit_gateway_route management_internet_egress_to_internet_egress_c {
   provider = aws.management-internet-egress
 

@@ -17,10 +17,3 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private[count.index].id
   subnet_id      = aws_subnet.private[count.index].id
 }
-
-resource aws_route clusterbroker_vpc {
-  count                     = length(regexall("^vpc-", var.clusterbroker_vpc)) > 0 ? local.zone_count : 0
-  route_table_id            = aws_route_table.private[count.index].id
-  destination_cidr_block    = data.aws_vpc.clusterbroker.cidr_block
-  vpc_peering_connection_id = aws_vpc_peering_connection.cluster-broker[0].id
-}

@@ -6,7 +6,7 @@ jobs:
         resource: meta-development
       - get: emp-release
         version: { tag: '0.0.6' }
-        trigger: true  
+        trigger: true
       - get: aws-analytical-env
         trigger: true
       - get: aws-dataworks-e2e-framework
@@ -15,10 +15,12 @@ jobs:
         params:
           DEPLOY_PATH: infra
       - .: (( inject meta.plan.terraform-apply ))
+        task: terraform-apply infra
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
       - .: (( inject meta.plan.terraform-plan ))
+        task: terraform-plan infra
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
@@ -26,6 +28,7 @@ jobs:
         params:
           DEPLOY_PATH: app
       - .: (( inject meta.plan.terraform-apply ))
+        task: terraform-apply app
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/app'
@@ -34,6 +37,7 @@ jobs:
         params:
           TF_VAR_emp_dir_path: ../../../../emp-release 
       - .: (( inject meta.plan.terraform-plan ))
+        task: terraform-plan app
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/app'

@@ -1,0 +1,30 @@
+jobs:
+  - name: management-dev
+    max_in_flight: 1
+    plan:
+      - put: meta
+        resource: meta-management-dev
+      - get: aws-analytical-env
+        trigger: true
+      - get: custom-auth-lambda-release
+        version: { tag: '0.0.15' }
+        trigger: true
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: cognito
+      - .: (( inject meta.plan.terraform-apply ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/cognito'
+          inputs:
+            - name: custom-auth-lambda-release
+        params:
+          TF_VAR_custom_auth_file_path: ../../../../custom-auth-lambda-release/lambda.zip
+      - .: (( inject meta.plan.terraform-plan ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/cognito'
+          inputs:
+            - name: custom-auth-lambda-release
+        params:
+          TF_VAR_custom_auth_file_path: ../../../../custom-auth-lambda-release/lambda.zip

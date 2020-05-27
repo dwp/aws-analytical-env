@@ -127,7 +127,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
     ]
     resources = [
       aws_kms_key.emr_ebs.arn,
-      aws_kms_key.emr_s3.arn
+      aws_kms_key.emr_s3.arn,
     ]
   }
 
@@ -140,7 +140,8 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
     ]
     resources = [
       "arn:aws:s3:::${aws_s3_bucket.emr.id}",
-      "arn:aws:s3:::${aws_s3_bucket.emr.id}/*"
+      "arn:aws:s3:::${aws_s3_bucket.emr.id}/*",
+
     ]
   }
 
@@ -296,7 +297,8 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
     resources = [
       aws_kms_key.emr_ebs.arn,
-      aws_kms_key.emr_s3.arn
+      aws_kms_key.emr_s3.arn,
+      var.artefact_bucket.kms_arn
     ]
   }
 
@@ -327,7 +329,11 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "arn:aws:s3:::${var.env_certificate_bucket}",
       "arn:aws:s3:::${var.env_certificate_bucket}/*",
       "arn:aws:s3:::dw-management-dev-public-certificates",
-      "arn:aws:s3:::dw-management-dev-public-certificates/*"
+      "arn:aws:s3:::dw-management-dev-public-certificates/*",
+      "arn:aws:s3:::${var.log_bucket}",
+      "arn:aws:s3:::${var.log_bucket}/*",
+      "arn:aws:s3:::${var.artefact_bucket.id}",
+      "arn:aws:s3:::${var.artefact_bucket.id}/*"
     ]
   }
 

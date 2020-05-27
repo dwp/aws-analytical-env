@@ -16,3 +16,5 @@ out/
 
 # Concourse
 aviator_pipeline.yml
+
+*.jar

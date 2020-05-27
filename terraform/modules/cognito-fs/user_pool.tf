@@ -11,6 +11,12 @@ resource aws_cognito_user_pool emr {
 
   admin_create_user_config {
     allow_admin_create_user_only = true
+
+    invite_message_template {
+      email_message = "Your username is {username} and temporary password is {####}"
+      email_subject = "Your temporary password"
+      sms_message   = "Your username is {username} and temporary password is {####}"
+    }
   }
 
   device_configuration {
@@ -32,32 +38,17 @@ resource aws_cognito_user_pool emr {
   }
 
   verification_message_template {
-    default_email_option = "CONFIRM_WITH_CODE"
-  }
-  tags = merge(var.common_tags, { Name = local.name })
-}
-
-data template_file metadata {
-  template = file("${path.module}/saml-metadata.xml.tpl")
-}
-
-resource aws_cognito_identity_provider adfs {
-  user_pool_id  = aws_cognito_user_pool.emr.id
-  provider_name = "ADFS"
-  provider_type = "SAML"
-
-  provider_details = {
-    MetadataFile          = data.template_file.metadata.rendered
-    IDPSignout            = false
-    SLORedirectBindingURI = "https://dataworks.com/adfs/ls/"
-    SSORedirectBindingURI = "https://dataworks.com/adfs/ls/"
+    default_email_option = "CONFIRM_WITH_LINK"
   }
 
-  attribute_mapping = {
-    email    = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
-    profile  = "http://schemas.xmlsoap.org/claims/UPN"
-    zoneinfo = "http://schemas.xmlsoap.org/claims/Group"
+  lambda_config {
+    create_auth_challenge          = var.auth_lambdas.create_auth_challenge
+    define_auth_challenge          = var.auth_lambdas.define_auth_challenge
+    verify_auth_challenge_response = var.auth_lambdas.verify_auth_challenge_response
+    pre_authentication             = var.auth_lambdas.pre_authentication
   }
+
+  tags = merge(var.common_tags, { Name = local.name, Persistance = "True" })
 }
 
 data template_file metadata_adfs {
