@@ -17,8 +17,8 @@ data aws_iam_policy_document lambda_s3 {
       "s3:ListBucket"
     ]
     resources = [
-      "arn:aws:s3:::${var.s3_bucket}",
-      "arn:aws:s3:::${var.s3_bucket}/*",
+      "arn:aws:s3:::${var.s3_log_bucket}",
+      "arn:aws:s3:::${var.s3_log_bucket}/*",
     ]
   }
 }
@@ -59,6 +59,6 @@ resource "aws_lambda_permission" "allow_cloudwatch" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.snapshot_cognito_pool.function_name
-  principle     = "events.amazonaws.com"
+  principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.snapshot_cognito_pool.arn
 }

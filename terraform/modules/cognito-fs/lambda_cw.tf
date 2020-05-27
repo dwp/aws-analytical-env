@@ -2,7 +2,7 @@ resource aws_cloudwatch_event_rule snapshot_cognito_pool {
   name        = "snapshot_cognito_pool"
   description = "Capture changes to the Cognito Pool made by an Administrator"
   depends_on = [
-    "aws_lambda_function.snapshot_cognito_pool"
+    aws_lambda_function.snapshot_cognito_pool
   ]
   event_pattern = <<PATTERN
     {
