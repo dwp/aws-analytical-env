@@ -1,17 +1,22 @@
 resource aws_iam_role role_for_lambda_create_auth_challenge {
   name               = "Role-Lambda-Create-Auth_Challenge"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda_custom_auth_flow_document.json
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
 }
 resource aws_iam_role role_for_lambda_define_auth_challenge {
   name               = "Role-Lambda-Define-Auth_Challenge"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda_custom_auth_flow_document.json
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
 }
 resource aws_iam_role role_for_lambda_verify_auth_challenge {
   name               = "Role-Lambda-Verify-Auth_Challenge"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda_custom_auth_flow_document.json
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
 }
 
-data aws_iam_policy_document assume_role_lambda_custom_auth_flow_document {
+resource "aws_iam_role" "role_for_lambda_pre_token_generation" {
+  name               = "Role-Lambda-Pre-Token-Generation"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
+}
+
+data aws_iam_policy_document assume_role_lambda {
   statement {
     actions = [
       "sts:AssumeRole",
@@ -60,6 +65,10 @@ resource "aws_iam_role_policy_attachment" "cognito_define_challenge_trigger_basi
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+resource "aws_iam_role_policy_attachment" "cognito_pre_token_generation_basic_execution" {
+  role       = aws_iam_role.role_for_lambda_pre_token_generation.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
 
 resource aws_iam_role_policy cognito_define_auth_policy {
   policy = data.aws_iam_policy_document.cognito_define_auth_policy.json
