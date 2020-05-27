@@ -61,7 +61,7 @@ jobs:
           path: aws-analytical-env
           status: pending
       - get: custom-auth-lambda-release
-        version: { tag: '0.0.13' }
+        version: { tag: '0.0.15' }
         trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
