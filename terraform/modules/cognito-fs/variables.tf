@@ -22,3 +22,9 @@ variable auth_lambdas {
     pre_authentication             = string
   })
 }
+
+variable s3_log_bucket {
+  description = "Bucket to store audit trail in"
+  type        = string
+}
+
