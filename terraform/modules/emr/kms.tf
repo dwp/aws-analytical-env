@@ -1,6 +1,7 @@
 resource "aws_kms_key" "emr_ebs" {
   description             = "aws-analytical-env-emr-ebs"
-  deletion_window_in_days = 30
+  enable_key_rotation     = true
+  deletion_window_in_days = 7
 
   tags = merge({ "Name" = var.emr_cluster_name }, var.common_tags)
 
@@ -20,7 +21,8 @@ resource "aws_kms_alias" "emr_ebs" {
 
 resource "aws_kms_key" "emr_s3" {
   description             = "aws-analytical-env-emr-s3"
-  deletion_window_in_days = 30
+  enable_key_rotation     = true
+  deletion_window_in_days = 7
 
   tags = merge({ "Name" = var.emr_cluster_name }, var.common_tags)
 
