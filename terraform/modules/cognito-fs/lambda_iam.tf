@@ -13,12 +13,21 @@ data aws_iam_policy_document snapshot_cognito_pool_lambda {
 data aws_iam_policy_document lambda_s3 {
   statement {
     actions = [
-      "s3:PutObject",
+      "s3:PutObject"
+    ]
+    resources = [
+      "arn:aws:s3:::${var.s3_bucket}/CognitoSnapshots/*",
+    ]
+  }
+}
+
+data aws_iam_policy_document lambda_s3_list {
+  statement {
+    actions = [
       "s3:ListBucket"
     ]
     resources = [
       "arn:aws:s3:::${var.s3_bucket}",
-      "arn:aws:s3:::${var.s3_bucket}/*",
     ]
   }
 }
@@ -48,6 +57,11 @@ resource aws_iam_role_policy lambda_log {
 resource aws_iam_role_policy lambda_s3 {
   role   = aws_iam_role.lambda_execution_role.id
   policy = data.aws_iam_policy_document.lambda_s3.json
+}
+
+resource aws_iam_role_policy lambda_s3_list {
+  role   = aws_iam_role.lambda_execution_role.id
+  policy = data.aws_iam_policy_document.lambda_s3_list.json
 }
 
 resource aws_iam_role_policy_attachment cognito_ro_attach {

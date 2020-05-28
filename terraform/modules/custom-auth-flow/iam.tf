@@ -28,6 +28,7 @@ resource aws_iam_role_policy cognito_create_auth_policy {
   role   = aws_iam_role.role_for_lambda_create_auth_challenge.name
 }
 
+// Work around for AWS SMS / SNS - SEE - https://stackoverflow.com/questions/38871201/authorization-when-sending-a-text-message-using-amazonsnsclient
 data aws_iam_policy_document cognito_create_auth_policy_document {
   statement {
     effect = "Allow"

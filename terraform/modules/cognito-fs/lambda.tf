@@ -29,7 +29,7 @@ resource "aws_lambda_function" "snapshot_cognito_pool" {
       "Name" = "snapshot_cognito_pool"
     },
     {
-      "contains-sensitive-info" = "False"
+      "ProtectSensitiveData" = "True"
     }
   )
 }

@@ -93,12 +93,6 @@ resource "aws_wafregional_rule" "restrict_sizes" {
   metric_name = "restrictsizes"
 
   predicate {
-    data_id = aws_wafregional_ipset.admin_remote_ipset.id
-    negated = true
-    type    = "IPMatch"
-  }
-
-  predicate {
     data_id = aws_wafregional_size_constraint_set.size_restrictions.id
     negated = false
     type    = "SizeConstraint"
@@ -108,6 +102,12 @@ resource "aws_wafregional_rule" "restrict_sizes" {
 resource "aws_wafregional_rule" "non_gb" {
   name        = "non-gb"
   metric_name = "nongb"
+
+  predicate {
+    data_id = aws_wafregional_ipset.admin_remote_ipset.id
+    negated = true
+    type    = "IPMatch"
+  }
 
   predicate {
     data_id = aws_wafregional_geo_match_set.gb.id
