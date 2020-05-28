@@ -1,8 +1,8 @@
 resource "aws_security_group" "lb_sg" {
-  name        = "${var.name_prefix}-lb-sg"
-  description = "Control access to LB"
-  vpc_id      = var.vpc_id
-  tags        = merge(var.common_tags, { Name = "${var.name_prefix}-lb-sg" })
+  name                   = "${var.name_prefix}-lb-sg"
+  description            = "Control access to LB"
+  vpc_id                 = var.vpc_id
+  tags                   = merge(var.common_tags, { Name = "${var.name_prefix}-lb-sg" })
   revoke_rules_on_delete = true
 }
 
