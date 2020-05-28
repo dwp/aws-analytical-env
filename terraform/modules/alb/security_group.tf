@@ -3,6 +3,7 @@ resource "aws_security_group" "lb_sg" {
   description = "Control access to LB"
   vpc_id      = var.vpc_id
   tags        = merge(var.common_tags, { Name = "${var.name_prefix}-lb-sg" })
+  revoke_rules_on_delete = true
 }
 
 resource aws_security_group_rule ingress_to_alb {
