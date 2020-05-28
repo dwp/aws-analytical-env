@@ -49,6 +49,14 @@ variable "interface_vpce_sg_id" {
   description = "VPC Interface Endpoints security group"
 }
 
+variable "dynamodb_prefix_list_id" {
+  description = "VPC Prefix list ID for DynamoDB"
+}
+
+variable "s3_prefix_list_id" {
+  description = "VPC Prefix list ID for S3"
+}
+
 variable "vpc" {
   description = "VPC information"
 }
@@ -142,7 +150,7 @@ variable environment {
 
 variable truststore_aliases {
   description = "Truststore aliases"
-  type = string
+  type        = string
 }
 
 variable truststore_certs {
