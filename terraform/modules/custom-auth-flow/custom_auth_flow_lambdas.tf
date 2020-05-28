@@ -6,7 +6,7 @@ resource "aws_lambda_function" "lambda_create_challenge" {
   runtime          = "nodejs12.x"
   timeout          = 6
   source_code_hash = filebase64sha256(var.custom_auth_file_path)
-  tags             = merge(var.common_tags, { Name = "${var.name_prefix}-create-challenge" })
+  tags             = merge(var.common_tags, { Name = "${var.name_prefix}-create-challenge", ProtectSensitiveData = "True" })
 }
 
 resource "aws_lambda_function" "lambda_define_challenge" {
@@ -17,7 +17,7 @@ resource "aws_lambda_function" "lambda_define_challenge" {
   runtime          = "nodejs12.x"
   timeout          = 6
   source_code_hash = filebase64sha256(var.custom_auth_file_path)
-  tags             = merge(var.common_tags, { Name = "${var.name_prefix}-define-challenge" })
+  tags             = merge(var.common_tags, { Name = "${var.name_prefix}-define-challenge", ProtectSensitiveData = "True" })
 }
 
 resource "aws_lambda_function" "lambda_verify_challenge" {
@@ -28,7 +28,7 @@ resource "aws_lambda_function" "lambda_verify_challenge" {
   runtime          = "nodejs12.x"
   timeout          = 6
   source_code_hash = filebase64sha256(var.custom_auth_file_path)
-  tags             = merge(var.common_tags, { Name = "${var.name_prefix}-verify-challenge" })
+  tags             = merge(var.common_tags, { Name = "${var.name_prefix}-verify-challenge", ProtectSensitiveData = "True" })
 }
 
 resource "aws_lambda_function" "lambda_pre_token_generation" {

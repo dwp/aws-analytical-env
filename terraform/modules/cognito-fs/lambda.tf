@@ -29,12 +29,14 @@ resource "aws_lambda_function" "snapshot_cognito_pool" {
       "Name" = "snapshot_cognito_pool"
     },
     {
-      "contains-sensitive-info" = "False"
+      "ProtectSensitiveData" = "True"
     }
   )
 }
 
 resource "aws_cloudwatch_log_group" "snapshot_cognito_pool" {
-  name              = "/aws/lambda/snapshot_cogntio_pool"
-  retention_in_days = 180
+  name                   = "/aws/lambda/snapshot_cogntio_pool"
+  description            = "Cognito Snapshot Lambda"
+  revoke_rules_on_delete = true
+  retention_in_days      = 180
 }
