@@ -35,6 +35,6 @@ resource "aws_lambda_function" "snapshot_cognito_pool" {
 }
 
 resource "aws_cloudwatch_log_group" "snapshot_cognito_pool" {
-  name              = "/aws/lambda/snapshot_cogntio_pool"
+  name              = "/aws/lambda/snapshot_cognito_pool"
   retention_in_days = 180
 }
