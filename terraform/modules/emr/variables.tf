@@ -142,10 +142,10 @@ variable environment {
 
 variable truststore_aliases {
   description = "Truststore aliases"
-  type = list(map(string))
+  type = string
 }
 
 variable truststore_certs {
   description = "Truststore Certificates"
-  type = list(map(string))
+  type        = string
 }

@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       test     = "StringEquals"
       variable = "ec2:Vpc"
       values = [
-        var.vpc.id
+        var.vpc.aws_vpc
       ]
     }
   }
