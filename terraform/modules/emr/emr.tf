@@ -9,13 +9,16 @@ resource "aws_emr_cluster" "cluster" {
   log_uri                           = format("s3n://%s/logs/", var.log_bucket)
   ebs_root_volume_size              = local.ebs_root_volume_size
   autoscaling_role                  = aws_iam_role.emr_autoscaling_role.arn
-  tags                              = merge({ "Name" = var.emr_cluster_name, "SSMEnabled" = "True" }, var.common_tags)
+  tags                              = merge({ "Name" = var.emr_cluster_name, "SSMEnabled" = "True", "ProtectSensitiveData" = "True" }, var.common_tags)
   custom_ami_id                     = var.ami_id
 
   ec2_attributes {
     subnet_id                         = var.vpc.aws_subnets_private[0].id
     additional_master_security_groups = aws_security_group.emr.id
     additional_slave_security_groups  = aws_security_group.emr.id
+    emr_managed_master_security_group = aws_security_group.emr_master_private.id
+    emr_managed_slave_security_group  = aws_security_group.emr_slave_private.id
+    service_access_security_group     = aws_security_group.emr_service_access.id
     instance_profile                  = aws_iam_instance_profile.emr_ec2_role.arn
   }
 

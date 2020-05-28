@@ -39,9 +39,7 @@ data "aws_iam_policy_document" "emrfs_iam" {
 
     actions = [
       "s3:Get*",
-      "s3:List*",
-      "kms:Decrypt",
-      "kms:DescribeKey"
+      "s3:List*"
     ]
 
     resources = concat(
@@ -52,8 +50,7 @@ data "aws_iam_policy_document" "emrfs_iam" {
       [
         for path_tuple in var.dataset_s3_paths :
         format("arn:aws:s3:::%s/%s", path_tuple[0], path_tuple[1])
-      ],
-      var.emrfs_kms_key_arns
+      ]
     )
 
     condition {
@@ -64,5 +61,15 @@ data "aws_iam_policy_document" "emrfs_iam" {
         var.dataset_s3_tags[1]
       ]
     }
+  }
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:Decrypt",
+      "kms:DescribeKey"
+    ]
+
+    resources = var.emrfs_kms_key_arns
   }
 }

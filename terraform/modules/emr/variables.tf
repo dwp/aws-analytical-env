@@ -49,6 +49,14 @@ variable "interface_vpce_sg_id" {
   description = "VPC Interface Endpoints security group"
 }
 
+variable "dynamodb_prefix_list_id" {
+  description = "VPC Prefix list ID for DynamoDB"
+}
+
+variable "s3_prefix_list_id" {
+  description = "VPC Prefix list ID for S3"
+}
+
 variable "vpc" {
   description = "VPC information"
 }
@@ -122,4 +130,30 @@ variable artefact_bucket {
     id      = string
     kms_arn = string
   })
+}
+
+variable region {
+  description = "AWS region"
+  type        = string
+  default     = "eu-west-2"
+}
+
+variable account {
+  description = "AWS account number"
+  type        = string
+}
+
+variable environment {
+  description = "Current environment"
+  type        = string
+}
+
+variable truststore_aliases {
+  description = "Truststore aliases"
+  type        = string
+}
+
+variable truststore_certs {
+  description = "Truststore Certificates"
+  type        = string
 }
