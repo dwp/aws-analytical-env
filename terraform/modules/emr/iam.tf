@@ -427,7 +427,7 @@ resource aws_iam_role_policy amazon_ec2_role_for_ssm {
 
 data aws_iam_policy_document amazon_ec2_role_for_ssm {
   statement {
-    sid = "AllowSSMActions"
+    sid    = "AllowSSMActions"
     effect = "Allow"
     actions = [
       "ssm:DescribeAssociation",
@@ -451,7 +451,7 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
   }
 
   statement {
-    sid = "AllowSSMMessages"
+    sid    = "AllowSSMMessages"
     effect = "Allow"
     actions = [
       "ssmmessages:CreateControlChannel",
@@ -464,7 +464,7 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
   }
 
   statement {
-    sid = "AllowEC2Messages"
+    sid    = "AllowEC2Messages"
     effect = "Allow"
     actions = [
       "ec2messages:AcknowledgeMessage",
@@ -479,7 +479,7 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
   }
 
   statement {
-    sid = "AllowPutMetrics"
+    sid    = "AllowPutMetrics"
     effect = "Allow"
     actions = [
       "cloudwatch:PutMetricData"
@@ -495,7 +495,7 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
   }
 
   statement {
-    sid = "AllowDescribeInstanceStatus"
+    sid    = "AllowDescribeInstanceStatus"
     effect = "Allow"
     actions = [
       "ec2:DescribeInstanceStatus"
@@ -541,7 +541,7 @@ resource "aws_iam_role_policy" "elastic_map_reduce_for_auto_scaling_role" {
 
 data "aws_iam_policy_document" "elastic_map_reduce_for_auto_scaling_role" {
   statement {
-    sid = "AllowDescribeCWAlarms"
+    sid    = "AllowDescribeCWAlarms"
     effect = "Allow"
     actions = [
       "cloudwatch:DescribeAlarms"
@@ -549,7 +549,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_for_auto_scaling_role" {
     resources = ["arn:aws:cloudwatch:${var.region}:${var.account}:alarm:*"]
   }
   statement {
-    sid = "AllowEMRInstanceGroupModify"
+    sid    = "AllowEMRInstanceGroupModify"
     effect = "Allow"
     actions = [
       "elasticmapreduce:ListInstanceGroups",
