@@ -39,5 +39,5 @@ resource "aws_lambda_function" "lambda_pre_token_generation" {
   runtime          = "nodejs12.x"
   timeout          = 6
   source_code_hash = filebase64sha256(var.custom_auth_file_path)
-  tags             = merge(var.common_tags, { Name = "${var.name_prefix}-pre-token-generation", ProtectSensitiveData = "True"})
+  tags             = merge(var.common_tags, { Name = "${var.name_prefix}-pre-token-generation", ProtectSensitiveData = "True" })
 }

@@ -241,7 +241,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid = "GlueAllowGetDefaultDatabases"
+    sid    = "GlueAllowGetDefaultDatabases"
     effect = "Allow"
     actions = [
       "glue:GetDatabase"
@@ -453,7 +453,7 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
     ]
     resources = [
       "arn:aws:ssm:${var.region}:${var.account}:*"
-      ]
+    ]
   }
 
   statement {
@@ -489,7 +489,7 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
     ]
     resources = ["arn:aws:cloudwatch:${var.region}:${var.account}:*"]
     condition {
-      test = "StringLike"
+      test     = "StringLike"
       variable = "aws:ResourceTag/Application"
       values = [
         "aws-analytical-env"
@@ -504,7 +504,7 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
     ]
     resources = ["*"]
     condition {
-      test = "StringLike"
+      test     = "StringLike"
       variable = "aws:ResourceTag/Application"
       values = [
         "aws-analytical-env"
@@ -557,7 +557,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_for_auto_scaling_role" {
     ]
     resources = ["arn:aws:elasticmapreduce:${var.region}:${var.account}:cluster:${var.emr_cluster_name}"]
     condition {
-      test = "StringLike"
+      test     = "StringLike"
       variable = "aws:ResourceTag/Application"
       values = [
         "aws-analytical-env"

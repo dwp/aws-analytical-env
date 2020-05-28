@@ -150,7 +150,7 @@ variable environment {
 
 variable truststore_aliases {
   description = "Truststore aliases"
-  type = string
+  type        = string
 }
 
 variable truststore_certs {
