@@ -123,3 +123,29 @@ variable artefact_bucket {
     kms_arn = string
   })
 }
+
+variable region {
+  description = "AWS region"
+  type        = string
+  default     = "eu-west-2"
+}
+
+variable account {
+  description = "AWS account number"
+  type        = string
+}
+
+variable environment {
+  description = "Current environment"
+  type        = string
+}
+
+variable truststore_aliases {
+  description = "Truststore aliases"
+  type = list(map(string))
+}
+
+variable truststore_certs {
+  description = "Truststore Certificates"
+  type = list(map(string))
+}

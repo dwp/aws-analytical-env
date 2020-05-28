@@ -61,7 +61,16 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:DescribeVolumeStatus",
       "ec2:DescribeVolumes",
     ]
-    resources = ["*"]
+    resources = [
+      "arn:aws:ec2:${var.region}:${var.account}:*"
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:Vpc"
+      values = [
+        var.vpc.id
+      ]
+    }
   }
 
   statement {
@@ -77,7 +86,9 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:DetachNetworkInterface",
       "ec2:TerminateInstances",
     ]
-    resources = ["*"]
+    resources = [
+      "arn:aws:ec2:${var.region}:${var.account}:*"
+    ]
     condition {
       test     = "StringEquals"
       variable = "ec2:ResourceTag/Application"
@@ -111,7 +122,16 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "cloudwatch:DescribeAlarms",
       "cloudwatch:DeleteAlarms",
     ]
-    resources = ["*"]
+    resources = [
+      "arn:aws:cloudwatch:${var.region}:${var.account}:alarm:*"
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:ResourceTag/Application"
+      values = [
+        "aws-analytical-env"
+      ]
+    }
   }
 
   statement {
@@ -122,8 +142,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "kms:Decrypt",
       "kms:ReEncrypt*",
       "kms:GenerateDataKey*",
-      "kms:DescribeKey",
-      "kms:CreateGrant"
+      "kms:DescribeKey"
     ]
     resources = [
       aws_kms_key.emr_ebs.arn,
@@ -140,8 +159,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
     ]
     resources = [
       "arn:aws:s3:::${aws_s3_bucket.emr.id}",
-      "arn:aws:s3:::${aws_s3_bucket.emr.id}/*",
-
+      "arn:aws:s3:::${aws_s3_bucket.emr.id}/*"
     ]
   }
 
@@ -149,7 +167,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
     sid       = "CreateServiceLinkedRoleAllow"
     effect    = "Allow"
     actions   = ["iam:CreateServiceLinkedRole"]
-    resources = ["arn:aws:iam::*:role/aws-service-role/spot.amazonaws.com/AWSServiceRoleForEC2Spot*"]
+    resources = ["arn:aws:iam::${var.account}:role/aws-service-role/spot.amazonaws.com/AWSServiceRoleForEC2Spot*"]
     condition {
       test     = "StringLike"
       variable = "iam:AWSServiceName"
@@ -196,6 +214,13 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "cloudwatch:PutMetricData"
     ]
     resources = ["*"]
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:ResourceTag/Application"
+      values = [
+        "aws-analytical-env"
+      ]
+    }
   }
 
   statement {
@@ -207,22 +232,23 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "glue:BatchGet*"
     ]
     resources = [
-      "arn:aws:glue:*:*:catalog",
-      "arn:aws:glue:*:*:database/${var.dataset_glue_db}",
-      "arn:aws:glue:*:*:database/${var.dataset_glue_db}_staging",
-      "arn:aws:glue:*:*:table/${var.dataset_glue_db}/*",
-      "arn:aws:glue:*:*:table/${var.dataset_glue_db}_staging/*"
+      "arn:aws:glue:${var.region}:${var.account}:catalog",
+      "arn:aws:glue:${var.region}:${var.account}:database/${var.dataset_glue_db}",
+      "arn:aws:glue:${var.region}:${var.account}:database/${var.dataset_glue_db}_staging",
+      "arn:aws:glue:${var.region}:${var.account}:table/${var.dataset_glue_db}/*",
+      "arn:aws:glue:${var.region}:${var.account}:table/${var.dataset_glue_db}_staging/*"
     ]
   }
 
   statement {
-    sid    = "GlueDeny"
-    effect = "Deny"
+    sid = "GlueAllowGetDefaultDatabases"
+    effect = "Allow"
     actions = [
-      "glue:*"
+      "glue:GetDatabase"
     ]
     resources = [
-      "arn:aws:glue:*:*:database/manifestetl",
+      "arn:aws:glue:*:*:database/default",
+      "arn:aws:glue:*:*:database/global_temp"
     ]
   }
 
@@ -244,7 +270,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "dynamodb:UpdateTable"
     ]
     resources = [
-      "arn:aws:dynamodb:*:*:table/EmrFSMetadata"
+      "arn:aws:dynamodb:${var.region}:${var.account}:table/EmrFSMetadata"
     ]
   }
 
@@ -260,7 +286,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "sqs:CreateQueue"
     ]
     resources = [
-      "arn:aws:sqs:*:*:EMRFS-Inconsistency-*"
+      "arn:aws:sqs:${var.region}:${var.account}:EMRFS-Inconsistency-*"
     ]
   }
 
@@ -281,7 +307,9 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     actions = [
       "acm-pca:GetCertficate"
     ]
-    resources = ["*"]
+    resources = [
+      var.cert_authority_arn
+    ]
   }
 
   statement {
@@ -292,8 +320,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "kms:Decrypt",
       "kms:ReEncrypt*",
       "kms:GenerateDataKey*",
-      "kms:DescribeKey",
-      "kms:CreateGrant"
+      "kms:DescribeKey"
     ]
     resources = [
       aws_kms_key.emr_ebs.arn,
@@ -303,7 +330,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "S3Allow"
+    sid    = "S3AllowRead"
     effect = "Allow"
     actions = [
       "s3:AbortMultipartUpload",
@@ -330,10 +357,24 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "arn:aws:s3:::${var.env_certificate_bucket}/*",
       "arn:aws:s3:::dw-management-dev-public-certificates",
       "arn:aws:s3:::dw-management-dev-public-certificates/*",
-      "arn:aws:s3:::${var.log_bucket}",
-      "arn:aws:s3:::${var.log_bucket}/*",
+      "arn:aws:s3:::${var.log_bucket}", #put
+      "arn:aws:s3:::${var.log_bucket}/*", #put
       "arn:aws:s3:::${var.artefact_bucket.id}",
       "arn:aws:s3:::${var.artefact_bucket.id}/*"
+    ]
+  }
+
+  statement {
+    sid    = "S3AllowPut"
+    effect = "Allow"
+    actions = [
+      "s3:PutBucketVersioning",
+      "s3:PutObject",
+      "s3:PutObjectTagging"
+    ]
+    resources = [
+      "arn:aws:s3:::${var.log_bucket}",
+      "arn:aws:s3:::${var.log_bucket}/*"
     ]
   }
 
@@ -348,15 +389,45 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
 
 }
 
-# EMR SSM Policy
-resource "aws_iam_role_policy_attachment" "amazon_ssm_managed_instance_core" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  role       = aws_iam_role.emr_ec2_role.name
+resource "aws_iam_role" "cogntio_read_only_role" {
+  provider           = aws.management
+  assume_role_policy = data.aws_iam_policy_document.assume_role_cross_acount.json
+
+  tags = merge(var.common_tags, {
+    Name = "allow-read-only-cognito"
+  })
 }
 
+data "aws_iam_policy_document" "assume_role_cross_acount" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      identifiers = [data.aws_caller_identity.current.account_id]
+      type        = "AWS"
+    }
+
+    condition {
+      variable = "aws:PrincipalArn"
+      test     = "ArnEquals"
+      values   = [aws_iam_role.emr_ec2_role.arn]
+    }
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "ReadOnlyCognito" {
+  provider = aws.management
+
+  policy_arn = "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
+  role       = aws_iam_role.cogntio_read_only_role.name
+}
+
+# EMR SSM Policy
 resource aws_iam_role_policy amazon_ec2_role_for_ssm {
   role   = aws_iam_role.emr_ec2_role.name
   policy = data.aws_iam_policy_document.amazon_ec2_role_for_ssm.json
+  name   = "AE_ElasticMapReduceforEC2Role_SSM"
 }
 
 data aws_iam_policy_document amazon_ec2_role_for_ssm {
@@ -378,7 +449,9 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
       "ssm:UpdateInstanceAssociationStatus",
       "ssm:UpdateInstanceInformation"
     ]
-    resources = ["*"]
+    resources = [
+      "arn:aws:ssm:${var.region}:${var.account}:*"
+      ]
   }
 
   statement {
@@ -390,6 +463,7 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
       "ssmmessages:OpenDataChannel"
     ]
     resources = ["*"]
+    # Amazon Session Manager Message Gateway Service does not support specifying a resource ARN in the Resource element of an IAM policy statement. To allow access to Amazon Session Manager Message Gateway Service, specify “Resource”: “*” in your policy.
   }
 
   statement {
@@ -403,19 +477,22 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
       "ec2messages:SendReply"
     ]
     resources = ["*"]
+    # EC2 Messages has no service-specific context keys that can be used in the Condition element of policy statements. For the list of the global context keys that are available to all services, see Available Keys for Conditions in the IAM Policy Reference.
   }
 
   statement {
     effect = "Allow"
     actions = [
-      "cloudwatch:PutMetricData",
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:DescribeLogGroups",
-      "logs:DescribeLogStreams",
-      "logs:PutLogEvents"
+      "cloudwatch:PutMetricData"
     ]
-    resources = ["*"]
+    resources = ["arn:aws:cloudwatch:${var.region}:${var.account}:*"]
+    condition {
+      test = "StringLike"
+      variable = "aws:ResourceTag/Application"
+      values = [
+        "aws-analytical-env"
+      ]
+    }
   }
 
   statement {
@@ -424,39 +501,13 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
       "ec2:DescribeInstanceStatus"
     ]
     resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
-      "ds:CreateComputer",
-      "ds:DescribeDirectories"
-    ]
-    resources = ["*"]
-  }
-}
-
-resource "aws_iam_role_policy" "emr_to_ecr" {
-  name   = "AE_AllowReadAccessECR"
-  role   = aws_iam_role.emr_ec2_role.name
-  policy = data.aws_iam_policy_document.emr_to_ecr.json
-}
-
-data "aws_iam_policy_document" "emr_to_ecr" {
-  statement {
-    effect    = "Allow"
-    actions   = ["ecr:GetAuthorizationToken"]
-    resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage",
-      "ecr:BatchCheckLayerAvailability"
-    ]
-    resources = ["arn:aws:ecr:*:*:repository/aws-analytical-env/*"]
+    condition {
+      test = "StringLike"
+      variable = "aws:ResourceTag/Application"
+      values = [
+        "aws-analytical-env"
+      ]
+    }
   }
 }
 
@@ -492,44 +543,23 @@ data "aws_iam_policy_document" "elastic_map_reduce_for_auto_scaling_role" {
   statement {
     effect = "Allow"
     actions = [
-      "cloudwatch:DescribeAlarms",
+      "cloudwatch:DescribeAlarms"
+    ]
+    resources = ["arn:aws:cloudwatch:${var.region}:${var.account}:alarm:*"]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
       "elasticmapreduce:ListInstanceGroups",
       "elasticmapreduce:ModifyInstanceGroups"
     ]
-    resources = ["*"]
-  }
-}
-
-resource "aws_iam_role" "cogntio_read_only_role" {
-  provider           = aws.management
-  assume_role_policy = data.aws_iam_policy_document.assume_role_cross_acount.json
-
-  tags = merge(var.common_tags, {
-    Name = "allow-read-only-cognito"
-  })
-}
-
-data "aws_iam_policy_document" "assume_role_cross_acount" {
-  statement {
-    effect  = "Allow"
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      identifiers = [data.aws_caller_identity.current.account_id]
-      type        = "AWS"
-    }
-
+    resources = ["arn:aws:elasticmapreduce:${var.region}:${var.account}:cluster:${var.emr_cluster_name}"]
     condition {
-      variable = "aws:PrincipalArn"
-      test     = "ArnEquals"
-      values   = [aws_iam_role.emr_ec2_role.arn]
+      test = "StringLike"
+      variable = "aws:ResourceTag/Application"
+      values = [
+        "aws-analytical-env"
+      ]
     }
   }
-}
-
-resource "aws_iam_role_policy_attachment" "ReadOnlyCognito" {
-  provider = aws.management
-
-  policy_arn = "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
-  role       = aws_iam_role.cogntio_read_only_role.name
 }

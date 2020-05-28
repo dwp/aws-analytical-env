@@ -34,6 +34,7 @@ module "emr" {
   cert_authority_arn         = data.terraform_remote_state.certificate_authority.outputs.root_ca.arn
   vpc                        = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc
   env_certificate_bucket     = local.env_certificate_bucket
+
   emrfs_kms_key_arns         = [data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket_cmk.arn]
   dataset_s3_paths           = [[data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket.id, "*"]]
   dataset_s3_tags            = ["collection_tag", "crown"]
@@ -42,5 +43,23 @@ module "emr" {
   artefact_bucket = {
     id      = data.terraform_remote_state.management.outputs.artefact_bucket.id
     kms_arn = data.terraform_remote_state.management.outputs.artefact_bucket.cmk_arn
+  }
+  region                     = var.region
+  account                    = local.account[local.management_account[local.environment]]
+  environment                = local.environment
+
+  truststore_aliases         = {
+    development = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/ca.pem"
+    qa          = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/ca.pem"
+    integration = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/ca.pem"
+    preprod     = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/ca.pem"
+    production  = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/ca.pem"
+  }
+  truststore_certs           = {
+    development = "dataworks_root_ca,dataworks_mgt_root_ca,env_ca,mgt_ca"
+    qa          = "dataworks_root_ca,dataworks_mgt_root_ca,env_ca,mgt_ca"
+    integration = "dataworks_root_ca,dataworks_mgt_root_ca,env_ca,mgt_ca"
+    preprod     = "dataworks_root_ca,dataworks_mgt_root_ca,env_ca,mgt_ca"
+    production  = "dataworks_root_ca,dataworks_mgt_root_ca,env_ca,mgt_ca"
   }
 }
