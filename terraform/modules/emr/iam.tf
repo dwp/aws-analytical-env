@@ -61,16 +61,8 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:DescribeVolumeStatus",
       "ec2:DescribeVolumes",
     ]
-    resources = [
-      "arn:aws:ec2:${var.region}:${var.account}:*"
-    ]
-    condition {
-      test     = "StringEquals"
-      variable = "ec2:Vpc"
-      values = [
-        var.vpc.aws_vpc
-      ]
-    }
+    # Majority of these actions don't accept conditions or resource restriction
+    resources = ["*"]
   }
 
   statement {
@@ -142,7 +134,8 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "kms:Decrypt",
       "kms:ReEncrypt*",
       "kms:GenerateDataKey*",
-      "kms:DescribeKey"
+      "kms:DescribeKey",
+      "kms:CreateGrant"
     ]
     resources = [
       aws_kms_key.emr_ebs.arn,
@@ -320,7 +313,8 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "kms:Decrypt",
       "kms:ReEncrypt*",
       "kms:GenerateDataKey*",
-      "kms:DescribeKey"
+      "kms:DescribeKey",
+      "kms:CreateGrant"
     ]
     resources = [
       aws_kms_key.emr_ebs.arn,
