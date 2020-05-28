@@ -357,8 +357,8 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "arn:aws:s3:::${var.env_certificate_bucket}/*",
       "arn:aws:s3:::dw-management-dev-public-certificates",
       "arn:aws:s3:::dw-management-dev-public-certificates/*",
-      "arn:aws:s3:::${var.log_bucket}", #put
-      "arn:aws:s3:::${var.log_bucket}/*", #put
+      "arn:aws:s3:::${var.log_bucket}",
+      "arn:aws:s3:::${var.log_bucket}/*",
       "arn:aws:s3:::${var.artefact_bucket.id}",
       "arn:aws:s3:::${var.artefact_bucket.id}/*"
     ]
@@ -374,7 +374,9 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
     resources = [
       "arn:aws:s3:::${var.log_bucket}",
-      "arn:aws:s3:::${var.log_bucket}/*"
+      "arn:aws:s3:::${var.log_bucket}/*",
+      "arn:aws:s3:::eu-west-2.elasticmapreduce",
+      "arn:aws:s3:::eu-west-2.elasticmapreduce/*",
     ]
   }
 
