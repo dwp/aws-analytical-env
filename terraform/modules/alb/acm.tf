@@ -1,4 +1,4 @@
-resource "aws_acm_certificate" "cert" {
+resource "aws_acm_certificate" "analytical-alb-cert" {
   domain_name               = local.fqdn
   certificate_authority_arn = var.cert_authority_arn
 

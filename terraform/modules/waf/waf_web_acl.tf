@@ -62,8 +62,7 @@ resource "aws_wafregional_web_acl" "acl" {
 
   rule {
     action {
-      // Breaks JupyterHub - doesn't allow notebooks to open
-      type = "COUNT"
+      type = "BLOCK"
     }
 
     priority = 6
