@@ -154,8 +154,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
     sid    = "S3Allow"
     effect = "Allow"
     actions = [
-      "s3:Get*",
-      "s3:List*",
+      "s3:Get*"
     ]
     resources = [
       "arn:aws:s3:::${aws_s3_bucket.emr.id}",
