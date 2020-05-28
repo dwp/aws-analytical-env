@@ -16,6 +16,9 @@ resource "aws_emr_cluster" "cluster" {
     subnet_id                         = var.vpc.aws_subnets_private[0].id
     additional_master_security_groups = aws_security_group.emr.id
     additional_slave_security_groups  = aws_security_group.emr.id
+    emr_managed_master_security_group = aws_security_group.emr_master_private.id
+    emr_managed_slave_security_group  = aws_security_group.emr_slave_private.id
+    service_access_security_group     = aws_security_group.emr_service_access.id
     instance_profile                  = aws_iam_instance_profile.emr_ec2_role.arn
   }
 

@@ -9,7 +9,7 @@ jobs:
         passed:
           - management-dev
       - get: custom-auth-lambda-release
-        version: { tag: '0.0.15' }
+        version: { tag: '0.0.17' }
         trigger: true
         passed:
           - management-dev

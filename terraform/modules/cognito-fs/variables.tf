@@ -20,5 +20,12 @@ variable auth_lambdas {
     define_auth_challenge          = string
     verify_auth_challenge_response = string
     pre_authentication             = string
+    pre_token_generation           = string
   })
 }
+
+variable s3_log_bucket {
+  description = "Bucket to store audit trail in"
+  type        = string
+}
+

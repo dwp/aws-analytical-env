@@ -20,6 +20,15 @@ resource "aws_s3_bucket" "emr" {
       }
     }
   }
+  lifecycle_rule {
+    id      = ""
+    prefix  = "/"
+    enabled = true
+
+    noncurrent_version_expiration {
+      days = 30
+    }
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "emr" {
@@ -29,4 +38,33 @@ resource "aws_s3_bucket_public_access_block" "emr" {
   block_public_policy     = true
   restrict_public_buckets = true
   ignore_public_acls      = true
+}
+
+data "aws_iam_policy_document" "config_bucket_https_only" {
+  statement {
+    sid     = "BlockHTTP"
+    effect  = "Deny"
+    actions = ["*"]
+
+    resources = [
+      aws_s3_bucket.emr.arn,
+      "${aws_s3_bucket.emr.arn}/*",
+    ]
+
+    principals {
+      identifiers = ["*"]
+      type        = "AWS"
+    }
+
+    condition {
+      test     = "Bool"
+      values   = ["false"]
+      variable = "aws:SecureTransport"
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "config_bucket_https_only" {
+  bucket = aws_s3_bucket.emr.id
+  policy = data.aws_iam_policy_document.config_bucket_https_only.json
 }

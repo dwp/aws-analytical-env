@@ -29,4 +29,18 @@ resource "aws_lambda_function" "lambda_verify_challenge" {
   timeout          = 6
   source_code_hash = filebase64sha256(var.custom_auth_file_path)
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-verify-challenge", ProtectSensitiveData = "True" })
+<<<<<<< HEAD
+=======
+}
+
+resource "aws_lambda_function" "lambda_pre_token_generation" {
+  filename         = var.custom_auth_file_path
+  function_name    = "${var.name_prefix}-pre-token-generation"
+  role             = aws_iam_role.role_for_lambda_pre_token_generation.arn
+  handler          = "lambda.preTokenGeneration"
+  runtime          = "nodejs12.x"
+  timeout          = 6
+  source_code_hash = filebase64sha256(var.custom_auth_file_path)
+  tags             = merge(var.common_tags, { Name = "${var.name_prefix}-pre-token-generation", ProtectSensitiveData = "True" })
+>>>>>>> DW-4172_Sec_remediation
 }
