@@ -135,7 +135,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "kms:ReEncrypt*",
       "kms:GenerateDataKey*",
       "kms:DescribeKey",
-      "kms:CreateGrant"
+      "kms:CreateGrant" #Required by EMR to spin up instances
     ]
     resources = [
       aws_kms_key.emr_ebs.arn,
@@ -313,8 +313,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "kms:Decrypt",
       "kms:ReEncrypt*",
       "kms:GenerateDataKey*",
-      "kms:DescribeKey",
-      "kms:CreateGrant"
+      "kms:DescribeKey"
     ]
     resources = [
       aws_kms_key.emr_ebs.arn,
