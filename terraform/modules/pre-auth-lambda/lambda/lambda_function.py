@@ -1,4 +1,5 @@
 import os
+import json
 import datetime
 from dateutil.relativedelta import relativedelta
 import boto3
@@ -83,6 +84,9 @@ def update_user_last_logged_in(user):
 
 def lambda_handler(event, context):
     username = event["userName"]
+    sub = event["request"]["userAttributes"]["sub"]
+    username = username + sub[0:3]
+
     user = query_user(username)
     if user is None:
         create_user(username)
