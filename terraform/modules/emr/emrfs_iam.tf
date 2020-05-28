@@ -70,12 +70,6 @@ data "aws_iam_policy_document" "emrfs_iam" {
       "kms:DescribeKey"
     ]
 
-<<<<<<< HEAD
-    resources = [
-      var.emrfs_kms_key_arns
-    ]
-=======
     resources = var.emrfs_kms_key_arns
->>>>>>> DW-4172_Sec_remediation
   }
 }
