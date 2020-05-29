@@ -13,7 +13,7 @@ terraform {
 
 data "terraform_remote_state" "security-tools" {
   backend = "s3"
-  workspace = local.management_workspace[local.management_account[local.environment]]
+  workspace = terraform.workspace
 
   config = {
     bucket         = "{{state_file_bucket}}"
@@ -29,13 +29,13 @@ provider "aws" {
   region = "{{provider_region}}"
 
   assume_role {
-    role_arn = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
+    role_arn = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
   }
 }
 
 locals {
   name        = "aws-analytical-env-cognito"
-  environment = terraform.workspace == "default" ? "development" : terraform.workspace
+  environment = terraform.workspace == "default" ? "management-dev" : terraform.workspace
 
   root_dns_name = {
     development = "dev.wip.{{dataworks_domain_name}}"
