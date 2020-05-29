@@ -56,8 +56,8 @@ resources:
   - name: meta-management
     type: meta
 
-#  - name: meta-preprod
-#    type: meta
+  - name: meta-preprod
+    type: meta
 
-#  - name: meta-production
-#    type: meta
+  - name: meta-production
+    type: meta
