@@ -1,16 +1,18 @@
 jobs:
-  - name: development
+  - name: production
     max_in_flight: 1
     plan:
       - put: meta
-        resource: meta-development
+        resource: meta-production
       - get: emp-release
         version: { tag: '0.0.6' }
+        passed:
+          - preprod
         trigger: true
       - get: aws-analytical-env
+        passed:
+          - preprod
         trigger: true
-      - get: aws-dataworks-e2e-framework
-        trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra
@@ -19,11 +21,15 @@ jobs:
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
+        params:
+          TF_WORKSPACE: 'production'
       - .: (( inject meta.plan.terraform-plan ))
         task: terraform-plan infra
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
+        params:
+          TF_WORKSPACE: 'production'
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: app
@@ -35,7 +41,8 @@ jobs:
           inputs:
             - name: emp-release
         params:
-          TF_VAR_emp_dir_path: ../../../../emp-release 
+          TF_WORKSPACE: 'production'
+          TF_VAR_emp_dir_path: ../../../../emp-release
       - .: (( inject meta.plan.terraform-plan ))
         task: terraform-plan app
         config:
@@ -44,9 +51,6 @@ jobs:
           inputs:
             - name: emp-release
         params:
+          TF_WORKSPACE: 'production'
           TF_VAR_emp_dir_path: ../../../../emp-release
-      - .: (( inject meta.plan.create-aws-profiles ))
-        config:
-          params:
-            AWS_ACC: ((aws_account.development))
-#      - .: (( inject meta.plan.analytical-env-e2e-tests )) # Temporarily disabled
+

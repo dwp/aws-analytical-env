@@ -4,6 +4,8 @@ groups:
       - development
       - qa
       - integration
+      - preprod
+      - production
   - name: pull-request
     jobs:
       - pull-request
