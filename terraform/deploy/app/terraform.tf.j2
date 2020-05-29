@@ -189,12 +189,13 @@ locals {
   env_certificate_bucket = "dw-${local.environment}-public-certificates"
   mgmt_certificate_bucket = "dw-${local.management_account[local.environment]}-public-certificates"
 
-  root_dns_prefix = {
-    development = "dev"
-    qa          = "qa"
-    integration = "int"
-    preprod     = "pre"
-    production  = "" # no prefix in prod
+
+  root_dns_name = {
+    development = "dev.wip.{{dataworks_domain_name}}"
+    qa          = "qa.wip.{{dataworks_domain_name}}"
+    integration = "int.wip.{{dataworks_domain_name}}"
+    preprod     = "pre.{{dataworks_domain_name}}"
+    production  = "{{dataworks_domain_name}}"
   }
 
   parent_domain_name = {
