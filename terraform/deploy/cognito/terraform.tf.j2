@@ -88,5 +88,5 @@ locals {
       } {% endfor %}
   }
 
-  cognito_domain = local.management_account[local.environment] == "management" ? "dataworks" : "dataworks-dev"
+  cognito_domain = local.environment == "management" ? "dataworks" : "dataworks-dev"
 }
