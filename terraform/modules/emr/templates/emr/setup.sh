@@ -44,7 +44,7 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
   echo "Adding users for group $GROUP"
   USERS=$(aws cognito-idp list-users-in-group --user-pool-id "${user_pool_id}" --group-name "$GROUP" | jq '.Users' | jq -r '.[].Username')
 
-  USERDIR = $(aws cognito-idp list-users --user-pool-id "${user_pool_id}")
+  USERDIR=$(aws cognito-idp list-users --user-pool-id "${user_pool_id}")
 
   for USER in $${USERS[@]}; do
 
