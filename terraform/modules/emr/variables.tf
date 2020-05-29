@@ -97,6 +97,10 @@ variable "env_certificate_bucket" {
   description = "Bucket that contains environment public certificates"
 }
 
+variable mgmt_certificate_bucket {
+  description = "Bucket that contains management environment public certificates"
+}
+
 variable "emrfs_kms_key_arns" {
   type        = list(string)
   default     = []

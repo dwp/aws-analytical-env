@@ -36,6 +36,7 @@ module "emr" {
   cert_authority_arn         = data.terraform_remote_state.certificate_authority.outputs.root_ca.arn
   vpc                        = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc
   env_certificate_bucket     = local.env_certificate_bucket
+  mgmt_certificate_bucket    = local.mgmt_certificate_bucket
   emrfs_kms_key_arns         = [data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket_cmk.arn]
   dataset_s3_paths           = [[data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket.id, "*"]]
   dataset_s3_tags            = ["collection_tag", "crown"]

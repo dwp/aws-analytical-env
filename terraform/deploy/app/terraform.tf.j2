@@ -187,6 +187,7 @@ locals {
     ]
 
   env_certificate_bucket = "dw-${local.environment}-public-certificates"
+  mgmt_certificate_bucket = "dw-${local.management_account[local.environment]}-public-certificates"
 
   root_dns_prefix = {
     development = "dev"
