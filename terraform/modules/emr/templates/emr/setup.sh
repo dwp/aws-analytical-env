@@ -44,7 +44,14 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
   echo "Adding users for group $GROUP"
   USERS=$(aws cognito-idp list-users-in-group --user-pool-id "${user_pool_id}" --group-name "$GROUP" | jq '.Users' | jq -r '.[].Username')
 
+  USERDIR = $(aws cognito-idp list-users --user-pool-id "${user_pool_id}")
+
   for USER in $${USERS[@]}; do
+
+    # Convert username format
+    USER = $(echo $USERDIR \
+            | jq ".Users[] as \$u | if \$u.Username == \"$USER\" then \$u else empty end" \
+            | jq -r ".Attributes[] | if .Name == \"sub\" then \"$USER\" + (.Value | match(\"...\").string) else empty end")
 
     user_exists=$(
       id -u "$USER" >/dev/null 2>&1

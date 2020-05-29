@@ -10,8 +10,8 @@ data "template_file" "get_dks_cert_sh" {
     emr_bucket_path    = aws_s3_bucket.emr.id
     acm_cert_arn       = aws_acm_certificate.emr.arn
     private_key_alias  = "development"
-    truststore_aliases = "env_ca,mgt_ca"
-    truststore_certs   = "s3://${var.env_certificate_bucket}/ca_certificates/dataworks/ca.pem,s3://dw-management-dev-public-certificates/ca_certificates/dataworks/ca.pem"
+    truststore_aliases = var.truststore_aliases
+    truststore_certs   = var.truststore_certs
     full_proxy         = local.full_proxy
     full_no_proxy      = join(",", local.no_proxy_hosts)
     dks_endpoint       = var.dks_endpoint

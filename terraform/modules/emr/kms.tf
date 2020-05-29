@@ -3,7 +3,7 @@ resource "aws_kms_key" "emr_ebs" {
   enable_key_rotation     = true
   deletion_window_in_days = 7
 
-  tags = merge({ "Name" = var.emr_cluster_name }, var.common_tags)
+  tags = merge({ "Name" = var.emr_cluster_name, "ProtectSensitiveData" = "True" }, var.common_tags)
 
   lifecycle {
     prevent_destroy = true
@@ -24,7 +24,7 @@ resource "aws_kms_key" "emr_s3" {
   enable_key_rotation     = true
   deletion_window_in_days = 7
 
-  tags = merge({ "Name" = var.emr_cluster_name }, var.common_tags)
+  tags = merge({ "Name" = var.emr_cluster_name, "ProtectSensitiveData" = "True" }, var.common_tags)
 
   lifecycle {
     prevent_destroy = true
