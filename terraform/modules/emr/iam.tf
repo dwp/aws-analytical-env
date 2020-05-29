@@ -240,8 +240,8 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "glue:GetDatabase"
     ]
     resources = [
-      "arn:aws:glue:*:*:database/default",
-      "arn:aws:glue:*:*:database/global_temp"
+      "arn:aws:glue:${var.region}:${var.account}:database/default",
+      "arn:aws:glue:${var.region}:${var.account}:database/global_temp"
     ]
   }
 
@@ -446,7 +446,7 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
       "ssm:UpdateInstanceInformation"
     ]
     resources = [
-      "arn:aws:ssm:${var.region}:${var.account}:*"
+      "*" # Restrictions not supported on SSM
     ]
   }
 
@@ -482,16 +482,14 @@ data aws_iam_policy_document amazon_ec2_role_for_ssm {
     sid    = "AllowPutMetrics"
     effect = "Allow"
     actions = [
-      "cloudwatch:PutMetricData"
+      "cloudwatch:PutMetricData",
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams",
+      "logs:PutLogEvents"
     ]
-    resources = ["arn:aws:cloudwatch:${var.region}:${var.account}:*"]
-    condition {
-      test     = "StringLike"
-      variable = "aws:ResourceTag/Application"
-      values = [
-        "aws-analytical-env"
-      ]
-    }
+    resources = ["*"] # Restrictions not supported for CloudWatch
   }
 
   statement {
