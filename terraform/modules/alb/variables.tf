@@ -34,9 +34,9 @@ variable "parent_domain_name" {
   description = "(Required) The parent domain name"
 }
 
-variable "root_dns_prefix" {
+variable "root_dns_name" {
   type        = string
-  description = "(Required) Zone to create DNS record in"
+  description = "(Required) The root dns name"
 }
 
 variable "vpc_id" {

@@ -1,5 +1,5 @@
 locals {
-  fqdn                            = format("%s.%s.%s.%s", "emr", var.emr_cluster_name, var.root_dns_prefix, data.aws_route53_zone.main.name)
+  fqdn                            = format("%s.%s.%s.", "emr", var.emr_cluster_name, var.root_dns_name)
   master_instance_type            = "m5.2xlarge"
   core_instance_type              = "m5.2xlarge"
   core_instance_count             = 1

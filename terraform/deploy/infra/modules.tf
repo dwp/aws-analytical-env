@@ -80,7 +80,7 @@ module alb {
   cert_authority_arn = data.terraform_remote_state.aws_certificate_authority.outputs.root_ca.arn
   internal_lb        = false
   parent_domain_name = local.parent_domain_name[local.environment]
-  root_dns_prefix    = local.root_dns_prefix[local.environment]
+  root_dns_name      = local.root_dns_name[local.environment]
   alb_subnets        = module.networking.outputs.aws_subnets_public.*.id
   common_tags        = local.common_tags
 

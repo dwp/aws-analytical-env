@@ -41,8 +41,8 @@ variable "parent_domain_name" {
   description = "Domain name of Route53 zone to create records in"
 }
 
-variable "root_dns_prefix" {
-  description = "Domain name prefix of Route53 records"
+variable "root_dns_name" {
+  description = "Root DNS name"
 }
 
 variable "interface_vpce_sg_id" {

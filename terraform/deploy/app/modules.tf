@@ -32,7 +32,7 @@ module "emr" {
   internet_proxy             = data.terraform_remote_state.internet_egress.outputs.internet_proxy
   internet_proxy_cidr_blocks = data.terraform_remote_state.internet_egress.outputs.proxy_subnet.cidr_blocks
   parent_domain_name         = local.parent_domain_name[local.environment]
-  root_dns_prefix            = local.root_dns_prefix[local.environment]
+  root_dns_name              = local.root_dns_name[local.environment]
   cert_authority_arn         = data.terraform_remote_state.certificate_authority.outputs.root_ca.arn
   vpc                        = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc
   env_certificate_bucket     = local.env_certificate_bucket
