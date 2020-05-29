@@ -11,8 +11,9 @@ def lambda_handler(event, context):
     userPoolId = os.environ['USERPOOLID']
     region     = os.environ['REGION']
     bucketName = os.environ['BUCKETNAME']
+    kmsKey     = os.environ['KMS_KEY']
 
-    if userPoolId is None or region is None or bucketName is None:
+    if userPoolId is None or region is None or bucketName is None or kmsKey is None:
         logger.error('Missing environment variables.')
         raise Exception('Missing environment variables')
 
@@ -45,7 +46,7 @@ def lambda_handler(event, context):
     filename = 'CognitoSnapshots/snapshot_' + datetime.now().strftime("%Y-%m-%d-%H%M%S") + '.json'
     
     
-    s3Client.put_object(Body=json.dumps(information, indent=2, sort_keys=True, default=str), Bucket=bucketName, Key=filename)
+    s3Client.put_object(Body=json.dumps(information, indent=2, sort_keys=True, default=str), Bucket=bucketName, Key=filename, ServerSideEncryption='aws:kms', SSEKMSKeyId=kmsKey)
     
     return {
         'statusCode': 200,

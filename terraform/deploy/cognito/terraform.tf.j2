@@ -13,6 +13,7 @@ terraform {
 
 data "terraform_remote_state" "security-tools" {
   backend = "s3"
+  workspace = local.management_workspace[local.management_account[local.environment]]
 
   config = {
     bucket         = "{{state_file_bucket}}"
@@ -48,6 +49,11 @@ locals {
     {% for key, value in accounts.items() %}
       {{key}} = "{{value}}"
     {% endfor %}
+  }
+
+  management_workspace = {
+      management-dev = "management-dev"
+      management     = "management"
   }
 
   management_account = {

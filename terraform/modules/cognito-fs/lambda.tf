@@ -21,6 +21,7 @@ resource "aws_lambda_function" "snapshot_cognito_pool" {
       REGION     = data.aws_region.current.name
       USERPOOLID = aws_cognito_user_pool.emr.id
       BUCKETNAME = var.s3_log_bucket
+      KMS_KEY    = aws_kms_alias.cognito_audit_kms.name
     }
   }
   tags = merge(
@@ -32,10 +33,4 @@ resource "aws_lambda_function" "snapshot_cognito_pool" {
       "ProtectSensitiveData" = "True"
     }
   )
-}
-
-resource "aws_cloudwatch_log_group" "snapshot_cognito_pool" {
-  name              = "/aws/lambda/snapshot_cognito_pool"
-  description       = "Cognito Snapshot Lambda"
-  retention_in_days = 180
 }

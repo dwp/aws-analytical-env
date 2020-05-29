@@ -39,3 +39,8 @@ resource aws_cloudwatch_event_target notification {
   rule      = aws_cloudwatch_event_rule.snapshot_cognito_pool.name
   arn       = aws_lambda_function.snapshot_cognito_pool.arn
 }
+
+resource "aws_cloudwatch_log_group" "snapshot_cognito_pool" {
+  name              = "/aws/lambda/snapshot_cognito_pool"
+  retention_in_days = 180
+}
