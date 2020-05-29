@@ -67,6 +67,16 @@ resource "aws_security_group_rule" "egress_emr_nodes" {
   source_security_group_id = aws_security_group.emr.id
 }
 
+resource "aws_security_group_rule" "inbound_emr_nodes" {
+  description              = "Alllow inbound traffic between EMR nodes"
+  from_port                = 0
+  to_port                  = 65535
+  protocol                 = "all"
+  type                     = "ingress"
+  security_group_id        = aws_security_group.emr.id
+  source_security_group_id = aws_security_group.emr.id
+}
+
 resource "aws_security_group_rule" "egress_https_to_s3" {
   description       = "Allow HTTPS to S3 endpoint"
   protocol          = "tcp"
