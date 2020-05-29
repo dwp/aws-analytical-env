@@ -133,7 +133,7 @@ data "terraform_remote_state" "management" {
 
 data "terraform_remote_state" "mgmt_ca" {
   backend   = "s3"
-  workspace = local.management_workspace[local.management_account[local.environment]]
+  workspace = local.management_account[local.environment]
 
   config = {
     bucket         = "{{state_file_bucket}}"
@@ -187,6 +187,7 @@ locals {
     ]
 
   env_certificate_bucket = "dw-${local.environment}-public-certificates"
+  mgmt_certificate_bucket = "dw-${local.management_account[local.environment]}-public-certificates"
 
   root_dns_prefix = {
     development = "dev"
