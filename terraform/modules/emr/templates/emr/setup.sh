@@ -49,7 +49,7 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
   for USER in $${USERS[@]}; do
 
     # Convert username format
-    USER = $(echo $USERDIR \
+    USER=$(echo $USERDIR \
             | jq ".Users[] as \$u | if \$u.Username == \"$USER\" then \$u else empty end" \
             | jq -r ".Attributes[] | if .Name == \"sub\" then \"$USER\" + (.Value | match(\"...\").string) else empty end")
 
