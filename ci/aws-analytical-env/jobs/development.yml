@@ -49,4 +49,4 @@ jobs:
         config:
           params:
             AWS_ACC: ((aws_account.development))
-      - .: (( inject meta.plan.analytical-env-e2e-tests ))
+#      - .: (( inject meta.plan.analytical-env-e2e-tests )) # Temporarily disabled
