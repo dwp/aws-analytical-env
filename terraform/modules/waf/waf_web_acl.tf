@@ -62,7 +62,7 @@ resource "aws_wafregional_web_acl" "acl" {
 
   rule {
     action {
-      type = "BLOCK"
+      type = "COUNT"
     }
 
     priority = 6
