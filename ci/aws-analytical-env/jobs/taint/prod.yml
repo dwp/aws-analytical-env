@@ -1,0 +1,19 @@
+jobs:
+  - name: trigger
+    plan:
+      - get: nightly-job-trigger
+        trigger: true
+  - name: taint-prod
+    plan:
+      - .: (( inject meta.plan.terraform-bootstrap ))
+          params:
+            DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-taint ))
+          params:
+            DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-apply ))
+          params:
+            DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-plan ))
+          params:
+            DEPLOY_PATH: app

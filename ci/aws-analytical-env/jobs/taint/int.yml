@@ -1,0 +1,15 @@
+jobs:
+  - name: taint-int
+    plan:
+      - .: (( inject meta.plan.terraform-bootstrap ))
+          params:
+            DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-taint ))
+          params:
+            DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-apply ))
+          params:
+            DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-plan ))
+          params:
+            DEPLOY_PATH: app
