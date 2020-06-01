@@ -1,0 +1,26 @@
+jobs:
+  - name: taint-dev
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: app
+
+      - .: (( inject meta.plan.terraform-taint ))
+        params:
+          DEPLOY_PATH: app
+
+      - .: (( inject meta.plan.terraform-apply ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/app'
+        params:
+          DEPLOY_PATH: app
+
+      - .: (( inject meta.plan.terraform-plan ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/app'
+        params:
+          DEPLOY_PATH: app

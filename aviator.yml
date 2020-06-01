@@ -7,6 +7,8 @@ spruce:
         regexp: ".*yml"
       - with_in: ci/aws-analytical-env/jobs/
         regexp: ".*yml"
+      - with_in: ci/aws-analytical-env/jobs/taint/
+        regexp: ".*yml"
       - with_in: ci/aws-analytical-env/shared/
         regexp: ".*yml"
     to: aviator_pipeline.yml

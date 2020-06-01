@@ -14,3 +14,10 @@ groups:
     jobs:
       - management-dev
       - management
+  - name: taint-emr
+    jobs:
+      - taint-dev
+      - taint-qa
+      - taint-int
+      - taint-preprod
+      - taint-prod
