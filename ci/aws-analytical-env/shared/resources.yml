@@ -62,8 +62,9 @@ resources:
   - name: meta-production
     type: meta
 
-  - name: 00:00
+  - name: midnight-trigger
     type: time
-    location: GB
-    start: 00:00
-    end: 01:00
+    source:
+      location: GB
+      start: 00:00
+      stop: 01:00
