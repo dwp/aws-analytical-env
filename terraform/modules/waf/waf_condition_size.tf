@@ -29,7 +29,7 @@ resource "aws_wafregional_size_constraint_set" "size_restrictions" {
   size_constraints {
     text_transformation = "NONE"
     comparison_operator = "GT"
-    size                = "1024"
+    size                = "2048"
 
     field_to_match {
       type = "QUERY_STRING"
@@ -39,7 +39,7 @@ resource "aws_wafregional_size_constraint_set" "size_restrictions" {
   size_constraints {
     text_transformation = "NONE"
     comparison_operator = "GT"
-    size                = "512"
+    size                = "2048"
 
     field_to_match {
       type = "URI"
