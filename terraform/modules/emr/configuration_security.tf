@@ -24,7 +24,7 @@ locals {
           {
             Role           = aws_iam_role.emrfs_iam.arn
             IdentifierType = "Group"
-            Identifiers    = ["non-pii", "pii"]
+            Identifiers    = var.security_configuration_groups
           }
         ]
       }
