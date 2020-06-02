@@ -161,3 +161,8 @@ variable truststore_certs {
   description = "Truststore Certificates"
   type        = string
 }
+
+variable "security_configuration_groups" {
+  description = "Cognito groups to allow access to S3 data"
+  type        = list(string)
+}
