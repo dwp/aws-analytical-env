@@ -10,7 +10,7 @@ jobs:
       - .: (( inject meta.plan.terraform-taint ))
         params:
           DEPLOY_PATH: app
-          TF_WORKSPACE: 'int'
+          TF_WORKSPACE: 'integration'
 
       - .: (( inject meta.plan.terraform-apply ))
         config:
@@ -18,7 +18,7 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/app'
         params:
           DEPLOY_PATH: app
-          TF_WORKSPACE: 'int'
+          TF_WORKSPACE: 'integration'
 
       - .: (( inject meta.plan.terraform-plan ))
         config:
@@ -26,4 +26,4 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/app'
         params:
           DEPLOY_PATH: app
-          TF_WORKSPACE: 'int'
+          TF_WORKSPACE: 'integration'
