@@ -10,6 +10,7 @@ jobs:
       - .: (( inject meta.plan.terraform-taint ))
         params:
           DEPLOY_PATH: app
+          TF_WORKSPACE: 'int'
 
       - .: (( inject meta.plan.terraform-apply ))
         config:
