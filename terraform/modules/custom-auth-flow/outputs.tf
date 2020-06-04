@@ -13,3 +13,7 @@ output "verify-auth-challenge-lambda" {
 output "pre-token-generation-lambda" {
   value = aws_lambda_function.lambda_pre_token_generation
 }
+
+output "pre-auth-lambda" {
+  value = aws_lambda_function.lambda_pre_auth
+}

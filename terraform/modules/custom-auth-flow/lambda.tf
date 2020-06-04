@@ -41,3 +41,18 @@ resource "aws_lambda_function" "lambda_pre_token_generation" {
   source_code_hash = filebase64sha256(var.custom_auth_file_path)
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-pre-token-generation", ProtectSensitiveData = "True" })
 }
+
+resource "aws_lambda_function" "lambda_pre_auth" {
+  filename         = var.custom_auth_file_path
+  function_name    = "${var.name_prefix}-pre-auth"
+  role             = aws_iam_role.role_for_lambda_pre_auth.arn
+  handler          = "lambda.preAuth"
+  runtime          = "nodejs12.x"
+  source_code_hash = filebase64sha256(var.custom_auth_file_path)
+  tags             = merge(var.common_tags, { Name = "${var.name_prefix}-pre-auth", "ProtectSensitiveData" = "True" })
+  environment {
+    variables = {
+      TABLE_NAME = aws_dynamodb_table.dynamodb_table_user.id
+    }
+  }
+}
