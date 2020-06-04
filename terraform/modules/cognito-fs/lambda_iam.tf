@@ -12,7 +12,7 @@ data aws_iam_policy_document snapshot_cognito_pool_lambda {
 
 data aws_iam_policy_document lambda_s3 {
   statement {
-    sid = "s3"
+    sid = "s3Put"
     actions = [
       "s3:PutObject"
     ]
@@ -21,6 +21,7 @@ data aws_iam_policy_document lambda_s3 {
     ]
   }
   statement {
+    sid = "AllowKMSActions"
     actions = [
       "kms:Decrypt",
       "kms:Encrypt",
