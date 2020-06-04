@@ -73,12 +73,28 @@ data aws_iam_policy_document policy_s3_check_user_expiry {
     actions = [
       "s3:GetObject"
     ]
-    resources = ["${var.template_bucket}/*"]
+    resources = ["arn:aws:s3:::${var.template_bucket}/*"]
   }
   statement {
     actions = [
       "s3:ListBucket"
     ]
-    resources = [var.template_bucket]
+    resources = ["arn:aws:s3:::${var.template_bucket}"]
+  }
+}
+
+resource aws_iam_role_policy role_policy_ses_send_reminder_email {
+  name   = "Role-Policy-SES-Check-User-Expiry"
+  role   = aws_iam_role.role_for_lambda_check_user_expiry.id
+  policy = data.aws_iam_policy_document.policy_ses_send_reminder_email.json
+}
+
+data aws_iam_policy_document policy_ses_send_reminder_email {
+  statement {
+    actions = [
+      "SES:SendEmail",
+      "SES:SendRawEmail"
+    ]
+    resources = ["arn:aws:ses:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:identity/*"]
   }
 }

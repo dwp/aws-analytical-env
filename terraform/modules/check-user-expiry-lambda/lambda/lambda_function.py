@@ -76,15 +76,16 @@ def process_items(items):
     print("email_body=" + email_body)
 
     for item in items:
-        print(item["username"] + " " + item["expiration_date"])
+        print(item["username"][:-3] + " " + item["expiration_date"])
+        formatted_time = datetime.datetime.strptime(item["expiration_date"], "%Y-%m-%dT%H:%M:%S.%fZ")
         days = (
-            datetime.date.fromisoformat(item["expiration_date"]) - datetime.date.today()
+            formatted_time.date() - datetime.date.today()
         )
-        subject_with_username = email_subject.replace("[[ recipient_name ]]", item["username"])
+        subject_with_username = email_subject.replace("[[ recipient_name ]]", item["username"][:-3])
         email_body_with_values = email_body.replace(
-            "[[ recipient_name ]]", item["username"]
+            "[[ recipient_name ]]", item["username"][:-3]
         ).replace("[[ number_of_days_until_expiry ]]", str(days.days).replace("[[ title ]]", email_subject))
-        email_to = query_user_email_from_cognito(item["username"])
+        email_to = query_user_email_from_cognito(item["username"][:-3])
         print("Sending email to: " + email_to)
         send_email(email_from, email_to, subject_with_username, email_body_with_values)
 

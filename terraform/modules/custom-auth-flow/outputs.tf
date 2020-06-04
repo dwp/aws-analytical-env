@@ -21,3 +21,10 @@ output "pre-auth-lambda" {
 output "post-auth-lambda" {
   value = aws_lambda_function.lambda_post_auth
 }
+
+output dynamodb_table_user {
+  value = {
+    arn  = aws_dynamodb_table.dynamodb_table_user.arn
+    name = aws_dynamodb_table.dynamodb_table_user.name
+  }
+}
