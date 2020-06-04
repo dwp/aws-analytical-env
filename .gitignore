@@ -19,7 +19,4 @@ aviator_pipeline.yml
 
 *.jar
 
-terraform/modules/pre-auth-lambda/*.zip
-terraform/modules/check-user-expiry-lambda/*.zip
-terraform/modules/check-user-expiry-lambda/s3_objects/email_body.txt
-terraform/modules/check-user-expiry-lambda/s3_objects/email_from.txt
+*.zip
