@@ -24,6 +24,12 @@ resource aws_iam_role role_for_lambda_pre_auth {
   tags               = merge(var.common_tags, { Name = "${var.name_prefix}-pre-auth" })
 }
 
+resource aws_iam_role role_for_lambda_post_auth {
+  name               = "Role-Lambda-Post-Auth"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
+  tags               = merge(var.common_tags, { Name = "${var.name_prefix}-post-auth" })
+}
+
 data aws_iam_policy_document assume_role_lambda {
   statement {
     actions = [
@@ -60,6 +66,11 @@ resource "aws_iam_role_policy_attachment" "cognito_pre_token_generation_basic_ex
 
 resource "aws_iam_role_policy_attachment" "cognito_pre_auth_basic_execution" {
   role       = aws_iam_role.role_for_lambda_pre_auth.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "cognito_post_auth_basic_execution" {
+  role       = aws_iam_role.role_for_lambda_post_auth.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
@@ -110,13 +121,43 @@ data aws_iam_policy_document cognito_define_auth_policy {
 /* Pre Auth Policy */
 
 resource aws_iam_role_policy cognito_pre_auth_policy {
-  policy = data.aws_iam_policy_document
+  policy = data.aws_iam_policy_document.cognito_pre_auth_policy.json
   role   = aws_iam_role.role_for_lambda_pre_auth.name
 }
 
 data aws_iam_policy_document cognito_pre_auth_policy {
   statement {
-    sid = "AllowRWUserDynamoDBTable"
+    sid    = "AllowRWUserDynamoDBTable"
+    effect = "Allow"
+    actions = [
+      "dynamodb:PutItem",
+      "dynamodb:GetItem",
+      "dynamodb:Query",
+      "dynamodb:UpdateItem"
+    ]
+    resources = [aws_dynamodb_table.dynamodb_table_user.arn]
+  }
+
+  statement {
+    sid    = "AllowCognitoAdminResetPassword"
+    effect = "Allow"
+    actions = [
+      "cognito-idp:AdminResetUserPassword"
+    ]
+    resources = [var.cognito_user_pool_arn]
+  }
+}
+
+/* Post Auth Policy */
+
+resource aws_iam_role_policy cognito_pre_post_auth_policy {
+  policy = data.aws_iam_policy_document.cognito_post_auth_policy.json
+  role   = aws_iam_role.role_for_lambda_post_auth.name
+}
+
+data aws_iam_policy_document cognito_post_auth_policy {
+  statement {
+    sid    = "AllowRWUserDynamoDBTable"
     effect = "Allow"
     actions = [
       "dynamodb:PutItem",

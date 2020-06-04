@@ -17,3 +17,7 @@ output "pre-token-generation-lambda" {
 output "pre-auth-lambda" {
   value = aws_lambda_function.lambda_pre_auth
 }
+
+output "post-auth-lambda" {
+  value = aws_lambda_function.lambda_post_auth
+}

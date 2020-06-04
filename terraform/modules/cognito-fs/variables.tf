@@ -20,6 +20,7 @@ variable auth_lambdas {
     define_auth_challenge          = string
     verify_auth_challenge_response = string
     pre_authentication             = string
+    post_authentication            = string
     pre_token_generation           = string
   })
 }

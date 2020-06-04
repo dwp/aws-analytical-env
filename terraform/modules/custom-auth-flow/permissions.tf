@@ -37,3 +37,11 @@ resource "aws_lambda_permission" "allow_cognito_pre_auth" {
   principal     = "cognito-idp.amazonaws.com"
   source_arn    = var.cognito_user_pool_arn
 }
+
+resource "aws_lambda_permission" "allow_cognito_post_auth" {
+  statement_id  = "AllowExecutionFromCognito"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_post_auth.function_name
+  principal     = "cognito-idp.amazonaws.com"
+  source_arn    = var.cognito_user_pool_arn
+}

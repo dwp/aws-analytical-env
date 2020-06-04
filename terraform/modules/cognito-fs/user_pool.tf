@@ -46,6 +46,7 @@ resource aws_cognito_user_pool emr {
     define_auth_challenge          = var.auth_lambdas.define_auth_challenge
     verify_auth_challenge_response = var.auth_lambdas.verify_auth_challenge_response
     pre_authentication             = var.auth_lambdas.pre_authentication
+    post_authentication            = var.auth_lambdas.post_authentication
     pre_token_generation           = var.auth_lambdas.pre_token_generation
   }
 

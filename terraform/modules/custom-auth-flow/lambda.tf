@@ -56,3 +56,18 @@ resource "aws_lambda_function" "lambda_pre_auth" {
     }
   }
 }
+
+resource "aws_lambda_function" "lambda_post_auth" {
+  filename         = var.custom_auth_file_path
+  function_name    = "${var.name_prefix}-post-auth"
+  role             = aws_iam_role.role_for_lambda_post_auth.arn
+  handler          = "lambda.postAuth"
+  runtime          = "nodejs12.x"
+  source_code_hash = filebase64sha256(var.custom_auth_file_path)
+  tags             = merge(var.common_tags, { Name = "${var.name_prefix}-post-auth", "ProtectSensitiveData" = "True" })
+  environment {
+    variables = {
+      TABLE_NAME = aws_dynamodb_table.dynamodb_table_user.id
+    }
+  }
+}
