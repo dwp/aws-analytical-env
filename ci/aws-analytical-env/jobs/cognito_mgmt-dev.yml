@@ -7,7 +7,7 @@ jobs:
       - get: aws-analytical-env
         trigger: true
       - get: custom-auth-lambda-release
-        version: { tag: '0.0.17' }
+        version: { tag: '0.0.18' }
         trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
