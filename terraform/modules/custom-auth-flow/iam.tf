@@ -85,7 +85,7 @@ resource aws_iam_role_policy cognito_create_auth_policy {
 // Work around for AWS SMS / SNS - SEE - https://stackoverflow.com/questions/38871201/authorization-when-sending-a-text-message-using-amazonsnsclient
 data aws_iam_policy_document cognito_create_auth_policy_document {
   statement {
-    sid = "AllowSNSPublish"
+    sid    = "AllowSNSPublish"
     effect = "Allow"
     actions = [
       "sns:Publish"
@@ -93,7 +93,7 @@ data aws_iam_policy_document cognito_create_auth_policy_document {
     resources = ["*"]
   }
   statement {
-    sid = "DenySNSPublish"
+    sid    = "DenySNSPublish"
     effect = "Deny"
     actions = [
       "sns:Publish"
@@ -111,7 +111,7 @@ resource aws_iam_role_policy cognito_define_auth_policy {
 
 data aws_iam_policy_document cognito_define_auth_policy {
   statement {
-    sid = "AllowCognitoGetUser"
+    sid    = "AllowCognitoGetUser"
     effect = "Allow"
     actions = [
       "cognito-idp:AdminGetUser",

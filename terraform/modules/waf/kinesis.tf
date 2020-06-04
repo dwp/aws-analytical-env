@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "firehose_assume_role" {
 
 data "aws_iam_policy_document" "write_s3_firehose" {
   statement {
-    sid = "AllowListS3"
+    sid    = "AllowListS3"
     effect = "Allow"
     actions = [
       "s3:ListBucket",
@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "write_s3_firehose" {
     ]
   }
   statement {
-    sid = "AllowS3Actions"
+    sid    = "AllowS3Actions"
     effect = "Allow"
     actions = [
       "s3:PutObject*",

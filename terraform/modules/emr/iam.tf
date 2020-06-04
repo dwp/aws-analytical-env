@@ -7,7 +7,7 @@ resource "aws_iam_role" "emr_role" {
 
 data "aws_iam_policy_document" "emr_role_assume_role" {
   statement {
-    sid = "AllowAssumeRole"
+    sid     = "AllowAssumeRole"
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
 
@@ -179,7 +179,7 @@ resource "aws_iam_role" "emr_ec2_role" {
 
 data "aws_iam_policy_document" "emr_ec2_role_assume_role" {
   statement {
-    sid = "AllowAssumeRole"
+    sid     = "AllowAssumeRole"
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
 
@@ -397,7 +397,7 @@ resource "aws_iam_role" "cogntio_read_only_role" {
 
 data "aws_iam_policy_document" "assume_role_cross_acount" {
   statement {
-    sid = "AllowAssumeRole"
+    sid     = "AllowAssumeRole"
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
 
@@ -521,7 +521,7 @@ resource "aws_iam_role" "emr_autoscaling_role" {
 
 data "aws_iam_policy_document" "emr_autoscaling_role_assume_role" {
   statement {
-    sid = "AllowAssumeRole"
+    sid     = "AllowAssumeRole"
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
 
