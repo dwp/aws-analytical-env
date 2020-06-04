@@ -32,3 +32,8 @@ variable "from_email_address" {
   description = "(Required) From email address"
   type        = string
 }
+
+variable "template_bucket" {
+  description = "(Required) The bucket that has the templated emails"
+  type        = string
+}

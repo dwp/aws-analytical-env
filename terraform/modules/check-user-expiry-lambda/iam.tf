@@ -73,6 +73,12 @@ data aws_iam_policy_document policy_s3_check_user_expiry {
     actions = [
       "s3:GetObject"
     ]
-    resources = ["${aws_s3_bucket.check_user_expiry_email.arn}/*"]
+    resources = ["${var.template_bucket}/*"]
+  }
+  statement {
+    actions = [
+      "s3:ListBucket"
+    ]
+    resources = [var.template_bucket]
   }
 }

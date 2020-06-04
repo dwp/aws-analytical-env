@@ -4,6 +4,17 @@ from dateutil.relativedelta import relativedelta
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 
+mail_from = os.environ.get("MAIL_FROM")
+if mail_from is None:
+    message = "Variable MAIL_FROM was not provided."
+    print(message)
+    raise Exception(message)
+
+subject_line = os.environ.get("SUBJECT_LINE")
+if subject_line is None:
+    message = "Variable SUBJECT_LINE was not provided."
+    print(message)
+    raise Exception(message)
 
 region_name = os.environ.get("AWS_REGION")
 if region_name is None:
@@ -57,9 +68,9 @@ def query_dynamodb_users_about_expire():
 
 def process_items(items):
     print("Process items")
-    email_from = read_object_from_bucket("email_from.txt")
-    email_subject = read_object_from_bucket("email_subject.txt")
-    email_body = read_object_from_bucket("email_body.txt")
+    email_from = mail_from
+    email_subject = subject_line
+    email_body = read_object_from_bucket("default_email_template_analytical.html")
     print("email_from=" + email_from)
     print("email_subject=" + email_subject)
     print("email_body=" + email_body)
@@ -69,12 +80,13 @@ def process_items(items):
         days = (
             datetime.date.fromisoformat(item["expiration_date"]) - datetime.date.today()
         )
+        subject_with_username = email_subject.replace("[[ recipient_name ]]", item["username"])
         email_body_with_values = email_body.replace(
-            "[[ username ]]", item["username"]
-        ).replace("[[ number_of_days_until_expiry ]]", str(days.days))
+            "[[ recipient_name ]]", item["username"]
+        ).replace("[[ number_of_days_until_expiry ]]", str(days.days).replace("[[ title ]]", email_subject))
         email_to = query_user_email_from_cognito(item["username"])
         print("Sending email to: " + email_to)
-        send_email(email_from, email_to, email_subject, email_body_with_values)
+        send_email(email_from, email_to, subject_with_username, email_body_with_values)
 
 
 def query_user_email_from_cognito(username):
