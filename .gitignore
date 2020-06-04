@@ -18,3 +18,5 @@ out/
 aviator_pipeline.yml
 
 *.jar
+
+*.zip
