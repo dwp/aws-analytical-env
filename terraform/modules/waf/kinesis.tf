@@ -32,7 +32,7 @@ resource "aws_iam_role_policy_attachment" "write_s3_firehose" {
 
 data "aws_iam_policy_document" "firehose_assume_role" {
   statement {
-    sid = "AllowAssumeRole"
+    sid = "AllowFirehouseToAssumeRole"
     actions = [
       "sts:AssumeRole",
     ]
@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "firehose_assume_role" {
 
 data "aws_iam_policy_document" "write_s3_firehose" {
   statement {
-    sid    = "AllowListS3"
+    sid    = "AllowKinesisToListLogBucket"
     effect = "Allow"
     actions = [
       "s3:ListBucket",
@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "write_s3_firehose" {
     ]
   }
   statement {
-    sid    = "AllowS3Actions"
+    sid    = "AllowKinesisToReadWriteToWafBucket"
     effect = "Allow"
     actions = [
       "s3:PutObject*",

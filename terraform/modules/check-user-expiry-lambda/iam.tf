@@ -6,7 +6,7 @@ resource aws_iam_role role_for_lambda_check_user_expiry {
 
 data aws_iam_policy_document policy_assume_role_lambda_check_user_expiry {
   statement {
-    sid = "AllowAssumeRole"
+    sid = "AllowLambdaToAssumeRole"
     actions = [
       "sts:AssumeRole",
     ]
@@ -41,7 +41,7 @@ resource aws_iam_role_policy role_policy_logs_check_user_expiry {
 
 data aws_iam_policy_document policy_logs_check_user_expiry {
   statement {
-    sid = "CreateLogs"
+    sid = "AllowLambdaCreateLogs"
     actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents"
@@ -58,7 +58,7 @@ resource aws_iam_role_policy role_policy_cognito_check_user_expiry {
 
 data aws_iam_policy_document policy_cognito_check_user_expiry {
   statement {
-    sid = "CheckUserExpiryCognito"
+    sid = "AllowLambdaCheckUserExpiryCognito"
     actions = [
       "cognito-idp:AdminGetUser"
     ]
@@ -74,14 +74,14 @@ resource aws_iam_role_policy role_policy_s3_check_user_expiry {
 
 data aws_iam_policy_document policy_s3_check_user_expiry {
   statement {
-    sid = "AllowGetS3Object"
+    sid = "AllowLambdaGetS3Object"
     actions = [
       "s3:GetObject"
     ]
     resources = ["arn:aws:s3:::${var.template_bucket}/*"]
   }
   statement {
-    sid = "AllowListBucket"
+    sid = "AllowLambdaListBucket"
     actions = [
       "s3:ListBucket"
     ]
@@ -97,7 +97,7 @@ resource aws_iam_role_policy role_policy_ses_send_reminder_email {
 
 data aws_iam_policy_document policy_ses_send_reminder_email {
   statement {
-    sid = "AllowSendEmail"
+    sid = "AllowLambdaSendEmail"
     actions = [
       "SES:SendEmail",
       "SES:SendRawEmail"

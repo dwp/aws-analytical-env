@@ -7,7 +7,7 @@ resource "aws_iam_role" "emr_role" {
 
 data "aws_iam_policy_document" "emr_role_assume_role" {
   statement {
-    sid     = "AllowAssumeRole"
+    sid     = "AllowEMRToAssumeRole"
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
 
@@ -26,7 +26,7 @@ resource "aws_iam_role_policy" "elastic_map_reduce_role" {
 
 data "aws_iam_policy_document" "elastic_map_reduce_role" {
   statement {
-    sid    = "EC2ReadAndCreateAllow"
+    sid    = "AllowEmrToCreateClusters"
     effect = "Allow"
     actions = [
       "ec2:AuthorizeSecurityGroupEgress",
@@ -67,7 +67,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
-    sid    = "EC2DestroyAllow"
+    sid    = "AllowEmrToDestroyOwnCluster"
     effect = "Allow"
     actions = [
       "ec2:DetachVolume",
@@ -92,7 +92,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
-    sid    = "IAMReadRolesAndPoliciesAllow"
+    sid    = "AllowEmrReadRolesAndPoliciesAllow"
     effect = "Allow"
     actions = [
       "iam:GetRole",
@@ -108,7 +108,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
-    sid    = "CloudwatchAllow"
+    sid    = "AllowEmrToCreateMetricsAndAlarms"
     effect = "Allow"
     actions = [
       "cloudwatch:PutMetricAlarm",
@@ -128,7 +128,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
-    sid    = "KMSAllow"
+    sid    = "AllowEmrToUseSpecificKMSKeys"
     effect = "Allow"
     actions = [
       "kms:Encrypt",
@@ -145,7 +145,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
-    sid    = "S3Allow"
+    sid    = "AllowEmrToReadEmrBucket"
     effect = "Allow"
     actions = [
       "s3:Get*",
@@ -179,7 +179,7 @@ resource "aws_iam_role" "emr_ec2_role" {
 
 data "aws_iam_policy_document" "emr_ec2_role_assume_role" {
   statement {
-    sid     = "AllowAssumeRole"
+    sid     = "AllowEmrEC2ToAssumeRole"
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
 
@@ -203,7 +203,7 @@ resource "aws_iam_role_policy" "elastic_map_reduce_for_ec2_role" {
 
 data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   statement {
-    sid    = "CloudwatchAllow"
+    sid    = "AllowEmrEC2toPutCloudwatchMetrics"
     effect = "Allow"
     actions = [
       "cloudwatch:PutMetricData"
@@ -219,7 +219,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "GlueAllowReadOnly"
+    sid    = "AllowEmrEC2ReadGlue"
     effect = "Allow"
     actions = [
       "glue:Get*",
@@ -236,7 +236,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "GlueAllowGetDefaultDatabases"
+    sid    = "AllowEC2GetDefaultGlueDatabases"
     effect = "Allow"
     actions = [
       "glue:GetDatabase"
@@ -248,7 +248,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "DynamodbAllow"
+    sid    = "AllowEmrEc2AccessMetadataDynamodb"
     effect = "Allow"
     actions = [
       "dynamodb:CreateTable",
@@ -270,7 +270,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "EMRFSInconsitenecySQSAllow"
+    sid    = "AllowEmrEc2AccessEMRFSInconsitenecySQS"
     effect = "Allow"
     actions = [
       "sqs:GetQueueUrl",
@@ -286,7 +286,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "ACMExportAllow"
+    sid    = "AllowEmrEc2ACMExport"
     effect = "Allow"
     actions = [
       "acm:ExportCertificate",
@@ -297,7 +297,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "PrivateCAGetCertificateAllow"
+    sid    = "AllowEmrEc2GetPrivateCAGetCertificate"
     effect = "Allow"
     actions = [
       "acm-pca:GetCertficate"
@@ -308,7 +308,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "KMSAllow"
+    sid    = "AllowEmrEc2KMSAccessSpecificKeys"
     effect = "Allow"
     actions = [
       "kms:Encrypt",
@@ -325,7 +325,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "S3AllowRead"
+    sid    = "AllowEmrEc2S3ReadSpecificBuckets"
     effect = "Allow"
     actions = [
       "s3:AbortMultipartUpload",
@@ -360,7 +360,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "S3AllowPut"
+    sid    = "AllowEmrEc2S3PutLogAndEMRBucket"
     effect = "Allow"
     actions = [
       "s3:PutBucketVersioning",
@@ -376,7 +376,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "AllowAssumeReadOnlyCognitoRole"
+    sid    = "AllowEmrEc2AssumeReadOnlyCognitoRole"
     effect = "Allow"
     actions = [
       "sts:AssumeRole"
@@ -397,7 +397,7 @@ resource "aws_iam_role" "cogntio_read_only_role" {
 
 data "aws_iam_policy_document" "assume_role_cross_acount" {
   statement {
-    sid     = "AllowAssumeRole"
+    sid     = "AllowCrossAccountAssumeRole"
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
 
