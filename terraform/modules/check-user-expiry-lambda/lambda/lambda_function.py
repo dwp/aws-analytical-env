@@ -76,8 +76,8 @@ def query_dynamodb_users_expired_today():
     print("Query dynamodb table user for users expiring today")
     today = datetime.date.today()
     response = table.scan(
-        FilterExpression=Attr("expiration_date").eq(
-            str(today)
+        FilterExpression=Attr("expiration_date").between(
+            (str(today)+"T00:00:00.000Z"), (str(today)+"T23:59:59.999Z")
         )
     )
     return response["Items"]
@@ -142,7 +142,7 @@ def lambda_handler(event, context):
         process_items(about_to_expire, reminder_subject_line, "default_email_template_analytical.html")
     else:
         print("Query did not return any due to expire items.")
-    expired = query_dynamodb_users_about_expire()
+    expired = query_dynamodb_users_expired_today()
     if expired:
         print("Query returned " + str(len(expired)) + " item(s)")
         process_items(expired, expired_subject_line, "default_email_template_analytical_expired.html")
