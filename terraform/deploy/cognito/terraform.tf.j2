@@ -27,7 +27,7 @@ data "terraform_remote_state" "security-tools" {
 
 data "terraform_remote_state" "aws_common_infrastructure" {
   backend   = "s3"
-  workspace = terraform.workspace
+  workspace = terraform.workspace == "default" ? "development" : "production"
 
   config = {
     bucket         = "{{state_file_bucket}}"
@@ -41,7 +41,7 @@ data "terraform_remote_state" "aws_common_infrastructure" {
 
 data "terraform_remote_state" "management" {
   backend   = "s3"
-  workspace = terraform.workspace != "default" ? "management" : terraform.workspace
+  workspace = terraform.workspace
 
   config = {
     bucket         = "{{state_file_bucket}}"
