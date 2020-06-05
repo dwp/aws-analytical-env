@@ -41,7 +41,7 @@ data "terraform_remote_state" "aws_common_infrastructure" {
 
 data "terraform_remote_state" "management" {
   backend   = "s3"
-  workspace = terraform.workspace
+  workspace = terraform.workspace != "default" ? "management" : terraform.workspace
 
   config = {
     bucket         = "{{state_file_bucket}}"
