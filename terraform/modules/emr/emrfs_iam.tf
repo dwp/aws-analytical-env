@@ -6,6 +6,7 @@ resource "aws_iam_role" "emrfs_iam" {
 
 data "aws_iam_policy_document" "emrfs_iam_assume_role" {
   statement {
+    sid     = "AllowAssumeRole"
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
     principals {
@@ -25,6 +26,7 @@ resource "aws_iam_role_policy" "emrfs_iam" {
 
 data "aws_iam_policy_document" "emrfs_iam" {
   statement {
+    sid    = "AllowAllDynamoDB"
     effect = "Allow"
     actions = [
       "dynamodb:*",
@@ -35,6 +37,7 @@ data "aws_iam_policy_document" "emrfs_iam" {
   }
 
   statement {
+    sid    = "AllowS3Read"
     effect = "Allow"
 
     actions = [
@@ -63,6 +66,7 @@ data "aws_iam_policy_document" "emrfs_iam" {
     }
   }
   statement {
+    sid    = "AllowKMSRead"
     effect = "Allow"
 
     actions = [

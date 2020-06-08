@@ -6,6 +6,7 @@ resource aws_iam_role role_for_lambda_check_user_expiry {
 
 data aws_iam_policy_document policy_assume_role_lambda_check_user_expiry {
   statement {
+    sid = "AllowLambdaToAssumeRole"
     actions = [
       "sts:AssumeRole",
     ]
@@ -24,6 +25,7 @@ resource aws_iam_role_policy role_policy_dynamodb_read_check_user_expiry {
 
 data aws_iam_policy_document policy_dynamodb_read_check_user_expiry {
   statement {
+    sid = "CheckUserExpiryDynamoDB"
     actions = [
       "dynamodb:Scan"
     ]
@@ -39,6 +41,7 @@ resource aws_iam_role_policy role_policy_logs_check_user_expiry {
 
 data aws_iam_policy_document policy_logs_check_user_expiry {
   statement {
+    sid = "AllowLambdaCreateLogs"
     actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents"
@@ -55,6 +58,7 @@ resource aws_iam_role_policy role_policy_cognito_check_user_expiry {
 
 data aws_iam_policy_document policy_cognito_check_user_expiry {
   statement {
+    sid = "AllowLambdaCheckUserExpiryCognito"
     actions = [
       "cognito-idp:AdminGetUser"
     ]
@@ -70,12 +74,14 @@ resource aws_iam_role_policy role_policy_s3_check_user_expiry {
 
 data aws_iam_policy_document policy_s3_check_user_expiry {
   statement {
+    sid = "AllowLambdaGetS3Object"
     actions = [
       "s3:GetObject"
     ]
     resources = ["arn:aws:s3:::${var.template_bucket}/*"]
   }
   statement {
+    sid = "AllowLambdaListBucket"
     actions = [
       "s3:ListBucket"
     ]
@@ -91,6 +97,7 @@ resource aws_iam_role_policy role_policy_ses_send_reminder_email {
 
 data aws_iam_policy_document policy_ses_send_reminder_email {
   statement {
+    sid = "AllowLambdaSendEmail"
     actions = [
       "SES:SendEmail",
       "SES:SendRawEmail"

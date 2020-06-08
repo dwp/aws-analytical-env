@@ -32,6 +32,7 @@ resource aws_iam_role role_for_lambda_post_auth {
 
 data aws_iam_policy_document assume_role_lambda {
   statement {
+    sid = "AllowLambdaToAssumeRole"
     actions = [
       "sts:AssumeRole",
     ]
@@ -84,6 +85,7 @@ resource aws_iam_role_policy cognito_create_auth_policy {
 // Work around for AWS SMS / SNS - SEE - https://stackoverflow.com/questions/38871201/authorization-when-sending-a-text-message-using-amazonsnsclient
 data aws_iam_policy_document cognito_create_auth_policy_document {
   statement {
+    sid    = "AllowLambdaToSendSNSToAllResources"
     effect = "Allow"
     actions = [
       "sns:Publish"
@@ -91,6 +93,7 @@ data aws_iam_policy_document cognito_create_auth_policy_document {
     resources = ["*"]
   }
   statement {
+    sid    = "DenyLambdaSNSPublishOnAWSResoruces"
     effect = "Deny"
     actions = [
       "sns:Publish"
@@ -108,6 +111,7 @@ resource aws_iam_role_policy cognito_define_auth_policy {
 
 data aws_iam_policy_document cognito_define_auth_policy {
   statement {
+    sid    = "AllowCognitoGetUser"
     effect = "Allow"
     actions = [
       "cognito-idp:AdminGetUser",

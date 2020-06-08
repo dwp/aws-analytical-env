@@ -1,7 +1,7 @@
 data aws_iam_policy_document snapshot_cognito_pool_lambda {
   statement {
     actions = [
-      "sts:AssumeRole",
+      "sts:AllowLambdaAssumeRole",
     ]
     principals {
       type        = "Service"
@@ -12,7 +12,7 @@ data aws_iam_policy_document snapshot_cognito_pool_lambda {
 
 data aws_iam_policy_document lambda_s3 {
   statement {
-    sid = "s3"
+    sid = "AllowLambdaS3PutSnapshotBucket"
     actions = [
       "s3:PutObject"
     ]
@@ -21,6 +21,7 @@ data aws_iam_policy_document lambda_s3 {
     ]
   }
   statement {
+    sid = "AllowLambdaKMSActionsAuditKey"
     actions = [
       "kms:Decrypt",
       "kms:Encrypt",
@@ -36,7 +37,7 @@ data aws_iam_policy_document lambda_s3 {
 
 data aws_iam_policy_document lambda_s3_list {
   statement {
-    sid = "s3List"
+    sid = "AllowLambdas3ListLogBucket"
     actions = [
       "s3:ListBucket"
     ]
@@ -48,7 +49,7 @@ data aws_iam_policy_document lambda_s3_list {
 
 data aws_iam_policy_document lambda_logging {
   statement {
-    sid = "Logging"
+    sid = "AllowLambdaLoggingToSnapshotLogGroup"
     actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents",
