@@ -62,11 +62,11 @@ def read_object_from_bucket(object_name):
 
 def query_dynamodb_users_about_expire():
     print("Query dynamodb table user for users about to expire")
-    today = datetime.date.today()
-    today_plus_two_weeks = today + relativedelta(weeks=2)
+    tomorrow = datetime.date.today() + relativedelta(hours=24)
+    today_plus_two_weeks = datetime.date.today() + relativedelta(weeks=2)
     response = table.scan(
         FilterExpression=Attr("expiration_date").between(
-            str(today), str(today_plus_two_weeks)
+            str(tomorrow), str(today_plus_two_weeks)
         )
     )
     return response["Items"]
@@ -101,7 +101,7 @@ def process_items(items, subject, template):
         subject_with_username = email_subject.replace("[[ recipient_name ]]", item["username"][:-3])
         email_body_with_values = email_body.replace(
             "[[ recipient_name ]]", item["username"][:-3]
-        ).replace("[[ number_of_days_until_expiry ]]", str(days.days).replace("[[ title ]]", email_subject))
+        ).replace("[[ number_of_days_until_expiry ]]", str(days.days)).replace("[[ title ]]", subject_with_username)
         email_to = query_user_email_from_cognito(item["username"][:-3])
         print("Sending email to: " + email_to)
         send_email(email_from, email_to, subject_with_username, email_body_with_values)
