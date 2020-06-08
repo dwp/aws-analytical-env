@@ -1,7 +1,8 @@
 data aws_iam_policy_document snapshot_cognito_pool_lambda {
   statement {
+    sid = "CognitoPoolLambdaAssumeRole"
     actions = [
-      "sts:AllowLambdaAssumeRole",
+      "sts:AssumeRole",
     ]
     principals {
       type        = "Service"
