@@ -8,11 +8,12 @@ resource "aws_lambda_function" "lambda_check_user_expiry" {
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-check-user-expiry" })
   environment {
     variables = {
-      TABLE_NAME           = var.dynamodb_table_user_name,
-      BUCKET_NAME          = var.template_bucket,
-      COGNITO_USER_POOL_ID = var.cognito_user_pool_id,
-      MAIL_FROM            = var.from_email_address,
-      SUBJECT_LINE         = "[[ recipient_name ]] Your access to DataWorks AWS is about to expire"
+      TABLE_NAME            = var.dynamodb_table_user_name,
+      BUCKET_NAME           = var.template_bucket,
+      COGNITO_USER_POOL_ID  = var.cognito_user_pool_id,
+      MAIL_FROM             = var.from_email_address,
+      REMINDER_SUBJECT_LINE = "[[ recipient_name ]]. Your access to DataWorks AWS is about to expire"
+      EXPIRED_SUBJECT_LINE  = "[[ recipient_name ]]. Your access to DataWorks AWS has expired"
     }
   }
 }

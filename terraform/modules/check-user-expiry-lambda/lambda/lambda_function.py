@@ -10,9 +10,15 @@ if mail_from is None:
     print(message)
     raise Exception(message)
 
-subject_line = os.environ.get("SUBJECT_LINE")
-if subject_line is None:
-    message = "Variable SUBJECT_LINE was not provided."
+reminder_subject_line = os.environ.get("REMINDER_SUBJECT_LINE")
+if reminder_subject_line is None:
+    message = "Variable REMINDER_SUBJECT_LINE was not provided."
+    print(message)
+    raise Exception(message)
+
+expired_subject_line = os.environ.get("EXPIRED_SUBJECT_LINE")
+if expired_subject_line is None:
+    message = "Variable EXPIRED_SUBJECT_LINE was not provided."
     print(message)
     raise Exception(message)
 
@@ -56,21 +62,32 @@ def read_object_from_bucket(object_name):
 
 def query_dynamodb_users_about_expire():
     print("Query dynamodb table user for users about to expire")
-    today = datetime.date.today()
-    today_plus_two_weeks = today + relativedelta(weeks=2)
+    tomorrow = datetime.date.today() + relativedelta(hours=24)
+    today_plus_two_weeks = datetime.date.today() + relativedelta(weeks=2)
     response = table.scan(
         FilterExpression=Attr("expiration_date").between(
-            str(today), str(today_plus_two_weeks)
+            str(tomorrow), str(today_plus_two_weeks)
         )
     )
     return response["Items"]
 
 
-def process_items(items):
+def query_dynamodb_users_expired_today():
+    print("Query dynamodb table user for users expiring today")
+    today = datetime.date.today()
+    response = table.scan(
+        FilterExpression=Attr("expiration_date").between(
+            (str(today)+"T00:00:00.000Z"), (str(today)+"T23:59:59.999Z")
+        )
+    )
+    return response["Items"]
+
+
+def process_items(items, subject, template):
     print("Process items")
     email_from = mail_from
-    email_subject = subject_line
-    email_body = read_object_from_bucket("default_email_template_analytical.html")
+    email_subject = subject
+    email_body = read_object_from_bucket(template)
     print("email_from=" + email_from)
     print("email_subject=" + email_subject)
     print("email_body=" + email_body)
@@ -79,12 +96,12 @@ def process_items(items):
         print(item["username"][:-3] + " " + item["expiration_date"])
         formatted_time = datetime.datetime.strptime(item["expiration_date"], "%Y-%m-%dT%H:%M:%S.%fZ")
         days = (
-            formatted_time.date() - datetime.date.today()
+                formatted_time.date() - datetime.date.today()
         )
         subject_with_username = email_subject.replace("[[ recipient_name ]]", item["username"][:-3])
         email_body_with_values = email_body.replace(
             "[[ recipient_name ]]", item["username"][:-3]
-        ).replace("[[ number_of_days_until_expiry ]]", str(days.days).replace("[[ title ]]", email_subject))
+        ).replace("[[ number_of_days_until_expiry ]]", str(days.days)).replace("[[ title ]]", subject_with_username)
         email_to = query_user_email_from_cognito(item["username"][:-3])
         print("Sending email to: " + email_to)
         send_email(email_from, email_to, subject_with_username, email_body_with_values)
@@ -109,19 +126,25 @@ def extract_email_from_user_attributes(user):
 def send_email(email_from, email_to, email_subject, email_body):
     CHARSET = "UTF-8"
     ses.send_email(
-        Destination={"ToAddresses": [email_to,],},
+        Destination={"ToAddresses": [email_to, ], },
         Message={
-            "Body": {"Html": {"Charset": CHARSET, "Data": email_body,},},
-            "Subject": {"Charset": CHARSET, "Data": email_subject,},
+            "Body": {"Html": {"Charset": CHARSET, "Data": email_body, }, },
+            "Subject": {"Charset": CHARSET, "Data": email_subject, },
         },
         Source=email_from,
     )
 
 
 def lambda_handler(event, context):
-    items = query_dynamodb_users_about_expire()
-    if items:
-        print("Query returned " + str(len(items)) + " item(s)")
-        process_items(items)
+    about_to_expire = query_dynamodb_users_about_expire()
+    if about_to_expire:
+        print("Query returned " + str(len(about_to_expire)) + " item(s)")
+        process_items(about_to_expire, reminder_subject_line, "default_email_template_analytical.html")
     else:
-        print("Query did not return any items.")
+        print("Query did not return any due to expire items.")
+    expired = query_dynamodb_users_expired_today()
+    if expired:
+        print("Query returned " + str(len(expired)) + " item(s)")
+        process_items(expired, expired_subject_line, "default_email_template_analytical_expired.html")
+    else:
+        print("Query did not return any expired items.")
