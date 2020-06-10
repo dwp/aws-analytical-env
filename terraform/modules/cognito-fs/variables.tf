@@ -39,3 +39,11 @@ variable ses_domain {
   description = "SES domain identity domain"
   type        = string
 }
+
+variable "role_arn" {
+  description = "The Role ARN for management account"
+  type = object({
+    management = string
+
+  })
+}
