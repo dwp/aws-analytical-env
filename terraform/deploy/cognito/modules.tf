@@ -17,9 +17,6 @@ module "cognito-fs" {
     post_authentication            = module.custom-auth-flow.post-auth-lambda.arn
     pre_token_generation           = module.custom-auth-flow.pre-token-generation-lambda.arn
   }
-  role_arn = {
-    management = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
-  }
 }
 
 module "custom-auth-flow" {
