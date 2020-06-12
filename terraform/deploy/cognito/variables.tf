@@ -1,6 +1,13 @@
-variable "assume_role" {}
+variable "assume_role" {
+  type    = string
+  default = "ci"
+}
 
-variable "region" {}
+variable "region" {
+  type    = string
+  default = "eu-west-2"
+}
+
 
 variable "custom_auth_file_path" {
   description = "Local location of custom auth lambda"

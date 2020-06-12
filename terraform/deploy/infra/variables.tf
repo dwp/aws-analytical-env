@@ -1,3 +1,10 @@
-variable "assume_role" {}
+variable "assume_role" {
+  type    = string
+  default = "ci"
+}
 
-variable "region" {}
+variable "region" {
+  type    = string
+  default = "eu-west-2"
+}
+
