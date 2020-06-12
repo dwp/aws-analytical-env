@@ -6,7 +6,7 @@ module "cognito-fs" {
   root_dns_names = values(local.root_dns_name)
   s3_log_bucket  = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
   domain         = local.cognito_domain
-  email_template = "Your username is <strong>{username}</strong> and temporary password is <strong>{####}</strong>" //TODO: work out how the email template is going to be stored and call it from here
+  email_template = "Your username is <strong>{username}</strong> and temporary password is <strong>{####}</strong>"
   ses_domain     = data.terraform_remote_state.management.outputs.ses_domain_identity.domain
 
   auth_lambdas = {
@@ -16,9 +16,6 @@ module "cognito-fs" {
     pre_authentication             = module.custom-auth-flow.pre-auth-lambda.arn
     post_authentication            = module.custom-auth-flow.post-auth-lambda.arn
     pre_token_generation           = module.custom-auth-flow.pre-token-generation-lambda.arn
-  }
-  role_arn = {
-    management = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
   }
 }
 
