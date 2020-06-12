@@ -3,42 +3,44 @@ resources:
     type: git
     source:
       branch: master
-      username: ((github_com.username))
-      password: ((github_com.token))
+      access_token: ((dataworks-secrets.concourse_github_pat))
       uri: https://github.com/dwp/aws-analytical-env.git
-    check_every: 30m
+    check_every: 720h
+    webhook_token: ((dataworks.concourse_github_webhook_token))
 
   - name: aws-analytical-env-pr
     type: pull-request
     source:
-      access_token: ((github_com.token))
-      repo: dwp/aws-analytical-env
-      uri: https://github.com/dwp/aws-analytical-env.git
-    check_every: 30m
+      access_token: ((dataworks-secrets.concourse_github_pat))
+      repository: dwp/aws-analytical-env
+    check_every: 720h
+    webhook_token: ((dataworks.concourse_github_webhook_token))
 
   - name: aws-dataworks-e2e-framework
     type: git
     source:
       branch: master
-      private_key: ((svc-dip.private_key))
-      uri: git@github.ucds.io:dip/aws-dataworks-e2e-framework.git
-    check_every: 720h
-    webhook_token: ((ucfs-github.webhook-token))
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-dataworks-e2e-framework.git
+    check_every: 5m
+    webhook_token: ((dataworks.concourse_github_webhook_token))
 
   - name: emp-release
     type: github-release
     source:
       owner: dwp
       repository: emr-encryption-materials-provider
-      access_token: ((github_com.token))
-    check_every: 1h
+      access_token: ((dataworks-secrets.concourse_github_pat))
+    check_every: 5m
+    webhook_token: ((dataworks.concourse_github_webhook_token))
 
   - name: custom-auth-lambda-release
     type: github-release
     source:
       owner: dwp
       repository: dataworks-analytical-custom-auth-flow
-      access_token: ((github_com.token))
+      access_token: ((dataworks-secrets.concourse_github_pat))
     check_every: 1h
 
   - name: meta-development

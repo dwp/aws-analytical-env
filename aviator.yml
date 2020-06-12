@@ -14,6 +14,7 @@ spruce:
     to: aviator_pipeline.yml
 fly:
   name: aws-analytical-env
-  target: concourse
+  target: aws-concourse
   config: aviator_pipeline.yml
   expose: true
+  check_credentials: true

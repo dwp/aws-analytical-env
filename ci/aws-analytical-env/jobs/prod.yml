@@ -5,7 +5,7 @@ jobs:
       - put: meta
         resource: meta-production
       - get: emp-release
-        version: { tag: '0.0.6' }
+        version: { tag: '0.0.7' }
         passed:
           - preprod
         trigger: true
