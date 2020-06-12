@@ -1,9 +1,9 @@
 variable "assume_role" {
-  type = string
+  type    = string
   default = "ci"
 }
 
 variable "region" {
-  type = string
+  type    = string
   default = "eu-west-2"
 }
