@@ -5,7 +5,6 @@ jobs:
       - put: meta
         resource: meta-development
       - get: emp-release
-        version: { tag: '0.0.7' }
         trigger: true
       - get: aws-analytical-env
         trigger: true
