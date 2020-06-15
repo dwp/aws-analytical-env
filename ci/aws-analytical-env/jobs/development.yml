@@ -5,7 +5,6 @@ jobs:
       - put: meta
         resource: meta-development
       - get: emp-release
-        version: { tag: '0.0.6' }
         trigger: true
       - get: aws-analytical-env
         trigger: true
@@ -45,8 +44,4 @@ jobs:
             - name: emp-release
         params:
           TF_VAR_emp_dir_path: ../../../../emp-release
-      - .: (( inject meta.plan.create-aws-profiles ))
-        config:
-          params:
-            AWS_ACC: ((aws_account.development))
 #      - .: (( inject meta.plan.analytical-env-e2e-tests )) # Temporarily disabled

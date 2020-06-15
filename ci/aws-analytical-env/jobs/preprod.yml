@@ -5,7 +5,6 @@ jobs:
       - put: meta
         resource: meta-preprod
       - get: emp-release
-        version: { tag: '0.0.6' }
         passed:
           - qa
         trigger: true

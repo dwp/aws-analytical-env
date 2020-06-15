@@ -1,44 +1,17 @@
 meta:
   plan:
-    create-aws-profiles:
-      task: create-aws-profiles
+    terraform-common-config:
       config:
         platform: linux
         image_resource:
           type: docker-image
-          source: 
-            repository: ((docker-awscli.repository))
-            version: ((docker-awscli.version))
-            tag: ((docker-awscli.version))
-        outputs:
-          - name: .aws
+          source:
+            repository: ((dataworks.terraform_repository))
+            tag: ((dataworks.terraform_version))
         params:
-          AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
-          AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
-          AWS_ROLE: ci
-        run:
-          path: sh
-          args:
-            - -exc
-            - |
-              cat <<EOF> .aws/credentials
-              [default]
-              aws_access_key_id = $AWS_ACCESS_KEY_ID
-              aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
-              [$AWS_ROLE]
-              role_arn = arn:aws:iam::$AWS_ACC:role/$AWS_ROLE
-              source_profile = default
-              EOF
-              cat <<EOF> .aws/config
-              [default]
-              region = eu-west-2
-              [profile $AWS_ROLE]
-              region = eu-west-2
-              s3 =
-                max_concurrent_requests = 5
-                signature_version = s3v4
-                addressing_style = virtual
-              EOF
+          TF_INPUT: false
+          TF_CLI_ARGS_apply: -lock-timeout=300s
+          TF_CLI_ARGS_plan: -lock-timeout=300s
 
     terraform-bootstrap:
       task: terraform-bootstrap
@@ -48,8 +21,7 @@ meta:
           type: docker-image
           source:
             repository: dwpdigital/jinja-yaml-aws
-            version: 0.0.5
-            tag: 0.0.5
+            tag: 0.0.19
         run:
           path: sh
           args:
@@ -65,20 +37,12 @@ meta:
         outputs:
           - name: terraform-config
       params:
-        AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
-        AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
         AWS_REGION: eu-west-2
 
     terraform-apply:
       task: terraform-apply
+      .: (( inject meta.plan.terraform-common-config ))
       config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: ((terraform.repository))
-            version: ((terraform12.version))
-            tag: ((terraform12.version))
         run:
           path: sh
           args:
@@ -96,20 +60,11 @@ meta:
       params:
         TF_CLI_ARGS_apply: -lock-timeout=300s
         TF_INPUT: "false"
-        TF_VAR_assume_role: ci
-        AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
-        AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
 
     terraform-plan:
       task: terraform-plan
+      .: (( inject meta.plan.terraform-common-config ))
       config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: ((terraform.repository))
-            version: ((terraform12.version))
-            tag: ((terraform12.version))
         run:
           path: sh
           args:
@@ -126,20 +81,11 @@ meta:
       params:
         TF_CLI_ARGS_plan: -lock-timeout=300s -detailed-exitcode
         TF_INPUT: "false"
-        TF_VAR_assume_role: ci
-        AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
-        AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
 
     terraform-output-app:
       task: terraform-output-app
+      .: (( inject meta.plan.terraform-common-config ))
       config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: ((terraform.repository))
-            version: ((terraform12.version))
-            tag: ((terraform12.version))
         run:
           path: sh
           args:
@@ -159,9 +105,6 @@ meta:
       params:
         TF_CLI_ARGS_plan: -lock-timeout=300s
         TF_INPUT: "false"
-        TF_VAR_slack_webhook_url: ((slack.webhook_url))
-        AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
-        AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
 
     analytical-env-e2e-tests:
       task: analytical-env-e2e-tests
@@ -187,7 +130,6 @@ meta:
             - |
               cd src/runners
               ./run-dev-analytical-tests.sh
-
         inputs:
           - name: aws-dataworks-e2e-framework
           - name: .aws
@@ -195,14 +137,8 @@ meta:
 
     terraform-taint:
       task: terraform-taint
+      .: (( inject meta.plan.terraform-common-config ))
       config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: ((terraform.repository))
-            version: ((terraform12.version))
-            tag: ((terraform12.version))
         run:
           path: sh
           args:
@@ -219,6 +155,3 @@ meta:
       params:
         TF_CLI_ARGS_plan: -lock-timeout=300s -detailed-exitcode
         TF_INPUT: "false"
-        TF_VAR_assume_role: ci
-        AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
-        AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))

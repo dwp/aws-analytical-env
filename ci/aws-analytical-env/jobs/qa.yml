@@ -7,7 +7,6 @@ jobs:
       - get: aws-analytical-env
         trigger: true
       - get: emp-release
-        version: { tag: '0.0.6' }
         trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
