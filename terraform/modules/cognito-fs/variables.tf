@@ -30,3 +30,12 @@ variable s3_log_bucket {
   type        = string
 }
 
+variable email_template {
+  description = "Email template for onboarding of new users"
+  type        = string
+}
+
+variable ses_domain {
+  description = "SES domain identity domain"
+  type        = string
+}

@@ -13,7 +13,7 @@ resource aws_cognito_user_pool emr {
     allow_admin_create_user_only = true
 
     invite_message_template {
-      email_message = "Your username is {username} and temporary password is {####}"
+      email_message = var.email_template
       email_subject = "Your temporary password"
       sms_message   = "Your username is {username} and temporary password is {####}"
     }
@@ -25,7 +25,9 @@ resource aws_cognito_user_pool emr {
   }
 
   email_configuration {
-    email_sending_account = "COGNITO_DEFAULT"
+    email_sending_account  = "COGNITO_DEFAULT"
+    from_email_address     = "noreply@${var.ses_domain}"
+    reply_to_email_address = "noreply@${var.ses_domain}"
   }
 
   password_policy {
