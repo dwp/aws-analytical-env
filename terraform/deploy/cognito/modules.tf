@@ -3,12 +3,12 @@ module "cognito-fs" {
 
   common_tags = local.common_tags
 
-  root_dns_names = values(local.root_dns_name)
-  s3_log_bucket  = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
-  domain         = local.cognito_domain
-  email_template = "Your username is <strong>{username}</strong> and temporary password is <strong>{####}</strong>"
-  ses_domain     = data.terraform_remote_state.management.outputs.ses_domain_identity.domain
-  mgmt_account   = local.account[local.environment]
+  root_dns_names  = values(local.root_dns_name)
+  s3_log_bucket   = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+  domain          = local.cognito_domain
+  email_template  = data.aws_s3_bucket_object.template_bucket.body
+  ses_domain      = data.terraform_remote_state.management.outputs.ses_domain_identity.domain
+  mgmt_account    = local.account[local.environment]
 
   auth_lambdas = {
     create_auth_challenge          = module.custom-auth-flow.create-auth-challenge-lambda.arn
