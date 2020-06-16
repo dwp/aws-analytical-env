@@ -8,6 +8,7 @@ module "cognito-fs" {
   domain         = local.cognito_domain
   email_template = "Your username is <strong>{username}</strong> and temporary password is <strong>{####}</strong>"
   ses_domain     = data.terraform_remote_state.management.outputs.ses_domain_identity.domain
+  mgmt_account   = local.account[local.environment]
 
   auth_lambdas = {
     create_auth_challenge          = module.custom-auth-flow.create-auth-challenge-lambda.arn

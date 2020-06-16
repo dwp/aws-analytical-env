@@ -39,3 +39,9 @@ variable ses_domain {
   description = "SES domain identity domain"
   type        = string
 }
+
+variable mgmt_account {
+  description = "Local management account number"
+  type        = string
+}
+
