@@ -20,5 +20,5 @@ variable "name_prefix" {
 }
 
 variable "onboarding_email_file_path" {
-  description = "File path to onboarding email template"
+  description = "(Required) File path to onboarding email template"
 }

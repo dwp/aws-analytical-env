@@ -47,7 +47,7 @@ resources:
     type: git
     source:
       branch: master
-      paths: [/default_email_template_analytical_onboarding.html]
+      paths: [default_email_template_analytical_onboarding.html]
       uri: https://((dataworks.enterprise_github_url))/dip/aws-management-infrastructure.git
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))

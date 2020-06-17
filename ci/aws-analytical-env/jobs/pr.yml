@@ -63,6 +63,8 @@ jobs:
       - get: custom-auth-lambda-release
         version: { tag: '0.0.20' }
         trigger: true
+      - get: onboarding-email-template
+        trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: cognito
@@ -72,9 +74,11 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/cognito'
           inputs:
             - name: custom-auth-lambda-release
+            - name: onboarding-email-template
         params:
           TF_CLI_ARGS_plan: -lock-timeout=300s # overwrite removes -detailed-exitcode
           TF_VAR_custom_auth_file_path: ../../../../custom-auth-lambda-release/lambda.zip
+          TF_VAR_onboarding_email_file_path: ../../../../onboarding-email-template/default_email_template_analytical_onboarding.html
         on_failure:
           put: aws-analytical-env
           resource: aws-analytical-env-pr
