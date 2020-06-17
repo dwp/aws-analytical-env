@@ -25,7 +25,7 @@ resource aws_cognito_user_pool emr {
   }
 
   email_configuration {
-    email_sending_account  = "DEVELOPER" //"COGNITO_DEFAULT"
+    email_sending_account  = "DEVELOPER"
     source_arn             = "arn:aws:ses:eu-west-1:${var.mgmt_account}:identity/${var.ses_domain}"
     from_email_address     = "noreply@${var.ses_domain}"
     reply_to_email_address = "noreply@${var.ses_domain}"
