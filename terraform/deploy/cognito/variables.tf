@@ -18,3 +18,7 @@ variable "name_prefix" {
   description = "(Optional) Name prefix for resources we create, defaults to repository name"
   default     = "analytical-env-cognito"
 }
+
+variable "onboarding_email_file_path" {
+  description = "File path to onboarding email template"
+}

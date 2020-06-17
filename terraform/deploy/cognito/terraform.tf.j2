@@ -61,15 +61,6 @@ provider "aws" {
   }
 }
 
-provider "aws" {
-  region = "eu-west-1"
-  alias  = "mgmt-ireland"
-
-  assume_role {
-    role_arn = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
-  }
-}
-
 locals {
   name        = "aws-analytical-env-cognito"
   environment = terraform.workspace == "default" ? "management-dev" : terraform.workspace

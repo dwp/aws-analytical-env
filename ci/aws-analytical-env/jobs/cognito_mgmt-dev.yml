@@ -8,6 +8,8 @@ jobs:
         trigger: true
       - get: custom-auth-lambda-release
         trigger: true
+      - get: onboarding-email-template
+          trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: cognito
@@ -17,13 +19,17 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/cognito'
           inputs:
             - name: custom-auth-lambda-release
+            - name: onboarding-email-template
         params:
           TF_VAR_custom_auth_file_path: ../../../../custom-auth-lambda-release/lambda.zip
+          TF_VAR_onboarding_email_file_path: ../../../../onboarding-email-template/default_email_template_analytical_onboarding.html
       - .: (( inject meta.plan.terraform-plan ))
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/cognito'
           inputs:
             - name: custom-auth-lambda-release
+            - name: onboarding-email-template
         params:
           TF_VAR_custom_auth_file_path: ../../../../custom-auth-lambda-release/lambda.zip
+          TF_VAR_onboarding_email_file_path: ../../../../onboarding-email-template/default_email_template_analytical_onboarding.html

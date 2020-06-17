@@ -6,7 +6,7 @@ module "cognito-fs" {
   root_dns_names = values(local.root_dns_name)
   s3_log_bucket  = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
   domain         = local.cognito_domain
-  email_template = data.aws_s3_bucket_object.onboading_email_template.body
+  email_template = file(var.onboarding_email_file_path)
   ses_domain     = data.terraform_remote_state.management.outputs.ses_domain_identity.domain
   mgmt_account   = local.account[local.environment]
 
