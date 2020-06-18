@@ -132,6 +132,8 @@ locals {
     Application  = local.name
     Persistence  = "Ignore"
     AutoShutdown = "False"
+    Costcode     = "{{dataworks_costcode}}"
+    Team         = "DataWorks"
   }
 
   cidr_block = {
