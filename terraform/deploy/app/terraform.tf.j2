@@ -215,7 +215,7 @@ locals {
     Application  = local.name
     Persistence  = "True"
     AutoShutdown = "False"
-    Costcode     = "{{dataworks_costcode}}"
+    Costcode     = "{{var.costcode}}"
     Team         = "DataWorks"
   }
 
