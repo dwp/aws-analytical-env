@@ -58,9 +58,6 @@ meta:
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
-      params:
-        TF_CLI_ARGS_apply: -lock-timeout=300s
-        TF_INPUT: "false"
 
     terraform-plan:
       task: terraform-plan
@@ -79,9 +76,6 @@ meta:
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
-      params:
-        TF_CLI_ARGS_plan: -lock-timeout=300s -detailed-exitcode
-        TF_INPUT: "false"
 
     terraform-output-app:
       task: terraform-output-app
@@ -103,9 +97,6 @@ meta:
           - name: terraform-config
         outputs:
           - name: terraform-output-app
-      params:
-        TF_CLI_ARGS_plan: -lock-timeout=300s
-        TF_INPUT: "false"
 
     analytical-env-e2e-tests:
       task: analytical-env-e2e-tests
@@ -153,6 +144,3 @@ meta:
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
-      params:
-        TF_CLI_ARGS_plan: -lock-timeout=300s -detailed-exitcode
-        TF_INPUT: "false"
