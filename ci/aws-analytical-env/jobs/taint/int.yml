@@ -1,6 +1,8 @@
 jobs:
   - name: taint-int
     plan:
+      - get: midnight-trigger
+        trigger: true
       - get: aws-analytical-env
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
