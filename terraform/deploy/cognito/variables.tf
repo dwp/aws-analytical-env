@@ -22,3 +22,8 @@ variable "name_prefix" {
 variable "onboarding_email_file_path" {
   description = "(Required) File path to onboarding email template"
 }
+
+variable "costcode" {
+  type    = string
+  default = ""
+}

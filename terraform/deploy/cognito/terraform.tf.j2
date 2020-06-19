@@ -106,6 +106,8 @@ locals {
     Application  = local.name
     Persistence  = "True"
     AutoShutdown = "False"
+    Costcode     = var.costcode
+    Team         = "DataWorks"
   }
 
   cidr_block = {
