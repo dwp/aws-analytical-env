@@ -19,5 +19,7 @@ resource "aws_route53_record" "record_acm_verify" {
   type    = aws_acm_certificate.analytical-alb-cert-pub.domain_validation_options.0.resource_record_type
   zone_id = data.aws_route53_zone.main.zone_id
 
+  ttl = "600"
+
   records = [aws_acm_certificate.analytical-alb-cert-pub.domain_validation_options.0.resource_record_value]
 }
