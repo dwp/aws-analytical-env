@@ -20,7 +20,7 @@ resource "aws_lb_listener" "listener" {
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = aws_acm_certificate.analytical-alb-cert.arn
+  certificate_arn   = aws_acm_certificate.analytical-alb-cert-pub.arn
   default_action {
     type = "fixed-response"
 
