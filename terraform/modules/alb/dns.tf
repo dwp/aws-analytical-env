@@ -11,3 +11,13 @@ resource "aws_route53_record" "record" {
     zone_id                = aws_lb.lb.zone_id
   }
 }
+
+resource "aws_route53_record" "record_acm_verify" {
+  provider = aws.management-dns
+
+  name    = aws_acm_certificate.analytical-alb-cert-pub.resource_record_name
+  type    = aws_acm_certificate.analytical-alb-cert-pub.resource_record_type
+  zone_id = data.aws_route53_zone.main.zone_id
+
+  records = [aws_acm_certificate.analytical-alb-cert-pub.resource_record_value]
+}
