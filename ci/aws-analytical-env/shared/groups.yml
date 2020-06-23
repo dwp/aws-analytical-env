@@ -21,3 +21,8 @@ groups:
       - taint-int
       - taint-preprod
       - taint-prod
+  - name: testing
+    jobs:
+      - testing-development
+      - testing-qa
+

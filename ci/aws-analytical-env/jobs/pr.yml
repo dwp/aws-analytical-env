@@ -33,6 +33,17 @@ jobs:
           TF_WORKSPACE: 'qa'
           TF_CLI_ARGS_plan: -lock-timeout=300s # overwrite removes -detailed-exitcode
           TF_VAR_emp_dir_path: ../../../../emp-release
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: testing
+      - .: (( inject meta.plan.terraform-plan ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/testing'
+        params:
+          TF_WORKSPACE: 'qa'
+          TF_CLI_ARGS_plan: -lock-timeout=300s # overwrite removes -detailed-exitcode
+          TF_VAR_emp_dir_path: ../../../../emp-release
         on_failure:
           put: aws-analytical-env
           resource: aws-analytical-env-pr
