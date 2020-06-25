@@ -20,3 +20,5 @@ aviator_pipeline.yml
 *.jar
 
 *.zip
+
+*.pyc

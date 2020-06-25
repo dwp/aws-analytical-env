@@ -1,0 +1,22 @@
+jobs:
+  - name: testing-development
+    max_in_flight: 1
+    plan:
+      - get: aws-analytical-env
+        trigger: true
+      - get: aws-dataworks-e2e-framework
+        trigger: false
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: testing
+      - .: (( inject meta.plan.terraform-apply ))
+        task: terraform-apply testing
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/testing'
+      - .: (( inject meta.plan.terraform-plan ))
+        task: terraform-plan testing
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/testing'
+#      - .: (( inject meta.plan.analytical-env-e2e-tests )) # Temporarily disabled
