@@ -70,7 +70,10 @@ class TestRbac(TestCase):
             ),
         ]
         mock_check.side_effect = mock_response
-        rbac_lambda.check_for_access_denied(sessions_url)
+        expected = "OK"
+        actual = rbac_lambda.check_for_access_denied(sessions_url)
+        assert expected == actual
+
 
     # Excepted: 403
     # Actual : Not 403
@@ -121,7 +124,9 @@ class TestRbac(TestCase):
             )
         ]
         mock_check.side_effect = mock_response
-        rbac_lambda.check_for_access_granted(sessions_url)
+        actual = rbac_lambda.check_for_access_granted(sessions_url)
+        expected = "OK"
+        assert expected == actual
 
     # Excepted: 200
     # Actual : 403

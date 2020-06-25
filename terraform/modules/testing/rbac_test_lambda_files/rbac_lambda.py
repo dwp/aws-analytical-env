@@ -105,7 +105,7 @@ def check_for_access_denied(session_url):
     response = poll_for_result(session_url, status_url)
     if access_denied_message in response['output']['evalue']:
         print("Expected 403 - Got 403")
-        pass
+        return "OK"
     else:
         kill_session(session_url)
         print(response['output']['evalue'])
@@ -122,7 +122,7 @@ def check_for_access_granted(session_url):
     print(response)
     if response['output']['status'] != "error":
         print("Expected no error - No error found")
-        pass
+        return "OK"
     else:
         kill_session(session_url)
         print(response['output']['evalue'])
