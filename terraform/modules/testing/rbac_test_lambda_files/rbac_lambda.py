@@ -16,10 +16,10 @@ def lambda_handler(context, event):
     # kill_all_sessions()
 
     print("CONTEXT: ", context)
-    proxy_user = context["proxy_user"] if "proxy_user" in context else "test_user"
-    table = context["table"] if "table" in context else {"name": "test_table", "type": "pii"}
-    access = context["user_access"] if "access" in context else {"non_pii"}
-    database_name = context["db_name"] if "db_name" in context else "test_database"
+    proxy_user = context["proxy_user"]
+    table = context["table"]
+    access = context["user_access"]
+    database_name = context["db_name"]
 
     session_url = start_session(proxy_user)
     use_database(session_url, database_name)
