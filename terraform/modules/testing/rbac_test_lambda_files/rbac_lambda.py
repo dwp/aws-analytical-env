@@ -8,22 +8,24 @@ http = urllib3.PoolManager()
 
 # Environment Variables
 host = (os.environ["HOST_URL"] + ":8998") if "HOST_URL" in os.environ else "http://test_host.com:8998"
-database_name = os.environ["DB_NAME"] if "DB_NAME" in os.environ else "test_database"
-pii_table_name = os.environ["PII_TABLE"] if "PII_TABLE" in os.environ else "test_pii_table"
-non_pii_table_name = os.environ["NON_PII_TABLE"] if "NON_PII_TABLE" in os.environ else "test_non_pii_table"
-proxy_user = os.environ["PROXY_USER"] if "PROXY_USER" in os.environ else "test_user"
 
 access_denied_message = "Service: Amazon S3; Status Code: 403; Error Code: AccessDenied"
 
 
 def lambda_handler(context, event):
     # kill_all_sessions()
-    session_url = start_session()
-    use_database(session_url)
-    check_for_access_denied(session_url)
-    check_for_access_granted(session_url)
-    kill_session(session_url)
 
+    print("CONTEXT: ", context)
+    proxy_user = context["proxy_user"] if "proxy_user" in context else "test_user"
+    non_pii_table_name = context["non_pii_table"] if "non_pii_table" in context else "test_non_pii_table"
+    pii_table_name = context["pii_table"] if "pii_table" in context else "test_pii_table"
+    database_name = context["db_name"] if "db_name" in context else "test_database"
+
+    session_url = start_session(proxy_user)
+    use_database(session_url, database_name)
+    check_for_access_denied(session_url, pii_table_name)
+    check_for_access_granted(session_url, non_pii_table_name)
+    kill_session(session_url)
 
 def initial_request(url, code):
     print(code)
@@ -55,7 +57,7 @@ def poll_for_result(session_url, status_url):
 ###################
 
 # Create a session and poll until the session is ready
-def start_session():
+def start_session(proxy_user):
     print("Attempting to start a session with Spark")
     code = {
         'kind': 'spark',
@@ -76,6 +78,7 @@ def kill_session(session_url):
         session_url
     )
 
+
 def kill_all_sessions():
     url = host + "/sessions/"
     for i in range(1, 50):
@@ -84,7 +87,8 @@ def kill_all_sessions():
             url + str(i)
         )
 
-def use_database(session_url):
+
+def use_database(session_url, database_name):
     print("Selecting Database to use")
     statements_url = session_url + '/statements'
     code = {'code': f'spark.sql("USE {database_name}")'}
@@ -97,7 +101,7 @@ def use_database(session_url):
 # Test RBAC #
 #############
 # Attempt to access a table with the pii:true tag - should receive 403 error
-def check_for_access_denied(session_url):
+def check_for_access_denied(session_url, pii_table_name):
     print("Attempting to access PII data")
     statements_url = session_url + '/statements'
     code = {'code': f'spark.sql("select * from {pii_table_name}")'}
@@ -106,6 +110,10 @@ def check_for_access_denied(session_url):
     if access_denied_message in response['output']['evalue']:
         print("Expected 403 - Got 403")
         return "OK"
+    elif response['output']['status'] == "error":
+        kill_session(session_url)
+        print(response['output']['evalue'])
+        sys.exit('Excepted 403 - But received a different error')
     else:
         kill_session(session_url)
         print(response['output']['evalue'])
@@ -113,7 +121,7 @@ def check_for_access_denied(session_url):
 
 
 # Attempt to access a table with the pii:false tag - should be successful
-def check_for_access_granted(session_url):
+def check_for_access_granted(session_url, non_pii_table_name):
     print("Attempting to access Non PII data")
     statements_url = session_url + '/statements'
     code = {'code': f'spark.sql("select * from {non_pii_table_name}")'}
