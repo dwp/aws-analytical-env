@@ -6,6 +6,11 @@ import urllib3
 
 host = "http://test_host.com:8998"
 sessions_url = host + "/sessions"
+proxy_user = "test_user"
+non_pii_table_name = "test_non_pii_table"
+pii_table_name = "test_pii_table"
+database_name = "test_database"
+
 
 @patch('rbac_lambda.urllib3.PoolManager.request')
 class TestRbac(TestCase):
@@ -71,7 +76,7 @@ class TestRbac(TestCase):
         ]
         mock_check.side_effect = mock_response
         expected = "OK"
-        actual = rbac_lambda.check_for_access_denied(sessions_url)
+        actual = rbac_lambda.check_for_access_denied(sessions_url, pii_table_name)
         assert expected == actual
 
 
@@ -99,7 +104,7 @@ class TestRbac(TestCase):
         ]
         mock_check.side_effect = mock_response
         with self.assertRaises(SystemExit):
-            rbac_lambda.check_for_access_denied(sessions_url)
+            rbac_lambda.check_for_access_denied(sessions_url, pii_table_name)
 
     # Expected: 200
     # Actual : 200
@@ -124,7 +129,7 @@ class TestRbac(TestCase):
             )
         ]
         mock_check.side_effect = mock_response
-        actual = rbac_lambda.check_for_access_granted(sessions_url)
+        actual = rbac_lambda.check_for_access_granted(sessions_url, non_pii_table_name)
         expected = "OK"
         assert expected == actual
 
@@ -152,4 +157,4 @@ class TestRbac(TestCase):
         ]
         mock_check.side_effect = mock_response
         with self.assertRaises(SystemExit):
-            rbac_lambda.check_for_access_granted(sessions_url)
+            rbac_lambda.check_for_access_granted(sessions_url, non_pii_table_name)
