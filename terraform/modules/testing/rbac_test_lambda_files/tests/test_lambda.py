@@ -89,7 +89,7 @@ class TestNonPiiTable(TestCase):
     # Excepted: 200
     # Actual : 200
     def test_check_for_access_granted_to_non_pii_as_pii_user(self, mock_check):
-        print("\nStart test access granted to non-PII table as non-PII user\n")
+        print("\nStart test access granted to non-PII table as PII user\n")
 
         access = "pii"
         table = {"name": "test_table_non_pii", "type": "non_pii"}
