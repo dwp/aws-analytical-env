@@ -117,6 +117,33 @@ class TestNonPiiTable(TestCase):
         expected = "OK"
         assert expected == actual
 
+    def test_check_for_error_returned(self, mock_check):
+        print("\nStart test when an error is returned, an exception is raised\n")
+
+        access = "pii"
+        table = {"name": "test_table_non_pii", "type": "non_pii"}
+
+        mock_response = [
+            urllib3.response.HTTPResponse(
+                body=b'{"id":0,"proxyUser":"testuser017","state":"starting","kind":"spark"}',
+                status=200,
+                headers={
+                    "location": "/sessions/1/statements/1"
+                }
+            ),
+            urllib3.response.HTTPResponse(
+                body=b'{"id":0,"proxyUser":"testuser017","state":"waiting","kind":"spark"}',
+            ),
+            urllib3.response.HTTPResponse(
+                body=b'{"id":0,"proxyUser":"testuser017","state":"available","kind":"spark","output":{"status":"error","evalue":"Error - something went wrong"}}'
+            ),
+            urllib3.response.HTTPResponse(
+                body=b'"SessionKilled'
+            )
+        ]
+        mock_check.side_effect = mock_response
+        self.assertRaises(Exception, rbac_lambda.check_access_is_correct, sessions_url, table, access)
+
 
 @patch('rbac_lambda.urllib3.PoolManager.request')
 class TestPiiTable(TestCase):

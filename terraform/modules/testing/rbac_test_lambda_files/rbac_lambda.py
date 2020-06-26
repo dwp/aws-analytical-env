@@ -113,7 +113,7 @@ def check_access_is_correct(session_url, table, access):
         if response['output']['status'] == "error":
             kill_session(session_url)
             print(response['output']['evalue'])
-            sys.exit('Expected data - Received error')
+            raise Exception('Expected data - Received error')
         # Received data as expected
         else:
             kill_session(session_url)
@@ -131,12 +131,12 @@ def check_access_is_correct(session_url, table, access):
         elif table["type"] == "pii" and response['output']['status'] != "error":
             kill_session(session_url)
             print(response['output']['evalue'])
-            sys.exit('Expected 403 - Received data')
+            raise Exception('Expected 403 - Received data')
         # Error - exit and print error
         elif response['output']['status'] == "error":
             kill_session(session_url)
             print(response['output']['evalue'])
-            sys.exit('Expected data - Received error')
+            raise Exception('Expected data - Received error')
         # Finally, if no error, then non-pii data was returned as expected
         else:
             kill_session(session_url)
