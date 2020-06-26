@@ -113,11 +113,11 @@ def check_for_access_denied(session_url, pii_table_name):
     elif response['output']['status'] == "error":
         kill_session(session_url)
         print(response['output']['evalue'])
-        sys.exit('Excepted 403 - But received a different error')
+        sys.exit('Expected 403 - But received a different error')
     else:
         kill_session(session_url)
         print(response['output']['evalue'])
-        sys.exit('Excepted 403 - But did not receive access denied')
+        sys.exit('Expected 403 - But did not receive access denied')
 
 
 # Attempt to access a table with the pii:false tag - should be successful
@@ -134,4 +134,4 @@ def check_for_access_granted(session_url, non_pii_table_name):
     else:
         kill_session(session_url)
         print(response['output']['evalue'])
-        sys.exit('Excepted data - Received an error')
+        sys.exit('Expected data - Received an error')
