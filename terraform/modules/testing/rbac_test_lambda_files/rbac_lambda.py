@@ -17,14 +17,13 @@ def lambda_handler(context, event):
 
     print("CONTEXT: ", context)
     proxy_user = context["proxy_user"] if "proxy_user" in context else "test_user"
-    non_pii_table_name = context["non_pii_table"] if "non_pii_table" in context else "test_non_pii_table"
-    pii_table_name = context["pii_table"] if "pii_table" in context else "test_pii_table"
+    table = context["table"] if "table" in context else {"name": "test_table", "type": "pii"}
+    access = context["user_access"] if "access" in context else {"non_pii"}
     database_name = context["db_name"] if "db_name" in context else "test_database"
 
     session_url = start_session(proxy_user)
     use_database(session_url, database_name)
-    check_for_access_denied(session_url, pii_table_name)
-    check_for_access_granted(session_url, non_pii_table_name)
+    check_access_is_correct(session_url, table, access)
     kill_session(session_url)
 
 def initial_request(url, code):
@@ -97,41 +96,44 @@ def use_database(session_url, database_name):
     print(response)
     print("Using Database", database_name)
 
+
 #############
 # Test RBAC #
 #############
-# Attempt to access a table with the pii:true tag - should receive 403 error
-def check_for_access_denied(session_url, pii_table_name):
-    print("Attempting to access PII data")
+def check_access_is_correct(session_url, table, access):
     statements_url = session_url + '/statements'
-    code = {'code': f'spark.sql("select * from {pii_table_name}")'}
-    status_url = initial_request(statements_url, code)
-    response = poll_for_result(session_url, status_url)
-    if access_denied_message in response['output']['evalue']:
-        print("Expected 403 - Got 403")
-        return "OK"
-    elif response['output']['status'] == "error":
-        kill_session(session_url)
-        print(response['output']['evalue'])
-        sys.exit('Expected 403 - But received a different error')
-    else:
-        kill_session(session_url)
-        print(response['output']['evalue'])
-        sys.exit('Expected 403 - But did not receive access denied')
-
-
-# Attempt to access a table with the pii:false tag - should be successful
-def check_for_access_granted(session_url, non_pii_table_name):
-    print("Attempting to access Non PII data")
-    statements_url = session_url + '/statements'
-    code = {'code': f'spark.sql("select * from {non_pii_table_name}")'}
+    code = {'code': f'spark.sql("select * from {table["name"]}")'}
     status_url = initial_request(statements_url, code)
     response = poll_for_result(session_url, status_url)
     print(response)
-    if response['output']['status'] != "error":
-        print("Expected no error - No error found")
-        return "OK"
-    else:
-        kill_session(session_url)
-        print(response['output']['evalue'])
-        sys.exit('Expected data - Received an error')
+
+    # Should have full access to all data
+    if access == "pii":
+        # Error - exit and print error
+        if response['output']['status'] == "error":
+            kill_session(session_url)
+            print(response['output']['evalue'])
+            sys.exit('Expected data - Received data')
+        # Received data as expected
+        else:
+            kill_session(session_url)
+            print("Expected data - Received data")
+            return "OK"
+
+    # Should only have access to non-pii data
+    if access == "non_pii":
+        # Should receive 403 when trying to access pii data
+        if table["type"] == "pii" and access_denied_message in response['output']['evalue']:
+            kill_session(session_url)
+            print("Expected 403 - received 403")
+            return "OK"
+        # Error - exit and print error
+        elif response['output']['status'] == "error":
+            kill_session(session_url)
+            print("error")
+            print(response['output']['status'])
+        # Finally, if no error, then non-pii data was returned as expected
+        else:
+            kill_session(session_url)
+            print("Expected data - Received data")
+            return "OK"
