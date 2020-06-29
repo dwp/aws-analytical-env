@@ -5,3 +5,7 @@ output "emr_cluster_cname" {
 output "emr_security_group_id" {
   value = aws_security_group.emr.id
 }
+
+output "emrfs_iam_roles" {
+  value = aws_iam_role.emrfs_iam.arn
+}
