@@ -11,3 +11,7 @@ module "testing" {
   rbac_lambda_file_path = var.rbac_lambda_file_path
   account               = local.account[local.environment]
 }
+
+output test_dataset_s3 {
+  value = module.testing.test_dataset_s3
+}
