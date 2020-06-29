@@ -54,107 +54,11 @@ class TestSessionSetup(TestCase):
 
 
 @patch('rbac_lambda.urllib3.PoolManager.request')
-class TestNonPiiTable(TestCase):
-    # Expected: 200
-    # Actual : 200
-    def test_check_for_access_granted_to_non_pii_as_non_pii(self, mock_check):
-        print("\nStart test access granted to non-PII table as non-PII user\n")
-
-        access = "non_pii"
-        table = {"name": "test_table_non_pii", "type": "non_pii"}
-
-        mock_response = [
-            urllib3.response.HTTPResponse(
-                body=b'{"id":0,"proxyUser":"testuser017","state":"starting","kind":"spark"}',
-                status=200,
-                headers={
-                    "location": "/sessions/1/statements/1"
-                }
-            ),
-            urllib3.response.HTTPResponse(
-                body=b'{"id":0,"proxyUser":"testuser017","state":"waiting","kind":"spark"}',
-            ),
-            urllib3.response.HTTPResponse(
-                body=b'{"id":0,"proxyUser":"testuser017","state":"available","kind":"spark","output":{"status":"ok","evalue":"Data"}}'
-            ),
-            urllib3.response.HTTPResponse(
-                body=b'"SessionKilled'
-            )
-        ]
-        mock_check.side_effect = mock_response
-        actual = rbac_lambda.check_access_is_correct(sessions_url, table, access)
-        expected = "OK"
-        assert expected == actual
-
-    # Excepted: 200
-    # Actual : 200
-    def test_check_for_access_granted_to_non_pii_as_pii_user(self, mock_check):
-        print("\nStart test access granted to non-PII table as PII user\n")
-
-        access = "pii"
-        table = {"name": "test_table_non_pii", "type": "non_pii"}
-
-        mock_response = [
-            urllib3.response.HTTPResponse(
-                body=b'{"id":0,"proxyUser":"testuser017","state":"starting","kind":"spark"}',
-                status=200,
-                headers={
-                    "location": "/sessions/1/statements/1"
-                }
-            ),
-            urllib3.response.HTTPResponse(
-                body=b'{"id":0,"proxyUser":"testuser017","state":"waiting","kind":"spark"}',
-            ),
-            urllib3.response.HTTPResponse(
-                body=b'{"id":0,"proxyUser":"testuser017","state":"available","kind":"spark","output":{"status":"ok","evalue":"Data"}}'
-            ),
-            urllib3.response.HTTPResponse(
-                body=b'"SessionKilled'
-            )
-        ]
-        mock_check.side_effect = mock_response
-        actual = rbac_lambda.check_access_is_correct(sessions_url, table, access)
-        expected = "OK"
-        assert expected == actual
-
-    def test_check_for_error_returned(self, mock_check):
-        print("\nStart test when an error is returned, an exception is raised\n")
-
-        access = "pii"
-        table = {"name": "test_table_non_pii", "type": "non_pii"}
-
-        mock_response = [
-            urllib3.response.HTTPResponse(
-                body=b'{"id":0,"proxyUser":"testuser017","state":"starting","kind":"spark"}',
-                status=200,
-                headers={
-                    "location": "/sessions/1/statements/1"
-                }
-            ),
-            urllib3.response.HTTPResponse(
-                body=b'{"id":0,"proxyUser":"testuser017","state":"waiting","kind":"spark"}',
-            ),
-            urllib3.response.HTTPResponse(
-                body=b'{"id":0,"proxyUser":"testuser017","state":"available","kind":"spark","output":{"status":"error","evalue":"Error - something went wrong"}}'
-            ),
-            urllib3.response.HTTPResponse(
-                body=b'"SessionKilled'
-            )
-        ]
-        mock_check.side_effect = mock_response
-        self.assertRaises(Exception, rbac_lambda.check_access_is_correct, sessions_url, table, access)
-
-
-@patch('rbac_lambda.urllib3.PoolManager.request')
-class TestPiiTable(TestCase):
-    # Expected 403
-    # Actual 200
-    def test_check_for_access_denied_to_pii_as_non_pii_user(self, mock_check):
-        print("\nStart check for access denied to PII table as non-PII user\n")
+class TestDataAccess(TestCase):
+    def test_access_denied_returned(self, mock_get):
+        print("\nStart check access denied message returned\n")
 
         table = {"name": "test_table_pii", "type": "pii"}
-        access = "non_pii"
-
         mock_response = [
             urllib3.response.HTTPResponse(
                 body=b'{"id":0,"proxyUser":"testuser017","state":"starting","kind":"spark"}',
@@ -169,23 +73,15 @@ class TestPiiTable(TestCase):
             urllib3.response.HTTPResponse(
                 body=b'{"id":0,"proxyUser":"testuser017","state":"available","kind":"spark","output":{"status":"error","evalue":"Service: Amazon S3; Status Code: 403; Error Code: AccessDenied"}}'
             ),
-            urllib3.response.HTTPResponse(
-                body=b'"SessionKilled'
-            )
         ]
-        mock_check.side_effect = mock_response
-        expected = "OK"
-        actual = rbac_lambda.check_access_is_correct(sessions_url, table, access)
-        assert expected == actual
+        mock_get.side_effect = mock_response
+        response = rbac_lambda.make_api_call(sessions_url, table)
+        assert "Service: Amazon S3; Status Code: 403; Error Code: AccessDenied" in response["output"]["evalue"]
 
-    # Excepted: 200
-    # Actual : 200
-    def test_check_for_access_granted_to_pii_as_pii(self, mock_check):
-        print("\nStart check for access granted to PII table as PII user\n")
+    def test_check_for_access_granted_to_data_as_non_pii(self, mock_check):
+        print("\nStart check for access granted\n")
 
-        table = {"name": "test_table_pii", "type": "pii"}
-        access = "pii"
-
+        table = {"name": "test_table_pii", "type": "non_pii"}
         mock_response = [
             urllib3.response.HTTPResponse(
                 body=b'{"id":0,"proxyUser":"testuser017","state":"starting","kind":"spark"}',
@@ -198,13 +94,12 @@ class TestPiiTable(TestCase):
                 body=b'{"id":0,"proxyUser":"testuser017","state":"waiting","kind":"spark"}',
             ),
             urllib3.response.HTTPResponse(
-                body=b'{"id":0,"proxyUser":"testuser017","state":"available","kind":"spark","output":{"status":"ok","evalue":"Data"}}'
+                body=b'{"id":0,"proxyUser":"testuser017","state":"available","kind":"spark","output":{"status":"ok","data":"Data"}}'
             ),
             urllib3.response.HTTPResponse(
                 body=b'"SessionKilled'
             )
         ]
         mock_check.side_effect = mock_response
-        actual = rbac_lambda.check_access_is_correct(sessions_url, table, access)
-        expected = "OK"
-        assert expected == actual
+        response = rbac_lambda.make_api_call(sessions_url, table)
+        assert "Data" in response["output"]["data"]

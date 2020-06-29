@@ -18,13 +18,14 @@ def lambda_handler(context, event):
     print("CONTEXT: ", context)
     proxy_user = context["proxy_user"]
     table = context["table"]
-    access = context["user_access"]
     database_name = context["db_name"]
 
     session_url = start_session(proxy_user)
     use_database(session_url, database_name)
-    check_access_is_correct(session_url, table, access)
+    response = make_api_call(session_url, table)
     kill_session(session_url)
+    return response
+
 
 def initial_request(url, code):
     print(code)
@@ -97,48 +98,10 @@ def use_database(session_url, database_name):
     print("Using Database", database_name)
 
 
-#############
-# Test RBAC #
-#############
-def check_access_is_correct(session_url, table, access):
+def make_api_call(session_url, table):
     statements_url = session_url + '/statements'
-    code = {'code': f'spark.sql("select * from {table["name"]}")'}
+    code = {'code': f'spark.sql("select * from {table}")'}
     status_url = initial_request(statements_url, code)
     response = poll_for_result(session_url, status_url)
     print(response)
-
-    # Should have full access to all data
-    if access == "pii":
-        # Error - exit and print error
-        if response['output']['status'] == "error":
-            kill_session(session_url)
-            print(response['output']['evalue'])
-            raise Exception('Expected data - Received error')
-        # Received data as expected
-        else:
-            kill_session(session_url)
-            print("Expected data - Received data")
-            return "OK"
-
-    # Should only have access to non-pii data
-    if access == "non_pii":
-        # Should receive 403 when trying to access pii data
-        if table["type"] == "pii" and access_denied_message in response['output']['evalue']:
-            kill_session(session_url)
-            print("Expected 403 - received 403")
-            return "OK"
-        # Should receive 403 when trying to access data - but didn't. Throw error.
-        elif table["type"] == "pii" and response['output']['status'] != "error":
-            kill_session(session_url)
-            print(response['output']['evalue'])
-            raise Exception('Expected 403 - Received data')
-        # Error - exit and print error
-        elif response['output']['status'] == "error":
-            kill_session(session_url)
-            print(response['output']['evalue'])
-            raise Exception('Expected data - Received error')
-        # Finally, if no error, then non-pii data was returned as expected
-        else:
-            kill_session(session_url)
-            print("Expected data - Received data")
-            return "OK"
+    return response
