@@ -37,6 +37,22 @@ data "aws_iam_policy_document" "emrfs_iam" {
   }
 
   statement {
+    sid    = "AllowS3BucketList"
+    effect = "Allow"
+
+    actions = [
+      "s3:ListBucket"
+    ]
+
+    resources = concat(
+      [
+        for path_tuple in var.dataset_s3_paths :
+        format("arn:aws:s3:::%s", path_tuple[0])
+      ]
+    )
+  }
+
+  statement {
     sid    = "AllowS3Read"
     effect = "Allow"
 
@@ -46,10 +62,6 @@ data "aws_iam_policy_document" "emrfs_iam" {
     ]
 
     resources = concat(
-      [
-        for path_tuple in var.dataset_s3_paths :
-        format("arn:aws:s3:::%s", path_tuple[0])
-      ],
       [
         for path_tuple in var.dataset_s3_paths :
         format("arn:aws:s3:::%s/%s", path_tuple[0], path_tuple[1])
