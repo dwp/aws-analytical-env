@@ -19,8 +19,8 @@ data "aws_iam_policy_document" "emrfs_iam_assume_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "AnalyticalDatasetReadOnly" {
-  role       =  aws_iam_role.emrfs_iam.name
-  policy_arn =  "arn:aws:iam::${var.account}:policy/AnalyticalDatasetReadOnly"
+  role       = aws_iam_role.emrfs_iam.name
+  policy_arn = "arn:aws:iam::${var.account}:policy/AnalyticalDatasetReadOnly"
 }
 
 
