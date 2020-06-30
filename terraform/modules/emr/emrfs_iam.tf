@@ -41,30 +41,4 @@ data "aws_iam_policy_document" "emrfs_iam" {
       "*"
     ]
   }
-
-  statement {
-    sid    = "AllowS3Read"
-    effect = "Allow"
-
-    actions = [
-      "s3:Get*",
-      "s3:List*"
-    ]
-
-    resources = concat(
-      [
-        for path_tuple in var.dataset_s3_paths :
-        format("arn:aws:s3:::%s/%s", path_tuple[0], path_tuple[1])
-      ]
-    )
-
-    condition {
-      test     = "StringEquals"
-      variable = format("s3:ExistingObjectTag/%s", var.dataset_s3_tags[0])
-
-      values = [
-        var.dataset_s3_tags[1]
-      ]
-    }
-  }
 }
