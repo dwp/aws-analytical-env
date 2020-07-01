@@ -147,6 +147,7 @@ meta:
 
     terraform-output-analytical-dataset-generation:
       task: terraform-output-analytical-dataset-generation
+      .: (( inject meta.plan.terraform-common-config ))
       config:
         platform: linux
         image_resource:
@@ -159,6 +160,10 @@ meta:
           args:
             - -exc
             - |
+              python bootstrap_terraform.py
+              sed -i '/^assume_role/ d' terraform.tfvars
+              cp terraform.tf ../terraform-config
+              cp terraform.tfvars ../terraform-config
               terraform workspace show
               terraform init
               terraform output --json > ../terraform-output-analytical-dataset-generation/outputs.json
