@@ -4,6 +4,7 @@ jobs:
     plan:
       - get: aws-analytical-env
         trigger: true
+      - .:(( inject meta.plan.terraform-output-analytical-dataset-generation ))
       - get: aws-dataworks-e2e-framework
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
@@ -19,4 +20,7 @@ jobs:
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/testing'
-#      - .: (( inject meta.plan.analytical-env-e2e-tests )) # Temporarily disabled
+      - .: (( inject meta.plan.analytical-env-e2e-tests ))
+        config:
+          params:
+            TF_ADG_OUTPUT_FILE: terraform-output-analytical-dataset-generation/outputs.json

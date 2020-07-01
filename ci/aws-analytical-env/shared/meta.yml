@@ -144,3 +144,29 @@ meta:
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
+
+    terraform-output-analytical-dataset-generation:
+      task: terraform-output-analytical-dataset-generation
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.terraform_repository))
+            tag: ((dataworks.terraform_version))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              terraform workspace show
+              terraform init
+              terraform output --json > ../terraform-output-analytical-dataset-generation/outputs.json
+          dir: aws-management-infrastructure
+        inputs:
+          - name: aws-analytical-dataset-generation
+        outputs:
+          - name: terraform-output-analytical-dataset-generation
+      params:
+        TF_CLI_ARGS_plan: -lock-timeout=300s
+        TF_INPUT: "false"
