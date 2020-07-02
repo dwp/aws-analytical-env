@@ -145,9 +145,34 @@ meta:
           - name: aws-analytical-env
           - name: terraform-config
 
+    terraform-analytical-dataset-generation-bootstrap:
+      task: terraform-analytical-dataset-generation-bootstrap
+      .: (( inject meta.plan.terraform-common-config ))
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: dwpdigital/jinja-yaml-aws
+            tag: 0.0.19
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              export AWS_REGION=((dataworks.aws_region))
+              python bootstrap_terraform.py
+              cp terraform.tf ../terraform-config
+              cp terraform.tfvars ../terraform-config
+          dir: aws-analytical-dataset-generation
+        inputs:
+          - name: aws-analytical-dataset-generation
+        outputs:
+          - name: terraform-config
+
+
     terraform-output-analytical-dataset-generation:
       task: terraform-output-analytical-dataset-generation
-      .: (( inject meta.plan.terraform-common-config ))
       config:
         platform: linux
         image_resource:
@@ -160,16 +185,14 @@ meta:
           args:
             - -exc
             - |
-              python bootstrap_terraform.py
-              sed -i '/^assume_role/ d' terraform.tfvars
-              cp terraform.tf ../terraform-config
-              cp terraform.tfvars ../terraform-config
+              cp ../terraform-config/terraform.tf .
+              cp ../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
               terraform output --json > ../terraform-output-analytical-dataset-generation/outputs.json
-          dir: aws-management-infrastructure
+          dir: aws-analytical-dataset-generation
         inputs:
-          - name: aws-analytical-dataset-generation
+          - name: terraform-config
         outputs:
           - name: terraform-output-analytical-dataset-generation
       params:
