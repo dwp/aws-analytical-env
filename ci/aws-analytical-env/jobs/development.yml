@@ -10,8 +10,8 @@ jobs:
         trigger: true
       - get: aws-dataworks-e2e-framework
         trigger: false
-#      - get: aws-analytical-dataset-generation
-#        trigger: false
+      - get: aws-analytical-dataset-generation
+        trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra
@@ -46,10 +46,10 @@ jobs:
             - name: emp-release
         params:
           TF_VAR_emp_dir_path: ../../../../emp-release
-#      - .: (( inject meta.plan.terraform-analytical-dataset-generation-bootstrap )) # Temporarily disabled
-#      - .: (( inject meta.plan.terraform-output-analytical-dataset-generation )) # Temporarily disabled
-#        task: get variables for e2e
-#      - .: (( inject meta.plan.analytical-env-e2e-tests )) # Temporarily disabled
-#        config:
-#          params:
-#            TF_ADG_OUTPUT_FILE: terraform-output-analytical-dataset-generation/outputs.json
+      - .: (( inject meta.plan.terraform-analytical-dataset-generation-bootstrap ))
+      - .: (( inject meta.plan.terraform-output-analytical-dataset-generation ))
+        task: get variables for e2e
+      - .: (( inject meta.plan.analytical-env-e2e-tests ))
+        config:
+          params:
+            TF_ADG_OUTPUT_FILE: terraform-output-analytical-dataset-generation/outputs.json

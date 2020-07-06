@@ -24,7 +24,7 @@ jobs:
       - .: (( inject meta.plan.terraform-analytical-dataset-generation-bootstrap ))
       - .: (( inject meta.plan.terraform-output-analytical-dataset-generation ))
         task: get variables for e2e
-#      - .: (( inject meta.plan.analytical-env-e2e-tests ))
-#        config:
-#          params:
-#            TF_ADG_OUTPUT_FILE: terraform-output-analytical-dataset-generation/outputs.json
+      - .: (( inject meta.plan.analytical-env-e2e-tests ))
+        config:
+          params:
+            TF_ADG_OUTPUT_FILE: terraform-output-analytical-dataset-generation/outputs.json
