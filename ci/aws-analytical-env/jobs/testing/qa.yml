@@ -19,4 +19,10 @@ jobs:
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/testing'
-#      - .: (( inject meta.plan.analytical-env-e2e-tests )) # Temporarily disabled
+      - .: (( inject meta.plan.terraform-analytical-dataset-generation-bootstrap ))
+      - .: (( inject meta.plan.terraform-output-analytical-dataset-generation ))
+        task: get variables for e2e
+      - .: (( inject meta.plan.analytical-env-e2e-tests ))
+        config:
+          params:
+            TF_ADG_OUTPUT_FILE: terraform-output-analytical-dataset-generation/outputs.json
