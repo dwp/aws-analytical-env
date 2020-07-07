@@ -120,12 +120,12 @@ meta:
           args:
             - -exc
             - |
-              cd src/runners
-              ./run-dev-analytical-tests.sh
+              ./src/runners/run-ci.sh "" "" "" "" "" "../terraform-output-analytical-dataset-generation"
         inputs:
           - name: aws-dataworks-e2e-framework
           - name: .aws
           - name: meta
+          - name: terraform-output-analytical-dataset-generation
 
     terraform-taint:
       task: terraform-taint
