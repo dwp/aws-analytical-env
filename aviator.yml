@@ -15,7 +15,7 @@ spruce:
         regexp: ".*yml"
     to: aviator_pipeline.yml
 fly:
-  name: aws-analytical-env
+  name: analytical-env
   target: aws-concourse
   config: aviator_pipeline.yml
   expose: true
