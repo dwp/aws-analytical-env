@@ -61,6 +61,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:RunInstances",
       "ec2:DescribeVolumeStatus",
       "ec2:DescribeVolumes",
+      "application-autoscaling:DescribeScalableTargets"
     ]
     # Majority of these actions don't accept conditions or resource restriction
     resources = ["*"]
