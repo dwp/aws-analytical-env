@@ -148,7 +148,11 @@ locals {
     {% set doiranges = doi["cidr_blocks"].split(',') %}
     {% for cidr in doiranges %}
     "{{ cidr }}",
-    {% endfor %} 
+    {% endfor %}
+    {% set penranges = pen["cidr_blocks"].split(',') %}
+    {% for cidr in penranges %}
+    "{{ cidr }}",
+    {% endfor %}
     "{{ucfs["team_cidr_block"]}}"
   ]
 }
