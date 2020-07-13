@@ -149,10 +149,12 @@ locals {
     {% for cidr in doiranges %}
     "{{ cidr }}",
     {% endfor %}
+    {% if pen is defined %}
     {% set penranges = pen["cidr_blocks"].split(',') %}
     {% for cidr in penranges %}
     "{{ cidr }}",
     {% endfor %}
+    {% endif %}
     "{{ucfs["team_cidr_block"]}}"
   ]
 }
