@@ -61,7 +61,8 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:RunInstances",
       "ec2:DescribeVolumeStatus",
       "ec2:DescribeVolumes",
-      "application-autoscaling:DescribeScalableTargets"
+      "application-autoscaling:DescribeScalableTargets",
+      "ec2:DeleteNetworkInterface",
     ]
     # Majority of these actions don't accept conditions or resource restriction
     resources = ["*"]
@@ -74,7 +75,6 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:DetachVolume",
       "ec2:DeleteVolume",
       "ec2:RevokeSecurityGroupEgress",
-      "ec2:DeleteNetworkInterface",
       "ec2:DeleteSecurityGroup",
       "ec2:DeleteTags",
       "ec2:DetachNetworkInterface",
