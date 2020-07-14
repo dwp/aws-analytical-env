@@ -105,9 +105,9 @@ meta:
         image_resource:
           type: docker-image
           source:
-            repository: ((docker-python-boto-behave.repository))
-            version: ((docker-python-boto-behave.version))
-            tag: ((docker-python-boto-behave.version))
+            repository: ((docker-python-boto-behave_repository))
+            version: ((docker-python-boto-behave_version))
+            tag: ((docker-python-boto-behave_version))
         params:
           AWS_DEFAULT_PROFILE: ci
           AWS_SHARED_CREDENTIALS_FILE: ../../.aws/credentials
