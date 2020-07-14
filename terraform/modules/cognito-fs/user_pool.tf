@@ -60,24 +60,24 @@ resource aws_cognito_user_pool emr {
   }
 }
 
-// data template_file metadata_adfs {
-//   template = file("${path.module}/FederationMetadata-20200402.xml.tpl")
-// }
-// 
-// resource aws_cognito_identity_provider adfs_dwp {
-//   user_pool_id  = aws_cognito_user_pool.emr.id
-//   provider_name = "DWP"
-//   provider_type = "SAML"
-// 
-//   provider_details = {
-//     MetadataFile          = data.template_file.metadata_adfs.rendered
-//     IDPSignout            = false
-//     SLORedirectBindingURI = "https://sts.dwp.gov.uk/adfs/ls/"
-//     SSORedirectBindingURI = "https://sts.dwp.gov.uk/adfs/ls/"
-//   }
-// 
-//   attribute_mapping = {
-//     email              = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
-//     preferred_username = "sAMAccountName"
-//   }
-// }
+data template_file metadata_adfs {
+  template = file("${path.module}/FederationMetadata-20200402.xml.tpl")
+}
+
+resource aws_cognito_identity_provider adfs_dwp {
+  user_pool_id  = aws_cognito_user_pool.emr.id
+  provider_name = "DWP"
+  provider_type = "SAML"
+
+  provider_details = {
+    MetadataFile          = data.template_file.metadata_adfs.rendered
+    IDPSignout            = false
+    SLORedirectBindingURI = "https://sts.dwp.gov.uk/adfs/ls/"
+    SSORedirectBindingURI = "https://sts.dwp.gov.uk/adfs/ls/"
+  }
+
+  attribute_mapping = {
+    email              = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
+    preferred_username = "sAMAccountName"
+  }
+}
