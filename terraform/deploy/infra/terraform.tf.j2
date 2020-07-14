@@ -143,8 +143,9 @@ locals {
           {{ key }} = "{{ value }}"{% endfor %}
       } {% endfor %}
   }
-  
-  whitelist_cidr_blocks = [
+
+
+  whitelist_cidr_blocks =  local.environment == "integration"? [
     {% set doiranges = doi["cidr_blocks"].split(',') %}
     {% for cidr in doiranges %}
     "{{ cidr }}",
@@ -156,5 +157,12 @@ locals {
     {% endfor %}
     {% endif %}
     "{{ucfs["team_cidr_block"]}}"
+  ] : [
+    {% set doiranges = doi["cidr_blocks"].split(',') %}
+    {% for cidr in doiranges %}
+    "{{ cidr }}",
+    {% endfor %}
+    "{{ucfs["team_cidr_block"]}}"
   ]
+
 }
