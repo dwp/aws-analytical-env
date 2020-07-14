@@ -93,6 +93,19 @@ resource "aws_emr_cluster" "cluster" {
     }
   }
 
+  step {
+    name = "install-r-packages"
+    action_on_failure = "CONTINUE"
+
+    hadoop_jar_step {
+      jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
+      args = [
+        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.r_packages_install.key)
+      ]
+    }
+
+  }
+
   depends_on = [
     aws_s3_bucket_object.get_dks_cert_sh,
     aws_s3_bucket_object.livy_client_conf_sh,
