@@ -84,6 +84,12 @@ resources:
   - name: meta-production
     type: meta
 
+  - name: meta-testing-dev
+    type: meta
+
+  - name: meta-testing-qa
+    type: meta
+
   - name: midnight-trigger
     type: time
     source:
