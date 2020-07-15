@@ -94,7 +94,7 @@ resource "aws_emr_cluster" "cluster" {
   }
 
   step {
-    name = "install-r-packages"
+    name              = "install-r-packages"
     action_on_failure = "CONTINUE"
 
     hadoop_jar_step {

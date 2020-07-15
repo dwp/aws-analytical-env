@@ -48,13 +48,13 @@ resource "aws_s3_bucket_object" "livy_client_conf_sh" {
 }
 
 resource "aws_s3_bucket_object" "r_packages_install" {
-  bucket  = aws_s3_bucket.emr.id
-  key     = "scripts/emr/r_packages_install.sh"
-  content = templatefile("${path.module}/templates/emr/r_packages_install.sh",{
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/r_packages_install.sh"
+  content = templatefile("${path.module}/templates/emr/r_packages_install.sh", {
     emr_bucket_path = aws_s3_bucket.emr.id,
-    full_proxy = local.full_proxy,
-    full_no_proxy = join(",", local.no_proxy_hosts),
-    packages = join(";", local.r_packages)
+    full_proxy      = local.full_proxy,
+    full_no_proxy   = join(",", local.no_proxy_hosts),
+    packages        = join(";", local.r_packages)
   })
 }
 
