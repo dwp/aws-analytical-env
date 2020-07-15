@@ -35,5 +35,5 @@ do
     :
     echo "  Installing $${i}"
     echo "*****************************************"
-    sudo R -e "Sys.setenv(http_proxy = '${full_proxy}'); Sys.setenv(https_proxy = '${full_proxy}'); install.packages('$${i}', repos='https://cran.rstudio.com/')" 1>&2
+    sudo R -e "Sys.setenv(http_proxy = '${full_proxy}'); Sys.setenv(https_proxy = '${full_proxy}'); install.packages('$${i}', repos='https://cran.rstudio.com/')"
 done
