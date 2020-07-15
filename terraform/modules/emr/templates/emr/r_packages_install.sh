@@ -27,13 +27,12 @@ while [[ $# > 1 ]]; do
     shift
 done
 
-echo "*****************************************"
-
 PACKAGES_ARR=($${PACKAGES//;/ })
+PCK=""
 for i in "$${PACKAGES_ARR[@]}"
 do
     :
-    echo "  Installing $${i}"
-    echo "*****************************************"
-    sudo R -e "Sys.setenv(http_proxy = '${full_proxy}'); Sys.setenv(https_proxy = '${full_proxy}'); install.packages('$${i}', repos='https://cran.rstudio.com/')"
+    PCK="$${PCK}'$${i}',"
 done
+PCK="$${PCK%?}" # Remove last comma
+sudo R -e "options(Ncpus = parallel::detectCores()); Sys.setenv(http_proxy = '${full_proxy}'); Sys.setenv(https_proxy = '${full_proxy}'); install.packages(c($PCK), repos='https://cran.rstudio.com/')" 1>&2
