@@ -41,7 +41,7 @@ module "emr" {
   dataset_s3_paths              = [[data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket.id, "*"]]
   dataset_s3_tags               = ["collection_tag", "crown"]
   dataset_glue_db               = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.analytical_dataset_generation.job_name
-  security_configuration_groups = ["UC_DataScience_PII"]
+  security_configuration_groups = ["UC_DataScience_PII", "UC_DataScience_Non_PII"]
 
   artefact_bucket = {
     id      = data.terraform_remote_state.management.outputs.artefact_bucket.id

@@ -105,25 +105,38 @@ meta:
         image_resource:
           type: docker-image
           source:
-            repository: ((docker-python-boto-behave.repository))
-            version: ((docker-python-boto-behave.version))
-            tag: ((docker-python-boto-behave.version))
+            repository: ((dataworks.docker_python_boto_behave_repository))
+            version: ((dataworks.docker_python_boto_behave_version))
+            tag: ((dataworks.docker_python_boto_behave_version))
         params:
-          AWS_DEFAULT_PROFILE: ci
-          AWS_SHARED_CREDENTIALS_FILE: ../../.aws/credentials
-          AWS_CONFIG_FILE: ../../.aws/config
           E2E_TEST_TIMEOUT: 300
           E2E_FEATURE_TAG_FILTER: '@analytical'
+          AWS_S3_INPUT_BUCKET: 'na'
+          AWS_ACC: ((dataworks.aws_dev_acc))
+          AWS_DEFAULT_PROFILE: 'default'
+          AWS_SNS_TOPIC_NAME: 'na'
+          DYNAMODB_TABLE_NAME: 'na'
+          MONGO_SNAPSHOT_BUCKET: 'na'
+          MONGO_SNAPSHOT_PATH: 'na'
+          DLQ_S3_PATH_PREFIX: 'na'
         run:
           dir: aws-dataworks-e2e-framework
           path: sh
           args:
             - -exc
             - |
-              ./src/runners/run-ci.sh "" "" "" "" "" "../terraform-output-analytical-dataset-generation"
+              mkdir ~/.aws
+              cat << EOF > ~/.aws/config
+              [profile default]
+              role_arn = arn:aws:iam::((dataworks.aws_dev_acc)):role/ci
+              credential_source = Ec2InstanceMetadata
+              EOF
+              cd src/runners
+              unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy
+              export AWS_PUBLISHED_BUCKET=manual-cr-test-can-be-deleted
+              ./run-ci.sh "../../../meta" "" "" "" "" ""
         inputs:
           - name: aws-dataworks-e2e-framework
-          - name: .aws
           - name: meta
           - name: terraform-output-analytical-dataset-generation
 
