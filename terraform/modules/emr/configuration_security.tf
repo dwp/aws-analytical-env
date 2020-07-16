@@ -24,12 +24,12 @@ locals {
           {
             Role           = aws_iam_role.emrfs_iam.arn
             IdentifierType = "Group"
-            Identifiers    = var.security_configuration_groups[0]
+            Identifiers    = [var.security_configuration_groups[0]]
           },
           {
             Role           = aws_iam_role.emrfs_iam_non_pii.arn
             IdentifierType = "Group"
-            Identifiers    = var.security_configuration_groups[1]
+            Identifiers    = [var.security_configuration_groups[1]]
           }
         ]
       }
