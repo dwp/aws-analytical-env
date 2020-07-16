@@ -29,6 +29,11 @@ resource "aws_iam_role_policy_attachment" "AnalyticalDatasetReadOnly" {
   policy_arn = "arn:aws:iam::${var.account}:policy/AnalyticalDatasetCrownReadOnly"
 }
 
+resource "aws_iam_role_policy_attachment" "AnalyticalDatasetReadOnlyNonPii" {
+  role       = aws_iam_role.emrfs_iam_non_pii.name
+  policy_arn = "arn:aws:iam::${var.account}:policy/AnalyticalDatasetCrownReadOnlyNonPii"
+}
+
 resource "aws_iam_role_policy" "emrfs_iam" {
   name   = "emrfs_iam"
   role   = aws_iam_role.emrfs_iam.id
@@ -38,7 +43,7 @@ resource "aws_iam_role_policy" "emrfs_iam" {
 resource "aws_iam_role_policy" "emrfs_iam_non_pii" {
   name   = "emrfs_iam_non_pii"
   role   = aws_iam_role.emrfs_iam_non_pii.id
-  policy = data.aws_iam_policy_document.emrfs_iam_non_pii.json
+  policy = data.aws_iam_policy_document.emrfs_iam.json
 }
 
 data "aws_iam_policy_document" "emrfs_iam" {
@@ -51,53 +56,5 @@ data "aws_iam_policy_document" "emrfs_iam" {
     resources = [
       "*"
     ]
-  }
-}
-
-data "aws_iam_policy_document" "emrfs_iam_non_pii" {
-  statement {
-    sid    = "AllowAllDynamoDB"
-    effect = "Allow"
-    actions = [
-      "dynamodb:*",
-    ]
-    resources = [
-      "*"
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:GetBucketLocation",
-      "s3:ListBucket",
-    ]
-
-    resources = [
-      "${var.dataset_s3_paths[0]}/analytical-dataset/*",
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:Get*",
-      "s3:List*",
-    ]
-
-    resources = [
-      "${var.dataset_s3_paths[0]}/analytical-dataset/*",
-    ]
-
-    condition {
-      test     = "StringEquals"
-      variable = "s3:ExistingObjectTag/Pii"
-
-      values = [
-        "false"
-      ]
-    }
   }
 }
