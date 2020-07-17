@@ -1,0 +1,16 @@
+#cloud-config
+cloud_final_modules:
+- "users-groups"
+
+users:
+%{ for user in users ~}
+- name: "${user.name}"
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  shell: "/bin/bash"
+  ssh_authorized_keys:
+  - "${user.ssh-pubkey}"
+%{ endfor ~}
+
+apt:
+  http_proxy: ${http_proxy}
+  https_proxy: ${https_proxy}
