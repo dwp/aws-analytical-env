@@ -30,7 +30,7 @@ resource "aws_lambda_function" "rbac_test_lambda" {
 
 resource "aws_security_group" "sg_for_rbac_lambda" {
   name   = "${var.name_prefix}-rbac-test-lambda-sg"
-  vpc_id = var.vpc.aws_vpc
+  vpc_id = var.vpc.aws_vpc.id
   egress {
     from_port   = 0
     to_port     = 0
