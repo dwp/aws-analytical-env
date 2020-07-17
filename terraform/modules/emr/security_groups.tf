@@ -1,7 +1,7 @@
 resource "aws_security_group" "emr" {
   name                   = "emr-communications"
   description            = "Allow EMR Communications"
-  vpc_id                 = var.vpc.aws_vpc
+  vpc_id                 = var.vpc.aws_vpc.id
   revoke_rules_on_delete = true
 }
 
@@ -110,20 +110,20 @@ resource "aws_security_group_rule" "egress_http_to_s3" {
 resource "aws_security_group" "emr_master_private" {
   name                   = "analytical_env_emr_master"
   description            = "Analytical Env EMR Master"
-  vpc_id                 = var.vpc.aws_vpc
+  vpc_id                 = var.vpc.aws_vpc.id
   revoke_rules_on_delete = true
 }
 
 resource "aws_security_group" "emr_slave_private" {
   name                   = "analytical_env_emr_slave"
   description            = "Analytical Env EMR Slave"
-  vpc_id                 = var.vpc.aws_vpc
+  vpc_id                 = var.vpc.aws_vpc.id
   revoke_rules_on_delete = true
 }
 
 resource "aws_security_group" "emr_service_access" {
   name                   = "analytical_env_emr_service_access"
   description            = "Analytical Env EMR Service Access"
-  vpc_id                 = var.vpc.aws_vpc
+  vpc_id                 = var.vpc.aws_vpc.id
   revoke_rules_on_delete = true
 }
