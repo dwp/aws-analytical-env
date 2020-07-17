@@ -1,14 +1,12 @@
 #!/bin/bash
-
+#set -x
 declare -a patterns=(
     "\b[A-Z0-9]{20}\b"
     "\b[A-Za-z0-9\/+=]{40}\b"
     "\b[0-9]{12}\b"
     "\b[a-z0-9]{32}\b"
     "\b[A-Z]{2}[0-9]{6}[A-Z]{1}\b"
-    "\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
     "PRIVATE KEY-----"
-    "\b[A-Za-z0-9._%+-]{1,}@[A-Za-z0-9]{1,}.[A-Za-z0-9]{1,4}.[A-Za-z0-9]{1,4}\b"
     "\b.[a-z]{2}-[a-z]{4,9}-[0-9]{1}.\b"
 )
 
@@ -18,22 +16,62 @@ declare -a descriptions=(
     "AWS account number"
     "16 byte hex (e.g. S3 bucket name)"
     "NINO"
-    "IP address"
     "Private key (e.g. rsa private key, openssh private key)"
-    "Email addresses"
     "Regions embedded as part of resource descriptions"
+)
+
+declare -a email_patterns=(
+    "\b[A-Za-z0-9._%+-]{1,}@[A-Za-z0-9]{1,}.[A-Za-z0-9]{1,4}.[A-Za-z0-9]{1,4}\b"
+)
+
+declare -a email_descriptions=(
+    "Email addresses"
+)
+
+declare -a ip_patterns=(
+    "\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
+)
+
+declare -a ip_descriptions=(
+    "IP address"
 )
 
 if [ -d ".gitsecret" ]; then
     git secret hide
 fi
 
+
 match=0
 for i in "${!patterns[@]}"
 do
-    git diff-index -p -M --cached HEAD -- |
+    git diff-index -p -M --cached HEAD -- | grep -v "Subproject commit" |
     grep '^+[^+]' | grep -Eq "${patterns[$i]}" &&
     echo "Blocking commit: ${descriptions[$i]} detected in patch" &&
+    echo "This part of your change triggered this issue:" &&
+    git diff-index -p -M --cached HEAD -- | grep -v "Subproject commit" |
+    grep '^+[^+]' | grep -E "${patterns[$i]}" &&
+    ((match++))
+done
+
+for i in "${!email_patterns[@]}"
+do
+    git diff-index -p -M --cached HEAD -- | grep -v "snyk/snyk@"| grep -v "create-release@latest"| grep -v "checkout@master"| grep -v "Publish-Docker-Github-Action@master"| grep -v "docker@master"|
+    grep '^+[^+]' | grep -Eq "${email_patterns[$i]}" &&
+    echo "Blocking commit: ${email_descriptions[$i]} detected in patch" &&
+    echo "This part of your change triggered this issue:" &&
+    git diff-index -p -M --cached HEAD -- | grep -v "snyk/snyk@"| grep -v "create-release@latest"| grep -v "checkout@master"| grep -v "Publish-Docker-Github-Action@master"| grep -v "docker@master"|
+    grep '^+[^+]' | grep -E "${email_patterns[$i]}" &&
+    ((match++))
+done
+
+for i in "${!ip_patterns[@]}"
+do
+    git diff-index -p -M --cached HEAD -- | grep -v "169.254.169.254" | grep -v "0.0.0.0" | grep -v "127.0.0.1" |
+    grep '^+[^+]' | grep -Eq "${ip_patterns[$i]}" &&
+    echo "Blocking commit: ${ip_descriptions[$i]} detected in patch" &&
+    echo "This part of your change triggered this issue:" &&
+    git diff-index -p -M --cached HEAD -- | grep -v "169.254.169.254" | grep -v "0.0.0.0" | grep -v "127.0.0.1" |
+    grep '^+[^+]' | grep -E "${ip_patterns[$i]}" &&
     ((match++))
 done
 

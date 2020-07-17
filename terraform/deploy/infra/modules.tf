@@ -57,6 +57,7 @@ module networking {
   proxy_route_table                 = data.terraform_remote_state.internet_egress.outputs.proxy_route_table
   proxy_subnet                      = data.terraform_remote_state.internet_egress.outputs.proxy_subnet
   region                            = var.region
+  internet_proxy_service_name       = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
 }
 
 module waf {
@@ -72,7 +73,7 @@ module waf {
 module alb {
   source = "../../modules/alb"
 
-  vpc_id = module.networking.outputs.aws_vpc
+  vpc_id = module.networking.outputs.aws_vpc.id
 
   name_prefix = local.name
   region      = var.region
