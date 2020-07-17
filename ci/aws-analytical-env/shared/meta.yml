@@ -134,7 +134,7 @@ meta:
               EOF
               cd src/runners
               export no_proxy="$no_proxy,s3.*.amazonaws.com,s3.amazonaws.com"
-              ./run-ci.sh "../../../meta" "" "" "" "" "../terraform-ouput-analytical-dataset-generation"
+              ./run-ci.sh "../../../meta" "" "" "" "" "../../../terraform-output-analytical-dataset-generation/outputs.json"
         inputs:
           - name: aws-dataworks-e2e-framework
           - name: meta
