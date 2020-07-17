@@ -31,7 +31,7 @@ resource "aws_iam_role_policy_attachment" "AnalyticalDatasetReadOnly" {
 
 resource "aws_iam_role_policy_attachment" "AnalyticalDatasetReadOnlyNonPii" {
   role       = aws_iam_role.emrfs_iam_non_pii.name
-  policy_arn = "arn:aws:iam::${var.account}:policy/AnalyticalDatasetCrownReadOnly"
+  policy_arn = "arn:aws:iam::${var.account}:policy/AnalyticalDatasetCrownReadOnlyNonPii"
 }
 
 resource "aws_iam_role_policy" "emrfs_iam" {
@@ -43,7 +43,7 @@ resource "aws_iam_role_policy" "emrfs_iam" {
 resource "aws_iam_role_policy" "emrfs_iam_non_pii" {
   name   = "emrfs_iam_non_pii"
   role   = aws_iam_role.emrfs_iam_non_pii.id
-  policy = data.aws_iam_policy_document.emrfs_iam_non_pii.json
+  policy = data.aws_iam_policy_document.emrfs_iam.json
 }
 
 data "aws_iam_policy_document" "emrfs_iam" {
@@ -56,26 +56,5 @@ data "aws_iam_policy_document" "emrfs_iam" {
     resources = [
       "*"
     ]
-  }
-}
-
-data "aws_iam_policy_document" "emrfs_iam_non_pii" {
-  statement {
-    sid    = "AllowAllDynamoDB"
-    effect = "Allow"
-    actions = [
-      "dynamodb:*",
-    ]
-    resources = [
-      "*"
-    ]
-    condition {
-      test     = "StringEquals"
-      variable = "s3:ExistingObjectTag/pii"
-
-      values = [
-        "false"
-      ]
-    }
   }
 }

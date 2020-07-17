@@ -130,11 +130,11 @@ meta:
               [profile default]
               role_arn = arn:aws:iam::((dataworks.aws_dev_acc)):role/ci
               credential_source = Ec2InstanceMetadata
+              region = ((dataworks.aws_region))
               EOF
               cd src/runners
-              unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy
-              export AWS_PUBLISHED_BUCKET=manual-cr-test-can-be-deleted
-              ./run-ci.sh "../../../meta" "" "" "" "" ""
+              export no_proxy="$no_proxy,s3.*.amazonaws.com,s3.amazonaws.com"
+              ./run-ci.sh "../../../meta" "" "" "" "" "../terraform-ouput-analytical-dataset-generation"
         inputs:
           - name: aws-dataworks-e2e-framework
           - name: meta
