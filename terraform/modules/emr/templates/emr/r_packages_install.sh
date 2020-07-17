@@ -8,6 +8,15 @@ set -o pipefail
 echo -n "Running as: "
 whoami
 
+# R package installer uses libcurl as its default tool for downloading packages
+sudo yum install libcurl-devel curl-devel -y
+# Remove conflicting versions of gcc
+sudo yum remove gcc72-c++.x86_64 libgcc72.x86_64 -y
+# Install general development tools - possibly overkill but is efficient
+sudo yum groupinstall 'Development Tools' -y
+# Lastly install the R development tools
+sudo yum install R-devel
+
 PACKAGES="${packages}"
 
 while [[ $# > 1 ]]; do
