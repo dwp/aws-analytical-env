@@ -8,10 +8,6 @@ data "aws_ami" "kali" {
   }
 }
 
-data "template_file" "kali_user_data" {
-  template = "./kali_users.cfg"
-}
-
 resource "aws_security_group" "kali" {
   count       = local.deploy_ithc_infra[local.environment] ? 1 : 0
   name        = "kali"
@@ -92,7 +88,7 @@ resource "aws_instance" "kali" {
   subnet_id              = module.networking.outputs.aws_subnets_private.0.id
 
   user_data = templatefile(
-    "${path.module}/kali_users.cloud-cfg.tmpl",
+    "${path.module}/kali.cloud-cfg.tmpl",
     { users       = local.kali_users,
       http_proxy  = format("http://%s:3128", module.networking.outputs.internet_proxy_vpce.dns_name),
       https_proxy = format("http://%s:3128", module.networking.outputs.internet_proxy_vpce.dns_name),
@@ -103,6 +99,16 @@ resource "aws_instance" "kali" {
     local.common_tags,
     { Name = "Kali (ITHC)" }
   )
+}
+
+resource "aws_route53_record" "kali" {
+  count    = local.deploy_ithc_infra[local.environment] ? 1 : 0
+  zone_id  = data.terraform_remote_state.management_dns.outputs.dataworks_zone.id
+  name     = "kali.analytical-env.${local.dw_domain}"
+  type     = "A"
+  ttl      = "60"
+  records  = [aws_instance.kali[0].private_ip]
+  provider = aws.management_dns
 }
 
 resource "aws_vpc_peering_connection" "ssh_bastion" {

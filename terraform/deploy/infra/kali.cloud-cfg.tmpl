@@ -14,3 +14,8 @@ users:
 apt:
   http_proxy: ${http_proxy}
   https_proxy: ${https_proxy}
+  primary:
+    - arches: [default]
+      uri: http://kali.download/kali
+  sources_list: |
+    deb $MIRROR kali-rolling main non-free contrib
