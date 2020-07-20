@@ -44,8 +44,8 @@ module "emr" {
   security_configuration_groups = ["UC_DataScience_PII", "UC_DataScience_Non_PII"]
 
   artefact_bucket = {
-    id      = data.terraform_remote_state.management.outputs.artefact_bucket.id
-    kms_arn = data.terraform_remote_state.management.outputs.artefact_bucket.cmk_arn
+    id      = data.terraform_remote_state.management_artefacts.outputs.artefact_bucket.id
+    kms_arn = data.terraform_remote_state.management_artefacts.outputs.artefact_bucket.cmk_arn
   }
   region      = var.region
   account     = local.account[local.environment]
@@ -53,4 +53,26 @@ module "emr" {
 
   truststore_certs   = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
   truststore_aliases = "dataworks_root_ca,dataworks_mgt_root_ca"
+}
+
+module "pushgateway" {
+  source = "../../modules/pushgateway"
+
+  name_prefix = "analytical-env-pushgateway"
+
+  container_name       = "prom-pushgateway"
+  image_ecr_repository = data.terraform_remote_state.management.outputs.ecr_pushgateway_url
+
+  subnets              = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
+  vpc_id               = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
+  interface_vpce_sg_id = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
+  s3_prefixlist_id     = data.terraform_remote_state.aws_analytical_environment_infra.outputs.s3_prefix_list_id
+
+  loadbalancer_arn    = data.terraform_remote_state.aws_analytical_environment_infra.outputs.alb.arn
+  lb_fqdn             = data.terraform_remote_state.aws_analytical_environment_infra.outputs.alb_fqdn
+  lb_sg_id            = data.terraform_remote_state.aws_analytical_environment_infra.outputs.alb_sg.id
+  management_role_arn = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
+
+  common_tags = local.common_tags
+
 }
