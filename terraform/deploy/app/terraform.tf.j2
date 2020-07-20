@@ -117,9 +117,23 @@ data "terraform_remote_state" "aws-analytical-dataset-generation" {
   }
 }
 
-data "terraform_remote_state" "management" {
+data "terraform_remote_state" "management_artefacts" {
   backend   = "s3"
   workspace = "management"
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/management.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "management" {
+  backend   = "s3"
+  workspace = local.management_workspace[local.management_account[local.environment]]
 
   config = {
     bucket         = "{{state_file_bucket}}"
