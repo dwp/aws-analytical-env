@@ -12,5 +12,15 @@ locals {
   autoscaling_max_capacity        = 5
   dks_port                        = 8443
   full_proxy                      = var.internet_proxy["http_address"]
-  no_proxy_hosts                  = var.no_proxy_list
+  no_proxy_hosts = concat([
+    local.fqdn,
+    "jupyterhub",
+    "127.0.0.1",
+    "localhost",
+    "169.254.169.254",
+    ".s3.eu-west-2.amazonaws.com",
+    ".eu-west-2.compute.internal"
+  ], formatlist(".%s", var.no_proxy_list))
 }
+
+#S3 Required in no proxy list as it is a gateway endpoint
