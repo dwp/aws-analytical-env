@@ -19,12 +19,12 @@ export no_proxy="$FULL_NO_PROXY"
 export NO_PROXY="$FULL_NO_PROXY"
 
 # Install the R development tools
-sudo yum install R-devel gcc gcc-c++ gcc-gfortran readline-devel cairo-devel libpng-devel libjpeg-devel libtiff-devel libcurl-devel curl-devel
+sudo yum install -y R-devel gcc gcc-c++ gcc-gfortran readline-devel cairo-devel libpng-devel libjpeg-devel libtiff-devel libcurl-devel curl-devel
 
 ## Update R
 cd $HOME
 sudo yum-config-manager --enable epel
-sudo yum install pcre2-devel
+sudo yum install pcre2-devel -y
 mkdir R-latest
 cd R-latest
 wget http://cran.rstudio.com/src/base/R-latest.tar.gz
