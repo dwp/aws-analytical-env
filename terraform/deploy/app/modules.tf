@@ -79,6 +79,7 @@ module "pushgateway" {
 
 }
 
+/*
 module "codecommit" {
   source = "../../modules/codecommit"
 
@@ -88,4 +89,5 @@ module "codecommit" {
   repository_description = "This is the repository for Data Science"
 
 }
+*/
 
