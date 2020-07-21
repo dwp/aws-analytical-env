@@ -112,12 +112,14 @@ resource "aws_cloudwatch_event_rule" "cluster_bootstrap_event_rule" {
   description = "Alert on failure of EMR to bootstrap"
 
   event_pattern = <<PATTERN
-{
-  "detail-type": [
-    "Bootstrapping Failure"
-  ]
-}
-PATTERN
+    {
+      "detail": {
+        "state": ["TERMINATED_WITH_ERRORS"],
+        "clusterId": ["${aws_emr_cluster.cluster.id}"]
+      },
+      "source": ["aws.emr"]
+    }
+    PATTERN
 }
 
 resource "aws_cloudwatch_event_target" "slack_alert" {

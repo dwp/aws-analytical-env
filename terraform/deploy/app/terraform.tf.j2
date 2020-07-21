@@ -161,7 +161,7 @@ data "terraform_remote_state" "mgmt_ca" {
 
 data "terraform_remote_state" "aws_common_infrastructure" {
   backend   = "s3"
-  workspace = terraform.workspace == "default" ? "default" : "production"
+  workspace = terraform.workspace
 
   config = {
     bucket         = "{{state_file_bucket}}"
