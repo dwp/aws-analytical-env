@@ -82,7 +82,7 @@ module "pushgateway" {
 module "codecommit" {
   source = "../../modules/codecommit"
 
-  repository_name        = "Data_Science"
+  repository_name        = "Data_Science-${local.environment}"
   repository_description = "This is the repository for Data Science"
 
 }
