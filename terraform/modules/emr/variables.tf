@@ -19,6 +19,11 @@ variable "emr_applications" {
   default     = ["Spark", "Livy"]
 }
 
+variable "sns_cloudwatch_events" {
+  description = "Arn of SNS event to send alerts to Slack"
+  type        = string
+}
+
 variable "termination_protection" {
   description = "Default setting for Termination Protection"
   type        = bool

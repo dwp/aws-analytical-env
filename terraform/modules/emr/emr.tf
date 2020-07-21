@@ -106,3 +106,22 @@ resource "aws_emr_cluster" "cluster" {
     ]
   }
 }
+
+resource "aws_cloudwatch_event_rule" "cluster_bootstrap_event_rule" {
+  name        = "analytical-env-emr-bootstrap-event-rule"
+  description = "Alert on failure of EMR to bootstrap"
+
+  event_pattern = <<PATTERN
+{
+  "detail-type": [
+    "Bootstrapping Failure"
+  ]
+}
+PATTERN
+}
+
+resource "aws_cloudwatch_event_target" "slack_alert" {
+  rule      = aws_cloudwatch_event_rule.cluster_bootstrap_event_rule.name
+  target_id = "SendToSNS"
+  arn       = var.sns_cloudwatch_events
+}

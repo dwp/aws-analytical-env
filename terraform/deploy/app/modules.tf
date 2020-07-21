@@ -42,6 +42,7 @@ module "emr" {
   dataset_s3_tags               = ["collection_tag", "crown"]
   dataset_glue_db               = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.analytical_dataset_generation.job_name
   security_configuration_groups = ["UC_DataScience_PII", "UC_DataScience_Non_PII"]
+  sns_cloudwatch_events         = data.terraform_remote_state.aws_common_infrastructure.outputs.sns_cloudwatch_events.arn
 
   artefact_bucket = {
     id      = data.terraform_remote_state.management_artefacts.outputs.artefact_bucket.id
