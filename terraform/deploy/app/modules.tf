@@ -76,3 +76,12 @@ module "pushgateway" {
   common_tags = local.common_tags
 
 }
+
+module "codecommit" {
+  source = "../../modules/codecommit"
+
+  repository_name        = "Data Science"
+  repository_description = "This is the repository for Data Science"
+
+}
+
