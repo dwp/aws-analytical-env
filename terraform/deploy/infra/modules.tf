@@ -1,6 +1,6 @@
 module analytical_env_vpc {
-  source                                     = "dwp/vpc/aws"
-  version                                    = "3.0.3"
+  source  = "dwp/vpc/aws"
+  version = "3.0.3"
 
   common_tags                                = local.common_tags
   gateway_vpce_route_table_ids               = module.networking.outputs.aws_route_table_private_ids
@@ -16,7 +16,7 @@ module analytical_env_vpc {
     "ecs",
     "ecs-agent",
     "ecs-telemetry",
-    "ecr.api"
+    "ecr.api",
     "ecr.dkr",
     "ec2",
     "ec2messages",
