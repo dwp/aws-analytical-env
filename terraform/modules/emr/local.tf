@@ -31,6 +31,7 @@ locals {
     "api.ecr.${data.aws_region.current.name}.amazonaws.com",
   ]
   r_packages = [
+    "bestglm",
     "bizdays",
     "boot",
     "cluster",
@@ -46,6 +47,7 @@ locals {
     "flexdashboard",
     "forcats",
     "forecast",
+    "glmnet",
     "ggplot2",
     "googleVis",
     "Hmisc",
