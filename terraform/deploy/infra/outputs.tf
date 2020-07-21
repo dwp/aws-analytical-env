@@ -19,7 +19,7 @@ output alb_listner {
 }
 
 output vpc_main {
-  value = module.analytical_env_vpc.vpc
+  value = module.analytical_env_vpc
 }
 
 output interface_vpce_sg_id {
@@ -27,9 +27,9 @@ output interface_vpce_sg_id {
 }
 
 output s3_prefix_list_id {
-  value = module.analytical_env_vpc.s3_prefix_list_id
+  value = module.analytical_env_vpc.prefix_list_ids.s3
 }
 
 output dynamodb_prefix_list_id {
-  value = module.analytical_env_vpc.dynamodb_prefix_list_id
+  value = module.analytical_env_vpc.prefix_list_ids.dynamodb
 }

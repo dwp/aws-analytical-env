@@ -54,7 +54,7 @@ resource "aws_security_group_rule" "egress_internet_proxy" {
   from_port                = 3128
   to_port                  = 3128
   protocol                 = "tcp"
-  source_security_group_id = module.networking.outputs.internet_proxy_vpce.sg_id
+  source_security_group_id = module.analytical_env_vpc.custom_vpce_sg_id
   security_group_id        = aws_security_group.kali.0.id
 }
 
@@ -66,7 +66,7 @@ resource "aws_security_group_rule" "ingress_internet_proxy" {
   to_port                  = 3128
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.kali.0.id
-  security_group_id        = module.networking.outputs.internet_proxy_vpce.sg_id
+  security_group_id        = module.analytical_env_vpc.custom_vpce_sg_id
 }
 
 resource "aws_security_group_rule" "kali_allow_all_egress" {
@@ -90,8 +90,8 @@ resource "aws_instance" "kali" {
   user_data = templatefile(
     "${path.module}/kali.cloud-cfg.tmpl",
     { users       = local.kali_users,
-      http_proxy  = format("http://%s:3128", module.networking.outputs.internet_proxy_vpce.dns_name),
-      https_proxy = format("http://%s:3128", module.networking.outputs.internet_proxy_vpce.dns_name),
+      http_proxy  = format("http://%s:3128", module.analytical_env_vpc.custom_vpce_dns_names.proxy_vpc_endpoint),
+      https_proxy = format("http://%s:3128", module.analytical_env_vpc.custom_vpce_dns_names.proxy_vpc_endpoint),
     }
   )
 
