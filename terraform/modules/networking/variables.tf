@@ -82,8 +82,3 @@ variable "proxy_subnet" {
   description = "Internet Egress subnet ranges"
   type        = map(list(string))
 }
-
-variable "internet_proxy_service_name" {
-  description = "Internet Proxy VPC Endpoint Service name"
-  type        = string
-}

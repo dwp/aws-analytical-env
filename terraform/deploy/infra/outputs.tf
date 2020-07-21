@@ -19,7 +19,7 @@ output alb_listner {
 }
 
 output vpc_main {
-  value = module.analytical_env_vpc.vpc
+  value = module.analytical_env_vpc
 }
 
 output interface_vpce_sg_id {

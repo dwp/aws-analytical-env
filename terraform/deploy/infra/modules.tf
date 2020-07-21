@@ -1,6 +1,6 @@
 module analytical_env_vpc {
-  source  = "dwp/vpc/aws"
-  version = "2.0.14"
+  source                                     = "dwp/vpc/aws"
+  version                                    = "3.0.3"
 
   common_tags                                = local.common_tags
   gateway_vpce_route_table_ids               = module.networking.outputs.aws_route_table_private_ids
@@ -11,21 +11,32 @@ module analytical_env_vpc {
   vpc_cidr_block                             = local.cidr_block[local.environment]["aws-analytical-env-vpc"]
   vpc_name                                   = local.name
 
-  dynamodb_endpoint      = true
-  ecs_endpoint           = true
-  ecs-agent_endpoint     = true
-  ecs-telemetry_endpoint = true
-  ecrapi_endpoint        = true
-  ecrdkr_endpoint        = true
-  ec2_endpoint           = true
-  ec2messages_endpoint   = true
-  glue_endpoint          = true
-  kms_endpoint           = true
-  logs_endpoint          = true
-  monitoring_endpoint    = true
-  s3_endpoint            = true
-  ssm_endpoint           = true
-  ssmmessages_endpoint   = true
+  aws_vpce_services = [
+    "dynamodb",
+    "ecs",
+    "ecs-agent",
+    "ecs-telemetry",
+    "ecr.api"
+    "ecr.dkr",
+    "ec2",
+    "ec2messages",
+    "glue",
+    "kms",
+    "logs",
+    "monitoring",
+    "s3",
+    "ssm",
+    "ssmmessages",
+    "git-codecommit"
+  ]
+
+  custom_vpce_services = [
+    {
+      key          = "proxy_vpc_endpoint"
+      service_name = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
+      port         = 3128
+    }
+  ]
 }
 
 module networking {
@@ -57,7 +68,6 @@ module networking {
   proxy_route_table                 = data.terraform_remote_state.internet_egress.outputs.proxy_route_table
   proxy_subnet                      = data.terraform_remote_state.internet_egress.outputs.proxy_subnet
   region                            = var.region
-  internet_proxy_service_name       = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
 }
 
 module waf {

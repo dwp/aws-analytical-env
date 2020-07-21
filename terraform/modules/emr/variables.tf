@@ -166,3 +166,8 @@ variable "security_configuration_groups" {
   description = "Cognito groups to allow access to S3 data"
   type        = list(string)
 }
+
+variable "no_proxy_list" {
+  description = "List of no proxy hosts from VPC module"
+  type        = list(string)
+}

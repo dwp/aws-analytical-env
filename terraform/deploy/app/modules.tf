@@ -53,6 +53,8 @@ module "emr" {
 
   truststore_certs   = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
   truststore_aliases = "dataworks_root_ca,dataworks_mgt_root_ca"
+
+  no_proxy_list = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc_main.no_proxy_list
 }
 
 module "pushgateway" {

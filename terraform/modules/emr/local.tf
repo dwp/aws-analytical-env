@@ -12,22 +12,5 @@ locals {
   autoscaling_max_capacity        = 5
   dks_port                        = 8443
   full_proxy                      = var.internet_proxy["http_address"]
-  no_proxy_hosts = [
-    local.fqdn,
-    "jupyterhub",
-    "127.0.0.1",
-    "localhost",
-    "169.254.169.254",
-    "*.s3.${data.aws_region.current.name}.amazonaws.com",
-    "s3.${data.aws_region.current.name}.amazonaws.com",
-    "sns.${data.aws_region.current.name}.amazonaws.com",
-    "sqs.${data.aws_region.current.name}.amazonaws.com",
-    "${data.aws_region.current.name}.queue.amazonaws.com",
-    "glue.${data.aws_region.current.name}.amazonaws.com",
-    "sts.${data.aws_region.current.name}.amazonaws.com",
-    "*.${data.aws_region.current.name}.compute.internal",
-    "dynamodb.${data.aws_region.current.name}.amazonaws.com",
-    "*.dkr.ecr.${data.aws_region.current.name}.amazonaws.com",
-    "api.ecr.${data.aws_region.current.name}.amazonaws.com",
-  ]
+  no_proxy_hosts                  = var.no_proxy_list
 }
