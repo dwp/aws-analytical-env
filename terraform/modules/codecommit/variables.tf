@@ -8,3 +8,7 @@ variable "repository_description" {
   description = "(Required) Description for the CodeCommit repository"
 }
 
+variable "common_tags" {
+  type        = map(string)
+  description = "(Required) common tags to apply to aws resources"
+}
