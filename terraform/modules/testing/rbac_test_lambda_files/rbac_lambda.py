@@ -9,7 +9,7 @@ http = urllib3.PoolManager()
 # Environment Variables
 host = (os.environ["HOST_URL"] + ":8998") if "HOST_URL" in os.environ else "http://test_host.com:8998"
 
-access_denied_message = "Service: Amazon S3; Status Code: 403; Error Code: AccessDenied"
+access_denied_message = "Input path does not exist"
 
 
 def lambda_handler(context, event):
@@ -60,7 +60,7 @@ def poll_for_result(session_url, status_url):
 def start_session(proxy_user):
     print("Attempting to start a session with Spark")
     code = {
-        'kind': 'spark',
+        'kind': 'sparkr',
         'proxyUser': proxy_user
     }
     url = host + '/sessions'
@@ -91,7 +91,7 @@ def kill_all_sessions():
 def use_database(session_url, database_name):
     print("Selecting Database to use")
     statements_url = session_url + '/statements'
-    code = {'code': f'spark.sql("USE {database_name}")'}
+    code = {'code': f'sql("USE {database_name}")'}
     status_url = initial_request(statements_url, code)
     response = poll_for_result(session_url, status_url)
     print(response)
@@ -100,7 +100,7 @@ def use_database(session_url, database_name):
 
 def make_api_call(session_url, table):
     statements_url = session_url + '/statements'
-    code = {'code': f'spark.sql("select * from {table}")'}
+    code = {'code': f'head(sql("select * from {table}"))'}
     status_url = initial_request(statements_url, code)
     response = poll_for_result(session_url, status_url)
     print(response)
