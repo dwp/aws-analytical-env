@@ -114,16 +114,26 @@ resource "aws_cloudwatch_event_rule" "cluster_bootstrap_event_rule" {
   event_pattern = <<PATTERN
     {
       "detail": {
-        "state": ["TERMINATED_WITH_ERRORS"],
-        "clusterId": ["${aws_emr_cluster.cluster.id}"]
+        "state": ["TERMINATED_WITH_ERRORS"]
       },
       "source": ["aws.emr"]
     }
     PATTERN
 }
 
-resource "aws_cloudwatch_event_target" "slack_alert" {
-  rule      = aws_cloudwatch_event_rule.cluster_bootstrap_event_rule.name
-  target_id = "SendToSNS"
-  arn       = var.sns_cloudwatch_events
+resource "aws_cloudwatch_metric_alarm" "emr_terminated_with_errors_alarm" {
+  alarm_name          = "EMR Cluster Terminated with Errors (${var.environment})"
+  statistic           = "Sum"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  threshold           = "1"
+  metric_name         = "Invocations"
+  namespace           = "AWS/Events"
+  evaluation_periods  = "1"
+  period              = "60"
+  alarm_actions       = [var.monitoring_sns_topic_arn]
+  dimensions = {
+    RuleName = aws_cloudwatch_event_rule.cluster_bootstrap_event_rule.name
+  }
+  alarm_description         = "This metric monitors invocations of the analytical-env-emr-bootstrap-event-rule"
+  insufficient_data_actions = []
 }
