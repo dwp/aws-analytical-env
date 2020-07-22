@@ -19,7 +19,7 @@ variable "emr_applications" {
   default     = ["Spark", "Livy"]
 }
 
-variable "sns_cloudwatch_events" {
+variable "monitoring_sns_topic_arn" {
   description = "Arn of SNS event to send alerts to Slack"
   type        = string
 }
