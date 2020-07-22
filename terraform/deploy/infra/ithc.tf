@@ -90,8 +90,8 @@ resource "aws_instance" "kali" {
   user_data = templatefile(
     "${path.module}/kali.cloud-cfg.tmpl",
     { users       = local.kali_users,
-      http_proxy  = format("http://%s:3128", module.analytical_env_vpc.custom_vpce_dns_names.proxy_vpc_endpoint),
-      https_proxy = format("http://%s:3128", module.analytical_env_vpc.custom_vpce_dns_names.proxy_vpc_endpoint),
+      http_proxy  = format("http://%s:3128", data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.dns_name),
+      https_proxy = format("http://%s:3128", data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.dns_name),
     }
   )
 
