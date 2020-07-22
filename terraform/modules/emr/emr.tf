@@ -126,7 +126,7 @@ resource "aws_cloudwatch_metric_alarm" "emr_terminated_with_errors_alarm" {
   statistic           = "Sum"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   threshold           = "1"
-  metric_name         = "Invocations"
+  metric_name         = "TriggeredRules"
   namespace           = "AWS/Events"
   evaluation_periods  = "1"
   period              = "60"
