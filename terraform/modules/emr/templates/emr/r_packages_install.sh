@@ -18,13 +18,21 @@ export HTTPS_PROXY="$FULL_PROXY"
 export no_proxy="$FULL_NO_PROXY"
 export NO_PROXY="$FULL_NO_PROXY"
 
+export LANG=en_GB.UTF-8
+export LC_ALL=en_GB.UTF-8
+
 # Install the R development tools
-sudo yum install -y R-devel gcc gcc-c++ gcc-gfortran readline-devel cairo-devel libpng-devel libjpeg-devel libtiff-devel libcurl-devel curl-devel
+sudo yum install -y gcc gcc-c++ gcc-gfortran readline-devel cairo-devel libpng-devel libjpeg-devel libtiff-devel libcurl-devel
+
+# Use EPEL and install PCRE2
+cd $HOME
+sudo yum-config-manager --enable epel
+sudo yum-config-manager --setopt=epel.baseurl='http://mirrors.coreix.net/fedora-epel/6/$basearch' --setopt=epel.proxy=$FULL_PROXY --save
+sudo yum install pcre2-devel -y
+sudo yum-config-manager --disable epel
 
 ## Update R
 cd $HOME
-sudo yum-config-manager --enable epel
-sudo yum install pcre2-devel -y
 mkdir R-latest
 cd R-latest
 wget http://cran.rstudio.com/src/base/R-latest.tar.gz
@@ -34,7 +42,17 @@ cd R-4*
 make -j 8
 sudo make install
 
-###############################
+# Install StringI from source
+# This is required as the StringI packages is usually installed from third party repos, that aren't in proxy list
+wget https://github.com/gagolews/stringi/archive/master.zip -O stringi.zip
+unzip stringi.zip
+sed -i '/\/icu..\/data/d' stringi-master/.Rbuildignore
+sudo R CMD build stringi-master
+sudo R CMD INSTALL stringi-master
+
+####################
+# Install Packages #
+####################
 PACKAGES="${packages}"
 
 while [[ $# > 1 ]]; do
@@ -63,3 +81,19 @@ do
 done
 PCK="$${PCK%?}" # Remove last comma
 sudo R -e "options(Ncpus = parallel::detectCores()); Sys.setenv(http_proxy = '${full_proxy}'); Sys.setenv(https_proxy = '${full_proxy}'); install.packages(c($PCK), repos='https://cran.rstudio.com/')" 1>&2
+sudo R -e "devtools::install_github('apache/spark@v2.4.4', subdir='R/pkg')"
+
+# Install SparkR from source
+cd /tmp/
+wget https://github.com/apache/spark/archive/v2.4.4.zip
+unzip v2.4.4.zip
+cd spark-2.4.4
+sudo cp -r R /usr/lib/spark/
+cd bin
+sudo cp sparkR /usr/lib/spark/bin/
+
+cd /usr/lib/spark/R/
+sudo sh install-dev.sh
+
+### Cleanup
+sudo yum remove -y gcc gcc-c++ gcc-gfortran readline-devel cairo-devel libpng-devel libjpeg-devel libtiff-devel libcurl-devel
