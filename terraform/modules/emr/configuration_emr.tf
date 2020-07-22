@@ -54,7 +54,7 @@ resource "aws_s3_bucket_object" "r_packages_install" {
     emr_bucket_path = aws_s3_bucket.emr.id,
     full_proxy      = local.full_proxy,
     full_no_proxy   = join(",", local.no_proxy_hosts),
-    packages        = join(";", local.r_packages)
+    packages        = join(";", concat(local.r_dependencies, local.r_packages))
   })
 }
 
