@@ -46,10 +46,3 @@ jobs:
             - name: emp-release
         params:
           TF_VAR_emp_dir_path: ../../../../emp-release
-      - .: (( inject meta.plan.terraform-analytical-dataset-generation-bootstrap ))
-      - .: (( inject meta.plan.terraform-output-analytical-dataset-generation ))
-        task: get variables for e2e
-      - .: (( inject meta.plan.analytical-env-e2e-tests ))
-        config:
-          params:
-            TF_ADG_OUTPUT_FILE: terraform-output-analytical-dataset-generation/outputs.json
