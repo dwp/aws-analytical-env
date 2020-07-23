@@ -33,10 +33,10 @@ sudo yum-config-manager --disable epel
 
 ## Update R
 cd $HOME
-mkdir R-latest
-cd R-latest
-wget http://cran.rstudio.com/src/base/R-latest.tar.gz
-tar -xzf R-latest.tar.gz
+mkdir R-update
+cd R-update
+wget http://cran.rstudio.com/src/base/R-3/R-3.6.3.tar.gz
+tar -xzf R-3.6.3.tar.gz
 cd R-4*
 ./configure --with-readline=yes --enable-R-profiling=no --enable-memory-profiling=no --enable-R-shlib --with-pic --prefix=/usr --without-x --with-libpng --with-jpeglib --with-cairo --enable-R-shlib --with-recommended-packages=yes
 make -j 8
@@ -81,19 +81,3 @@ do
 done
 PCK="$${PCK%?}" # Remove last comma
 sudo R -e "options(Ncpus = parallel::detectCores()); Sys.setenv(http_proxy = '${full_proxy}'); Sys.setenv(https_proxy = '${full_proxy}'); install.packages(c($PCK), repos='https://cran.rstudio.com/')" 1>&2
-sudo R -e "devtools::install_github('apache/spark@v2.4.4', subdir='R/pkg')"
-
-# Install SparkR from source
-cd /tmp/
-wget https://github.com/apache/spark/archive/v2.4.4.zip
-unzip v2.4.4.zip
-cd spark-2.4.4
-sudo cp -r R /usr/lib/spark/
-cd bin
-sudo cp sparkR /usr/lib/spark/bin/
-
-cd /usr/lib/spark/R/
-sudo sh install-dev.sh
-
-### Cleanup
-sudo yum remove -y gcc gcc-c++ gcc-gfortran readline-devel cairo-devel libpng-devel libjpeg-devel libtiff-devel libcurl-devel
