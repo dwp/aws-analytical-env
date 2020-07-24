@@ -51,7 +51,6 @@ resource "aws_s3_bucket_object" "r_packages_install" {
   bucket = aws_s3_bucket.emr.id
   key    = "scripts/emr/r_packages_install.sh"
   content = templatefile("${path.module}/templates/emr/r_packages_install.sh", {
-    emr_bucket_path = aws_s3_bucket.emr.id,
     full_proxy      = local.full_proxy,
     full_no_proxy   = join(",", local.no_proxy_hosts),
     packages        = join(";", concat(local.r_dependencies, local.r_packages))
@@ -62,9 +61,17 @@ resource "aws_s3_bucket_object" "sparkR_install" {
   bucket = aws_s3_bucket.emr.id
   key    = "scripts/emr/sparkR_install.sh"
   content = templatefile("${path.module}/templates/emr/sparkR_install.sh", {
-    emr_bucket_path = aws_s3_bucket.emr.id,
     full_proxy      = local.full_proxy,
     full_no_proxy   = join(",", local.no_proxy_hosts),
+  })
+}
+
+resource "aws_s3_bucket_object" "run_on_all_nodes" {
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/run_on_all_nodes.py"
+  content = templatefile("${path.module}/templates/emr/run_on_all_nodes.py", {
+    emr_bucket_path = "s3://${aws_s3_bucket.emr.bucket}",
+    script_path = aws_s3_bucket_object.r_packages_install.key
   })
 }
 
