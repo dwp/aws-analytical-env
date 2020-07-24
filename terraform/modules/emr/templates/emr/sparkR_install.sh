@@ -22,6 +22,8 @@ export LANG=en_GB.UTF-8
 export LC_ALL=en_GB.UTF-8
 
 # Install SparkR from source
+sudo R -e "Sys.setenv(http_proxy = '$FULL_PROXY'); Sys.setenv(https_proxy = '$FULL_PROXY'); devtools::install_github('apache/spark@v2.4.4', subdir='R/pkg')"
+
 cd /tmp/
 wget https://github.com/apache/spark/archive/v2.4.4.zip
 unzip v2.4.4.zip
@@ -33,8 +35,5 @@ sudo cp sparkR /usr/lib/spark/bin/
 cd /usr/lib/spark/R/
 sudo sh install-dev.sh
 
-sudo R -e "sudo R -e Sys.setenv(http_proxy = '$FULL_PROXY'); Sys.setenv(https_proxy = '$FULL_PROXY'); devtools::install_github('apache/spark@v2.4.4', subdir='R/pkg')"
-
-### Cleanup
+### Cleanup R DevTools
 sudo R -e "Sys.setenv(http_proxy = '$FULL_PROXY'); Sys.setenv(https_proxy = '$FULL_PROXY'); remove.packages('devtools')"
-sudo yum remove -y gcc gcc-c++ gcc-gfortran readline-devel cairo-devel libpng-devel libjpeg-devel libtiff-devel libcurl-devel

@@ -71,11 +71,6 @@ resource "aws_emr_cluster" "cluster" {
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.emr_setup_sh.key)
   }
 
-  bootstrap_action {
-    name = "r_packages_install"
-    path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.r_packages_install.key)
-  }
-
   step {
     name              = "hdfs-setup"
     action_on_failure = "CONTINUE"
@@ -88,12 +83,13 @@ resource "aws_emr_cluster" "cluster" {
   }
 
   step {
-    name              = "livy-client-conf"
+    name              = "r_packages_install_on_all_nodes"
     action_on_failure = "CONTINUE"
+
     hadoop_jar_step {
       jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
       args = [
-        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.livy_client_conf_sh.key)
+        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.run_on_all_nodes.key)
       ]
     }
   }
@@ -109,6 +105,18 @@ resource "aws_emr_cluster" "cluster" {
       ]
     }
   }
+
+  step {
+    name              = "livy-client-conf"
+    action_on_failure = "CONTINUE"
+    hadoop_jar_step {
+      jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
+      args = [
+        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.livy_client_conf_sh.key)
+      ]
+    }
+  }
+
 
   depends_on = [
     aws_s3_bucket_object.get_dks_cert_sh,
