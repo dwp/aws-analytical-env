@@ -22,7 +22,7 @@ export LANG=en_GB.UTF-8
 export LC_ALL=en_GB.UTF-8
 
 # Install the R development tools
-sudo yum install -y gcc gcc-c++ gcc-gfortran readline-devel cairo-devel libpng-devel libjpeg-devel libtiff-devel libcurl-devel bzip2-devel
+sudo yum install -y gcc gcc-c++ gcc-gfortran readline-devel cairo-devel libpng-devel libjpeg-devel libtiff-devel libcurl-devel
 
 # Use EPEL and install PCRE
 cd $HOME
@@ -30,25 +30,6 @@ sudo yum-config-manager --enable epel
 sudo yum-config-manager --setopt=epel.baseurl='http://mirrors.coreix.net/fedora-epel/6/$basearch' --setopt=epel.proxy=$FULL_PROXY --save
 sudo yum install pcre2-devel pcre-devel -y
 sudo yum-config-manager --disable epel
-
-## Update R
-cd $HOME
-mkdir R-update
-cd R-update
-wget http://cran.rstudio.com/src/base/R-3/R-3.6.3.tar.gz
-tar -xzf R-3.6.3.tar.gz
-cd R-3.6.3
-./configure --with-readline=yes --enable-R-profiling=no --enable-memory-profiling=no --enable-R-shlib --with-pic --prefix=/usr --without-x --with-libpng --with-jpeglib --with-cairo --enable-R-shlib --with-recommended-packages=yes
-make -j 8
-sudo make install
-
-# Install StringI from source
-# This is required as the StringI packages is usually installed from third party repos, that aren't in proxy list
-wget https://github.com/gagolews/stringi/archive/master.zip -O stringi.zip
-unzip stringi.zip
-sed -i '/\/icu..\/data/d' stringi-master/.Rbuildignore
-sudo R CMD build stringi-master
-sudo R CMD INSTALL stringi-master
 
 ####################
 # Install Packages #
