@@ -83,19 +83,18 @@ resource "aws_emr_cluster" "cluster" {
   }
 
   step {
-    name              = "r_packages_install_on_all_nodes"
+    name              = "Update R and Install R Packages"
     action_on_failure = "CONTINUE"
-
     hadoop_jar_step {
       jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
       args = [
-        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.run_on_all_nodes.key)
+        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.r_packages_install.key)
       ]
     }
   }
 
   step {
-    name              = "sparkR_install"
+    name              = "Install SparkR on Master"
     action_on_failure = "CONTINUE"
 
     hadoop_jar_step {

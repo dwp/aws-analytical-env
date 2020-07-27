@@ -202,11 +202,6 @@ resource "aws_iam_role_policy" "elastic_map_reduce_for_ec2_role" {
   policy = data.aws_iam_policy_document.elastic_map_reduce_for_ec2_role.json
 }
 
-resource "aws_iam_role_policy_attachment" "SSMForEMREC2" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
-  role       = aws_iam_role.emr_ec2_role.name
-}
-
 data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   statement {
     sid    = "AllowEmrEC2toPutCloudwatchMetrics"

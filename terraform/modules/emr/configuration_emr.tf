@@ -47,6 +47,7 @@ resource "aws_s3_bucket_object" "livy_client_conf_sh" {
   content = data.template_file.livy_client_conf_sh.rendered
 }
 
+# A shell script to update R and install required R packages
 resource "aws_s3_bucket_object" "r_packages_install" {
   bucket = aws_s3_bucket.emr.id
   key    = "scripts/emr/r_packages_install.sh"
@@ -66,14 +67,7 @@ resource "aws_s3_bucket_object" "sparkR_install" {
   })
 }
 
-resource "aws_s3_bucket_object" "run_on_all_nodes" {
-  bucket = aws_s3_bucket.emr.id
-  key    = "scripts/emr/run_on_all_nodes.py"
-  content = templatefile("${path.module}/templates/emr/run_on_all_nodes.py", {
-    emr_bucket_path = "s3://${aws_s3_bucket.emr.bucket}",
-    script_path = aws_s3_bucket_object.r_packages_install.key
-  })
-}
+
 
 data "template_file" "livy_client_conf_sh" {
   template = file(format("%s/templates/emr/livy_client_conf.sh", path.module))

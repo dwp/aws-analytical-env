@@ -9,7 +9,8 @@ emrclient = client('emr')
 with open('/mnt/var/lib/info/extraInstanceData.json') as json_file:
     data = json.load(json_file)
     clusterId = data["jobFlowId"]
-script = "${emr_bucket_path}/${script_path}"
+bucket = "${emr_bucket_path}/"
+script = "${script_path}"
 
 instances = emrclient.list_instances(ClusterId=clusterId, InstanceGroupTypes=['CORE'])['Instances']
 instance_list = [x['Ec2InstanceId'] for x in instances]
@@ -21,9 +22,9 @@ ec2client.create_tags(Resources=instance_list, Tags=[{"Key": "environment", "Val
 ssmclient = client('ssm')
 
 # Download shell script from S3
-command = "aws s3 cp " + script + " /home/hadoop"
+command = "aws s3 cp " + bucket + script + " /home/hadoop"
 try:
-    first_command = ssmclient.send_command(Targets=[{"Key": "tag:environment", "Values": ["coreNodeLibs"]}],
+    first_command = ssmclient.send_command(Targets=[{"Key": "tag:Name", "Values": ["aws-analytical-env"]}],
                                            DocumentName='AWS-RunShellScript',
                                            Parameters={"commands": [command]},
                                            TimeoutSeconds=3600)['Command']['CommandId']
@@ -51,7 +52,7 @@ try:
     if first_command_status == 'Success':
         # Run shell script to install libraries
 
-        second_command = ssmclient.send_command(Targets=[{"Key": "tag:environment", "Values": ["coreNodeLibs"]}],
+        second_command = ssmclient.send_command(Targets=[{"Key": "tag:Name", "Values": ["aws-analytical-env"]}],
                                                 DocumentName='AWS-RunShellScript',
                                                 Parameters={"commands": [f"bash /home/hadoop/{script}"]},
                                                 TimeoutSeconds=3600)['Command']['CommandId']

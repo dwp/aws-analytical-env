@@ -83,4 +83,4 @@ PCK="$${PCK%?}" # Remove last comma
 sudo R -e "options(Ncpus = parallel::detectCores()); Sys.setenv(http_proxy = '${full_proxy}'); Sys.setenv(https_proxy = '${full_proxy}'); install.packages(c($PCK), repos='https://cran.rstudio.com/')" 1>&2
 
 # Cleanup Yum Packages
-sudo yum remove -y gcc gcc-c++ gcc-gfortran readline-devel cairo-devel libpng-devel libjpeg-devel libtiff-devel libcurl-devel bzip2-devel pcre-devel pcre2-devel
+sudo yum remove -y gcc gcc-c++ gcc-gfortran readline-devel cairo-devel libpng-devel libjpeg-devel libtiff-devel libcurl-devel bzip2-devel pcre-devel pcre2-devel bzip2-devel
