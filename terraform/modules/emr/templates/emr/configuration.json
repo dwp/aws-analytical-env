@@ -34,6 +34,8 @@
   {
     "Classification": "spark-defaults",
     "Properties": {
+      "spark.r.shell.command": "/opt/R/R-${r_version}/bin/R",
+      "spark.r.command": "/opt/R/R-${r_version}/bin/Rscript",
       "spark.sql.catalogImplementation": "hive",
       "spark.sql.warehouse.dir": "${data_bucket_path}/external",
       "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=70 -XX:MaxHeapFreeRatio=70 -XX:+CMSClassUnloadingEnabled -XX:OnOutOfMemoryError='kill -9 %p' -Dhttp.proxyHost='${proxy_host}' -Dhttp.proxyPort='3128' -Dhttp.nonProxyHosts='${full_no_proxy}' -Dhttps.proxyHost='${proxy_host}' -Dhttps.proxyPort='3128'",

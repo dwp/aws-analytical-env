@@ -55,6 +55,7 @@ resource "aws_s3_bucket_object" "r_packages_install" {
     full_proxy      = local.full_proxy,
     full_no_proxy   = join(",", local.no_proxy_hosts),
     packages        = join(";", concat(local.r_dependencies, local.r_packages))
+    r_version       = local.r_version
   })
 }
 
@@ -64,10 +65,9 @@ resource "aws_s3_bucket_object" "sparkR_install" {
   content = templatefile("${path.module}/templates/emr/sparkR_install.sh", {
     full_proxy      = local.full_proxy,
     full_no_proxy   = join(",", local.no_proxy_hosts),
+    r_version       = local.r_version
   })
 }
-
-
 
 data "template_file" "livy_client_conf_sh" {
   template = file(format("%s/templates/emr/livy_client_conf.sh", path.module))

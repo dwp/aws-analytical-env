@@ -30,6 +30,15 @@ locals {
     "*.dkr.ecr.${data.aws_region.current.name}.amazonaws.com",
     "api.ecr.${data.aws_region.current.name}.amazonaws.com",
   ]
+  r_version = "3.6.3"
+  r_dependencies = [
+    "devtools",
+    "bestglm",
+    "glmnet",
+    "stringr",
+    "tidyr",
+    "V8",
+  ]
   r_packages = [
     "bizdays",
     "boot",
@@ -84,14 +93,6 @@ locals {
     "xtable",
     "YaleToolkit",
     "zoo"
-  ]
-  r_dependencies = [
-    "devtools",
-    "bestglm",
-    "glmnet",
-    "stringr",
-    "tidyr",
-    "V8",
   ]
 }
 
