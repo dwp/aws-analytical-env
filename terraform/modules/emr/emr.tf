@@ -59,6 +59,7 @@ resource "aws_emr_cluster" "cluster" {
     notebook_bucket_path = format("%s/data", aws_s3_bucket.emr.id)
     proxy_host           = var.internet_proxy["dns_name"]
     full_no_proxy        = join("|", local.no_proxy_hosts)
+    r_version            = local.r_version
   })
 
   bootstrap_action {
@@ -69,6 +70,11 @@ resource "aws_emr_cluster" "cluster" {
   bootstrap_action {
     name = "emr-setup"
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.emr_setup_sh.key)
+  }
+
+  bootstrap_action {
+    name = "Update R and Install R Packages"
+    path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.r_packages_install.key)
   }
 
   step {
@@ -83,6 +89,18 @@ resource "aws_emr_cluster" "cluster" {
   }
 
   step {
+    name              = "Install SparkR on Master"
+    action_on_failure = "CONTINUE"
+
+    hadoop_jar_step {
+      jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
+      args = [
+        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.sparkR_install.key)
+      ]
+    }
+  }
+
+  step {
     name              = "livy-client-conf"
     action_on_failure = "CONTINUE"
     hadoop_jar_step {
@@ -92,6 +110,7 @@ resource "aws_emr_cluster" "cluster" {
       ]
     }
   }
+
 
   depends_on = [
     aws_s3_bucket_object.get_dks_cert_sh,
