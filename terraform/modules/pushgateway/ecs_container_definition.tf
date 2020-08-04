@@ -20,7 +20,7 @@ module "container_definition" {
   }]
   container_cpu = var.container_cpu
   essential     = true
-  environment =  [
+  environment = [
     {
       name  = "PROMETHEUS"
       value = true
