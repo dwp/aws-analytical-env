@@ -20,7 +20,12 @@ module "container_definition" {
   }]
   container_cpu = var.container_cpu
   essential     = true
-
+  environment = [
+    {
+      name  = "PROMETHEUS"
+      value = true
+    }
+  ]
   log_configuration = {
     secretOptions = []
     logDriver     = "awslogs"
