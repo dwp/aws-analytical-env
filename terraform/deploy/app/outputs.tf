@@ -5,3 +5,7 @@ output "emr_hostname" {
 output "emr_sg_id" {
   value = module.emr.emr_security_group_id
 }
+
+output "push_gateway_sg" {
+  value = module.pushgateway.push_gateway_sg
+}
