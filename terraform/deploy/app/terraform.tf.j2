@@ -160,6 +160,7 @@ data "terraform_remote_state" "mgmt_ca" {
 }
 
 provider "aws" {
+  version = "~> 2.70.0"
   alias  = "management"
   region = var.region
 
