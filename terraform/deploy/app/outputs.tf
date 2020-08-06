@@ -9,3 +9,7 @@ output "emr_sg_id" {
 output "push_gateway_sg" {
   value = module.pushgateway.push_gateway_sg
 }
+
+output "pushgateway" {
+  value = module.pushgateway
+}

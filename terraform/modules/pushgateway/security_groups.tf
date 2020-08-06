@@ -5,6 +5,13 @@ resource "aws_security_group" "ecs_tasks_sg" {
   tags        = merge(var.common_tags, { Name = "${var.name_prefix}-ecs-tasks-sg" })
 }
 
+resource "aws_security_group" "lb_sg" {
+  name        = "${var.name_prefix}-lb-sg"
+  description = "${var.name_prefix}-lb-sg"
+  vpc_id      = var.vpc_id
+  tags        = merge(var.common_tags, { Name = "${var.name_prefix}-lb-sg" })
+}
+
 resource aws_security_group_rule "ecs_tasks_ingress_from_alb" {
   description              = "ingress_from_alb"
   from_port                = var.container_port
@@ -12,14 +19,14 @@ resource aws_security_group_rule "ecs_tasks_ingress_from_alb" {
   security_group_id        = aws_security_group.ecs_tasks_sg.id
   to_port                  = var.container_port
   type                     = "ingress"
-  source_security_group_id = var.lb_sg_id
+  source_security_group_id = aws_security_group.lb_sg.id
 }
 
 resource aws_security_group_rule "lb_egress_to_ecs_tasks" {
   description              = "egress_to_ecs_tasks"
   from_port                = var.container_port
   protocol                 = "tcp"
-  security_group_id        = var.lb_sg_id
+  security_group_id        = aws_security_group.lb_sg.id
   to_port                  = var.container_port
   type                     = "egress"
   source_security_group_id = aws_security_group.ecs_tasks_sg.id
