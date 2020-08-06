@@ -48,11 +48,18 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
 
   for USER in $${USERS[@]}; do
 
-    # Convert username format
-    USER=$(echo $USERDIR \
-            | jq ".Users[] as \$u | if \$u.Username == \"$USER\" then \$u else empty end" \
-            | jq -r ".Attributes[] | if .Name == \"sub\" then \"$USER\" + (.Value | match(\"...\").string) else empty end")
-
+    echo Attempting to create $USER if it doesnt exist
+    # If user is DWP ADFS then use their preferred username
+    if [[ $USER == "DWP_"* ]]; then
+      USER=$(echo $USERDIR \
+              | jq ".Users[] as \$u | if \$u.Username == \"$USER\" then \$u else empty end" \
+              | jq -r ".Attributes[] | if .Name == \"preferred_username\" then .Value else empty end")
+    else
+      # Convert username format
+      USER=$(echo $USERDIR \
+              | jq ".Users[] as \$u | if \$u.Username == \"$USER\" then \$u else empty end" \
+              | jq -r ".Attributes[] | if .Name == \"sub\" then \"$USER\" + (.Value | match(\"...\").string) else empty end")
+    fi
     user_exists=$(
       id -u "$USER" >/dev/null 2>&1
       echo $?
