@@ -65,21 +65,6 @@ variable "container_memory_reservation" {
   default     = 2048 # 2 GB
 }
 
-variable "loadbalancer_arn" {
-  type        = string
-  description = "Loadbalancer ARN to use to forward requests to the service"
-}
-
-variable "lb_fqdn" {
-  type        = string
-  description = "FQDN of the Loadbalancer"
-}
-
-variable "lb_sg_id" {
-  type        = string
-  description = "ID of the Loadbalancer security group"
-}
-
 variable "health_check_path" {
   type        = string
   description = "(Optional) Health check path for the Load Balancer"
@@ -89,4 +74,19 @@ variable "health_check_path" {
 variable "management_role_arn" {
   type        = string
   description = "(Required) The role to assume when accessing resources in management"
+}
+
+variable "cert_authority_arn" {
+  type        = string
+  description = "(Required) The ARN of the ACM CA creating our certificate"
+}
+
+variable "root_dns_suffix" {
+  type        = string
+  description = "(Required) Zone to create DNS record in"
+}
+
+variable "parent_domain_name" {
+  type        = string
+  description = "(Required) The parent domain name"
 }

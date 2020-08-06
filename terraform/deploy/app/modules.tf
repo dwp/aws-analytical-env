@@ -71,13 +71,13 @@ module "pushgateway" {
   interface_vpce_sg_id = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
   s3_prefixlist_id     = data.terraform_remote_state.aws_analytical_environment_infra.outputs.s3_prefix_list_id
 
-  loadbalancer_arn    = data.terraform_remote_state.aws_analytical_environment_infra.outputs.alb.arn
-  lb_fqdn             = data.terraform_remote_state.aws_analytical_environment_infra.outputs.alb_fqdn
-  lb_sg_id            = data.terraform_remote_state.aws_analytical_environment_infra.outputs.alb_sg.id
   management_role_arn = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
 
   common_tags = local.common_tags
 
+  cert_authority_arn = data.terraform_remote_state.certificate_authority.outputs.root_ca.arn
+  parent_domain_name = local.parent_domain_name[local.environment]
+  root_dns_suffix    = local.root_dns_name[local.environment]
 }
 
 module "codecommit" {
