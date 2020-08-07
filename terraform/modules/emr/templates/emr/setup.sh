@@ -42,34 +42,34 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
   sudo groupadd -f "$GROUP"
 
   echo "Adding users for group $GROUP"
-  USERS=$(aws cognito-idp list-users-in-group --user-pool-id "${user_pool_id}" --group-name "$GROUP" | jq '.Users' | jq -r '.[].Username')
+  USERS=$(aws cognito-idp list-users-in-group --user-pool-id "${user_pool_id}" --group-name "$GROUP" | jq '.Users[]' | jq -r '(.Attributes[] | if .Name =="preferred_username" then .Value else empty end) // .Username')
 
   USERDIR=$(aws cognito-idp list-users --user-pool-id "${user_pool_id}")
 
   for USER in $${USERS[@]}; do
 
-    # Convert username format
-    USER=$(echo $USERDIR \
-            | jq ".Users[] as \$u | if \$u.Username == \"$USER\" then \$u else empty end" \
+    echo "Constructing username for $USER"
+    # Append sub to username
+    USERNAME=$(echo $USERDIR \
+            | jq ".Users[] as \$u | if ( (\$u.Attributes[] | if .Name ==\"preferred_username\" then .Value else empty end) // \$u.Username) == \"$USER\" then \$u else empty end " \
             | jq -r ".Attributes[] | if .Name == \"sub\" then \"$USER\" + (.Value | match(\"...\").string) else empty end")
 
-    user_exists=$(
-      id -u "$USER" >/dev/null 2>&1
-      echo $?
-    )
-    if [[ user_exists -eq 1 ]]; then
-      echo "Creating user '$USER'"
-      if sudo useradd -m "$USER"; then
-        echo "$USER" | sudo tee -a /opt/dataworks/users
+    echo "Attempting to create $USERNAME if they don't exist"
+    if id -u "$USERNAME"; then
+      echo "User already exists"
+    else
+      echo "Creating user '$USERNAME'"
+      if sudo useradd -m "$USERNAME"; then
+        echo "$USERNAME" | sudo tee -a /opt/dataworks/users
       else
-        echo "Cannot create user '$USER'"
+        echo "Cannot create user '$USERNAME'"
         continue
       fi
     fi
 
-    echo "Adding user '$USER' to group '$GROUP'"
-    sudo usermod -aG hadoop "$USER"
-    sudo usermod -aG "$GROUP" "$USER"
+    echo "Adding user '$USERNAME' to group '$GROUP'"
+    sudo usermod -aG hadoop "$USERNAME"
+    sudo usermod -aG "$GROUP" "$USERNAME"
 
   done
 done
