@@ -42,26 +42,20 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
   sudo groupadd -f "$GROUP"
 
   echo "Adding users for group $GROUP"
-  USERS=$(aws cognito-idp list-users-in-group --user-pool-id "${user_pool_id}" --group-name "$GROUP" | jq '.Users' | jq -r '.[].Username')
+#  USERS=$(aws cognito-idp list-users-in-group --user-pool-id "${user_pool_id}" --group-name "$GROUP" | jq '.Users' | jq -r '.[].Username')
+  USERS=$(aws cognito-idp list-users-in-group --user-pool-id "${user_pool_id}" --group-name "$GROUP" | jq '.Users[]' | jq -r '(.Attributes[] | if .Name =="preferred_username" then .Value else empty end) // .[].Username')
 
   USERDIR=$(aws cognito-idp list-users --user-pool-id "${user_pool_id}")
 
   for USER in $${USERS[@]}; do
 
     echo "Constructing username for $USER"
-    # If user is DWP ADFS then use their preferred username
-    if [[ $USER == "DWP_"* ]]; then
-      USERNAME=$(echo $USERDIR \
-              | jq ".Users[] as \$u | if \$u.Username == \"$USER\" then \$u else empty end" \
-              | jq -r ".Attributes[] | if .Name == \"preferred_username\" then .Value else empty end")
-    else
-    # Convert append sub to username
-      USERNAME=$(echo $USERDIR \
-              | jq ".Users[] as \$u | if \$u.Username == \"$USER\" then \$u else empty end" \
-              | jq -r ".Attributes[] | if .Name == \"sub\" then \"$USER\" + (.Value | match(\"...\").string) else empty end")
-    fi
+    # Append sub to username
+    USERNAME=$(echo $USERDIR \
+            | jq ".Users[] as \$u | if ( (\$u.Attributes[] | if .Name ==\"preferred_username\" then .Value else empty end) // \$u.Username) == \"$USER\" then \$u else empty end " \
+            | jq -r ".Attributes[] | if .Name == \"sub\" then \"$USER\" + (.Value | match(\"...\").string) else empty end")
 
-    echo "Attempting to create $USER if they don't exist"
+    echo "Attempting to create $USERNAME if they don't exist"
     if id -u "$USERNAME"; then
       echo "User already exists"
     else
