@@ -48,35 +48,35 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
 
   for USER in $${USERS[@]}; do
 
-    echo Attempting to create $USER if it doesnt exist
+    echo "Constructing username for $USER"
     # If user is DWP ADFS then use their preferred username
     if [[ $USER == "DWP_"* ]]; then
-      USER=$(echo $USERDIR \
+      USERNAME=$(echo $USERDIR \
               | jq ".Users[] as \$u | if \$u.Username == \"$USER\" then \$u else empty end" \
               | jq -r ".Attributes[] | if .Name == \"preferred_username\" then .Value else empty end")
     else
-      # Convert username format
-      USER=$(echo $USERDIR \
+    # Convert append sub to username
+      USERNAME=$(echo $USERDIR \
               | jq ".Users[] as \$u | if \$u.Username == \"$USER\" then \$u else empty end" \
               | jq -r ".Attributes[] | if .Name == \"sub\" then \"$USER\" + (.Value | match(\"...\").string) else empty end")
     fi
-    user_exists=$(
-      id -u "$USER" >/dev/null 2>&1
-      echo $?
-    )
-    if [[ user_exists -eq 1 ]]; then
-      echo "Creating user '$USER'"
-      if sudo useradd -m "$USER"; then
-        echo "$USER" | sudo tee -a /opt/dataworks/users
+
+    echo "Attempting to create $USER if they don't exist"
+    if id -u "$USERNAME"; then
+      echo "User already exists"
+    else
+      echo "Creating user '$USERNAME'"
+      if sudo useradd -m "$USERNAME"; then
+        echo "$USERNAME" | sudo tee -a /opt/dataworks/users
       else
-        echo "Cannot create user '$USER'"
+        echo "Cannot create user '$USERNAME'"
         continue
       fi
     fi
 
-    echo "Adding user '$USER' to group '$GROUP'"
-    sudo usermod -aG hadoop "$USER"
-    sudo usermod -aG "$GROUP" "$USER"
+    echo "Adding user '$USERNAME' to group '$GROUP'"
+    sudo usermod -aG hadoop "$USERNAME"
+    sudo usermod -aG "$GROUP" "$USERNAME"
 
   done
 done
