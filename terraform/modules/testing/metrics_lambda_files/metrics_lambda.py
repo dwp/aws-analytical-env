@@ -81,6 +81,7 @@ def measure_response_time(url, code):
     # Continuously check status until Available or Idle
     while True:
         print("Polling url: ", status_url)
+
         # Address Sonar Issues by checking url is in trusted domain
         if parse.urlparse(status_url).hostname in DOMAIN_WHITELIST:
             poll = http.request('GET', status_url)
@@ -93,6 +94,7 @@ def measure_response_time(url, code):
             else:
                 time.sleep(1)
     completed = datetime.datetime.now()
+
     if 'output' in response and response['output']['status'] == "error":
         elapsed_seconds = 0
     else:
