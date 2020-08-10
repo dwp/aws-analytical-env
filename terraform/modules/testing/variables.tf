@@ -30,6 +30,11 @@ variable "rbac_lambda_file_path" {
   description = "(Required) local file path to rbac testing lambda zip"
 }
 
+variable "metrics_lambda_file_path" {
+  type        = string
+  description = "(Required) local file path to EMR metrics collecting lambda zip"
+}
+
 variable log_bucket {
   description = "Bucket to store audit trail in"
   type        = string
@@ -42,4 +47,9 @@ variable "vpc" {
 variable "emr_host_url" {
   type        = string
   description = "the url of the EMR master node"
+}
+
+variable "interface_vpce_sg_id" {
+  type        = string
+  description = "SG id for VPC endpoints"
 }
