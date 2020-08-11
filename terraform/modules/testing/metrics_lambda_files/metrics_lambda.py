@@ -2,8 +2,8 @@ import datetime
 import json
 import os
 import time
-import urllib3
 import boto3
+import urllib3
 
 cloudwatch = boto3.client("cloudwatch", region_name="eu-west-2")
 
@@ -19,14 +19,26 @@ def lambda_handler(context, event):
     database_name = context["db_name"]
     table_names = context["table_names"]
 
-    session_url = start_session(proxy_user)
-    try:
-        use_database(session_url, database_name)
+    session_code = {'kind': 'sparkr', 'proxyUser': proxy_user}
+    database_code = {'code': f'sql("USE {database_name}")'}
 
+    # Initiate Session
+    start_session_response = measure_response_time((host + '/sessions'), session_code)
+    session_url = start_session_response[0]
+    session_state_time_taken = start_session_response[1]
+    publish_metrics("start_session", session_state_time_taken)
+
+    # Connect to database and run queries against tables
+    try:
+        statements_url = session_url + '/statements'
+        database_time_taken = measure_response_time(statements_url, database_code)[1]
+        publish_metrics(f"use_database_{database_name}", database_time_taken)
         for table in table_names:
-            time_taken = measure_response_time(session_url, table)
-            print(f"query to ${table} took ${time_taken}")
-            publish_metrics(table, time_taken)
+            table_code = {'code': f'head(sql("select * from {table}"))'}
+            time_taken = measure_response_time(statements_url, table_code)[1]
+            print(f"query to {table} took {time_taken}")
+            publish_metrics("select_all_from_" + table, time_taken)
+        kill_session(session_url)
     except Exception as e:
         print(e)
         kill_session(session_url)
@@ -35,45 +47,6 @@ def lambda_handler(context, event):
 ###################
 # Helper Functions
 ###################
-def initial_request(url, code):
-    print(code)
-    r = http.request('POST',
-                     url,
-                     body=json.dumps(code),
-                     headers={'Content-Type': 'application/json'})
-    response = json.loads(r.data.decode('utf-8'))
-    print(response)
-    status_url = host + r.headers['location']
-    return status_url
-
-
-def poll_for_result(session_url, status_url):
-    while True:
-        print("Polling url: ", status_url)
-        poll = http.request('GET', status_url)
-        response = json.loads(poll.data.decode('utf-8'))
-        state = response['state']
-        print("Current state =", state)
-        if state == "available" or state == "idle":
-            return response
-        else:
-            time.sleep(1)
-
-
-# Create a session and poll until the session is ready
-def start_session(proxy_user):
-    print("Attempting to start a session with Spark")
-    code = {
-        'kind': 'sparkr',
-        'proxyUser': proxy_user
-    }
-    url = host + '/sessions'
-    session_url = initial_request(url, code)
-    poll_for_result(session_url, session_url)
-    print("SESSION ESTABLISHED")
-    return session_url
-
-
 # When finished, kill the session
 def kill_session(session_url):
     print("Killing session", session_url)
@@ -83,40 +56,46 @@ def kill_session(session_url):
     )
 
 
-def use_database(session_url, database_name):
-    print("Selecting Database to use")
-    statements_url = session_url + '/statements'
-    code = {'code': f'sql("USE {database_name}")'}
-    status_url = initial_request(statements_url, code)
-    response = poll_for_result(session_url, status_url)
-    print(response)
-    print("Using Database", database_name)
-
-
-def measure_response_time(session_url, table):
-    code = {'code': f'head(sql("select * from {table}"))'}
-    statements_url = session_url + '/statements'
-    status_url = initial_request(statements_url, code)
+###################
+# Capture Metrics
+###################
+def measure_response_time(url, code):
     started = datetime.datetime.now()
-    poll_for_result(session_url, status_url)
+    print(f"Measure response time for code: {code}")
+    # Send code to SparkR
+    r = http.request('POST',
+                     url,
+                     body=json.dumps(code),
+                     headers={'Content-Type': 'application/json'})
+    response = json.loads(r.data.decode('utf-8'))
+    print(response)
+    status_url = host + r.headers['location']
+
+    # Continuously check status until Available or Idle
+    print("Polling url: ", status_url)
+    while True:
+        poll = http.request('GET', status_url)
+        response = json.loads(poll.data.decode('utf-8'))
+        state = response['state']
+        print("Current state =", state)
+        if state == "available" or state == "idle":
+            break
+        else:
+            time.sleep(1)
     completed = datetime.datetime.now()
     elapsed_seconds = completed - started
-    kill_session(session_url)
-    return elapsed_seconds.total_seconds()
+    return status_url, elapsed_seconds.total_seconds()
 
 
-def publish_metrics(table, seconds):
-    print(f"Publishing metric for ${table}")
+###################
+# Publish Metrics
+###################
+def publish_metrics(metric_name, seconds):
+    print(f"Publishing metric for {metric_name}")
     response = cloudwatch.put_metric_data(
         MetricData=[
             {
-                'MetricName': 'return_all_rows',
-                'Dimensions': [
-                    {
-                        'Name': 'table',
-                        'Value': table
-                    }
-                ],
+                'MetricName': metric_name,
                 'Value': seconds
             },
         ],
