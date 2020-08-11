@@ -4,13 +4,17 @@ import os
 import time
 import boto3
 import urllib3
+from urllib import parse
 
 cloudwatch = boto3.client("cloudwatch", region_name="eu-west-2")
 
 http = urllib3.PoolManager()
 
 # Environment Variables
-host = (os.environ["HOST_URL"] + ":8998") if "HOST_URL" in os.environ else "http://test_host.com:8998"
+host_url = os.environ["HOST_URL"]
+host = host_url + ":8998" if "HOST_URL" in os.environ else "http://test_host.com:8998"
+
+DOMAIN_WHITELIST = [parse.urlparse(host_url).hostname]
 
 
 def lambda_handler(context, event):
@@ -74,10 +78,12 @@ def measure_response_time(url, code):
     # Continuously check status until Available or Idle
     print("Polling url: ", status_url)
     while True:
-        if host in status_url:
+        if parse.urlparse(status_url).hostname in DOMAIN_WHITELIST:
             poll = http.request('GET', status_url)
             response = json.loads(poll.data.decode('utf-8'))
             state = response['state']
+            if "error" in response['data']:
+                print(response['data'])
             print("Current state =", state)
             if state == "available" or state == "idle":
                 break
