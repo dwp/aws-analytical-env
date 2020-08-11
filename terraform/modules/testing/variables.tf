@@ -35,6 +35,11 @@ variable "metrics_lambda_file_path" {
   description = "(Required) local file path to EMR metrics collecting lambda zip"
 }
 
+variable "create_metrics_data_lambda_file_path" {
+  type        = string
+  description = "(Required) local file path to EMR metrics data creating lambda zip"
+}
+
 variable log_bucket {
   description = "Bucket to store audit trail in"
   type        = string
@@ -79,6 +84,18 @@ variable "large_test_dataset" {
 }
 
 variable "dataset_s3" {
+  type        = map(string)
+  description = "the data set bucket - id (name) and arn included"
+}
+
+variable "s3_path" {
   type        = string
-  description = "the data set bucket name"
+  description = "the path to the folder in which the data will sit"
+  default     = "analytical-dataset/metrics-data"
+}
+
+variable "db_name" {
+  type        = string
+  description = "the name of the database for test data"
+  default     = "test_analytical_dataset_generation"
 }

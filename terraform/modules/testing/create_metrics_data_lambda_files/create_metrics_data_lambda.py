@@ -64,7 +64,7 @@ def upload_file_to_s3(file_location, s3_bucket, s3_key):
 def create_hive_on_s3_data(bucket_name, s3_file_path, collection_name):
     client = boto3.client("glue", region_name='eu-west-2')
 
-    DatabaseName = "database"  # TODO: pass in db name
+    DatabaseName = ${db_name}
     try:
         client.delete_table(DatabaseName=DatabaseName, Name=collection_name)
     except client.exceptions.EntityNotFoundException:
@@ -102,11 +102,7 @@ def create_hive_on_s3_data(bucket_name, s3_file_path, collection_name):
 def lambda_handler(context, event):
     create_false_data("table1k.json", 1000)
     create_false_data("table5m.json", 5000000)
-    upload_file_to_s3("/tmp/table1k.json", ${dataset_s3},
-                      "analytical-dataset/PATH TO FOLDER/table1k.json")  # TODO: pass in bucket name
-    upload_file_to_s3("/tmp/table5m.json", ${dataset_s3},
-                      "analytical-dataset/PATH TO FOLDER/table5m.json")  # TODO: pass in bucket name
-    create_hive_on_s3_data("s3_bucket", "analytical-dataset/PATH TO FOLDER/table1k.json",
-                           "table1k")  # TODO: pass in bucket name
-    create_hive_on_s3_data("s3_bucket", "analytical-dataset/PATH TO FOLDER/table5m.json",
-                           "table5m")  # TODO: pass in bucket name
+    upload_file_to_s3("/tmp/table1k.json", ${dataset_s3_name}, "${s3_path}/table1k.json")
+    upload_file_to_s3("/tmp/table5m.json", ${dataset_s3_name}, "${s3_path}/table5m.json")
+    create_hive_on_s3_data(${dataset_s3_name}, "${s3_path}/table1k.json", "table1k")
+    create_hive_on_s3_data(${dataset_s3_name}, "${s3_path}/table5m.json", "table5m")
