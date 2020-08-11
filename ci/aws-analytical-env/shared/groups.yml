@@ -21,6 +21,9 @@ groups:
       - taint-int
       - taint-preprod
       - taint-prod
+  - name: codecommit
+    jobs:
+      - copy-rnd
   - name: testing
     jobs:
       - testing-development
