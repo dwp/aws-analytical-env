@@ -79,7 +79,6 @@ def measure_response_time(url, code):
         state = response['state']
         print("Current state =", state)
         if state == "available" or state == "idle":
-            print(response)
             break
         else:
             time.sleep(1)

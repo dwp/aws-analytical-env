@@ -234,7 +234,9 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "arn:aws:glue:${var.region}:${var.account}:table/${var.dataset_glue_db}/*",
       "arn:aws:glue:${var.region}:${var.account}:table/${var.dataset_glue_db}_staging/*",
       "arn:aws:glue:${var.region}:${var.account}:database/test_analytical_dataset_generation",
-      "arn:aws:glue:${var.region}:${var.account}:table/test_analytical_dataset_generation/*"
+      "arn:aws:glue:${var.region}:${var.account}:table/test_analytical_dataset_generation/*",
+      "arn:aws:glue:${var.region}:${var.account}:database/metrics",
+      "arn:aws:glue:${var.region}:${var.account}:table/metrics/*"
     ]
   }
 
