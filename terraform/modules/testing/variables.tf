@@ -62,8 +62,8 @@ variable "test_proxy_user" {
 
 variable "non_pii_database_name" {
   type        = string
-  description = "The name of the Non Pii Database"
-  default     = "UC_DataScience_Non_PII"
+  description = "The name of the metrics database"
+  default     = "metrics"
 }
 
 variable "metrics_table_names" {
