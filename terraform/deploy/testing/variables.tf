@@ -15,6 +15,12 @@ variable "rbac_lambda_file_path" {
   default     = "rbac_test_lambda_files"
 }
 
+variable "metrics_lambda_file_path" {
+  type        = string
+  description = "(Required) local file path to EMR metric collection lambda zip"
+  default     = "metrics_lambda_files"
+}
+
 variable "name_prefix" {
   type        = string
   description = "(Optional) Name prefix for resources we create, defaults to repository name"

@@ -30,6 +30,11 @@ variable "rbac_lambda_file_path" {
   description = "(Required) local file path to rbac testing lambda zip"
 }
 
+variable "metrics_lambda_file_path" {
+  type        = string
+  description = "(Required) local file path to EMR metrics collecting lambda zip"
+}
+
 variable log_bucket {
   description = "Bucket to store audit trail in"
   type        = string
@@ -42,4 +47,27 @@ variable "vpc" {
 variable "emr_host_url" {
   type        = string
   description = "the url of the EMR master node"
+}
+
+variable "interface_vpce_sg_id" {
+  type        = string
+  description = "SG id for VPC endpoints"
+}
+
+variable "test_proxy_user" {
+  type        = string
+  description = "The user to use when calling Livy"
+  default     = "e2e_testuser_non_piib0a"
+}
+
+variable "non_pii_database_name" {
+  type        = string
+  description = "The name of the metrics database"
+  default     = "metrics"
+}
+
+variable "metrics_table_names" {
+  description = "Table names where our test data is stored"
+  type        = list(string)
+  default     = ["table1k", "table5m"]
 }
