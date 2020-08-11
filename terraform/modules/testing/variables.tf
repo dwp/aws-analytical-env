@@ -77,3 +77,8 @@ variable "large_test_dataset" {
   type        = string
   default     = "table5m"
 }
+
+variable "dataset_s3" {
+  type        = string
+  description = "the data set bucket name"
+}
