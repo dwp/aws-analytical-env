@@ -74,14 +74,15 @@ def measure_response_time(url, code):
     # Continuously check status until Available or Idle
     print("Polling url: ", status_url)
     while True:
-        poll = http.request('GET', status_url)
-        response = json.loads(poll.data.decode('utf-8'))
-        state = response['state']
-        print("Current state =", state)
-        if state == "available" or state == "idle":
-            break
-        else:
-            time.sleep(1)
+        if host in status_url:
+            poll = http.request('GET', status_url)
+            response = json.loads(poll.data.decode('utf-8'))
+            state = response['state']
+            print("Current state =", state)
+            if state == "available" or state == "idle":
+                break
+            else:
+                time.sleep(1)
     completed = datetime.datetime.now()
     elapsed_seconds = completed - started
     return status_url, elapsed_seconds.total_seconds()
