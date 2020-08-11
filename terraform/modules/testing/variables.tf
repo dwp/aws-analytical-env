@@ -71,3 +71,8 @@ variable "metrics_table_names" {
   type        = list(string)
   default     = ["table1k", "table5m"]
 }
+
+variable "dataset_s3" {
+  type        = string
+  description = "the data set bucket name"
+}
