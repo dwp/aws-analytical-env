@@ -19,7 +19,7 @@ resource "aws_lambda_function" "rbac_test_lambda" {
   }
   environment {
     variables = {
-      HOST_URL      = var.emr_host_url
+      HOST_URL = var.emr_host_url
     }
   }
 }
@@ -56,7 +56,7 @@ resource "aws_lambda_function" "emr_metrics_lambda" {
   }
   environment {
     variables = {
-      HOST_URL      = var.emr_host_url
+      HOST_URL = var.emr_host_url
     }
   }
 }
