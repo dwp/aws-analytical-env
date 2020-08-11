@@ -68,3 +68,8 @@ resource "aws_iam_policy" "allow_cloudwatch_metrics_push" {
 }
 EOF
 }
+
+resource "aws_iam_role_policy_attachment" "policy_for_metrics_lambda_cloudwatch_metrics" {
+  role       = aws_iam_role.role_for_metrics_lambda.name
+  policy_arn = aws_iam_policy.allow_cloudwatch_metrics_push.arn
+}

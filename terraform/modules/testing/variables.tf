@@ -53,3 +53,21 @@ variable "interface_vpce_sg_id" {
   type        = string
   description = "SG id for VPC endpoints"
 }
+
+variable "test_proxy_user" {
+  type = string
+  description = "The user to use when calling Livy"
+  default = "e2e_testuser_non_piib0a"
+}
+
+variable "non_pii_database_name" {
+  type = string
+  description = "The name of the Non Pii Database"
+  default = "UC_DataScience_Non_PII"
+}
+
+variable "metrics_table_names" {
+  description = "Table names where our test data is stored"
+  type = list(string)
+  default = ["table1k", "table5m"]
+}

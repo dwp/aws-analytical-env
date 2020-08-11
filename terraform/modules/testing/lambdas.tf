@@ -10,7 +10,7 @@ resource "aws_lambda_function" "rbac_test_lambda" {
   role             = aws_iam_role.role_for_rbac_lambda.arn
   handler          = "rbac_lambda.lambda_handler"
   runtime          = "python3.8"
-  timeout          = 180
+  timeout          = 300
   source_code_hash = filebase64sha256("${path.module}/${var.name_prefix}-${var.rbac_lambda_file_path}.zip")
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-rbac-test", ProtectSensitiveData = "True" })
   vpc_config {
@@ -20,10 +20,6 @@ resource "aws_lambda_function" "rbac_test_lambda" {
   environment {
     variables = {
       HOST_URL      = var.emr_host_url
-      DB_NAME       = ""
-      PII_TABLE     = ""
-      NON_PII_TABLE = ""
-      PROXY_USER    = ""
     }
   }
 }
@@ -40,7 +36,7 @@ resource "aws_lambda_function" "emr_metrics_lambda" {
   role             = aws_iam_role.role_for_metrics_lambda.arn
   handler          = "metrics_lambda.lambda_handler"
   runtime          = "python3.8"
-  timeout          = 180
+  timeout          = 300
   source_code_hash = filebase64sha256("${path.module}/${var.name_prefix}-${var.metrics_lambda_file_path}.zip")
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-metrics", ProtectSensitiveData = "True" })
   vpc_config {
@@ -50,10 +46,6 @@ resource "aws_lambda_function" "emr_metrics_lambda" {
   environment {
     variables = {
       HOST_URL      = var.emr_host_url
-      DB_NAME       = ""
-      PII_TABLE     = ""
-      NON_PII_TABLE = ""
-      PROXY_USER    = ""
     }
   }
 }
