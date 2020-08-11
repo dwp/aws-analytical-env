@@ -5,17 +5,12 @@ import time
 import boto3
 import urllib3
 from urllib import parse
-
 cloudwatch = boto3.client("cloudwatch", region_name="eu-west-2")
 http = urllib3.PoolManager()
-
 # Environment Variables
 host_url = os.environ["HOST_URL"]
 host = host_url + ":8998" if "HOST_URL" in os.environ else "http://test_host.com:8998"
-
 DOMAIN_WHITELIST = [parse.urlparse(host_url).hostname]
-
-
 def lambda_handler(context, event):
     print("CONTEXT: ", context)
     proxy_user = context["proxy_user"]
@@ -23,13 +18,11 @@ def lambda_handler(context, event):
     table_names = context["table_names"]
     session_code = {'kind': 'sparkr', 'proxyUser': proxy_user}
     database_code = {'code': f'sql("USE {database_name}")'}
-
     # Initiate Session
     start_session_response = measure_response_time((host + '/sessions'), session_code)
     session_url = start_session_response[0]
     session_state_time_taken = start_session_response[1]
     publish_metrics("start_session", session_state_time_taken)
-
     # Connect to database and run queries against tables
     try:
         statements_url = session_url + '/statements'
@@ -44,8 +37,6 @@ def lambda_handler(context, event):
     except Exception as e:
         print(e)
         kill_session(session_url)
-
-
 ###################
 # Helper Functions
 ###################
@@ -56,8 +47,6 @@ def kill_session(session_url):
         'DELETE',
         session_url
     )
-
-
 ###################
 # Capture Metrics
 ###################
@@ -72,11 +61,9 @@ def measure_response_time(url, code):
     response = json.loads(r.data.decode('utf-8'))
     print(response)
     status_url = host + r.headers['location']
-
     # Continuously check status until Available or Idle
     while True:
         print("Polling url: ", status_url)
-
         # Address Sonar Issues by checking url is in trusted domain
         if parse.urlparse(status_url).hostname in DOMAIN_WHITELIST:
             poll = http.request('GET', status_url)
@@ -90,10 +77,7 @@ def measure_response_time(url, code):
                 time.sleep(1)
     completed = datetime.datetime.now()
     elapsed_seconds = completed - started
-
     return status_url, elapsed_seconds.total_seconds()
-
-
 ###################
 # Publish Metrics
 ###################
