@@ -91,11 +91,11 @@ variable "dataset_s3" {
 variable "s3_path" {
   type        = string
   description = "the path to the folder in which the data will sit"
-  default     = "analytical-dataset/metrics-data"
+  default     = "analytical-dataset/metrics"
 }
 
 variable "db_name" {
   type        = string
   description = "the name of the database for test data"
-  default     = "test_analytical_dataset_generation"
+  default     = "metrics"
 }

@@ -108,7 +108,11 @@ data "aws_iam_policy_document" "create_metrics_data_lambda_policy" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "policy_for_create_metrics_data_lambda_cloudwatch_metrics" {
+resource "aws_iam_policy" "policy_for_create_metrics_data_lambda_s3" {
+  policy = data.aws_iam_policy_document.create_metrics_data_lambda_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "policy_for_create_metrics_data_lambda_s3" {
   role       = aws_iam_role.role_for_create_metrics_data_lambda.name
-  policy_arn = aws_iam_policy.allow_cloudwatch_metrics_push.arn
+  policy_arn = aws_iam_policy.policy_for_create_metrics_data_lambda_s3.arn
 }
