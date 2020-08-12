@@ -106,6 +106,21 @@ data "aws_iam_policy_document" "create_metrics_data_lambda_policy" {
       "arn:aws:s3:::${var.dataset_s3.arn}/*"
     ]
   }
+
+  statement {
+    sid    = "KmsToAccessBucket"
+    effect = "Allow"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+    ]
+    resources = [
+      "${var.published_bucket_cmk}",
+    ]
+  }
 }
 
 resource "aws_iam_policy" "policy_for_create_metrics_data_lambda_s3" {

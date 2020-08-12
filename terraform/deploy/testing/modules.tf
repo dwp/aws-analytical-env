@@ -14,4 +14,5 @@ module "testing" {
   interface_vpce_sg_id                 = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
   dataset_s3                           = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket
   create_metrics_data_lambda_file_path = var.create_metrics_data_lambda_file_path
+  published_bucket_cmk                 = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket_cmk.arn
 }

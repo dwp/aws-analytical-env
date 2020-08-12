@@ -99,3 +99,9 @@ variable "db_name" {
   description = "the name of the database for test data"
   default     = "metrics"
 }
+
+variable "published_bucket_cmk" {
+  description = "(Required) KMS key arn for accessing the published_bucket"
+  type        = string
+}
+
