@@ -43,12 +43,15 @@ jobs:
                 git add -A
                 git commit -m"Mirroring"
                 git push
-                git status
+                UNTRACKED=$(git status -s | wc -l)
+                test $UNTRACKED -eq 0
           inputs:
             - name: rnd-repo
 
   - name: copy-rnd-incoming
     plan:
+      - get: working-day-hourly-trigger
+        trigger: true
       - get: rnd-incoming-repo
         trigger: false
       - task: copy-into-rnd-repo
@@ -88,8 +91,10 @@ jobs:
                 then
                     cp -Rfpv /root/${REPO}/outgoing/rnd/* ./
                     git add -A
-                    git commit -m"Mirroring"
+                    git commit -m"Mirroring" || true
                 fi
+                UNTRACKED=$(git status -s | wc -l)
+                test $UNTRACKED -eq 0
           inputs:
             - name: rnd-incoming-repo
           outputs:
