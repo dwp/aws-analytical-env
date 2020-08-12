@@ -1,5 +1,6 @@
 import json
 import boto3
+import os
 
 template = {
     '_id': {
@@ -29,22 +30,6 @@ template = {
     },
     'secondTestId': '10000000-0000-0000-0000-000000000000'
 }
-
-
-def create_false_data(output_data_file_name, number_of_copies):
-    local_filename = "/tmp/{}".format(output_data_file_name)
-    with open(local_filename, "a") as output:
-        count = 100000000000000000000000
-        output.write("[")
-        for x in range(0, number_of_copies):
-            template["_id"]["d_oid"] = str(count)
-            output_data = template
-            count += 1
-            output.write(json.dumps(output_data))
-            if x != number_of_copies - 1:
-                output.write(",")
-            else:
-                output.write("]")
 
 
 def wait_for_file_in_s3(s3_bucket, s3_key, s3_client):
@@ -99,10 +84,44 @@ def create_hive_on_s3_data(bucket_name, s3_file_path, collection_name):
     )
 
 
+def write_data_and_upload_to_s3(output_data_file_name, count, chunk_length, chunk_id):
+    local_filename = "/tmp/{}.json".format(output_data_file_name)
+
+    with open(local_filename, "a") as output:
+        output.write("[")
+
+        for x in range(0, chunk_length):
+            template["_id"]["d_oid"] = str(count)
+            output_data = template
+            count += 1
+            output.write(json.dumps(output_data))
+            if x != chunk_length - 1:
+                output.write(",")
+            else:
+                output.write("]")
+
+        upload_file_to_s3(local_filename,
+                          "${dataset_s3_name}",
+                          "${path_to_folder}/{}{}.json".format(output_data_file_name, chunk_id))
+        os.remove(local_filename)
+
+
+def create_false_data(output_data_file_name, number_of_copies):
+
+    whole_chunks = round(number_of_copies/375000)
+    last_chunk = number_of_copies - (whole_chunks*37500)
+    count = 100000000000000000000000
+    chunk_id = 1
+
+    for x in range(0, whole_chunks):
+        write_data_and_upload_to_s3(output_data_file_name, count, 375000, chunk_id)
+        chunk_id += 1
+
+    write_data_and_upload_to_s3(output_data_file_name, count, last_chunk, chunk_id)
+
+
 def lambda_handler(context, event):
-    create_false_data("table1k.json", 1000)
-    create_false_data("table5m.json", 5000000)
-    upload_file_to_s3("/tmp/table1k.json", "${dataset_s3_name}", "${path_to_folder}/table1k.json")
-    upload_file_to_s3("/tmp/table5m.json", "${dataset_s3_name}", "${path_to_folder}/table5m.json")
-    create_hive_on_s3_data("${dataset_s3_name}", "${path_to_folder}/table1k.json", "table1k")
-    create_hive_on_s3_data("${dataset_s3_name}", "${path_to_folder}/table5m.json", "table5m")
+    create_false_data("table1k", 1000)
+    create_false_data("table5m", 5000000)
+    create_hive_on_s3_data("${dataset_s3_name}", "${path_to_folder}/", "table1k")
+    create_hive_on_s3_data("${dataset_s3_name}", "${path_to_folder}/", "table5m")
