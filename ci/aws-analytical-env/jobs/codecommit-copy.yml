@@ -46,3 +46,54 @@ jobs:
                 git status
           inputs:
             - name: rnd-repo
+
+  - name: copy-rnd-incoming
+    plan:
+      - get: rnd-incoming-repo
+        trigger: false
+      - task: copy-into-rnd-repo
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: ((dataworks.docker_python_boto_behave_repository))
+              version: 0.0.24
+              tag: 0.0.24
+          params:
+            AWS_ACC: ((dataworks.aws_dev_acc))
+            AWS_REGION: ((dataworks.aws_region))
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
+          run:
+            dir: rnd-incoming-repo
+            path: sh
+            args:
+              - -exc
+              - |
+                source /assume-role
+                export TARGET_DIR=$(pwd)
+                set +x
+                export REPO=Data_Science-production
+                # TODO Remove later
+                export no_proxy="${no_proxy},git-codecommit.eu-west-2.amazonaws.com"
+
+                apk add git
+                pip install git-remote-codecommit
+                git config --global user.email ""
+                git config --global user.name "Mirror Job"
+                git clone codecommit::eu-west-2://${REPO} /root/${REPO}
+                rm -Rf /root/${REPO}/mirrors/rnd
+
+                if [[ -d /root/${REPO}/outgoing/rnd ]]
+                then
+                    cp -Rfpv /root/${REPO}/outgoing/rnd/* ./
+                    git add -A
+                    git commit -m"Mirroring"
+                fi
+          inputs:
+            - name: rnd-incoming-repo
+          outputs:
+            - name: rnd-incoming-repo
+      - put: rnd-incoming-repo
+        params:
+          repository: rnd-incoming-repo
