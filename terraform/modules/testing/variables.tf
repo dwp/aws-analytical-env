@@ -60,7 +60,7 @@ variable "test_proxy_user" {
   default     = "e2e_testuser_non_piib0a"
 }
 
-variable "non_pii_database_name" {
+variable "metrics_database_name" {
   type        = string
   description = "The name of the metrics database"
   default     = "metrics"

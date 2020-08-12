@@ -2,18 +2,16 @@ import datetime
 import json
 import os
 import time
-import boto3
-import urllib3
 from urllib import parse
 
+import boto3
+import urllib3
+
 cloudwatch = boto3.client("cloudwatch", region_name="eu-west-2")
-
 http = urllib3.PoolManager()
-
 # Environment Variables
 host_url = os.environ["HOST_URL"]
 host = host_url + ":8998" if "HOST_URL" in os.environ else "http://test_host.com:8998"
-
 DOMAIN_WHITELIST = [parse.urlparse(host_url).hostname]
 
 
@@ -38,7 +36,7 @@ def lambda_handler(context, event):
         database_time_taken = measure_response_time(statements_url, database_code)[1]
         publish_metrics(f"use_database_{database_name}", database_time_taken)
         for table in table_names:
-            table_code = {'code': f'head(sql("select * from {table}"))'}
+            table_code = {'code': f'sql("select * from {table}")'}
             time_taken = measure_response_time(statements_url, table_code)[1]
             print(f"query to {table} took {time_taken}")
             publish_metrics("select_all_from_" + table, time_taken)
@@ -74,23 +72,24 @@ def measure_response_time(url, code):
     response = json.loads(r.data.decode('utf-8'))
     print(response)
     status_url = host + r.headers['location']
-
     # Continuously check status until Available or Idle
-    print("Polling url: ", status_url)
     while True:
+        print("Polling url: ", status_url)
+        # Address Sonar Issues by checking url is in trusted domain
         if parse.urlparse(status_url).hostname in DOMAIN_WHITELIST:
             poll = http.request('GET', status_url)
             response = json.loads(poll.data.decode('utf-8'))
             state = response['state']
-            if "error" in response['data']:
-                print(response['data'])
             print("Current state =", state)
             if state == "available" or state == "idle":
+                print(response)
                 break
             else:
                 time.sleep(1)
     completed = datetime.datetime.now()
     elapsed_seconds = completed - started
+    if 'output' in response and response['output']['state'] == "error":
+        elapsed_seconds = 0
     return status_url, elapsed_seconds.total_seconds()
 
 
