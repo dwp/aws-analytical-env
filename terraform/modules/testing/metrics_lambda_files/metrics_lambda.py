@@ -88,7 +88,7 @@ def measure_response_time(url, code):
                 time.sleep(1)
     completed = datetime.datetime.now()
     elapsed_seconds = completed - started
-    if response['output']['state'] == "error":
+    if 'output' in response and response['output']['state'] == "error":
         elapsed_seconds = 0
     return status_url, elapsed_seconds.total_seconds()
 
