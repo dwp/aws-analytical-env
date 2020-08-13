@@ -19,10 +19,19 @@ def lambda_handler(context, event):
     print("CONTEXT: ", context)
     proxy_user = context["proxy_user"]
     database_name = context["db_name"]
-    table_names = context["table_names"]
+    small_dataset = context["small_dataset"]
+    large_dataset = context["large_dataset"]
 
     session_code = {'kind': 'sparkr', 'proxyUser': proxy_user}
-    database_code = {'code': f'sql("USE {database_name}")'}
+
+    tests_code_snippets = [
+        [f"use_database_${database_name}", {'code': f'sql("USE {database_name}")'}],
+        ["select_one_row", {'code': f'sql("SELECT * FROM {small_dataset} LIMIT 1")'}],
+        ["select_row_count", {'code': f'sql("SELECT COUNT(*) FROM {small_dataset}")'}],
+        ["left_join_on_small_dataset", {'code': f'sql("SELECT COUNT(*) FROM {small_dataset} AS a LEFT JOIN {small_dataset} as b ON a.val = b.val")'}],
+        ["left_join_on_large_dataset", {'code': f'sql("SELECT COUNT(*) FROM {large_dataset} AS a LEFT JOIN {large_dataset} as b ON a.val = b.val")'}],
+        ["distinct_count_on_large_dataset", {'code': f'sq;("SELECT COUNT(DISTINCT val) FROM {large_dataset}")'}],
+    ]
 
     # Initiate Session
     start_session_response = measure_response_time((host + '/sessions'), session_code)
@@ -33,13 +42,10 @@ def lambda_handler(context, event):
     # Connect to database and run queries against tables
     try:
         statements_url = session_url + '/statements'
-        database_time_taken = measure_response_time(statements_url, database_code)[1]
-        publish_metrics(f"use_database_{database_name}", database_time_taken)
-        for table in table_names:
-            table_code = {'code': f'sql("select * from {table}")'}
-            time_taken = measure_response_time(statements_url, table_code)[1]
-            print(f"query to {table} took {time_taken}")
-            publish_metrics("select_all_from_" + table, time_taken)
+        for test, code in tests_code_snippets:
+            time_taken = measure_response_time(statements_url, code)[1]
+            print(f"{code} took {time_taken}")
+            publish_metrics(test, time_taken)
         kill_session(session_url)
     except Exception as e:
         print(e)

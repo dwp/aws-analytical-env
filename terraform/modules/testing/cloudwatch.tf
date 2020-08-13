@@ -9,9 +9,10 @@ resource "aws_cloudwatch_event_target" "trigger_metric_lambda_every_five_minutes
   target_id = "emr_metrics_lambda"
   arn       = aws_lambda_function.emr_metrics_lambda.arn
   input = jsonencode({
-    proxy_user  = var.test_proxy_user,
-    db_name     = var.metrics_database_name,
-    table_names = var.metrics_table_names
+    proxy_user    = var.test_proxy_user,
+    db_name       = var.metrics_database_name,
+    small_dataset = var.small_test_dataset,
+    large_dataset = var.large_test_dataset
   })
 }
 

@@ -66,8 +66,14 @@ variable "metrics_database_name" {
   default     = "metrics"
 }
 
-variable "metrics_table_names" {
-  description = "Table names where our test data is stored"
-  type        = list(string)
-  default     = ["table1k", "table5m"]
+variable "small_test_dataset" {
+  description = "Table name where our small test data is stored"
+  type        = string
+  default     = "table1k"
+}
+
+variable "large_test_dataset" {
+  description = "Table name where our large test data is stored"
+  type        = string
+  default     = "table5m"
 }
