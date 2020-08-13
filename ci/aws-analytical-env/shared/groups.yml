@@ -24,6 +24,7 @@ groups:
   - name: codecommit
     jobs:
       - copy-rnd
+      - copy-rnd-incoming
   - name: testing
     jobs:
       - testing-development
