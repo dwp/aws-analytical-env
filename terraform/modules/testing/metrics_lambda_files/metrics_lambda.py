@@ -87,24 +87,27 @@ def measure_response_time(url, code):
             else:
                 time.sleep(1)
     completed = datetime.datetime.now()
-    elapsed_seconds = completed - started
-    if 'output' in response and response['output']['state'] == "error":
+    if 'output' in response and response['output']['status'] == "error":
         elapsed_seconds = 0
-    return status_url, elapsed_seconds.total_seconds()
+    else:
+        elapsed_seconds = (completed - started).total_seconds()
+    return status_url, elapsed_seconds
 
 
 ###################
 # Publish Metrics
 ###################
-def publish_metrics(metric_name, seconds):
+def publish_metrics(metric_name, metric_value):
     print(f"Publishing metric for {metric_name}")
     response = cloudwatch.put_metric_data(
         MetricData=[
             {
                 'MetricName': metric_name,
-                'Value': seconds
+                'Value': metric_value,
+                'Unit': 'Seconds'
             },
         ],
         Namespace='/Analytical-Env/EMR_Response_Time',
+
     )
     print("CW Response", response)
