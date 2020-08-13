@@ -35,9 +35,9 @@ variable "metrics_lambda_file_path" {
   description = "(Required) local file path to EMR metrics collecting lambda zip"
 }
 
-variable "create_metrics_data_lambda_file_path" {
+variable "create_metrics_data_file_path" {
   type        = string
-  description = "(Required) local file path to EMR metrics data creating lambda zip"
+  description = "(Required) local file path to EMR metrics data docker folder"
 }
 
 variable log_bucket {
@@ -105,3 +105,17 @@ variable "published_bucket_cmk" {
   type        = string
 }
 
+variable "s3_prefixlist_id" {
+  type        = string
+  description = "(Required) The PrefixList ID for s3, required for docker pull"
+}
+
+variable "subnets" {
+  type        = list(string)
+  description = "(Required) The subnets required for ec2 instances"
+}
+
+variable "mgmt_account" {
+  type        = string
+  description = "(Required) The local management account"
+}

@@ -83,26 +83,3 @@ resource "aws_security_group_rule" "ingress_https_vpc_endpoints_from_metrics_lam
   source_security_group_id = aws_security_group.sg_for_metric_lambda.id
 }
 
-resource aws_lambda_function create_metrics_data_lambda {
-  filename         = data.archive_file.create_metrics_data_lambda_package.output_path
-  description      = "Lambda to create false data for metrics monitoring"
-  function_name    = "${var.name_prefix}-create-metrics-data"
-  role             = aws_iam_role.role_for_create_metrics_data_lambda.arn
-  handler          = "create_metrics_data_lambda.lambda_handler"
-  runtime          = "python3.8"
-  timeout          = 300
-  source_code_hash = filebase64sha256("${path.module}/${var.name_prefix}-${var.create_metrics_data_lambda_file_path}.zip")
-  tags             = merge(var.common_tags, { Name = "${var.name_prefix}-create-metrics-data", ProtectSensitiveData = "True" })
-  depends_on = [
-    data.archive_file.create_metrics_data_lambda_package,
-  ]
-}
-
-data "archive_file" "create_metrics_data_lambda_package" {
-  type        = "zip"
-  output_path = "${path.module}/${var.name_prefix}-${var.create_metrics_data_lambda_file_path}.zip"
-  source {
-    content  = "${data.template_file.create_metrics_data_template.rendered}"
-    filename = "create_metrics_data_lambda.py"
-  }
-}

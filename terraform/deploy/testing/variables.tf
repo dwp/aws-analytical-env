@@ -21,10 +21,10 @@ variable "metrics_lambda_file_path" {
   default     = "metrics_lambda_files"
 }
 
-variable "create_metrics_data_lambda_file_path" {
+variable "create_metrics_data_file_path" {
   type        = string
   description = "(Required) local file path to EMR metric collection lambda zip"
-  default     = "create_metrics_data_lambda_files"
+  default     = "create_metrics_data_docker"
 }
 
 variable "name_prefix" {

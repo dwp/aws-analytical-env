@@ -2,6 +2,9 @@ import json
 import boto3
 import os
 
+small_dataset = "table1k"
+large_dataset = "table5m"
+chunk_size = 405000
 template = {
     '_id': {
         'd_oid': '100000000000000000000000'
@@ -32,8 +35,8 @@ template = {
 }
 
 
-def wait_for_file_in_s3(s3_bucket, s3_key, s3_client):
-    waiter = s3_client.get_waiter("object_exists")
+def wait_for_file_in_s3(s3_bucket, s3_key):
+    waiter = boto3.client('s3').get_waiter("object_exists")
     waiter.wait(
         Bucket=s3_bucket, Key=s3_key, WaiterConfig={"Delay": 2, "MaxAttempts": 60}
     )
@@ -43,13 +46,12 @@ def wait_for_file_in_s3(s3_bucket, s3_key, s3_client):
 def upload_file_to_s3(file_location, s3_bucket, s3_key):
     s3 = boto3.resource('s3')
     s3.meta.client.upload_file(file_location, s3_bucket, s3_key)
-    wait_for_file_in_s3(s3_bucket, s3_key, s3)
 
 
 def create_hive_on_s3_data(bucket_name, s3_file_path, collection_name):
     client = boto3.client("glue", region_name='eu-west-2')
 
-    DatabaseName = "${db_name}"
+    DatabaseName = os.getenv('db_name')
     try:
         client.delete_table(DatabaseName=DatabaseName, Name=collection_name)
     except client.exceptions.EntityNotFoundException:
@@ -100,28 +102,34 @@ def write_data_and_upload_to_s3(output_data_file_name, count, chunk_length, chun
             else:
                 output.write("]")
 
-        upload_file_to_s3(local_filename,
-                          "${dataset_s3_name}",
-                          "${path_to_folder}/{}{}.json".format(output_data_file_name, chunk_id))
-        os.remove(local_filename)
+    upload_file_to_s3(local_filename,
+                        os.getenv('dataset_s3_name'),
+                        "{}/{}/{}{}.json".format(
+                          os.getenv('path_to_folder'),
+                          output_data_file_name,
+                          output_data_file_name,
+                          chunk_id
+                        )
+                      )
+    os.remove(local_filename)
 
 
 def create_false_data(output_data_file_name, number_of_copies):
 
-    whole_chunks = round(number_of_copies/375000)
-    last_chunk = number_of_copies - (whole_chunks*37500)
+    whole_chunks = round(number_of_copies/chunk_size)
+    last_chunk = number_of_copies - (whole_chunks*chunk_size)
     count = 100000000000000000000000
     chunk_id = 1
 
     for x in range(0, whole_chunks):
-        write_data_and_upload_to_s3(output_data_file_name, count, 375000, chunk_id)
+        write_data_and_upload_to_s3(output_data_file_name, count, chunk_size, chunk_id)
         chunk_id += 1
 
     write_data_and_upload_to_s3(output_data_file_name, count, last_chunk, chunk_id)
+    # wait_for_file_in_s3(os.getenv('dataset_s3_name'), "{}/".format(os.getenv('path_to_folder')))
 
 
-def lambda_handler(context, event):
-    create_false_data("table1k", 1000)
-    create_false_data("table5m", 5000000)
-    create_hive_on_s3_data("${dataset_s3_name}", "${path_to_folder}/", "table1k")
-    create_hive_on_s3_data("${dataset_s3_name}", "${path_to_folder}/", "table5m")
+create_false_data(small_dataset, 1000)
+create_false_data(large_dataset, 5000000)
+create_hive_on_s3_data(os.getenv('dataset_s3_name'), "{}/{}/".format(os.getenv('path_to_folder'), small_dataset), small_dataset)
+create_hive_on_s3_data(os.getenv('dataset_s3_name'), "{}/{}/".format(os.getenv('path_to_folder'), large_dataset), large_dataset)
