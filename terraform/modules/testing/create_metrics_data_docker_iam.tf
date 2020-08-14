@@ -68,7 +68,8 @@ data aws_iam_policy_document policy_assume_role_batch_job {
     principals {
       type        = "Service"
       identifiers = [
-        "ecs-task.amazonaws.com"
+        "ecs-task.amazonaws.com",
+        "batch.amazonaws.com"
       ]
     }
   }
@@ -88,7 +89,6 @@ data "aws_iam_policy_document" "create_metrics_data_batch_policy" {
       "s3:PutObject",
       "s3:DeleteObject",
       "s3:GetObject",
-      "s3:ListObjects",
     ]
     resources = [
       "arn:aws:s3:::${var.dataset_s3.arn}",

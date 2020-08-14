@@ -1,6 +1,7 @@
-import json
 import boto3
 import os
+import pandas as pd
+from fastparquet import write
 
 small_dataset = "table1k"
 large_dataset = "table5m"
@@ -33,6 +34,13 @@ template = {
     },
     'secondTestId': '10000000-0000-0000-0000-000000000000'
 }
+
+
+def create_parquet(output_data_file_name, chunk_id, json_data):
+    write(
+        '{}.parquet'.format(output_data_file_name),
+        pd.DataFrame({'id': chunk_id, 'val': json_data}),
+    )
 
 
 def wait_for_file_in_s3(s3_bucket, s3_key):
@@ -86,29 +94,26 @@ def create_hive_on_s3_data(bucket_name, s3_file_path, collection_name):
     )
 
 
-def write_data_and_upload_to_s3(output_data_file_name, count, chunk_length, chunk_id):
-    local_filename = "/tmp/{}.json".format(output_data_file_name)
+def write_data_and_upload_to_s3(output_data_file_name, chunk_length, chunk_id):
+    local_filename = "./{}{}".format(output_data_file_name, chunk_id)
+    json_builder = []
 
-    with open(local_filename, "a") as output:
-        output.write("[")
+    for x in range(0, chunk_length):
+        output_data = template
+        output_data["_id"]["d_oid"] = str(int(output_data["_id"]["d_oid"]) + 1)
+        json_builder.append(deepcopy(output_data))
 
-        for x in range(0, chunk_length):
-            template["_id"]["d_oid"] = str(count)
-            output_data = template
-            count += 1
-            output.write(json.dumps(output_data))
-            if x != chunk_length - 1:
-                output.write(",")
-            else:
-                output.write("]")
+    print(json_builder)
 
-    upload_file_to_s3(local_filename,
+    create_parquet(local_filename, chunk_id, json_builder)
+
+    upload_file_to_s3(
+                        '{}.parquet'.format(local_filename),
                         os.getenv('dataset_s3_name'),
-                        "{}/{}/{}{}.json".format(
-                          os.getenv('path_to_folder'),
-                          output_data_file_name,
-                          output_data_file_name,
-                          chunk_id
+                        "{}/{}/{}.parquet".format(
+                            os.getenv('path_to_folder'),
+                            output_data_file_name,
+                            local_filename
                         )
                       )
     os.remove(local_filename)
@@ -122,10 +127,10 @@ def create_false_data(output_data_file_name, number_of_copies):
     chunk_id = 1
 
     for x in range(0, whole_chunks):
-        write_data_and_upload_to_s3(output_data_file_name, count, chunk_size, chunk_id)
+        write_data_and_upload_to_s3(output_data_file_name, chunk_size, chunk_id)
         chunk_id += 1
 
-    write_data_and_upload_to_s3(output_data_file_name, count, last_chunk, chunk_id)
+    write_data_and_upload_to_s3(output_data_file_name, last_chunk, chunk_id)
     # wait_for_file_in_s3(os.getenv('dataset_s3_name'), "{}/".format(os.getenv('path_to_folder')))
 
 

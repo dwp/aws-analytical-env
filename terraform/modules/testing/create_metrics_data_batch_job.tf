@@ -35,7 +35,7 @@ resource "aws_batch_job_definition" "create_metrics_data_batch_job" {
   container_properties = <<CONTAINER_PROPERTIES
     {
         "jobRoleArn": "${aws_iam_role.job_role_for_create_metrics_data_batch.arn}",
-        "image": "matttoczek/python_datagenerator",
+        "image": "dwpdigital/create_metrics_data_batch",
         "memory": 1024,
         "vcpus": 1,
         "environment": [
