@@ -16,7 +16,7 @@ data aws_iam_policy_document policy_assume_role_batch_service {
 }
 
 resource "aws_iam_role" "service_role_for_create_metrics_data_batch" {
-  name               = "${var.name_prefix}-create-metrics-data-batch-instance-role"
+  name               = "${var.name_prefix}-create-metrics-data-batch-service-role"
   assume_role_policy = data.aws_iam_policy_document.policy_assume_role_batch_service.json
 }
 
@@ -49,12 +49,12 @@ resource "aws_iam_role" "instance_role_for_create_metrics_data_batch" {
 
 resource "aws_iam_instance_profile" "create_metrics_data_instance_profile" {
   name = "${var.name_prefix}-create-metrics-data-instance-profile"
-  role = aws_iam_role.instance_role_for_create_metrics_data_batch.arn
+  role = aws_iam_role.instance_role_for_create_metrics_data_batch.name
 }
 
 resource "aws_iam_role_policy_attachment" "policy_attachment_for_create_metrics_instance" {
   role       = aws_iam_role.instance_role_for_create_metrics_data_batch.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerRegistryReadOnly"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
 /* ========== Batch Job Role ========== */
@@ -68,7 +68,7 @@ data aws_iam_policy_document policy_assume_role_batch_job {
     principals {
       type        = "Service"
       identifiers = [
-        "ecs-task.amazonaws.com",
+        "ecs-tasks.amazonaws.com",
         "batch.amazonaws.com"
       ]
     }
