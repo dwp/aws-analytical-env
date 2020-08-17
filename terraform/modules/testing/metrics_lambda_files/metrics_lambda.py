@@ -96,10 +96,11 @@ def measure_response_time(url, code):
             else:
                 time.sleep(1)
     completed = datetime.datetime.now()
-
-    elapsed_seconds = completed - started
-    return status_url, elapsed_seconds.total_seconds()
-
+    if 'output' in response and response['output']['status'] == "error":
+        elapsed_seconds = 0
+    else:
+        elapsed_seconds = (completed - started).total_seconds()
+    return status_url, elapsed_seconds
 
 ###################
 # Publish Metrics
