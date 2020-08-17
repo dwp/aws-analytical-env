@@ -7,7 +7,7 @@ data aws_iam_policy_document policy_assume_role_batch_service {
       "sts:AssumeRole",
     ]
     principals {
-      type        = "Service"
+      type = "Service"
       identifiers = [
         "batch.amazonaws.com",
       ]
@@ -34,7 +34,7 @@ data aws_iam_policy_document policy_assume_role_batch_instance {
       "sts:AssumeRole",
     ]
     principals {
-      type        = "Service"
+      type = "Service"
       identifiers = [
         "ec2.amazonaws.com"
       ]
@@ -66,7 +66,7 @@ data aws_iam_policy_document policy_assume_role_batch_job {
       "sts:AssumeRole",
     ]
     principals {
-      type        = "Service"
+      type = "Service"
       identifiers = [
         "ecs-tasks.amazonaws.com",
         "batch.amazonaws.com"
@@ -97,7 +97,7 @@ data "aws_iam_policy_document" "create_metrics_data_batch_policy" {
   }
 
   statement {
-    sid = "AllowGlueActions"
+    sid    = "AllowGlueActions"
     effect = "Allow"
     actions = [
       "glue:DeleteTable",
