@@ -2,6 +2,7 @@ import boto3
 import os
 import pandas as pd
 from fastparquet import write
+from copy import deepcopy
 
 small_dataset = "table1k"
 large_dataset = "table5m"
