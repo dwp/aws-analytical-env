@@ -3,6 +3,7 @@ import json
 import os
 import time
 from urllib import parse
+
 import boto3
 import urllib3
 
@@ -30,8 +31,10 @@ def lambda_handler(context, event):
         [f"use_database_${database_name}", {'code': f'sql("USE {database_name}")'}],
         ["select_one_row", {'code': f'sql("SELECT * FROM {small_dataset} LIMIT 1")'}],
         ["select_row_count", {'code': f'sql("SELECT COUNT(*) FROM {small_dataset}")'}],
-        ["left_join_on_small_dataset", {'code': f'sql("SELECT COUNT(*) FROM {small_dataset} AS a LEFT JOIN {small_dataset} as b ON a.val = b.val")'}],
-        ["left_join_on_large_dataset", {'code': f'sql("SELECT COUNT(*) FROM {large_dataset} AS a LEFT JOIN {large_dataset} as b ON a.val = b.val")'}],
+        ["left_join_on_small_dataset",
+         {'code': f'sql("SELECT COUNT(*) FROM {small_dataset} AS a LEFT JOIN {small_dataset} as b ON a.val = b.val")'}],
+        ["left_join_on_large_dataset",
+         {'code': f'sql("SELECT COUNT(*) FROM {large_dataset} AS a LEFT JOIN {large_dataset} as b ON a.val = b.val")'}],
         ["distinct_count_on_large_dataset", {'code': f'sq;("SELECT COUNT(DISTINCT val) FROM {large_dataset}")'}],
     ]
 
@@ -101,6 +104,7 @@ def measure_response_time(url, code):
     else:
         elapsed_seconds = (completed - started).total_seconds()
     return status_url, elapsed_seconds
+
 
 ###################
 # Publish Metrics
