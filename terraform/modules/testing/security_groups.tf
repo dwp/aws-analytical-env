@@ -25,7 +25,7 @@ resource aws_security_group_rule egress_to_s3_pl {
   prefix_list_ids   = [var.s3_prefixlist_id]
 }
 
-resource "aws_security_group_rule" "ingress_https_vpc_endpoints_from_emr" {
+resource "aws_security_group_rule" "ingress_https_vpc_endpoints_from_batch" {
   description              = "ingress_https_vpc_endpoints_from_batch"
   from_port                = 443
   protocol                 = "tcp"

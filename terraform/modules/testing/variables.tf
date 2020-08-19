@@ -88,12 +88,6 @@ variable "dataset_s3" {
   description = "the data set bucket - id (name) and arn included"
 }
 
-variable "s3_path" {
-  type        = string
-  description = "the path to the folder in which the data will sit"
-  default     = "analytical-dataset/metrics"
-}
-
 variable "db_name" {
   type        = string
   description = "the name of the database for test data"
