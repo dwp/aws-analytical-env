@@ -25,6 +25,48 @@ resource "aws_iam_role_policy_attachment" "create_metrics_data_batch_service_rol
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
 }
 
+# Custom policy to allow use of default EBS encryption key by Batch service role
+data "aws_iam_policy_document" "aws_batch_service_role_ebs_cmk" {
+  statement {
+    sid       = "AllowUseDefaultEbsCmk"
+    effect    = "Allow"
+    resources = [var.default_ebs_kms_key]
+
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+    ]
+
+  }
+
+  statement {
+    sid       = "AllowGrantDefaultEbsCmk"
+    effect    = "Allow"
+    actions   = ["kms:CreateGrant"]
+    resources = [var.default_ebs_kms_key]
+
+    condition {
+      test     = "Bool"
+      variable = "kms:GrantIsForAWSResource"
+      values   = ["true"]
+    }
+  }
+}
+
+resource "aws_iam_policy" "aws_batch_service_role_ebs_cmk" {
+  name     = "analytical_env_metrics_batch_service_role_ebs_cmk"
+  policy   = data.aws_iam_policy_document.aws_batch_service_role_ebs_cmk.json
+}
+
+resource "aws_iam_role_policy_attachment" "aws_batch_service_role_ebs_cmk" {
+  role       = aws_iam_role.service_role_for_create_metrics_data_batch.name
+  policy_arn = aws_iam_policy.aws_batch_service_role_ebs_cmk.arn
+}
+
+
 /* ========== Batch Instance Role ========== */
 
 data aws_iam_policy_document policy_assume_role_batch_instance {
@@ -54,6 +96,39 @@ resource "aws_iam_instance_profile" "create_metrics_data_instance_profile" {
 
 resource "aws_iam_role_policy_attachment" "policy_attachment_for_create_metrics_instance" {
   role       = aws_iam_role.instance_role_for_create_metrics_data_batch.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+}
+
+# Custom policy to allow use of default EBS encryption key by Batch instance role
+data "aws_iam_policy_document" "ecs_instance_role_batch_ebs_cmk" {
+  statement {
+    sid    = "AllowUseDefaultEbsCmk"
+    effect = "Allow"
+
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+    ]
+
+    resources = [ var.default_ebs_kms_key ]
+  }
+}
+
+resource "aws_iam_policy" "ecs_instance_role_batch_ebs_cmk" {
+  name     = "analytical_env_metrics_batch_instance_role_batch_ebs_cmk"
+  policy   = data.aws_iam_policy_document.ecs_instance_role_batch_ebs_cmk.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_instance_role_ebs_cmk" {
+  role       = aws_iam_role.instance_role_for_create_metrics_data_batch.name
+  policy_arn = aws_iam_policy.ecs_instance_role_batch_ebs_cmk.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_instance_role_batch_ecr" {
+  role       = aws_iam_role.instance_role_for_create_metrics_data_batch.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
@@ -82,7 +157,7 @@ resource "aws_iam_role" "job_role_for_create_metrics_data_batch" {
 
 data "aws_iam_policy_document" "create_metrics_data_batch_policy" {
   statement {
-    sid    = "AllowLambdaToUploadToBucket"
+    sid    = "AllowBatchToUploadToBucket"
     effect = "Allow"
     actions = [
       "s3:ListBucket",
@@ -91,8 +166,8 @@ data "aws_iam_policy_document" "create_metrics_data_batch_policy" {
       "s3:GetObject",
     ]
     resources = [
-      "arn:aws:s3:::${var.dataset_s3.arn}",
-      "arn:aws:s3:::${var.dataset_s3.arn}/*"
+      var.dataset_s3.arn
+      "${var.dataset_s3.arn}/*"
     ]
   }
 

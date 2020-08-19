@@ -4,7 +4,8 @@ module "testing" {
   common_tags = local.common_tags
   environment = local.environment
 
-  log_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+  log_bucket          = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+  default_ebs_kms_key = data.terraform_remote_state.security-tools.outputs.ebs_cmk.arn
 
   emr_host_url                  = data.terraform_remote_state.aws_analytical_environment_app.outputs.emr_hostname
   vpc                           = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc
@@ -18,4 +19,5 @@ module "testing" {
   s3_prefixlist_id              = data.terraform_remote_state.aws_analytical_environment_infra.outputs.s3_prefix_list_id
   subnets                       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
   mgmt_account                  = local.account["management"]
+  metrics_data_batch_image_name = "${local.account[local.management_account[local.environment]]}.dkr.ecr.${var.region}.amazonaws.com/aws-analytical-env/create_metrics_data_batch"
 }
