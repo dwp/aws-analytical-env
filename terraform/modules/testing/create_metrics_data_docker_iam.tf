@@ -57,8 +57,8 @@ data "aws_iam_policy_document" "aws_batch_service_role_ebs_cmk" {
 }
 
 resource "aws_iam_policy" "aws_batch_service_role_ebs_cmk" {
-  name     = "analytical_env_metrics_batch_service_role_ebs_cmk"
-  policy   = data.aws_iam_policy_document.aws_batch_service_role_ebs_cmk.json
+  name   = "analytical_env_metrics_batch_service_role_ebs_cmk"
+  policy = data.aws_iam_policy_document.aws_batch_service_role_ebs_cmk.json
 }
 
 resource "aws_iam_role_policy_attachment" "aws_batch_service_role_ebs_cmk" {
@@ -113,13 +113,13 @@ data "aws_iam_policy_document" "ecs_instance_role_batch_ebs_cmk" {
       "kms:DescribeKey",
     ]
 
-    resources = [ var.default_ebs_kms_key ]
+    resources = [var.default_ebs_kms_key]
   }
 }
 
 resource "aws_iam_policy" "ecs_instance_role_batch_ebs_cmk" {
-  name     = "analytical_env_metrics_batch_instance_role_batch_ebs_cmk"
-  policy   = data.aws_iam_policy_document.ecs_instance_role_batch_ebs_cmk.json
+  name   = "analytical_env_metrics_batch_instance_role_batch_ebs_cmk"
+  policy = data.aws_iam_policy_document.ecs_instance_role_batch_ebs_cmk.json
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_instance_role_ebs_cmk" {
@@ -166,7 +166,7 @@ data "aws_iam_policy_document" "create_metrics_data_batch_policy" {
       "s3:GetObject",
     ]
     resources = [
-      var.dataset_s3.arn
+      var.dataset_s3.arn,
       "${var.dataset_s3.arn}/*"
     ]
   }

@@ -121,11 +121,11 @@ variable "mgmt_account" {
 }
 
 variable "default_ebs_kms_key" {
-  type = string
+  type        = string
   description = "The default KMS key used for EBS encryption"
 }
 
 variable "metrics_data_batch_image_name" {
-  type = string
+  type        = string
   description = "The Container Image name for the Metrics Data Batch job"
 }
