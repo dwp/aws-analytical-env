@@ -35,7 +35,7 @@ def lambda_handler(context, event):
          {'code': f'sql("SELECT COUNT(*) FROM {small_dataset} AS a LEFT JOIN {small_dataset} as b ON a.val = b.val")'}],
         ["left_join_on_large_dataset",
          {'code': f'sql("SELECT COUNT(*) FROM {large_dataset} AS a LEFT JOIN {large_dataset} as b ON a.val = b.val")'}],
-        ["distinct_count_on_large_dataset", {'code': f'sq;("SELECT COUNT(DISTINCT val) FROM {large_dataset}")'}],
+        ["distinct_count_on_large_dataset", {'code': f'sql("SELECT COUNT(DISTINCT val) FROM {large_dataset}")'}],
     ]
 
     # Initiate Session

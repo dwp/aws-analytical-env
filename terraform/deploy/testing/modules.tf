@@ -14,7 +14,7 @@ module "testing" {
   account                       = local.account[local.environment]
   interface_vpce_sg_id          = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
   dataset_s3                    = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket
-  create_metrics_data_file_path = var.create_metrics_data_file_path
+  metrics_data_s3_folder        = var.metrics_data_s3_folder
   published_bucket_cmk          = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket_cmk.arn
   s3_prefixlist_id              = data.terraform_remote_state.aws_analytical_environment_infra.outputs.s3_prefix_list_id
   subnets                       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id

@@ -35,7 +35,7 @@ variable "metrics_lambda_file_path" {
   description = "(Required) local file path to EMR metrics collecting lambda zip"
 }
 
-variable "create_metrics_data_file_path" {
+variable "metrics_data_s3_folder" {
   type        = string
   description = "(Required) local file path to EMR metrics data docker folder"
 }

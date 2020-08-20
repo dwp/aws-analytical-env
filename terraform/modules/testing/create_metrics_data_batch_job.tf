@@ -52,7 +52,7 @@ resource "aws_batch_job_definition" "create_metrics_data_batch_job" {
         "memory": 1024,
         "vcpus": 1,
         "environment": [
-            { "name": "path_to_folder", "value" : "${var.create_metrics_data_file_path}"},
+            { "name": "path_to_folder", "value" : "${var.name_prefix}-${var.metrics_data_s3_folder}"},
             { "name": "db_name", "value" : "${var.db_name}"},
             { "name": "dataset_s3_name", "value" : "${var.dataset_s3.id}"}
         ]
