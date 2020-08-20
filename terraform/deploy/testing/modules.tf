@@ -20,4 +20,6 @@ module "testing" {
   subnets                       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
   mgmt_account                  = local.account["management"]
   metrics_data_batch_image_name = "${local.account[local.management_account[local.environment]]}.dkr.ecr.${var.region}.amazonaws.com/aws-analytical-env/create_metrics_data_batch"
+  push_host                     = data.terraform_remote_state.aws_analytical_environment_app.outputs.pushgateway.fqdn
+  push_host_sg                  = data.terraform_remote_state.aws_analytical_environment_app.outputs.pushgateway.lb_sg.id
 }
