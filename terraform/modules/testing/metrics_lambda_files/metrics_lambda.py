@@ -8,10 +8,13 @@ import boto3
 import urllib3
 
 cloudwatch = boto3.client("cloudwatch", region_name="eu-west-2")
+
 http = urllib3.PoolManager()
+
 # Environment Variables
 host_url = os.environ["HOST_URL"]
 host = host_url + ":8998" if "HOST_URL" in os.environ else "http://test_host.com:8998"
+
 DOMAIN_WHITELIST = [parse.urlparse(host_url).hostname]
 
 
@@ -28,8 +31,10 @@ def lambda_handler(context, event):
         [f"use_database_${database_name}", {'code': f'sql("USE {database_name}")'}],
         ["select_one_row", {'code': f'sql("SELECT * FROM {small_dataset} LIMIT 1")'}],
         ["select_row_count", {'code': f'sql("SELECT COUNT(*) FROM {small_dataset}")'}],
-        ["left_join_on_small_dataset", {'code': f'sql("SELECT COUNT(*) FROM {small_dataset} AS a LEFT JOIN {small_dataset} as b ON a.val = b.val")'}],
-        ["left_join_on_large_dataset", {'code': f'sql("SELECT COUNT(*) FROM {large_dataset} AS a LEFT JOIN {large_dataset} as b ON a.val = b.val")'}],
+        ["left_join_on_small_dataset",
+         {'code': f'sql("SELECT COUNT(*) FROM {small_dataset} AS a LEFT JOIN {small_dataset} as b ON a.val = b.val")'}],
+        ["left_join_on_large_dataset",
+         {'code': f'sql("SELECT COUNT(*) FROM {large_dataset} AS a LEFT JOIN {large_dataset} as b ON a.val = b.val")'}],
         ["distinct_count_on_large_dataset", {'code': f'sq;("SELECT COUNT(DISTINCT val) FROM {large_dataset}")'}],
     ]
 
@@ -78,6 +83,7 @@ def measure_response_time(url, code):
     response = json.loads(r.data.decode('utf-8'))
     print(response)
     status_url = host + r.headers['location']
+
     # Continuously check status until Available or Idle
     while True:
         print("Polling url: ", status_url)

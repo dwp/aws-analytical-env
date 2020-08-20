@@ -35,6 +35,11 @@ variable "metrics_lambda_file_path" {
   description = "(Required) local file path to EMR metrics collecting lambda zip"
 }
 
+variable "create_metrics_data_file_path" {
+  type        = string
+  description = "(Required) local file path to EMR metrics data docker folder"
+}
+
 variable log_bucket {
   description = "Bucket to store audit trail in"
   type        = string
@@ -76,4 +81,45 @@ variable "large_test_dataset" {
   description = "Table name where our large test data is stored"
   type        = string
   default     = "table5m"
+}
+
+variable "dataset_s3" {
+  type        = map(string)
+  description = "the data set bucket - id (name) and arn included"
+}
+
+variable "db_name" {
+  type        = string
+  description = "the name of the database for test data"
+  default     = "metrics"
+}
+
+variable "published_bucket_cmk" {
+  description = "(Required) KMS key arn for accessing the published_bucket"
+  type        = string
+}
+
+variable "s3_prefixlist_id" {
+  type        = string
+  description = "(Required) The PrefixList ID for s3, required for docker pull"
+}
+
+variable "subnets" {
+  type        = list(string)
+  description = "(Required) The subnets required for ec2 instances"
+}
+
+variable "mgmt_account" {
+  type        = string
+  description = "(Required) The local management account"
+}
+
+variable "default_ebs_kms_key" {
+  type        = string
+  description = "The default KMS key used for EBS encryption"
+}
+
+variable "metrics_data_batch_image_name" {
+  type        = string
+  description = "The Container Image name for the Metrics Data Batch job"
 }
