@@ -50,8 +50,8 @@ def lambda_handler(context, event):
     start_session_response = measure_response_time((host + '/sessions'), session_code)
     session_url = start_session_response[0]
     session_state_time_taken = start_session_response[1]
-    publish_metrics_to_cw("start_session", session_state_time_taken)
-    push_metrics_to_pushgateway("start_session", session_state_time_taken)
+    publish_metrics_to_cw("start_sparkr_session", session_state_time_taken)
+    push_metrics_to_pushgateway("start_sparkr_session", session_state_time_taken)
 
     # Connect to database and run queries against tables
     try:
@@ -137,10 +137,12 @@ def publish_metrics_to_cw(metric_name, metric_value):
 
 def push_metrics_to_pushgateway(name, value):
     print(f"Pushing metric {name} to Prometheus push gateway")
-    pushgateway_url = f"https://{push_host}:{push_port}/metrics/job/analytical-env-emr-metrics/instance/{name}"
+    pushgateway_url = f"https://{push_host}:{push_port}/metrics/job/analytical-env-emr-metrics/instance/livy"
+    data = f"analytical_env_{name} {value}\n"
     response = http.request(
-        "POST",
+        "PUT",
         pushgateway_url,
-        body=f"{name} {value}",
+        body=data,
+        headers={'Content-Type': 'text/plain'}
     )
-    print("Push_response", response.status_code)
+    print("Push_response_status_code: ", response.status)

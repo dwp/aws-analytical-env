@@ -125,11 +125,11 @@ variable "metrics_data_batch_image_name" {
 }
 
 variable "push_host" {
-  type = string
+  type        = string
   description = "The URL for the Pushgateway"
 }
 
 variable "push_host_sg" {
-  type = string
+  type        = string
   description = "Push Gateway Security Group"
 }

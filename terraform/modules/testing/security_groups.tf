@@ -36,13 +36,13 @@ resource "aws_security_group_rule" "ingress_https_vpc_endpoints_from_batch" {
 }
 
 resource "aws_security_group_rule" "ingress_to_push_gateway" {
-  from_port = 9091
-  to_port = 9091
-  protocol = "tcp"
-  type = "ingress"
-  security_group_id = var.push_host_sg
+  from_port                = 9091
+  to_port                  = 9091
+  protocol                 = "tcp"
+  type                     = "ingress"
+  security_group_id        = var.push_host_sg
   source_security_group_id = aws_security_group.sg_for_metric_lambda.id
-  description = "Allow push access from Metrics Lambda"
+  description              = "Allow push access from Metrics Lambda"
 }
 
 // Security group for metrics lambdas that are placed in VPCs
