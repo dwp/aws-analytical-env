@@ -14,7 +14,7 @@ resource "aws_lambda_function" "rbac_test_lambda" {
   source_code_hash = filebase64sha256("${path.module}/${var.name_prefix}-${var.rbac_lambda_file_path}.zip")
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-rbac-test", ProtectSensitiveData = "True" })
   vpc_config {
-    security_group_ids = [aws_security_group.sg_for_rbac_lambda.id]
+    security_group_ids = [aws_security_group.rbac_lambda.id]
     subnet_ids         = [var.vpc.aws_subnets_private[0].id]
   }
   environment {
@@ -40,7 +40,7 @@ resource "aws_lambda_function" "emr_metrics_lambda" {
   source_code_hash = filebase64sha256("${path.module}/${var.name_prefix}-${var.metrics_lambda_file_path}.zip")
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-livy-emr-metrics", ProtectSensitiveData = "True" })
   vpc_config {
-    security_group_ids = [aws_security_group.sg_for_metric_lambda.id]
+    security_group_ids = [aws_security_group.metric_lambda.id]
     subnet_ids         = [var.vpc.aws_subnets_private[0].id]
   }
   environment {
