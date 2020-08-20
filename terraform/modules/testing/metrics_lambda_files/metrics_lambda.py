@@ -28,9 +28,12 @@ def lambda_handler(context, event):
     session_code = {'kind': 'sparkr', 'proxyUser': proxy_user}
 
     tests_code_snippets = [
-        [f"use_database_${database_name}", {'code': f'sql("USE {database_name}")'}],
-        ["select_one_row", {'code': f'sql("SELECT * FROM {small_dataset} LIMIT 1")'}],
-        ["select_row_count", {'code': f'sql("SELECT COUNT(*) FROM {small_dataset}")'}],
+        [f"use_database_{database_name}",
+         {'code': f'sql("USE {database_name}")'}],
+        [f"select_all_rows_from_{small_dataset}_limit_1",
+         {'code': f'sql("SELECT * FROM {small_dataset} LIMIT 1")'}],
+        [f"select_row_count_from_{small_dataset}",
+         {'code': f'sql("SELECT COUNT(*) FROM {small_dataset}")'}],
         ["left_join_on_small_dataset",
          {'code': f'sql("SELECT COUNT(*) FROM {small_dataset} AS a LEFT JOIN {small_dataset} as b ON a.val = b.val")'}],
         ["left_join_on_large_dataset",
