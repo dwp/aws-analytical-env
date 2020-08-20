@@ -6,7 +6,7 @@ resource "aws_security_group" "batch_job_sg" {
 }
 
 resource aws_security_group_rule egress_to_vpce {
-  description              = "egress__https_to_vpc_endpoints"
+  description              = "egress_https_to_vpc_endpoints"
   from_port                = 443
   protocol                 = "tcp"
   security_group_id        = aws_security_group.batch_job_sg.id
@@ -41,20 +41,46 @@ resource "aws_security_group_rule" "ingress_to_push_gateway" {
   protocol                 = "tcp"
   type                     = "ingress"
   security_group_id        = var.push_host_sg
-  source_security_group_id = aws_security_group.sg_for_metric_lambda.id
+  source_security_group_id = aws_security_group.metric_lambda.id
   description              = "Allow push access from Metrics Lambda"
 }
 
 // Security group for metrics lambdas that are placed in VPCs
-resource "aws_security_group" "sg_for_metric_lambda" {
-  name   = "${var.name_prefix}-metric-lambda-sg"
-  vpc_id = var.vpc.aws_vpc.id
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_security_group" "metric_lambda" {
+  name        = "${var.name_prefix}-metric-lambda-sg"
+  description = "Security Group for Analytical Env Metrics Lambda"
+  vpc_id      = var.vpc.aws_vpc.id
+  tags        = merge(var.common_tags, { Name = "${var.name_prefix}-ecs-tasks-sg" })
+}
+
+resource aws_security_group_rule egress_to_vpce {
+  description              = "egress_https_to_vpc_endpoints"
+  from_port                = 443
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.metric_lambda.id
+  to_port                  = 443
+  type                     = "egress"
+  source_security_group_id = var.interface_vpce_sg_id
+}
+
+resource aws_security_group_rule egress_to_push_host {
+  description              = "egress_https_to_push_host"
+  from_port                = 9091
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.metric_lambda.id
+  to_port                  = 9091
+  type                     = "egress"
+  source_security_group_id = var.push_host_sg
+}
+
+resource aws_security_group_rule egress_to_emr {
+  description              = "egress_https_to_emr"
+  from_port                = 9091
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.metric_lambda.id
+  to_port                  = 9091
+  type                     = "egress"
+  source_security_group_id = var.emr_host_sg
 }
 
 resource "aws_security_group_rule" "ingress_https_vpc_endpoints_from_metrics_lambda" {
@@ -64,16 +90,22 @@ resource "aws_security_group_rule" "ingress_https_vpc_endpoints_from_metrics_lam
   security_group_id        = var.interface_vpce_sg_id
   to_port                  = 443
   type                     = "ingress"
-  source_security_group_id = aws_security_group.sg_for_metric_lambda.id
+  source_security_group_id = aws_security_group.metric_lambda.id
 }
 
-resource "aws_security_group" "sg_for_rbac_lambda" {
-  name   = "${var.name_prefix}-rbac-test-lambda-sg"
-  vpc_id = var.vpc.aws_vpc.id
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_security_group" "rbac_lambda" {
+  name        = "${var.name_prefix}-rbac-test-lambda-sg"
+  description = "Security Group for Analytical Env RBAC Test Lambda"
+  vpc_id      = var.vpc.aws_vpc.id
+  tags        = merge(var.common_tags, { Name = "${var.name_prefix}-ecs-tasks-sg" })
+}
+
+resource aws_security_group_rule egress_to_vpce {
+  description              = "egress_https_to_vpc_endpoints"
+  from_port                = 443
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.rbac_lambda.id
+  to_port                  = 443
+  type                     = "egress"
+  source_security_group_id = var.interface_vpce_sg_id
 }

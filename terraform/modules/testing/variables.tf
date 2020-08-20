@@ -133,3 +133,8 @@ variable "push_host_sg" {
   type        = string
   description = "Push Gateway Security Group"
 }
+
+variable "emr_host_sg" {
+  type        = string
+  description = "Security Group for the EMR cluster"
+}
