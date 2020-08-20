@@ -123,3 +123,18 @@ variable "metrics_data_batch_image_name" {
   type        = string
   description = "The Container Image name for the Metrics Data Batch job"
 }
+
+variable "push_host" {
+  type        = string
+  description = "The URL for the Pushgateway"
+}
+
+variable "push_host_sg" {
+  type        = string
+  description = "Push Gateway Security Group"
+}
+
+variable "emr_host_sg" {
+  type        = string
+  description = "Security Group for the EMR cluster"
+}

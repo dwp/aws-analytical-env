@@ -6,14 +6,19 @@ from urllib import parse
 
 import boto3
 import urllib3
+import ssl
 
 cloudwatch = boto3.client("cloudwatch", region_name="eu-west-2")
 
-http = urllib3.PoolManager()
+# Disable SSL Cert verification as there is a self-signed cert in our chain
+http = urllib3.PoolManager(cert_reqs=ssl.CERT_NONE)
+urllib3.disable_warnings()
 
 # Environment Variables
 host_url = os.environ["HOST_URL"]
 host = host_url + ":8998" if "HOST_URL" in os.environ else "http://test_host.com:8998"
+push_port = os.environ["PUSH_PORT"] if "PUSH_PORT" in os.environ else "9091"
+push_host = os.environ["PUSH_HOST"]
 
 DOMAIN_WHITELIST = [parse.urlparse(host_url).hostname]
 
@@ -45,7 +50,8 @@ def lambda_handler(context, event):
     start_session_response = measure_response_time((host + '/sessions'), session_code)
     session_url = start_session_response[0]
     session_state_time_taken = start_session_response[1]
-    publish_metrics("start_session", session_state_time_taken)
+    publish_metrics_to_cw("start_sparkr_session", session_state_time_taken)
+    push_metrics_to_pushgateway("start_sparkr_session", session_state_time_taken)
 
     # Connect to database and run queries against tables
     try:
@@ -53,7 +59,8 @@ def lambda_handler(context, event):
         for test, code in tests_code_snippets:
             time_taken = measure_response_time(statements_url, code)[1]
             print(f"{code} took {time_taken}")
-            publish_metrics(test, time_taken)
+            publish_metrics_to_cw(test, time_taken)
+            push_metrics_to_pushgateway(test, time_taken)
         kill_session(session_url)
     except Exception as e:
         print(e)
@@ -112,8 +119,8 @@ def measure_response_time(url, code):
 ###################
 # Publish Metrics
 ###################
-def publish_metrics(metric_name, metric_value):
-    print(f"Publishing metric for {metric_name}")
+def publish_metrics_to_cw(metric_name, metric_value):
+    print(f"Publishing metric for {metric_name} to CW")
     response = cloudwatch.put_metric_data(
         MetricData=[
             {
@@ -126,3 +133,16 @@ def publish_metrics(metric_name, metric_value):
 
     )
     print("CW Response", response)
+
+
+def push_metrics_to_pushgateway(name, value):
+    print(f"Pushing metric {name} to Prometheus push gateway")
+    pushgateway_url = f"https://{push_host}:{push_port}/metrics/job/analytical-env-emr-metrics/instance/livy"
+    data = f"analytical_env_{name} {value}\n"
+    response = http.request(
+        "PUT",
+        pushgateway_url,
+        body=data,
+        headers={'Content-Type': 'text/plain'}
+    )
+    print("Push_response_status_code: ", response.status)
