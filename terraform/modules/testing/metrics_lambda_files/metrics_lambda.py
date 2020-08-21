@@ -138,9 +138,10 @@ def publish_metrics_to_cw(metric_name, metric_value):
 def push_metrics_to_pushgateway(name, value):
     print(f"Pushing metric {name} to Prometheus push gateway")
     pushgateway_url = f"https://{push_host}:{push_port}/metrics/job/analytical-env-emr-metrics/instance/livy"
-    data = f"analytical_env_{name} {value}\n"
+    data = f"# TYPE analytical_env_{name} gauge\n" \
+           f"analytical_env_{name} {value}\n"
     response = http.request(
-        "PUT",
+        "POST",
         pushgateway_url,
         body=data,
         headers={'Content-Type': 'text/plain'}
