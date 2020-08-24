@@ -37,7 +37,7 @@ cd /usr/lib/spark/R/
 sudo sh install-dev.sh
 
 ### Cleanup R DevTools
-sudo R -e "Sys.setenv(http_proxy = '$FULL_PROXY'); Sys.setenv(https_proxy = '$FULL_PROXY'); remove.packages('devtools')"
+sudo R -e "Sys.setenv(http_proxy = '$FULL_PROXY'); Sys.setenv(https_proxy = '$FULL_PROXY'); remove.packages('devtools')" || true
 
 sudo echo "export SPARKR_DRIVER_R=/opt/R/R-${r_version}/bin/R" >> /etc/spark/conf.dist/spark-env.sh
 
