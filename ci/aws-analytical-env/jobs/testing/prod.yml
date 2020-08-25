@@ -9,25 +9,6 @@ jobs:
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: testing
-          TF_WORKSPACE: 'production'
-      - .: (( inject meta.plan.terraform-common-config ))
-        task: terraform-init-setup
-        config:
-          run:
-            path: sh
-            args:
-              - -exc
-              - |
-                cp ../../../../terraform-config/terraform.tf .
-                cp ../../../../terraform-config/terraform.tfvars .
-                terraform workspace new production
-          inputs:
-            - name: aws-analytical-env
-            - name: terraform-config
-        params:
-          TF_WORKSPACE: 'production'
-          DEPLOY_PATH: testing
-
       - .: (( inject meta.plan.terraform-apply ))
         task: terraform-apply testing
         config:
