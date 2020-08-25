@@ -29,4 +29,5 @@ groups:
     jobs:
       - testing-development
       - testing-qa
+      - testing-production
 

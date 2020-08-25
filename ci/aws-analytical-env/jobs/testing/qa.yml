@@ -6,10 +6,6 @@ jobs:
         resource: meta-testing-qa
       - get: aws-analytical-env
         trigger: true
-      - get: aws-dataworks-e2e-framework
-        trigger: false
-      - get: aws-analytical-dataset-generation
-        trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: testing
@@ -18,15 +14,14 @@ jobs:
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/testing'
+        params:
+          TF_WORKSPACE: 'qa'
+          TF_VAR_test_proxy_user: 'metrics_user11c'
       - .: (( inject meta.plan.terraform-plan ))
         task: terraform-plan testing
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/testing'
-      - .: (( inject meta.plan.terraform-analytical-dataset-generation-bootstrap ))
-      - .: (( inject meta.plan.terraform-output-analytical-dataset-generation ))
-        task: get variables for e2e
-      - .: (( inject meta.plan.analytical-env-e2e-tests ))
-        config:
-          params:
-            TF_ADG_OUTPUT_FILE: terraform-output-analytical-dataset-generation/outputs.json
+        params:
+          TF_WORKSPACE: 'qa'
+          TF_VAR_test_proxy_user: 'metrics_user11c'

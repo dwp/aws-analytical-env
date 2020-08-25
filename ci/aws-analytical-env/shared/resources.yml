@@ -108,6 +108,9 @@ resources:
   - name: meta-testing-qa
     type: meta
 
+  - name: meta-testing-prod
+    type: meta
+
   - name: midnight-trigger
     type: time
     source:
