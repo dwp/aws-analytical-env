@@ -49,7 +49,7 @@ resource "aws_batch_job_definition" "create_metrics_data_batch_job" {
     {
         "jobRoleArn": "${aws_iam_role.job_role_for_create_metrics_data_batch.arn}",
         "image": "${var.metrics_data_batch_image_name}",
-        "memory": 1024,
+        "memory": 1500,
         "vcpus": 1,
         "environment": [
             { "name": "path_to_folder", "value" : "${var.name_prefix}-${var.metrics_data_s3_folder}"},
