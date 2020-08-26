@@ -186,7 +186,8 @@ data "aws_iam_policy_document" "create_metrics_data_batch_policy" {
     ]
     resources = [
       "arn:aws:glue:${var.region}:${var.account}:database/metrics",
-      "arn:aws:glue:${var.region}:${var.account}:table/metrics/*"
+      "arn:aws:glue:${var.region}:${var.account}:table/metrics/*",
+      "arn:aws:glue:${var.region}:${var.account}:catalog",
     ]
   }
 
