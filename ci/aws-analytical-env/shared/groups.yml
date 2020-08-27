@@ -29,4 +29,12 @@ groups:
     jobs:
       - testing-development
       - testing-qa
+      - testing-production
+      - testing-integration
+      - testing-preproduction
+      - metrics-submit-job-development
+      - metrics-submit-job-production
+      - metrics-submit-job-preproduction
+      - metrics-submit-job-integration
+      - metrics-submit-job-qa
 

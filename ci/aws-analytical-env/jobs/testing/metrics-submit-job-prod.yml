@@ -1,0 +1,25 @@
+jobs:
+  - name: metrics-submit-job-production
+    max_in_flight: 1
+    plan:
+      - task: submit-job
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: ((dataworks.docker_awscli_repository))
+              version: ((dataworks.docker_awscli_version))
+          params:
+            AWS_DEFAULT_REGION: ((dataworks.aws_region))
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
+          run:
+            path: sh
+            args:
+              - -exc
+              - |
+                source /assume-role
+                set +x
+                JOB_DEFINITION=aws-analytical-env-create-metrics-data-batch-job
+                JOB_QUEUE_NAME=aws-analytical-env-create-metrics-data-job-queue
+                aws batch submit-job --job-name ci_run --job-queue $JOB_QUEUE_NAME --job-definition $JOB_DEFINITION

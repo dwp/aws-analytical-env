@@ -1,9 +1,9 @@
 jobs:
-  - name: testing-qa
+  - name: testing-production
     max_in_flight: 1
     plan:
       - put: meta
-        resource: meta-testing-qa
+        resource: meta-testing-prod
       - get: aws-analytical-env
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
@@ -15,13 +15,16 @@ jobs:
           run:
             dir: 'aws-analytical-env/terraform/deploy/testing'
         params:
-          TF_WORKSPACE: 'qa'
-          TF_VAR_test_proxy_user: 'xxxxx'
+          DEPLOY_PATH: testing
+          TF_WORKSPACE: 'production'
+          TF_VAR_test_proxy_user: 'metrics_user11c'
+
       - .: (( inject meta.plan.terraform-plan ))
         task: terraform-plan testing
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/testing'
         params:
-          TF_WORKSPACE: 'qa'
-          TF_VAR_test_proxy_user: 'xxxxx'
+          TF_WORKSPACE: 'production'
+          TF_VAR_test_proxy_user: 'metrics_user11c'
+          DEPLOY_PATH: testing

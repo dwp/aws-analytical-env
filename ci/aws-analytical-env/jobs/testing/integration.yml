@@ -1,9 +1,9 @@
 jobs:
-  - name: testing-qa
+  - name: testing-integration
     max_in_flight: 1
     plan:
       - put: meta
-        resource: meta-testing-qa
+        resource: meta-testing-integration
       - get: aws-analytical-env
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
@@ -15,7 +15,7 @@ jobs:
           run:
             dir: 'aws-analytical-env/terraform/deploy/testing'
         params:
-          TF_WORKSPACE: 'qa'
+          TF_WORKSPACE: 'integration'
           TF_VAR_test_proxy_user: 'xxxxx'
       - .: (( inject meta.plan.terraform-plan ))
         task: terraform-plan testing
@@ -23,5 +23,5 @@ jobs:
           run:
             dir: 'aws-analytical-env/terraform/deploy/testing'
         params:
-          TF_WORKSPACE: 'qa'
+          TF_WORKSPACE: 'integration'
           TF_VAR_test_proxy_user: 'xxxxx'
