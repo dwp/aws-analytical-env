@@ -5,7 +5,7 @@ jobs:
       - put: meta
         resource: meta-testing-qa
       - get: aws-analytical-env
-        trigger: true
+        trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: testing
@@ -16,7 +16,7 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/testing'
         params:
           TF_WORKSPACE: 'qa'
-          TF_VAR_test_proxy_user: 'metrics_user11c'
+          TF_VAR_test_proxy_user: 'xxxxx'
       - .: (( inject meta.plan.terraform-plan ))
         task: terraform-plan testing
         config:
@@ -24,4 +24,4 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/testing'
         params:
           TF_WORKSPACE: 'qa'
-          TF_VAR_test_proxy_user: 'metrics_user11c'
+          TF_VAR_test_proxy_user: ''xxxxx'

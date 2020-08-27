@@ -5,7 +5,7 @@ jobs:
       - put: meta
         resource: meta-testing-prod
       - get: aws-analytical-env
-        trigger: true
+        trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: testing

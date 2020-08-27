@@ -5,10 +5,6 @@ jobs:
       - put: meta
         resource: meta-testing-dev
       - get: aws-analytical-env
-        trigger: true
-      - get: aws-dataworks-e2e-framework
-        trigger: false
-      - get: aws-analytical-dataset-generation
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:

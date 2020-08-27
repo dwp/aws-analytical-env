@@ -30,4 +30,6 @@ groups:
       - testing-development
       - testing-qa
       - testing-production
+      - metrics-submit-job-development
+      - metrics-submit-job-prod
 
