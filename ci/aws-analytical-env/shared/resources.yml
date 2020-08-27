@@ -111,6 +111,12 @@ resources:
   - name: meta-testing-prod
     type: meta
 
+  - name: meta-testing-preprod
+    type: meta
+
+  - name: meta-testing-integration
+    type: meta
+
   - name: midnight-trigger
     type: time
     source:

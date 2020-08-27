@@ -1,5 +1,5 @@
 jobs:
-  - name: metrics-submit-job-production
+  - name: metrics-submit-job-preproduction
     max_in_flight: 1
     plan:
       - task: submit-job
@@ -12,7 +12,7 @@ jobs:
               version: ((dataworks.docker_awscli_version))
           params:
             AWS_DEFAULT_REGION: ((dataworks.aws_region))
-            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
           run:
             path: sh
             args:
