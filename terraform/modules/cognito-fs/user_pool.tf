@@ -56,7 +56,7 @@ resource aws_cognito_user_pool emr {
   tags = merge(var.common_tags, { Name = local.name, Persistance = "True" })
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 }
 
