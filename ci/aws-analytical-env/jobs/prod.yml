@@ -43,6 +43,7 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/app'
           inputs:
             - name: emp-release
+            - name: emr-launcher-release
         params:
           TF_WORKSPACE: 'production'
           TF_VAR_emp_dir_path: ../../../../emp-release
@@ -53,6 +54,7 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/app'
           inputs:
             - name: emp-release
+            - name: emr-launcher-release
         params:
           TF_WORKSPACE: 'production'
           TF_VAR_emp_dir_path: ../../../../emp-release

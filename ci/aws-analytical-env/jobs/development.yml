@@ -27,6 +27,8 @@ jobs:
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
+          inputs:
+            - name: emr-launcher-release
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: app
@@ -37,6 +39,7 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/app'
           inputs:
             - name: emp-release
+            - name: emr-launcher-release
         params:
           TF_VAR_emp_dir_path: ../../../../emp-release
       - .: (( inject meta.plan.terraform-plan ))
@@ -46,5 +49,6 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/app'
           inputs:
             - name: emp-release
+            - name: emr-launcher-release
         params:
           TF_VAR_emp_dir_path: ../../../../emp-release

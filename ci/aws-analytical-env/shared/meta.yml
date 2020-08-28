@@ -53,13 +53,12 @@ meta:
               cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
-              export TF_VAR_adg_emr_launcher_zip="{base_path = \"../emr-launcher-release\", version = \"$(cat ../emr-launcher-release/version)\"}"
+              export TF_VAR_aws_analytical_env_emr_launcher_zip="{base_path = \"../../../../emr-launcher-release\", version = \"$(cat ../../../../emr-launcher-release/version)\"}"
               terraform plan -out terraform.plan
               terraform apply -auto-approve terraform.plan
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
-          - name: emr-launcher-release
 
     terraform-plan:
       task: terraform-plan
@@ -74,12 +73,11 @@ meta:
               cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
-              export TF_VAR_adg_emr_launcher_zip="{base_path = \"../emr-launcher-release\", version = \"$(cat ../emr-launcher-release/version)\"}"
+              export TF_VAR_aws_analytical_env_emr_launcher_zip="{base_path = \"../../../../emr-launcher-release\", version = \"$(cat ../../../../emr-launcher-release/version)\"}"
               terraform plan
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
-          - name: emr-launcher-release
 
     terraform-output-app:
       task: terraform-output-app
@@ -94,6 +92,7 @@ meta:
               cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
+              export TF_VAR_aws_analytical_env_emr_launcher_zip="{base_path = \"../../../../emr-launcher-release\", version = \"$(cat ../../../../emr-launcher-release/version)\"}"
               terraform output --json > ../../../../terraform-output-app/outputs.json
           dir: aws-analytical-env/terraform/deploy/app
         inputs:
