@@ -33,6 +33,12 @@ variable "name_prefix" {
   default     = "analytical-env"
 }
 
+variable "test_proxy_user" {
+  type        = string
+  description = "The user to use when calling Livy"
+  default     = "xxxxx"
+}
+
 variable "costcode" {
   type    = string
   default = ""
