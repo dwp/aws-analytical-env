@@ -10,5 +10,14 @@ variable "region" {
 
 variable "costcode" {
   type    = string
-  default = ""
+  default = "PRJ0022507"
+}
+
+variable "aws_analytical_env_emr_launcher_zip" {
+  type = map(string)
+
+  default = {
+    base_path = ""
+    version   = ""
+  }
 }

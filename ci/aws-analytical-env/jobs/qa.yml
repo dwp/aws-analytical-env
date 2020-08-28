@@ -8,6 +8,8 @@ jobs:
         trigger: true
       - get: emp-release
         trigger: true
+      - get: emr-launcher-release
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra
@@ -35,6 +37,7 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/app'
           inputs:
             - name: emp-release
+            - name: emr-launcher-release
         params:
           TF_WORKSPACE: 'qa'
           TF_VAR_emp_dir_path: ../../../../emp-release  
@@ -45,6 +48,7 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/app'
           inputs:
             - name: emp-release
+            - name: emr-launcher-release
         params:
           TF_WORKSPACE: 'qa'
           TF_VAR_emp_dir_path: ../../../../emp-release  
