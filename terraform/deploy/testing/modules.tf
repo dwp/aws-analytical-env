@@ -11,6 +11,7 @@ module "testing" {
   vpc                           = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc
   rbac_lambda_file_path         = var.rbac_lambda_file_path
   metrics_lambda_file_path      = var.metrics_lambda_file_path
+  test_proxy_user               = var.test_proxy_user
   account                       = local.account[local.environment]
   interface_vpce_sg_id          = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
   dataset_s3                    = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket
