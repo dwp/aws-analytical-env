@@ -12,6 +12,10 @@ jobs:
         passed:
           - qa
         trigger: true
+      - get: emr-launcher-release
+        passed:
+          - qa
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra

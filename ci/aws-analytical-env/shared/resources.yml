@@ -81,6 +81,14 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/rnd_incoming.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+  - name: emr-launcher-release
+    type: github-release
+    source:
+      owner: dwp
+      repository: emr-launcher
+    check_every: 1h
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
   - name: meta-development
     type: meta
 

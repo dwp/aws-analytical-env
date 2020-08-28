@@ -8,6 +8,10 @@ jobs:
         passed:
           - qa
         trigger: true
+      - get: emr-launcher-release
+        passed:
+          - qa
+        trigger: true
       - get: aws-analytical-env
         passed:
           - qa

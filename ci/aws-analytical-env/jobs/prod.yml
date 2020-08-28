@@ -8,6 +8,10 @@ jobs:
         passed:
           - preprod
         trigger: true
+      - get: emr-launcher-release
+        passed:
+          - preprod
+        trigger: true
       - get: aws-analytical-env
         passed:
           - preprod

@@ -8,6 +8,8 @@ jobs:
         trigger: true
       - get: emp-release
         trigger: true
+      - get: emr-launcher-release
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra
