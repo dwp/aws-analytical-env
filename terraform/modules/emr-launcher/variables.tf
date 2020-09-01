@@ -10,6 +10,7 @@ variable "aws_analytical_env_emr_launcher_zip" {
 variable "config_bucket" {}
 variable "config_bucket_cmk" {}
 variable "log_bucket" {}
+variable "emr_bucket" {}
 variable "ami" {}
 variable "account" {}
 variable "security_configuration" {}

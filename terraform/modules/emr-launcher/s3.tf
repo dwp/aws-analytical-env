@@ -26,7 +26,7 @@ resource "aws_s3_bucket_object" "steps" {
   bucket = var.config_bucket.id
   key    = "emr/aws-analytical-env/steps.yaml"
   content = templatefile("../../../cluster_config/steps.yaml.tpl", {
-    config_bucket = var.config_bucket.id
+    config_bucket = var.emr_bucket.id
   })
 }
 
@@ -34,7 +34,7 @@ resource "aws_s3_bucket_object" "configurations" {
   bucket = var.config_bucket.id
   key    = "emr/aws-analytical-env/configurations.yaml"
   content = templatefile("../../../cluster_config/configurations.yaml.tpl", {
-    config_bucket = var.config_bucket.id
+    config_bucket = var.emr_bucket.id
     log_bucket    = var.log_bucket
     proxy_host    = var.proxy_host
     full_no_proxy = var.full_no_proxy

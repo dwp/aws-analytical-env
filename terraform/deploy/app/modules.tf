@@ -94,6 +94,7 @@ module "codecommit" {
 module launcher {
   source = "../../modules/emr-launcher"
 
+  emr_bucket                          = module.emr.emr_bucket
   config_bucket                       = data.terraform_remote_state.common.outputs.config_bucket
   config_bucket_cmk                   = data.terraform_remote_state.common.outputs.config_bucket_cmk
   aws_analytical_env_emr_launcher_zip = var.aws_analytical_env_emr_launcher_zip
