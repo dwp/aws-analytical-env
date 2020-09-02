@@ -36,7 +36,7 @@ resource "aws_lambda_function" "emr_metrics_lambda" {
   role             = aws_iam_role.role_for_metrics_lambda.arn
   handler          = "metrics_lambda.lambda_handler"
   runtime          = "python3.8"
-  timeout          = 300
+  timeout          = 900
   source_code_hash = filebase64sha256("${path.module}/${var.name_prefix}-${var.metrics_lambda_file_path}.zip")
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-livy-emr-metrics", ProtectSensitiveData = "True" })
   vpc_config {

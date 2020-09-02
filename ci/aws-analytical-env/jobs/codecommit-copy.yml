@@ -50,7 +50,7 @@ jobs:
 
   - name: copy-rnd-incoming
     plan:
-      - get: working-day-hourly-trigger
+      - get: working-day-copy-trigger
         trigger: true
       - get: rnd-incoming-repo
         trigger: false

@@ -132,11 +132,11 @@ resources:
       start: 00:00
       stop: 01:00
 
-  - name: working-day-hourly-trigger
+  - name: working-day-copy-trigger
     type: time
     source:
       location: GB
       start: 08:00
       stop: 20:00
-      interval: 1h 
+      interval: 10m 
       days: [Monday, Tuesday, Wednesday, Thursday, Friday]
