@@ -23,12 +23,12 @@ push_host = os.environ["PUSH_HOST"]
 DOMAIN_WHITELIST = [parse.urlparse(host_url).hostname]
 
 
-def lambda_handler(context, event):
-    print("CONTEXT: ", context)
-    proxy_user = context["proxy_user"]
-    database_name = context["db_name"]
-    small_dataset = context["small_dataset"]
-    large_dataset = context["large_dataset"]
+def lambda_handler(event, context):
+    print("EVENT: ", event)
+    proxy_user = event["proxy_user"]
+    database_name = event["db_name"]
+    small_dataset = event["small_dataset"]
+    large_dataset = event["large_dataset"]
 
     session_code = {'kind': 'sparkr', 'proxyUser': proxy_user}
 
@@ -56,11 +56,18 @@ def lambda_handler(context, event):
     # Connect to database and run queries against tables
     try:
         statements_url = session_url + '/statements'
+        current_state = "ok"
         for test, code in tests_code_snippets:
-            time_taken = measure_response_time(statements_url, code)[1]
-            print(f"{code} took {time_taken}")
-            publish_metrics_to_cw(test, time_taken)
-            push_metrics_to_pushgateway(test, time_taken)
+            if context.get_remaining_time_in_millis() > 5 * 1000 * 60 and current_state == "ok":  # 5 minutes
+                result = measure_response_time(statements_url, code)
+                time_taken = result[1]
+                current_state = result[2]
+                print(f"{code} took {time_taken}")
+                publish_metrics_to_cw(test, time_taken)
+                push_metrics_to_pushgateway(test, time_taken)
+            else:
+                print("Highwater mark limit reached. Exiting early.")
+
         kill_session(session_url)
     except Exception as e:
         print(e)
@@ -100,6 +107,7 @@ def measure_response_time(url, code):
     status_url = host + r.headers['location']
 
     # Continuously check status until Available or Idle
+    retStatus = "ok"
     maxSteps = 300
     while maxSteps > 0:
         print("Polling url: ", status_url)
@@ -109,8 +117,12 @@ def measure_response_time(url, code):
             response = json.loads(poll.data.decode('utf-8'))
             state = response.get('state')
             print("Current state =", state)
-            if state == "available" or state == "idle":
+            if state == "available" or state == "idle" :
                 print(response)
+                break
+            elif state == "shutting_down" or state == "dead" :
+                print(response)
+                retStatus = "fail"
                 break
             else:
                 time.sleep(1)
@@ -121,7 +133,7 @@ def measure_response_time(url, code):
         elapsed_seconds = 0
     else:
         elapsed_seconds = (completed - started).total_seconds()
-    return status_url, elapsed_seconds
+    return status_url, elapsed_seconds, retStatus
 
 
 ###################
@@ -155,3 +167,4 @@ def push_metrics_to_pushgateway(name, value):
         headers={'Content-Type': 'text/plain'}
     )
     print("Push_response_status_code: ", response.status)
+
