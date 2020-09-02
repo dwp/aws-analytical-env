@@ -92,24 +92,32 @@ def measure_response_time(url, code):
                      headers={'Content-Type': 'application/json'})
     response = json.loads(r.data.decode('utf-8'))
     print(response)
+
+    if 'location' not in r.headers:
+      print("No location found")
+      return '', 0
+  
     status_url = host + r.headers['location']
 
     # Continuously check status until Available or Idle
-    while True:
+    maxSteps = 300
+    while maxSteps > 0:
         print("Polling url: ", status_url)
         # Address Sonar Issues by checking url is in trusted domain
         if parse.urlparse(status_url).hostname in DOMAIN_WHITELIST:
             poll = http.request('GET', status_url)
             response = json.loads(poll.data.decode('utf-8'))
-            state = response['state']
+            state = response.get('state')
             print("Current state =", state)
             if state == "available" or state == "idle":
                 print(response)
                 break
             else:
                 time.sleep(1)
+                maxSteps = maxSteps - 1
+
     completed = datetime.datetime.now()
-    if 'output' in response and response['output']['status'] == "error":
+    if 'output' in response and response['output'].get('status') == "error":
         elapsed_seconds = 0
     else:
         elapsed_seconds = (completed - started).total_seconds()
