@@ -5,6 +5,8 @@ jobs:
         trigger: true
       - get: aws-analytical-env
         trigger: false
+      - get: emr-launcher-release
+        trigger: false
 
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
@@ -19,6 +21,8 @@ jobs:
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/app'
+          inputs:
+            - name: emr-launcher-release
         params:
           DEPLOY_PATH: app
           TF_WORKSPACE: 'production'
@@ -28,6 +32,8 @@ jobs:
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/app'
+          inputs:
+            - name: emr-launcher-release
         params:
           DEPLOY_PATH: app
           TF_WORKSPACE: 'production'
