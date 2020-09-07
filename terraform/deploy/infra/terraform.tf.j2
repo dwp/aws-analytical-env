@@ -11,6 +11,15 @@ terraform {
   }
 }
 
+provider "aws" {
+  version = "~> 2.70.0"
+  region  = "{{provider_region}}"
+  alias   = "internal_compute"
+
+  assume_role {
+    role_arn = "arn:aws:iam::${lookup(local.account, local.environment)}:role/${var.assume_role}"
+  }
+}
 
 provider "aws" {
   version = "~> 2.70.0"
@@ -38,6 +47,48 @@ provider "aws" {
 
   assume_role {
     role_arn = "arn:aws:iam::${local.account["management"]}:role/${var.assume_role}"
+  }
+}
+
+data "terraform_remote_state" "internal_compute" {
+  backend   = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-internal-compute.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "aws_analytical_environment_app" {
+  backend   = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-analytical-environment-app.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "aws_analytical_dataset_generation" {
+  backend   = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-analytical-dataset-generation.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
   }
 }
 
@@ -124,6 +175,8 @@ data "terraform_remote_state" "management_dns" {
     dynamodb_table = "remote_state_locks"
   }
 }
+
+data "aws_availability_zones" "available" {}
 
 locals {
   name        = "aws-analytical-env"
