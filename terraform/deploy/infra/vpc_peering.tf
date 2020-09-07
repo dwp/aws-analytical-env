@@ -44,7 +44,7 @@ resource "aws_security_group_rule" "hive_metastore_allow_emr" {
   to_port                  = 3306
   protocol                 = "tcp"
   source_security_group_id = data.terraform_remote_state.aws_analytical_environment_app.outputs.emr_sg_id
-  security_group_id        = data.terraform_remote_state.aws_analytical_dataset_generation.outputs.hive_metastore.sg_id
+  security_group_id        = data.terraform_remote_state.aws_analytical_dataset_generation.outputs.hive_metastore.security_group.id
 }
 
 resource "aws_security_group_rule" "emr_allow_hive_metastore" {
@@ -56,5 +56,5 @@ resource "aws_security_group_rule" "emr_allow_hive_metastore" {
   to_port                  = 3306
   protocol                 = "tcp"
   security_group_id        = data.terraform_remote_state.aws_analytical_environment_app.outputs.emr_sg_id
-  source_security_group_id = data.terraform_remote_state.aws_analytical_dataset_generation.outputs.hive_metastore.sg_id
+  source_security_group_id = data.terraform_remote_state.aws_analytical_dataset_generation.outputs.hive_metastore.security_group.id
 }
