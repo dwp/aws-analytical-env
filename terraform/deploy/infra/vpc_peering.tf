@@ -21,8 +21,8 @@ resource "aws_vpc_peering_connection_accepter" "internal_compute" {
 }
 
 resource "aws_route" "analytical_env_to_internal_compute" {
-  count                     = length(data.terraform_remote_state.internal_compute.outputs. pdm_subnet.cidr_blocks)
-  destination_cidr_block    = data.terraform_remote_state.internal_compute.outputs. pdm_subnet.cidr_blocks[count.index]
+  count                     = length(data.terraform_remote_state.internal_compute.outputs.pdm_subnet.cidr_blocks)
+  destination_cidr_block    = data.terraform_remote_state.internal_compute.outputs.pdm_subnet.cidr_blocks[count.index]
   route_table_id            = module.networking.outputs.aws_route_table_private_ids[count.index]
   vpc_peering_connection_id = aws_vpc_peering_connection.internal_compute.id
 }
