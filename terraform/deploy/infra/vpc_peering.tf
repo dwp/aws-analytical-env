@@ -38,7 +38,7 @@ resource "aws_route" "internal_compute_to_analytical_env" {
 resource "aws_security_group_rule" "hive_metastore_allow_emr" {
   // SG refs require VPC Peering Connection
   depends_on               = [aws_vpc_peering_connection_accepter.internal_compute]
-  description              = "Allow MySQL access from EMR"
+  description              = "Allow MySQL access from analytical-env EMR"
   type                     = "ingress"
   from_port                = 3306
   to_port                  = 3306
