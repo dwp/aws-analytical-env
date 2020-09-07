@@ -13,3 +13,7 @@ output "push_gateway_sg" {
 output "pushgateway" {
   value = module.pushgateway
 }
+
+output "emr_common_sg_id" {
+  value = module.emr.common_security_group
+}
