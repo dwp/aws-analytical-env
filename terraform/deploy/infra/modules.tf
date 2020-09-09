@@ -93,6 +93,7 @@ module alb {
   root_dns_name      = local.root_dns_name[local.environment]
   alb_subnets        = module.networking.outputs.aws_subnets_public.*.id
   common_tags        = local.common_tags
+  logging_bucket     = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
 
   wafregional_web_acl_id = module.waf.wafregional_web_acl_id
   whitelist_cidr_blocks  = local.whitelist_cidr_blocks
