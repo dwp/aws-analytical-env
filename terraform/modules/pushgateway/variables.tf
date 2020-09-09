@@ -90,3 +90,5 @@ variable "parent_domain_name" {
   type        = string
   description = "(Required) The parent domain name"
 }
+
+variable "logging_bucket" {}

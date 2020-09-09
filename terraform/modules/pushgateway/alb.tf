@@ -7,6 +7,12 @@ resource "aws_lb" "lb" {
   enable_deletion_protection       = false
   enable_cross_zone_load_balancing = true
   tags                             = merge(var.common_tags, { Name = "${var.name_prefix}-alb" })
+
+  access_logs {
+    bucket  = var.logging_bucket
+    prefix  = "ELBLogs/${var.name_prefix}"
+    enabled = true
+  }
 }
 
 resource "aws_lb_target_group" "lb_tg" {

@@ -59,3 +59,5 @@ variable "region" {
   description = "(Required) AWS Region"
   default     = "eu-west-2"
 }
+
+variable "logging_bucket" {}
