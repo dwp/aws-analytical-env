@@ -42,13 +42,16 @@ jobs:
                   name=$(echo $i | sed s/-repo//g)
                   rm -Rf /root/${REPO}/mirrors/${name}
                   mkdir -p /root/mirrors/${name}
-                  cp -Rfpv ./${i}/ /root/mirrors/${name}
+                  cp -Rfp ./${i}/ /root/mirrors/${name}
                   ls /root/mirrors/
                   rm -Rf /root/${REPO}/mirrors/${name}/.git
                 done
-                git add -A
-                git commit -m"Mirroring"
-                git push
+                cd /root/${REPO}
+                if [[ ! -z $(git status --porcelain) ]]; then
+                  git add -A
+                  git commit -m"Mirroring"
+                  git push
+                fi
                 UNTRACKED=$(git status -s | wc -l)
                 test $UNTRACKED -eq 0
           inputs:
