@@ -3,6 +3,16 @@ jobs:
     plan:
       - get: rnd-repo
         trigger: true
+      - get: impact-measures-repo
+        trigger: true
+      - get: chs-how-many-repo
+        trigger: true
+      - get: chs-auditlog-repo
+        trigger: true
+      - get: chs-uc-lab-repo
+        trigger: true
+#      - get: datateam_dotfiles-repo
+#        trigger: true
       - task: copy-rnd-repo
         config:
           platform: linux
@@ -17,29 +27,25 @@ jobs:
             AWS_REGION: ((dataworks.aws_region))
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
           run:
-            dir: rnd-repo
             path: sh
             args:
               - -exc
               - |
                 source /assume-role
-                pwd
-                set +x
                 export REPO=Data_Science-production
-                # TODO Remove later
-                export no_proxy="${no_proxy},git-codecommit.eu-west-2.amazonaws.com"
-
                 apk add git
                 pip install git-remote-codecommit
                 git config --global user.email ""
                 git config --global user.name "Mirror Job"
                 git clone codecommit::eu-west-2://${REPO} /root/${REPO}
-                rm -Rf /root/${REPO}/mirrors/rnd
-
-                mkdir -p /root/${REPO}/mirrors/rnd
-                cp -Rfpv ./ /root/${REPO}/mirrors/rnd
-                cd /root/${REPO}
-                rm -Rf mirrors/rnd/.git
+                for i in $(ls ./); do
+                  name=$(echo $i | sed s/-repo//g)
+                  rm -Rf /root/${REPO}/mirrors/${name}
+                  mkdir -p /root/mirrors/${name}
+                  cp -Rfpv ./${i}/ /root/mirrors/${name}
+                  ls /root/mirrors/
+                  rm -Rf /root/${REPO}/mirrors/${name}/.git
+                done
                 git add -A
                 git commit -m"Mirroring"
                 git push
@@ -47,6 +53,11 @@ jobs:
                 test $UNTRACKED -eq 0
           inputs:
             - name: rnd-repo
+            - name: impact-measures-repo
+            - name: chs-how-many-repo
+            - name: chs-auditlog-repo
+            - name: chs-uc-lab-repo
+#            - name: datateam_dotfiles-repo
 
   - name: copy-rnd-incoming
     plan:
@@ -75,18 +86,13 @@ jobs:
               - |
                 source /assume-role
                 export TARGET_DIR=$(pwd)
-                set +x
                 export REPO=Data_Science-production
-                # TODO Remove later
-                export no_proxy="${no_proxy},git-codecommit.eu-west-2.amazonaws.com"
-
                 apk add git
                 pip install git-remote-codecommit
                 git config --global user.email ""
                 git config --global user.name "Mirror Job"
                 git clone codecommit::eu-west-2://${REPO} /root/${REPO}
                 rm -Rf /root/${REPO}/mirrors/rnd
-
                 if [[ -d /root/${REPO}/outgoing/rnd ]]
                 then
                     cp -Rfpv /root/${REPO}/outgoing/rnd/* ./
