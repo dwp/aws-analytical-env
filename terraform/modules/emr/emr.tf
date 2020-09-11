@@ -54,12 +54,16 @@ resource "aws_emr_cluster" "cluster" {
   }
 
   configurations_json = templatefile(format("%s/templates/emr/configuration.json", path.module), {
-    logs_bucket_path     = format("s3://%s/logs", var.log_bucket)
-    data_bucket_path     = format("s3://%s/data", aws_s3_bucket.emr.id)
-    notebook_bucket_path = format("%s/data", aws_s3_bucket.emr.id)
-    proxy_host           = var.internet_proxy["dns_name"]
-    full_no_proxy        = join("|", local.no_proxy_hosts)
-    r_version            = local.r_version
+    logs_bucket_path             = format("s3://%s/logs", var.log_bucket)
+    data_bucket_path             = format("s3://%s/data", aws_s3_bucket.emr.id)
+    notebook_bucket_path         = format("%s/data", aws_s3_bucket.emr.id)
+    proxy_host                   = var.internet_proxy["dns_name"]
+    full_no_proxy                = join("|", local.no_proxy_hosts)
+    r_version                    = local.r_version
+    hive_metastore_endpoint      = var.hive_metastore_endpoint
+    hive_metastore_database_name = var.hive_metastore_database_name
+    hive_metastore_username      = var.hive_metastore_username
+    hive_metastore_pwd           = var.hive_metastore_password
   })
 
   bootstrap_action {

@@ -9,6 +9,11 @@ module "emr_ami" {
   ami_filter_values = ["dw-emr-ami-*"]
 }
 
+// TODO: replace with Analytical Env credentials
+data "aws_secretsmanager_secret_version" "hive_metastore_password_secret" {
+  provider  = aws
+  secret_id = "metadata-store-adg-writer"
+}
 
 module "emr" {
   source = "../../modules/emr"
@@ -43,6 +48,11 @@ module "emr" {
   dataset_glue_db               = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.analytical_dataset_generation.job_name
   security_configuration_groups = ["UC_DataScience_PII", "UC_DataScience_Non_PII"]
   monitoring_sns_topic_arn      = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
+
+  hive_metastore_endpoint      = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.endpoint
+  hive_metastore_database_name = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.database_name
+  hive_metastore_password      = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["password"]
+  hive_metastore_username      = "hive"
 
   artefact_bucket = {
     id      = data.terraform_remote_state.management_artefacts.outputs.artefact_bucket.id
