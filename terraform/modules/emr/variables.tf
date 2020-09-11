@@ -176,3 +176,34 @@ variable "no_proxy_list" {
   description = "List of no proxy hosts from VPC module"
   type        = list(string)
 }
+
+variable "hive_metastore_username" {
+  description = "Username to use when connecting to hive metastore"
+  type        = string
+}
+
+variable "hive_metastore_password" {
+  description = "Name of Secrets Manager secret that contains the password for the hive metastore"
+  type        = string
+}
+
+variable "hive_metastore_endpoint" {
+  description = "Endpoint of the hive metastore"
+  type        = string
+}
+
+variable "hive_metastore_database_name" {
+  description = "Database name of the hive metastore"
+  type        = string
+}
+
+variable "hive_metastore_sg_id" {
+  description = "Security group id of the hive metastore"
+  type        = string
+}
+
+variable "use_mysql_hive_metastore" {
+  description = "Whether to use MySQL hive metastore instead of Glue"
+  type        = bool
+  default     = false
+}

@@ -12,6 +12,29 @@ locals {
   autoscaling_max_capacity        = 5
   dks_port                        = 8443
   full_proxy                      = var.internet_proxy["http_address"]
+
+  configurations_mysql_json = templatefile(format("%s/templates/emr/configuration.mysql.json", path.module), {
+    logs_bucket_path             = format("s3://%s/logs", var.log_bucket)
+    data_bucket_path             = format("s3://%s/data", aws_s3_bucket.emr.id)
+    notebook_bucket_path         = format("%s/data", aws_s3_bucket.emr.id)
+    proxy_host                   = var.internet_proxy["dns_name"]
+    full_no_proxy                = join("|", local.no_proxy_hosts)
+    r_version                    = local.r_version
+    hive_metastore_endpoint      = var.hive_metastore_endpoint
+    hive_metastore_database_name = var.hive_metastore_database_name
+    hive_metastore_username      = var.hive_metastore_username
+    hive_metastore_pwd           = var.hive_metastore_password
+  })
+
+  configurations_glue_json = templatefile(format("%s/templates/emr/configuration.glue.json", path.module), {
+    logs_bucket_path     = format("s3://%s/logs", var.log_bucket)
+    data_bucket_path     = format("s3://%s/data", aws_s3_bucket.emr.id)
+    notebook_bucket_path = format("%s/data", aws_s3_bucket.emr.id)
+    proxy_host           = var.internet_proxy["dns_name"]
+    full_no_proxy        = join("|", local.no_proxy_hosts)
+    r_version            = local.r_version
+  })
+
   no_proxy_hosts = [
     local.fqdn,
     "jupyterhub",
