@@ -36,6 +36,8 @@ resource "aws_security_group_rule" "egress_https_emr_to_internet_proxy" {
 }
 
 resource "aws_security_group_rule" "egress_mysql_emr_to_metastore" {
+  count = var.use_mysql_hive_metastore == true ? 1 : 0
+
   description              = "Allow MySQL traffic to Aurora RDS from EMR"
   from_port                = 3306
   protocol                 = "tcp"
@@ -46,6 +48,9 @@ resource "aws_security_group_rule" "egress_mysql_emr_to_metastore" {
 }
 
 resource "aws_security_group_rule" "ingress_mysql_metastore_from_emr" {
+  count = var.use_mysql_hive_metastore == true ? 1 : 0
+
+
   description              = "Allow MySQL traffic from EMR to Aurora RDS"
   from_port                = 3306
   protocol                 = "tcp"

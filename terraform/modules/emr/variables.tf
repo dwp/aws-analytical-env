@@ -201,3 +201,9 @@ variable "hive_metastore_sg_id" {
   description = "Security group id of the hive metastore"
   type        = string
 }
+
+variable "use_mysql_hive_metastore" {
+  description = "Whether to use MySQL hive metastore instead of Glue"
+  type        = bool
+  default     = false
+}

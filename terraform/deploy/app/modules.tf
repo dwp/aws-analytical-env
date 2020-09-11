@@ -49,12 +49,13 @@ module "emr" {
   security_configuration_groups = ["UC_DataScience_PII", "UC_DataScience_Non_PII"]
   monitoring_sns_topic_arn      = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
 
+
+  use_mysql_hive_metastore     = local.use_mysql_hive_metastore[local.environment]
   hive_metastore_endpoint      = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.endpoint
   hive_metastore_database_name = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.database_name
   hive_metastore_password      = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["password"]
   hive_metastore_username      = "hive"
   hive_metastore_sg_id         = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.security_group.id
-
 
   artefact_bucket = {
     id      = data.terraform_remote_state.management_artefacts.outputs.artefact_bucket.id

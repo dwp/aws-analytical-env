@@ -248,4 +248,12 @@ locals {
     Team         = "DataWorks"
   }
 
+  use_mysql_hive_metastore = {
+    development = true
+    qa          = false
+    integration = false
+    preprod     = false
+    production  = false
+  }
+
 }
