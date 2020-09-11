@@ -196,3 +196,8 @@ variable "hive_metastore_database_name" {
   description = "Database name of the hive metastore"
   type        = string
 }
+
+variable "hive_metastore_sg_id" {
+  description = "Security group id of the hive metastore"
+  type        = string
+}

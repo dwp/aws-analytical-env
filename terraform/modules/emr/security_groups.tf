@@ -35,6 +35,26 @@ resource "aws_security_group_rule" "egress_https_emr_to_internet_proxy" {
   cidr_blocks       = var.internet_proxy_cidr_blocks
 }
 
+resource "aws_security_group_rule" "egress_mysql_emr_to_metastore" {
+  description              = "Allow MySQL traffic to Aurora RDS from EMR"
+  from_port                = 3306
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.emr.id
+  source_security_group_id = var.hive_metastore_sg_id
+  to_port                  = 3306
+  type                     = "egress"
+}
+
+resource "aws_security_group_rule" "ingress_mysql_metastore_from_emr" {
+  description              = "Allow MySQL traffic from EMR to Aurora RDS"
+  from_port                = 3306
+  protocol                 = "tcp"
+  security_group_id        = var.hive_metastore_sg_id
+  source_security_group_id = aws_security_group.emr.id
+  to_port                  = 3306
+  type                     = "ingress"
+}
+
 resource "aws_security_group_rule" "egress_https_from_emr_to_dks" {
   description       = "egress_https_from_emr_to_dks"
   from_port         = local.dks_port
