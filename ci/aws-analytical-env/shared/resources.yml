@@ -81,6 +81,96 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/rnd_incoming.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+  - name: impact-measures-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/impact-measures.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+#  - name: impact-measures-incoming-repo
+#    type: git
+#    source:
+#      branch: master
+#      username: ((dataworks.enterprise_github_username))
+#      password: ((dataworks-secrets.enterprise_github_pat))
+#      uri: https://((dataworks.enterprise_github_url))/dip/impact-measures-incoming.git
+#    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: chs-how-many-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/chs-how-many.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+#  - name: chs-how-many-incoming-repo
+#    type: git
+#    source:
+#      branch: master
+#      username: ((dataworks.enterprise_github_username))
+#      password: ((dataworks-secrets.enterprise_github_pat))
+#      uri: https://((dataworks.enterprise_github_url))/dip/chs-how-many-incoming.git
+#    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: chs-auditlog-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/chs-auditlog.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+#  - name: chs-auditlog-incoming-repo
+#    type: git
+#    source:
+#      branch: master
+#      username: ((dataworks.enterprise_github_username))
+#      password: ((dataworks-secrets.enterprise_github_pat))
+#      uri: https://((dataworks.enterprise_github_url))/dip/chs-auditlog-incoming.git
+#    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: chs-uc-lab-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/chs-uc-lab.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+#  - name: chs-uc-lab-incoming-repo
+#    type: git
+#    source:
+#      branch: master
+#      username: ((dataworks.enterprise_github_username))
+#      password: ((dataworks-secrets.enterprise_github_pat))
+#      uri: https://((dataworks.enterprise_github_url))/dip/chs-uc-lab-incoming.git
+#    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+#  - name: datateam_dotfiles-repo
+#    type: git
+#    source:
+#      branch: master
+#      username: ((dataworks.enterprise_github_username))
+#      password: ((dataworks-secrets.enterprise_github_pat))
+#      uri: https://((dataworks.enterprise_github_url))/dip/datateam_dotfiles.git
+#    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+#  - name: datateam_dotfiles-incoming-repo
+#    type: git
+#    source:
+#      branch: master
+#      username: ((dataworks.enterprise_github_username))
+#      password: ((dataworks-secrets.enterprise_github_pat))
+#      uri: https://((dataworks.enterprise_github_url))/dip/datateam_dotfiles-incoming.git
+#    webhook_token: ((dataworks.concourse_github_webhook_token))
+
   - name: emr-launcher-release
     type: github-release
     source:
@@ -138,5 +228,5 @@ resources:
       location: GB
       start: 08:00
       stop: 20:00
-      interval: 10m 
+      interval: 10m
       days: [Monday, Tuesday, Wednesday, Thursday, Friday]
