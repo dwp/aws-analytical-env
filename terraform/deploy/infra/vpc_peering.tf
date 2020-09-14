@@ -34,27 +34,3 @@ resource "aws_route" "internal_compute_to_analytical_env" {
   route_table_id            = data.terraform_remote_state.internal_compute.outputs.route_table_ids.pdm
   vpc_peering_connection_id = aws_vpc_peering_connection.internal_compute.id
 }
-
-resource "aws_security_group_rule" "hive_metastore_allow_emr" {
-  // SG refs require VPC Peering Connection
-  depends_on               = [aws_vpc_peering_connection_accepter.internal_compute]
-  description              = "Allow MySQL access from analytical-env EMR"
-  type                     = "ingress"
-  from_port                = 3306
-  to_port                  = 3306
-  protocol                 = "tcp"
-  source_security_group_id = data.terraform_remote_state.aws_analytical_environment_app.outputs.emr_sg_id
-  security_group_id        = data.terraform_remote_state.aws_analytical_dataset_generation.outputs.hive_metastore.security_group.id
-}
-
-resource "aws_security_group_rule" "emr_allow_hive_metastore" {
-  // SG refs require VPC Peering Connection
-  depends_on               = [aws_vpc_peering_connection_accepter.internal_compute]
-  description              = "Allow analytical-env EMR to reach Hive Metastore"
-  type                     = "egress"
-  from_port                = 3306
-  to_port                  = 3306
-  protocol                 = "tcp"
-  security_group_id        = data.terraform_remote_state.aws_analytical_environment_app.outputs.emr_sg_id
-  source_security_group_id = data.terraform_remote_state.aws_analytical_dataset_generation.outputs.hive_metastore.security_group.id
-}
