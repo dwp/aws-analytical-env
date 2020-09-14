@@ -21,4 +21,4 @@ for USER in ${USERS[@]}; do
   sudo -H -u hdfs bash -c "hdfs dfs -chmod 770 /user/$USER"
 done
 
-cp /usr/share/java/mariadb-connector-java.jar /usr/lib/spark/jars/
+sudo cp /usr/share/java/mariadb-connector-java.jar /usr/lib/spark/jars/
