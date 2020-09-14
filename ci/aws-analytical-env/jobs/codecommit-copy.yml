@@ -41,13 +41,16 @@ jobs:
                 for i in $(ls ./); do
                   name=$(echo $i | sed s/-repo//g)
                   rm -Rf /root/${REPO}/mirrors/${name}
-                  mkdir -p /root/mirrors/${name}
-                  cp -Rfp ./${i}/ /root/mirrors/${name}
-                  ls /root/mirrors/
+                  mkdir -p /root/${REPO}/mirrors/${name}
+                  cp -Rfp ./${i}/* /root/${REPO}/mirrors/${name}/
+                  ls ./${i}/
+                  ls /root/${REPO}/mirrors/${name}/
+                  ls /root/${REPO}/mirrors/
                   rm -Rf /root/${REPO}/mirrors/${name}/.git
                 done
                 cd /root/${REPO}
-                if [[ ! -z $(git status --porcelain) ]]; then
+                echo $(git status --porcelain)
+                if [[ ! -z "$(git status --porcelain)" ]]; then
                   git add -A
                   git commit -m"Mirroring"
                   git push
