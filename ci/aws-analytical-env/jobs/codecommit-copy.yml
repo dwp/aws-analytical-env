@@ -1,5 +1,5 @@
 jobs:
-  - name: copy-rnd
+  - name: copy-repos
     plan:
       - get: rnd-repo
         trigger: true
@@ -13,7 +13,7 @@ jobs:
         trigger: true
 #      - get: datateam_dotfiles-repo
 #        trigger: true
-      - task: copy-rnd-repo
+      - task: copy-repos
         config:
           platform: linux
           image_resource:
