@@ -20,3 +20,5 @@ for USER in ${USERS[@]}; do
   sudo -H -u hdfs bash -c "hdfs dfs -chown -R $USER:$USER /user/$USER"
   sudo -H -u hdfs bash -c "hdfs dfs -chmod 770 /user/$USER"
 done
+
+cp /usr/share/java/mariadb-connector-java.jar /usr/lib/spark/jars/
