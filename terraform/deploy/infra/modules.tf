@@ -1,6 +1,6 @@
 module analytical_env_vpc {
   source  = "dwp/vpc/aws"
-  version = "3.0.3"
+  version = "3.0.8"
 
   common_tags                              = local.common_tags
   gateway_vpce_route_table_ids             = module.networking.outputs.aws_route_table_private_ids
