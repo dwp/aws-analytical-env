@@ -169,7 +169,7 @@ variable truststore_certs {
 
 variable "security_configuration_groups" {
   description = "Cognito groups to allow access to S3 data"
-  type        = list(string)
+  type        = map(list(string))
 }
 
 variable "no_proxy_list" {

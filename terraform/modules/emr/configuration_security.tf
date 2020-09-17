@@ -22,14 +22,14 @@ locals {
       EmrFsConfiguration = {
         RoleMappings = [
           {
-            Role           = aws_iam_role.emrfs_iam.arn
+            Role           = aws_iam_role.emrfs_iam[0].arn
             IdentifierType = "Group"
-            Identifiers    = [var.security_configuration_groups[0]]
+            Identifiers    = [flatten([for i, x in var.security_configuration_groups: i])[0]]
           },
           {
-            Role           = aws_iam_role.emrfs_iam_non_pii.arn
+            Role           = aws_iam_role.emrfs_iam[1].arn
             IdentifierType = "Group"
-            Identifiers    = [var.security_configuration_groups[1]]
+            Identifiers    = [flatten([for i, x in var.security_configuration_groups: i])[1]]
           }
         ]
       }
