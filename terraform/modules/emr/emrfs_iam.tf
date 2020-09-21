@@ -1,6 +1,6 @@
 resource "aws_iam_role" "emrfs_iam" {
-  count              = length(var.security_configuration_groups)
-  name               = flatten([for name, policy_suffix in var.security_configuration_groups: name])[count.index]
+  for_each           = toset(flatten([for name, policy_suffix in var.security_configuration_groups : name]))
+  name               = each.value
   assume_role_policy = data.aws_iam_policy_document.emrfs_iam_assume_role.json
   tags               = var.common_tags
 }
@@ -41,13 +41,13 @@ locals {
   user_policies = flatten([
     for group, policy_suffixes in var.security_configuration_groups : [
       {
-        group = group
+        group      = group
         policy_arn = aws_iam_policy.emrfs_iam.arn
       },
       [
-      for policy_suffix in policy_suffixes :
+        for policy_suffix in policy_suffixes :
         {
-          group = group
+          group      = group
           policy_arn = "arn:aws:iam::${var.account}:policy/${policy_suffix}"
         }
       ]
@@ -57,7 +57,7 @@ locals {
 }
 
 resource "aws_iam_role_policy_attachment" "attach_policies_to_roles" {
-  for_each = { for pol in local.user_policies : "${pol.group}.${pol.policy_arn}}" => pol }
-  role       = aws_iam_role.emrfs_iam[each.value.group].name
-  policy_arn = each.value.policy_arn
+  count      = length(local.user_policies)
+  role       = aws_iam_role.emrfs_iam[local.user_policies[count.index].group].arn
+  policy_arn = local.user_policies[count.index].policy_arn
 }
