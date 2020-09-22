@@ -36,12 +36,6 @@ variable "keep_flow_alive" {
   default     = true
 }
 
-variable "availability_zone_index" {
-  description = "AZ to deploy cluster to"
-  default     = 0
-  type        = number
-}
-
 variable "parent_domain_name" {
   description = "Domain name of Route53 zone to create records in"
 }
@@ -106,22 +100,6 @@ variable mgmt_certificate_bucket {
   description = "Bucket that contains management environment public certificates"
 }
 
-variable "emrfs_kms_key_arns" {
-  type        = list(string)
-  default     = []
-  description = "KMS keys to be granted access to the emrfs role"
-}
-
-variable "dataset_s3_paths" {
-  type        = list(tuple([string, string]))
-  description = "List of [bucket_name, bucket_path] tuples that emrfs users can access"
-}
-
-variable "dataset_s3_tags" {
-  type        = tuple([string, string])
-  description = "Tuple of [tag_key, tag_value] that determine which s3 objects emrfs can access"
-}
-
 variable "cognito_user_pool_id" {}
 
 variable "dataset_glue_db" {
@@ -170,11 +148,6 @@ variable truststore_certs {
 variable "security_configuration_groups" {
   description = "Cognito groups to allow access to S3 data"
   type        = map(list(string))
-}
-
-variable "no_proxy_list" {
-  description = "List of no proxy hosts from VPC module"
-  type        = list(string)
 }
 
 variable "hive_metastore_username" {

@@ -42,13 +42,10 @@ module "emr" {
   vpc                        = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc
   env_certificate_bucket     = local.env_certificate_bucket
   mgmt_certificate_bucket    = local.mgmt_certificate_bucket
-  emrfs_kms_key_arns         = [data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket_cmk.arn]
-  dataset_s3_paths           = [[data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket.id, "*"]]
-  dataset_s3_tags            = ["collection_tag", "crown"]
   dataset_glue_db            = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.analytical_dataset_generation.job_name
   security_configuration_groups = {
     UC_DataScience_PII     = ["AnalyticalDatasetCrownReadOnlyPii"],
-    UC_DataScience_Non_PII = ["AnalyticalDatasetCrownReadOnlyPii"]
+    UC_DataScience_Non_PII = ["AnalyticalDatasetCrownReadOnlyNonPii"]
   }
   monitoring_sns_topic_arn = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
 
@@ -70,8 +67,6 @@ module "emr" {
 
   truststore_certs   = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
   truststore_aliases = "dataworks_root_ca,dataworks_mgt_root_ca"
-
-  no_proxy_list = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc_main.no_proxy_list
 }
 
 module "pushgateway" {
