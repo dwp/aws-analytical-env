@@ -58,6 +58,6 @@ locals {
 
 resource "aws_iam_role_policy_attachment" "attach_policies_to_roles" {
   count      = length(local.user_policies)
-  role       = aws_iam_role.emrfs_iam[local.user_policies[count.index].group].arn
+  role       = aws_iam_role.emrfs_iam[local.user_policies[count.index].group].name
   policy_arn = local.user_policies[count.index].policy_arn
 }

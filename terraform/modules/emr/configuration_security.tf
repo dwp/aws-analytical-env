@@ -23,9 +23,9 @@ locals {
         RoleMappings = flatten([
           for group, policy_suffixes in var.security_configuration_groups : [
             {
-              Role           = aws_iam_role.emrfs_iam[group]
+              Role           = aws_iam_role.emrfs_iam[group].arn
               IdentifierType = "Group"
-              Identifiers    = group
+              Identifiers    = [group]
             }
           ]
         ])
