@@ -92,13 +92,13 @@ data "terraform_remote_state" "internet_ingress" {
   }
 }
 
-data "terraform_remote_state" "internet_egress" {
+data "terraform_remote_state" "aws_analytical_environment_infra" {
   backend   = "s3"
-  workspace = local.management_workspace[local.management_account[local.environment]]
+  workspace = terraform.workspace
 
   config = {
     bucket         = "{{state_file_bucket}}"
-    key            = "terraform/dataworks/aws-internet-egress.tfstate"
+    key            = "terraform/dataworks/aws-analytical-environment_infra.tfstate"
     region         = "{{state_file_region}}"
     encrypt        = true
     kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"

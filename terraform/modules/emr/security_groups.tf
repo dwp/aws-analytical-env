@@ -25,14 +25,24 @@ resource "aws_security_group_rule" "ingress_https_vpc_endpoints_from_emr" {
   source_security_group_id = aws_security_group.emr.id
 }
 
-resource "aws_security_group_rule" "egress_https_emr_to_internet_proxy" {
-  description       = "egress_https_emr_to_internet_proxy"
-  from_port         = 3128
-  protocol          = "tcp"
-  security_group_id = aws_security_group.emr.id
-  to_port           = 3128
-  type              = "egress"
-  cidr_blocks       = var.internet_proxy_cidr_blocks
+resource "aws_security_group_rule" "egress_internet_proxy" {
+  description              = "Allow EMR access to proxy"
+  from_port                = 3128
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.emr.id
+  to_port                  = 3128
+  type                     = "egress"
+  source_security_group_id = var.internet_proxy_sg.id
+}
+
+resource "aws_security_group_rule" "ingress_internet_proxy" {
+  description              = "Allow proxy access from EMR"
+  type                     = "ingress"
+  from_port                = 3128
+  to_port                  = 3128
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.emr.id
+  security_group_id        = var.internet_proxy_sg.id
 }
 
 resource "aws_security_group_rule" "egress_mysql_emr_to_metastore" {

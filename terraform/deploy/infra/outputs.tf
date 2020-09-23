@@ -33,3 +33,11 @@ output s3_prefix_list_id {
 output dynamodb_prefix_list_id {
   value = module.analytical_env_vpc.prefix_list_ids.dynamodb
 }
+
+output internet_proxy_dns_name {
+  value = module.networking.outputs.proxy_dns_name
+}
+
+output internet_proxy_sg {
+  value = module.networking.outputs.proxy_dns_name
+}
