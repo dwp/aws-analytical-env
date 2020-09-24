@@ -24,6 +24,16 @@ variable "monitoring_sns_topic_arn" {
   type        = string
 }
 
+variable "logging_bucket" {
+  type        = string
+  description = "(Required) The bucket ID for access logging"
+}
+
+variable "name_prefix" {
+  type        = string
+  description = "(Required) Name prefix for resources created"
+}
+
 variable "termination_protection" {
   description = "Default setting for Termination Protection"
   type        = bool

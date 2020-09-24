@@ -48,6 +48,8 @@ module "emr" {
     UC_DataScience_Non_PII = ["AnalyticalDatasetCrownReadOnlyNonPii"]
   }
   monitoring_sns_topic_arn = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
+  logging_bucket           = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+  name_prefix              = local.name
 
 
   use_mysql_hive_metastore     = local.use_mysql_hive_metastore[local.environment]
