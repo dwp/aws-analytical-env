@@ -32,7 +32,7 @@ resource "aws_security_group_rule" "egress_internet_proxy" {
   security_group_id        = aws_security_group.emr.id
   to_port                  = 3128
   type                     = "egress"
-  source_security_group_id = var.internet_proxy_sg.id
+  source_security_group_id = var.internet_proxy_sg_id
 }
 
 resource "aws_security_group_rule" "ingress_internet_proxy" {
@@ -42,7 +42,7 @@ resource "aws_security_group_rule" "ingress_internet_proxy" {
   to_port                  = 3128
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.emr.id
-  security_group_id        = var.internet_proxy_sg.id
+  security_group_id        = var.internet_proxy_sg_id
 }
 
 resource "aws_security_group_rule" "egress_mysql_emr_to_metastore" {

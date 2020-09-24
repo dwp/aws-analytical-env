@@ -35,9 +35,13 @@ output dynamodb_prefix_list_id {
 }
 
 output internet_proxy_dns_name {
-  value = module.networking.outputs.proxy_dns_name
+  value = module.analytical_env_vpc.custom_vpce_dns_names["proxy_vpc_endpoint"][0]
 }
 
 output internet_proxy_sg {
-  value = module.networking.outputs.proxy_dns_name
+  value = module.analytical_env_vpc.custom_vpce_sg_id
+}
+
+output no_proxy_list {
+  value = module.analytical_env_vpc.no_proxy_list
 }

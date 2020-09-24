@@ -29,6 +29,14 @@ module analytical_env_vpc {
     "git-codecommit"
   ]
 
+  custom_vpce_services = [
+    {
+      key          = "proxy_vpc_endpoint"
+      service_name = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
+      port         = 3128
+    }
+  ]
+
 }
 
 module networking {
@@ -53,7 +61,6 @@ module networking {
   dks_subnet          = data.terraform_remote_state.crypto.outputs.dks_subnet
   dks_route_table     = data.terraform_remote_state.crypto.outputs.dks_route_table
   region              = var.region
-  proxy_service_name  = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_dns_name
 }
 
 module waf {

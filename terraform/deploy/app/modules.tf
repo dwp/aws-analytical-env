@@ -35,7 +35,7 @@ module "emr" {
   s3_prefix_list_id       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.s3_prefix_list_id
   dynamodb_prefix_list_id = data.terraform_remote_state.aws_analytical_environment_infra.outputs.dynamodb_prefix_list_id
   internet_proxy_dns_name = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_dns_name
-  internet_proxy_sg       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_sg
+  internet_proxy_sg_id    = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_sg
   parent_domain_name      = local.parent_domain_name[local.environment]
   root_dns_name           = local.root_dns_name[local.environment]
   cert_authority_arn      = data.terraform_remote_state.certificate_authority.outputs.root_ca.arn

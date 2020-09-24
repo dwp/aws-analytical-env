@@ -64,8 +64,8 @@ variable "role_arn" {
   description = "Role arns for in module providers"
 }
 
-variable "internet_proxy_sg" {
-  description = "Internet proxy SG"
+variable "internet_proxy_sg_id" {
+  description = "Internet proxy SG ID"
 }
 
 variable "internet_proxy_dns_name" {

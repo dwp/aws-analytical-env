@@ -48,7 +48,3 @@ variable "dks_route_table" {
   type        = map(string)
 }
 
-variable "proxy_service_name" {
-  description = "Proxy Endpoint Service Name"
-  type        = string
-}
