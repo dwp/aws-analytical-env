@@ -23,7 +23,7 @@ groups:
       - taint-prod
   - name: codecommit
     jobs:
-      - copy-rnd
+      - copy-repos
       - copy-rnd-incoming
   - name: testing
     jobs:
