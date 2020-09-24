@@ -10,7 +10,6 @@ jobs:
       - put: aws-analytical-env
         resource: aws-analytical-env-pr
         params:
-          context: $BUILD_JOB_NAME
           path: aws-analytical-env
           status: pending
       - .: (( inject meta.plan.terraform-bootstrap ))
@@ -51,14 +50,12 @@ jobs:
           put: aws-analytical-env
           resource: aws-analytical-env-pr
           params:
-            context: $BUILD_JOB_NAME
             path: aws-analytical-env
             status: failure
         on_success:
           put: aws-analytical-env
           resource: aws-analytical-env-pr
           params:
-            context: $BUILD_JOB_NAME
             path: aws-analytical-env
             status: success
   - name: pull-request_cognito
@@ -71,7 +68,6 @@ jobs:
       - put: aws-analytical-env
         resource: aws-analytical-env-pr
         params:
-          context: $BUILD_JOB_NAME
           path: aws-analytical-env
           status: pending
       - get: custom-auth-lambda-release
@@ -96,13 +92,11 @@ jobs:
           put: aws-analytical-env
           resource: aws-analytical-env-pr
           params:
-            context: $BUILD_JOB_NAME
             path: aws-analytical-env
             status: failure
         on_success:
           put: aws-analytical-env
           resource: aws-analytical-env-pr
           params:
-            context: $BUILD_JOB_NAME
             path: aws-analytical-env
             status: success
