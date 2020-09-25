@@ -64,12 +64,12 @@ variable "role_arn" {
   description = "Role arns for in module providers"
 }
 
-variable "internet_proxy" {
-  description = "Internet egress proxy ouptuts"
+variable "internet_proxy_sg_id" {
+  description = "Internet proxy SG ID"
 }
 
-variable "internet_proxy_cidr_blocks" {
-  description = "Internet egress proxy cidr blocks"
+variable "internet_proxy_dns_name" {
+  description = "Internet proxy DNS name"
 }
 
 variable "dks_subnet" {

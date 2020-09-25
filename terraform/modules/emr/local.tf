@@ -11,13 +11,13 @@ locals {
   autoscaling_min_capacity        = 1
   autoscaling_max_capacity        = 5
   dks_port                        = 8443
-  full_proxy                      = var.internet_proxy["http_address"]
+  full_proxy                      = "http://${var.internet_proxy_dns_name}:3128"
 
   configurations_mysql_json = templatefile(format("%s/templates/emr/configuration.mysql.json", path.module), {
     logs_bucket_path             = format("s3://%s/logs", var.log_bucket)
     data_bucket_path             = format("s3://%s/data", aws_s3_bucket.emr.id)
     notebook_bucket_path         = format("%s/data", aws_s3_bucket.emr.id)
-    proxy_host                   = var.internet_proxy["dns_name"]
+    proxy_host                   = var.internet_proxy_dns_name
     full_no_proxy                = join("|", local.no_proxy_hosts)
     r_version                    = local.r_version
     hive_metastore_endpoint      = var.hive_metastore_endpoint
@@ -30,7 +30,7 @@ locals {
     logs_bucket_path     = format("s3://%s/logs", var.log_bucket)
     data_bucket_path     = format("s3://%s/data", aws_s3_bucket.emr.id)
     notebook_bucket_path = format("%s/data", aws_s3_bucket.emr.id)
-    proxy_host           = var.internet_proxy["dns_name"]
+    proxy_host           = var.internet_proxy_dns_name
     full_no_proxy        = join("|", local.no_proxy_hosts)
     r_version            = local.r_version
   })
