@@ -6,7 +6,7 @@ resource "aws_s3_bucket" "emr" {
   bucket = random_id.emr_bucket_name.hex
   acl    = "private"
 
-  tags = merge({ "Name" = "${var.emr_cluster_name}-deleteme" }, var.common_tags)
+  tags = merge({ "Name" = "${var.emr_cluster_name}-emr-s3" }, var.common_tags)
 
   versioning {
     enabled = true
@@ -28,6 +28,11 @@ resource "aws_s3_bucket" "emr" {
     noncurrent_version_expiration {
       days = 30
     }
+  }
+
+  logging {
+    target_bucket = var.logging_bucket
+    target_prefix = "S3Logs/${var.name_prefix}-emr-s3-bucket"
   }
 }
 
