@@ -6,7 +6,7 @@ resource "aws_s3_bucket" "emr" {
   bucket = random_id.emr_bucket_name.hex
   acl    = "private"
 
-  tags = merge({ "Name" = "${var.emr_cluster_name}-s3-bucket" }, var.common_tags)
+  tags = merge({ "Name" = "${var.emr_cluster_name}-emr-s3" }, var.common_tags)
 
   versioning {
     enabled = true

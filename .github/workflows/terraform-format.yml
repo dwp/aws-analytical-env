@@ -24,31 +24,31 @@ jobs:
           ls
           curl https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
           output=""
-          for d in $(find ./terraform/deploy -type d) ;do
-            section=$(tflint -f json --force --disable-rule=aws_cloudwatch_log_group_invalid_name --config=./terraform/.tflint.hcl $d |jq -c '.issues[] | "_ISSUE FOUND:_ (\(.rule.name)) in \(.range.filename) line \(.range.start.line) - \(.range.end.line)"')
-            output+=$(if [ ${#section} -gt 1 ] ; then echo "***ISSUE(S) FOUND IN ${d}***: ${section}|"; fi);
-          done
-          for d in $(find ./terraform/modules -type d) ;do
-            section=$(tflint -f json --force --disable-rule=aws_cloudwatch_log_group_invalid_name --config=./terraform/.tflint.hcl $d |jq -c '.issues[] | "_ISSUE FOUND:_ (\(.rule.name)) in \(.range.filename) line \(.range.start.line) - \(.range.end.line)"')
-            output+=$(if [ ${#section} -gt 1 ] ; then echo "***ISSUE(S) FOUND IN ${d}***: ${section}¢"; fi);
-          done
-          echo "::set-env name=TFLINT::$(echo ${output} | tr ':' '~' )"
 
-      - name: comment-to-pr
-        uses: actions/github-script@v3
+          for d in $(find ./terraform/* -type d) ;do
+            section=$(tflint -f json --force --disable-rule=aws_cloudwatch_log_group_invalid_name --config=./terraform/.tflint.hcl $d |jq -c '.issues[] | "ISSUE FOUND: (\(.rule.name)) in \(.range.filename) line \(.range.start.line) - \(.range.end.line)¡"')
+            output+=$(if [ ${#section} -gt 1 ] ; then echo "***ISSUE(S) FOUND IN ${d}***:¡${section}¢"; fi);
+          done
+
+          output=$( echo $output | sed -e 's/"//g' )
+
+          IFS='¢' read -r -a array <<< "$output"
+
+          for i in "${array[@]}"
+            do
+              IFS='¡' read -r -a comment_sections <<< "$i"
+              echo "${comment_sections[0]}" >> .github/workflows/comment.md
+              echo "\`\`\`" >> .github/workflows/comment.md
+              for p in "${comment_sections[@]:1}"
+                do
+                  echo $p >> .github/workflows/comment.md
+                done
+              echo -e "\`\`\` \n" >> .github/workflows/comment.md
+            done
+
+      - name: Add checkout commands
+        uses: harupy/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            if (process.env.TFLINT.length > 5){
-              var str = process.env.TFLINT.replace(/\"/g,"").replace(/~/g, ":");
-              var list = str.split("¢");
-              list.pop()
-              for (i = 0; i < list.length; i++) {
-                await github.issues.createComment({
-                              issue_number: context.issue.number,
-                              owner: context.repo.owner,
-                              repo: context.repo.repo,
-                              body: list[i]
-                })
-              }
-            }
+          filename: comment.md
