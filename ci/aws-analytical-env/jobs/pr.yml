@@ -10,7 +10,6 @@ jobs:
       - put: aws-analytical-env
         resource: aws-analytical-env-pr
         params:
-          context: $BUILD_JOB_NAME
           path: aws-analytical-env
           status: pending
       - .: (( inject meta.plan.terraform-bootstrap ))
@@ -47,20 +46,18 @@ jobs:
           TF_WORKSPACE: 'qa'
           TF_CLI_ARGS_plan: -lock-timeout=300s # overwrite removes -detailed-exitcode
           TF_VAR_emp_dir_path: ../../../../emp-release
-        on_failure:
-          put: aws-analytical-env
-          resource: aws-analytical-env-pr
-          params:
-            context: $BUILD_JOB_NAME
-            path: aws-analytical-env
-            status: failure
-        on_success:
-          put: aws-analytical-env
-          resource: aws-analytical-env-pr
-          params:
-            context: $BUILD_JOB_NAME
-            path: aws-analytical-env
-            status: success
+    on_failure:
+      put: aws-analytical-env
+      resource: aws-analytical-env-pr
+      params:
+        path: aws-analytical-env
+        status: failure
+    on_success:
+      put: aws-analytical-env
+      resource: aws-analytical-env-pr
+      params:
+        path: aws-analytical-env
+        status: success
   - name: pull-request_cognito
     max_in_flight: 1
     plan:
@@ -71,7 +68,6 @@ jobs:
       - put: aws-analytical-env
         resource: aws-analytical-env-pr
         params:
-          context: $BUILD_JOB_NAME
           path: aws-analytical-env
           status: pending
       - get: custom-auth-lambda-release
@@ -92,17 +88,15 @@ jobs:
           TF_CLI_ARGS_plan: -lock-timeout=300s # overwrite removes -detailed-exitcode
           TF_VAR_custom_auth_file_path: ../../../../custom-auth-lambda-release/lambda.zip
           TF_VAR_onboarding_email_file_path: ../../../../onboarding-email-template/default_email_template_analytical_onboarding.html
-        on_failure:
-          put: aws-analytical-env
-          resource: aws-analytical-env-pr
-          params:
-            context: $BUILD_JOB_NAME
-            path: aws-analytical-env
-            status: failure
-        on_success:
-          put: aws-analytical-env
-          resource: aws-analytical-env-pr
-          params:
-            context: $BUILD_JOB_NAME
-            path: aws-analytical-env
-            status: success
+    on_failure:
+      put: aws-analytical-env
+      resource: aws-analytical-env-pr
+      params:
+        path: aws-analytical-env
+        status: failure
+    on_success:
+      put: aws-analytical-env
+      resource: aws-analytical-env-pr
+      params:
+        path: aws-analytical-env
+        status: success

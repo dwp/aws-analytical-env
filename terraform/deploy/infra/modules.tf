@@ -36,6 +36,7 @@ module analytical_env_vpc {
       port         = 3128
     }
   ]
+
 }
 
 module networking {
@@ -55,18 +56,11 @@ module networking {
     main_route_table_id = module.analytical_env_vpc.vpc.main_route_table_id
   }
 
-  crypto_vpc                        = data.terraform_remote_state.crypto.outputs.crypto_vpc
-  crypto_vpc_owner_id               = local.account[local.management_account[local.environment]]
-  dks_subnet                        = data.terraform_remote_state.crypto.outputs.dks_subnet
-  dks_route_table                   = data.terraform_remote_state.crypto.outputs.dks_route_table
-  internet_egress_proxy_route_table = data.terraform_remote_state.internet_egress.outputs.proxy_route_table
-  internet_egress_proxy_subnet      = data.terraform_remote_state.internet_egress.outputs.proxy_subnet
-  internet_transit_gateway          = data.terraform_remote_state.internet_egress.outputs.internet_transit_gateway
-  tgw_attachment_internet_egress    = data.terraform_remote_state.internet_egress.outputs.tgw_attachment_internet_egress
-  tgw_rtb_internet_egress           = data.terraform_remote_state.internet_egress.outputs.tgw_rtb_internet_egress
-  proxy_route_table                 = data.terraform_remote_state.internet_egress.outputs.proxy_route_table
-  proxy_subnet                      = data.terraform_remote_state.internet_egress.outputs.proxy_subnet
-  region                            = var.region
+  crypto_vpc          = data.terraform_remote_state.crypto.outputs.crypto_vpc
+  crypto_vpc_owner_id = local.account[local.management_account[local.environment]]
+  dks_subnet          = data.terraform_remote_state.crypto.outputs.dks_subnet
+  dks_route_table     = data.terraform_remote_state.crypto.outputs.dks_route_table
+  region              = var.region
 }
 
 module waf {
