@@ -41,4 +41,4 @@ sudo R -e "Sys.setenv(http_proxy = '$FULL_PROXY'); Sys.setenv(https_proxy = '$FU
 
 sudo sh -c "echo -e \\nexport SPARKR_DRIVER_R=/opt/R/R-${r_version}/bin/R >> /etc/spark/conf.dist/spark-env.sh"
 
-sudo wget https://github.com/sparklyr/sparklyr/raw/master/inst/java/sparklyr-2.4-2.11.jar?raw=true -O /usr/lib/spark/jars/sparklyr-2.4-2.11.jar
+sudo -E wget https://github.com/sparklyr/sparklyr/raw/master/inst/java/sparklyr-2.4-2.11.jar?raw=true -O /usr/lib/spark/jars/sparklyr-2.4-2.11.jar
