@@ -16,7 +16,7 @@ variable "emr_release_label" {
 variable "emr_applications" {
   description = "List of applications to deploy to EMR Cluster"
   type        = list(string)
-  default     = ["Spark", "Livy"]
+  default     = ["Spark", "Livy", "Hive"]
 }
 
 variable "monitoring_sns_topic_arn" {
