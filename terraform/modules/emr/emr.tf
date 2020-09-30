@@ -65,11 +65,6 @@ resource "aws_emr_cluster" "cluster" {
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.emr_setup_sh.key)
   }
 
-  bootstrap_action {
-    name = "Update R and Install R Packages"
-    path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.r_packages_install.key)
-  }
-
   step {
     name              = "hdfs-setup"
     action_on_failure = "CONTINUE"
