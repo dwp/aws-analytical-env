@@ -39,7 +39,22 @@ sudo touch /opt/dataworks/users
 
 for GROUP in $${COGNITO_GROUPS[@]}; do
   echo "Creating group $GROUP"
-  sudo groupadd -f "$GROUP"
+
+  echo "Creating group level user for '$GROUP'"
+  if id -u "$GROUP"; then
+    echo "User already exists"
+  else
+    echo "Creating user '$GROUP'"
+    if sudo useradd -m "$GROUP"; then
+      echo "$GROUP" | sudo tee -a /opt/dataworks/users
+    else
+      echo "Cannot create user '$GROUP'"
+      continue
+    fi
+  fi
+
+  echo "Adding user '$GROUP' to group '$GROUP'"
+  sudo usermod -aG hadoop "$GROUP"
 
   echo "Adding users for group $GROUP"
   USERS=$(aws cognito-idp list-users-in-group --user-pool-id "${user_pool_id}" --group-name "$GROUP" | jq '.Users[]' | jq -r '(.Attributes[] | if .Name =="preferred_username" then .Value else empty end) // .Username')
@@ -73,3 +88,5 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
 
   done
 done
+
+
