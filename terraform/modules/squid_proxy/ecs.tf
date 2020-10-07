@@ -4,7 +4,7 @@
 # just change that number (to anything). Future work will put proper version
 # tags on the container image itself, at which point that psuedo-version
 # environment variable can be removed again
-resource "aws_ecs_task_definition" "container_internet_proxy" {
+resource "aws_ecs_task_definition" "proxy" {
   family                   = var.name
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -27,7 +27,7 @@ resource "aws_ecs_task_definition" "container_internet_proxy" {
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "${aws_cloudwatch_log_group.internet_proxy_ecs.name}",
+        "awslogs-group": "${aws_cloudwatch_log_group.proxy.name}",
         "awslogs-region": "${data.aws_region.current.name}",
         "awslogs-stream-prefix": "container-internet-proxy"
       }
@@ -66,10 +66,10 @@ DEFINITION
 
 }
 
-resource "aws_ecs_service" "container_internet_proxy" {
-  name            = "container-internet-proxy"
-  cluster         = var.ecs_cluster_arn
-  task_definition = aws_ecs_task_definition.container_internet_proxy.arn
+resource "aws_ecs_service" "proxy" {
+  name            = var.name
+  cluster         = var.ecs_cluster
+  task_definition = aws_ecs_task_definition.proxy.arn
   desired_count   = length(data.aws_availability_zones.available.names)
   launch_type     = "FARGATE"
 
@@ -79,7 +79,7 @@ resource "aws_ecs_service" "container_internet_proxy" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.container_internet_proxy.arn
+    target_group_arn = aws_lb_target_group.proxy.arn
     container_name   = "squid-s3"
     container_port   = var.proxy_port
   }

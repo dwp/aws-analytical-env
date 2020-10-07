@@ -1,5 +1,5 @@
 resource "aws_lb" "container_internet_proxy" {
-  name               = "container-internet-proxy"
+  name               = "${var.name}-lb"
   internal           = true
   load_balancer_type = "network"
   subnets            = var.subnet_ids
@@ -12,8 +12,8 @@ resource "aws_lb" "container_internet_proxy" {
   }
 }
 
-resource "aws_lb_target_group" "container_internet_proxy" {
-  name              = "container-internet-proxy"
+resource "aws_lb_target_group" "proxy" {
+  name              = "${var.name}-tg"
   port              = var.proxy_port
   protocol          = "TCP"
   target_type       = "ip"
@@ -42,20 +42,7 @@ resource "aws_lb_listener" "container_internet_proxy" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.container_internet_proxy.arn
+    target_group_arn = aws_lb_target_group.proxy.arn
   }
 }
 
-resource "aws_lb_listener" "container_internet_proxy_tls" {
-  load_balancer_arn = aws_lb.container_internet_proxy.arn
-  port              = 443
-  protocol          = "TLS"
-  ssl_policy        = "ELBSecurityPolicy-FS-1-2-Res-2019-08"
-  certificate_arn   = aws_acm_certificate.internet_proxy.arn
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.container_internet_proxy.arn
-  }
-
-}

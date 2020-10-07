@@ -63,7 +63,7 @@ resource "aws_iam_role_policy" "proxy" {
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name               = "ecsTaskExecutionRole"
+  name               = "${var.name}-execution-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role.json
   tags               = var.common_tags
 }

@@ -1,0 +1,131 @@
+terraform {
+  required_version = "{{terraform_12_version}}"
+
+  backend "s3" {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-analytical-environment_github-proxy.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "management" {
+  backend   = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/management.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "security_tools" {
+  backend   = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-security-tools.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "concourse" {
+  backend   = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{state_file_bucket}}"
+    key            = "terraform/dataworks/aws-concourse.tfstate"
+    region         = "{{state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+provider "aws" {
+  region = "{{provider_region}}"
+  version = "~> 2.70.0"
+
+  assume_role {
+    role_arn = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
+  }
+}
+
+locals {
+  name        = "github-proxy"
+  environment = terraform.workspace == "default" ? "management-dev" : terraform.workspace
+
+  root_dns_name = {
+    development = "dev.wip.{{dataworks_domain_name}}"
+    qa          = "qa.wip.{{dataworks_domain_name}}"
+    integration = "int.wip.{{dataworks_domain_name}}"
+    preprod     = "pre.{{dataworks_domain_name}}"
+    production  = "{{dataworks_domain_name}}"
+    management-dev = "mgt-dev.{{dataworks_domain_name}}"
+    management     = "mgt.{{dataworks_domain_name}}"
+  }
+
+  account = {
+    {% for key, value in accounts.items() %}
+      {{key}} = "{{value}}"
+    {% endfor %}
+  }
+
+  mgmt_account_mapping = {
+    management-dev = ["development", "qa", "integration"]
+    management     = ["preprod", "production"]
+  }
+
+  management_workspace = {
+      management-dev = "management-dev"
+      management     = "management"
+  }
+
+  management_account = {
+    development = "management-dev"
+    qa          = "management-dev"
+    integration = "management-dev"
+    preprod     = "management"
+    production  = "management"
+  }
+
+  crypto_workspace = {
+    management-dev = "management-dev"
+    management     = "management"
+  }
+
+  common_tags = {
+    {% for key, value in common_tags.items() %}
+      {{key}} = "{{value}}"
+    {% endfor %}
+    Name         = local.name
+    Environment  = local.environment
+    Application  = local.name
+    Persistence  = "True"
+    AutoShutdown = "False"
+    Costcode     = var.costcode
+    Team         = "DataWorks"
+  }
+
+  cidr_block = {
+  {% for environment, ranges in cidr_block.items() %}
+      {{ environment }} = {
+        {% for key, value in ranges.items() %}
+          {{ key }} = "{{ value }}"{% endfor %}
+      } {% endfor %}
+  }
+
+  ecr_dkr_endpoint   = "${local.account[local.environment]}.dkr.ecr.${var.region}.amazonaws.com"
+
+}

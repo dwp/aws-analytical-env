@@ -1,5 +1,5 @@
 data "template_file" "squid_conf" {
-  template = file("templates/squid_conf.tpl")
+  template = file("${path.module}/templates/squid_conf.tpl")
 
   vars = {
     environment = var.environment
@@ -21,12 +21,12 @@ resource "aws_s3_bucket_object" "squid_conf" {
 }
 
 data template_file "whitelist" {
-  template = file("templates/whitelist.tpl")
+  template = file("${path.module}/templates/whitelist.tpl")
 }
 
 resource "aws_s3_bucket_object" "ecs_whitelists" {
   bucket     = var.config_bucket.id
   key        = "${local.squid_config_s3_main_prefix}/conf.d/whitelist"
-  content    = data.template_file.whitelist[count.index].rendered
+  content    = data.template_file.whitelist.rendered
   kms_key_id = var.config_bucket.cmk_arn
 }

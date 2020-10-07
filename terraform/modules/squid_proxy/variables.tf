@@ -30,17 +30,11 @@ variable "config_bucket" {
   })
 }
 
-variable "prefix_list_ids" {
-  type = object({
-    s3 = string
-  })
-}
-
-variable "parent_domain_name" {
+variable "s3_prefix_list_id" {
   type = string
 }
 
-variable "cert_authority_arn" {
+variable "parent_domain_name" {
   type = string
 }
 
@@ -48,15 +42,16 @@ variable "ecr_dkr_endpoint" {
   type = string
 }
 
-variable "ecs_cluster_arn" {
+variable "ecs_cluster" {
   type = string
 }
 
-variable "mgmt_account_mapping" {
+variable "managed_envs_account_numbers" {
+  type = set(string)
 }
 
-variable "managed_envs_account_numbers" {
-  type = list(string)
+variable "interface_vpce_sg_id" {
+  type = string
 }
 
 variable "common_tags" {
