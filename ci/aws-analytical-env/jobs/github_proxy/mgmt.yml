@@ -1,0 +1,23 @@
+jobs:
+  - name: gh-proxy-mgmt
+    max_in_flight: 1
+    plan:
+      - get: aws-analytical-env
+        trigger: true
+        passed:
+          - gh-proxy-mgmt-dev
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: github_proxy
+      - .: (( inject meta.plan.terraform-apply ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/github_proxy'
+        params:
+          TF_WORKSPACE: 'management'
+      - .: (( inject meta.plan.terraform-plan ))
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/github_proxy'
+        params:
+          TF_WORKSPACE: 'management'

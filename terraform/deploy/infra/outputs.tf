@@ -38,6 +38,10 @@ output internet_proxy_dns_name {
   value = module.analytical_env_vpc.custom_vpce_dns_names["proxy_vpc_endpoint"][0]
 }
 
+output github_proxy_dns_name {
+  value = module.analytical_env_vpc.custom_vpce_dns_names["github_proxy_vpc_endpoint"][0]
+}
+
 output internet_proxy_sg {
   value = module.analytical_env_vpc.custom_vpce_sg_id
 }

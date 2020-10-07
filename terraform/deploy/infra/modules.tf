@@ -34,6 +34,11 @@ module analytical_env_vpc {
       key          = "proxy_vpc_endpoint"
       service_name = data.terraform_remote_state.internet_egress.outputs.internet_proxy_service.service_name
       port         = 3128
+    },
+    {
+      key          = "github_proxy_vpc_endpoint"
+      service_name = data.terraform_remote_state.analytical_env_github_proxy.outputs.proxy_vpce_service.service_name
+      port         = 3128
     }
   ]
 

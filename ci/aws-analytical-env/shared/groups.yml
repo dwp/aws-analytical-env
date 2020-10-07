@@ -37,4 +37,8 @@ groups:
       - metrics-submit-job-preproduction
       - metrics-submit-job-integration
       - metrics-submit-job-qa
+  - name: github-proxy
+    jobs:
+      - gh-proxy-mgmt-dev
+      - gh-proxy-mgmt
 
