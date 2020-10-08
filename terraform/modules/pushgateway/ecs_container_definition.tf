@@ -40,4 +40,5 @@ module "container_definition" {
 resource "aws_cloudwatch_log_group" "logs" {
   name              = "/aws/ecs/${data.aws_ecs_cluster.ecs_main_cluster.cluster_name}/${var.name_prefix}"
   retention_in_days = 180
+  tags = merge(var.common_tags, {Name: "${var.name_prefix}-ecs-logs"})
 }
