@@ -124,5 +124,7 @@ module launcher {
   service_security_group              = module.emr.service_security_group
   proxy_host                          = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_dns_name
   full_no_proxy                       = module.emr.full_no_proxy
+  common_tags = local.common_tags
+  name_prefix = local.name
 }
 

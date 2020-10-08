@@ -7,6 +7,16 @@ variable "aws_analytical_env_emr_launcher_zip" {
   }
 }
 
+variable "common_tags" {
+  type = map(string)
+  description = "Tags common to all resources"
+}
+
+variable "name_prefix" {
+  type = string
+  description = "Name of service to be used as resource prefix"
+}
+
 variable "config_bucket" {}
 variable "config_bucket_cmk" {}
 variable "log_bucket" {}
