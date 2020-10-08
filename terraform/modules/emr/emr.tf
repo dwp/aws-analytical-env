@@ -126,7 +126,7 @@ resource "aws_cloudwatch_event_rule" "cluster_bootstrap_event_rule" {
       "source": ["aws.emr"]
     }
     PATTERN
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-emr-error-rule"})
+  tags          = merge(var.common_tags, { Name : "${var.name_prefix}-emr-error-rule" })
 }
 
 resource "aws_cloudwatch_metric_alarm" "emr_terminated_with_errors_alarm" {
@@ -144,5 +144,5 @@ resource "aws_cloudwatch_metric_alarm" "emr_terminated_with_errors_alarm" {
   }
   alarm_description         = "This metric monitors invocations of the analytical-env-emr-bootstrap-event-rule"
   insufficient_data_actions = []
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-with-errors-alarm"})
+  tags                      = merge(var.common_tags, { Name : "${var.name_prefix}-with-errors-alarm" })
 }

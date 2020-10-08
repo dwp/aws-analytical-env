@@ -66,7 +66,7 @@ data aws_iam_policy_document lambda_logging {
 resource aws_iam_role lambda_execution_role {
   name               = "snapshot-cognito-pool-lambda-execution-role"
   assume_role_policy = data.aws_iam_policy_document.snapshot_cognito_pool_lambda.json
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-cognito-execution"})
+  tags               = merge(var.common_tags, { Name : "${var.name_prefix}-cognito-execution" })
 }
 
 resource aws_iam_role_policy lambda_log {

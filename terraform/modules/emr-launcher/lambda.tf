@@ -21,5 +21,5 @@ resource "aws_lambda_function" "aws_analytical_env_emr_launcher" {
       EMR_LAUNCHER_LOG_LEVEL        = "debug"
     }
   }
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-emr-launch-lambda"})
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-lambda" })
 }

@@ -3,7 +3,7 @@ resource "aws_security_group" "emr" {
   description            = "Allow EMR Communications"
   vpc_id                 = var.vpc.aws_vpc.id
   revoke_rules_on_delete = true
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-emr-sg"})
+  tags                   = merge(var.common_tags, { Name : "${var.name_prefix}-emr-sg" })
 }
 
 resource "aws_security_group_rule" "egress_https_to_vpc_endpoints" {
@@ -148,7 +148,7 @@ resource "aws_security_group" "emr_master_private" {
   description            = "Analytical Env EMR Master"
   vpc_id                 = var.vpc.aws_vpc.id
   revoke_rules_on_delete = true
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-emr-master-priv-sg"})
+  tags                   = merge(var.common_tags, { Name : "${var.name_prefix}-emr-master-priv-sg" })
 }
 
 resource "aws_security_group" "emr_slave_private" {
@@ -156,7 +156,7 @@ resource "aws_security_group" "emr_slave_private" {
   description            = "Analytical Env EMR Slave"
   vpc_id                 = var.vpc.aws_vpc.id
   revoke_rules_on_delete = true
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-emr-slave-priv-sg"})
+  tags                   = merge(var.common_tags, { Name : "${var.name_prefix}-emr-slave-priv-sg" })
 }
 
 resource "aws_security_group" "emr_service_access" {
@@ -164,5 +164,5 @@ resource "aws_security_group" "emr_service_access" {
   description            = "Analytical Env EMR Service Access"
   vpc_id                 = var.vpc.aws_vpc.id
   revoke_rules_on_delete = true
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-emr-access-sg"})
+  tags                   = merge(var.common_tags, { Name : "${var.name_prefix}-emr-access-sg" })
 }

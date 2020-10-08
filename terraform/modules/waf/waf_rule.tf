@@ -7,7 +7,7 @@ resource "aws_wafregional_rule" "detect_admin_access" {
     negated = false
     type    = "IPMatch"
   }
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-admin-waf-rule"})
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-admin-waf-rule" })
 }
 
 resource "aws_wafregional_rule" "detect_bad_auth_tokens" {
@@ -19,7 +19,7 @@ resource "aws_wafregional_rule" "detect_bad_auth_tokens" {
     negated = false
     type    = "ByteMatch"
   }
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-bad-token-waf-rule"})
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-bad-token-waf-rule" })
 }
 
 resource "aws_wafregional_rule" "detect_rfi_lfi_traversal" {
@@ -31,7 +31,7 @@ resource "aws_wafregional_rule" "detect_rfi_lfi_traversal" {
     negated = false
     type    = "ByteMatch"
   }
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-rfi-lfi-waf-rule"})
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-rfi-lfi-waf-rule" })
 }
 
 resource "aws_wafregional_rule" "detect_ssi" {
@@ -43,7 +43,7 @@ resource "aws_wafregional_rule" "detect_ssi" {
     negated = false
     type    = "ByteMatch"
   }
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-ssi-waf-rule"})
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-ssi-waf-rule" })
 }
 
 resource "aws_wafregional_rule" "enforce_csrf" {
@@ -61,7 +61,7 @@ resource "aws_wafregional_rule" "enforce_csrf" {
     negated = true
     type    = "SizeConstraint"
   }
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-csrf-waf-rule"})
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-csrf-waf-rule" })
 }
 
 resource "aws_wafregional_rule" "mitigate_sqli" {
@@ -80,7 +80,7 @@ resource "aws_wafregional_rule" "mitigate_sqli" {
     negated = false
     type    = "SqlInjectionMatch"
   }
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-sqli-waf-rule"})
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-sqli-waf-rule" })
 }
 
 resource "aws_wafregional_rule" "mitigate_xss" {
@@ -92,7 +92,7 @@ resource "aws_wafregional_rule" "mitigate_xss" {
     negated = false
     type    = "XssMatch"
   }
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-xss-waf-rule"})
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-xss-waf-rule" })
 }
 
 resource "aws_wafregional_rule" "restrict_sizes" {
@@ -104,7 +104,7 @@ resource "aws_wafregional_rule" "restrict_sizes" {
     negated = false
     type    = "SizeConstraint"
   }
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-restrict-waf-rule"})
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-restrict-waf-rule" })
 }
 
 resource "aws_wafregional_rule" "non_gb" {
@@ -123,6 +123,6 @@ resource "aws_wafregional_rule" "non_gb" {
     type    = "GeoMatch"
   }
 
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-non-gb-waf-rule"})
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-non-gb-waf-rule" })
 }
 

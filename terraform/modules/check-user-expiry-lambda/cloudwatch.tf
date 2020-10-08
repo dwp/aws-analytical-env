@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_log_group" "check_user_expiry_lambda_logs" {
   name              = "${var.name_prefix}-check-user-expiry-lambda-logs"
   retention_in_days = 180
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-expiry-logs"})
+  tags              = merge(var.common_tags, { Name : "${var.name_prefix}-expiry-logs" })
 }
 
 resource "aws_cloudwatch_event_rule" "rule_for_check_user_expiry_lambda" {

@@ -3,23 +3,23 @@
 resource aws_iam_role role_for_lambda_create_auth_challenge {
   name               = "Role-Lambda-Create-Auth_Challenge"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-auth-challenge"})
+  tags               = merge(var.common_tags, { Name : "${var.name_prefix}-auth-challenge" })
 }
 resource aws_iam_role role_for_lambda_define_auth_challenge {
   name               = "Role-Lambda-Define-Auth_Challenge"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-define-auth"})
+  tags               = merge(var.common_tags, { Name : "${var.name_prefix}-define-auth" })
 }
 resource aws_iam_role role_for_lambda_verify_auth_challenge {
   name               = "Role-Lambda-Verify-Auth_Challenge"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-verify-auth"})
+  tags               = merge(var.common_tags, { Name : "${var.name_prefix}-verify-auth" })
 }
 
 resource "aws_iam_role" "role_for_lambda_pre_token_generation" {
   name               = "Role-Lambda-Pre-Token-Generation"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-pre-token"})
+  tags               = merge(var.common_tags, { Name : "${var.name_prefix}-pre-token" })
 }
 
 resource aws_iam_role role_for_lambda_pre_auth {

@@ -32,7 +32,7 @@ resource aws_cloudwatch_event_rule snapshot_cognito_pool {
         }
     }
     PATTERN
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-cognito-pool-rule"})
+  tags          = merge(var.common_tags, { Name : "${var.name_prefix}-cognito-pool-rule" })
 }
 
 resource aws_cloudwatch_event_target notification {
@@ -44,5 +44,5 @@ resource aws_cloudwatch_event_target notification {
 resource "aws_cloudwatch_log_group" "snapshot_cognito_pool" {
   name              = "/aws/lambda/snapshot_cognito_pool"
   retention_in_days = 180
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-cognito-pool-logs"})
+  tags              = merge(var.common_tags, { Name : "${var.name_prefix}-cognito-pool-logs" })
 }

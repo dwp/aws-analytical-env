@@ -12,13 +12,13 @@ resource "aws_kinesis_firehose_delivery_stream" "extended_s3_stream" {
       log_stream_name = "S3Delivery"
     }
   }
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-s3-stream"})
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-s3-stream" })
 }
 
 resource "aws_iam_role" "firehose_role" {
   name               = "${local.name}-firehose-role"
   assume_role_policy = data.aws_iam_policy_document.firehose_assume_role.json
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-firehose-role"})
+  tags               = merge(var.common_tags, { Name : "${var.name_prefix}-firehose-role" })
 }
 
 resource "aws_iam_policy" "write_s3_firehose" {

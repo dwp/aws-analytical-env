@@ -1,7 +1,7 @@
 resource "aws_security_group" "internet_proxy" {
   name   = var.name
   vpc_id = var.vpc_id
-  tags = merge(var.common_tags, {Name: "${var.name_prefix}-internet-proxy"})
+  tags   = merge(var.common_tags, { Name : "${var.name_prefix}-internet-proxy" })
 }
 
 resource "aws_security_group_rule" "internet_proxy" {

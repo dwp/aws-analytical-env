@@ -55,11 +55,11 @@ variable "interface_vpce_sg_id" {
 }
 
 variable "common_tags" {
-  type = map(string)
+  type        = map(string)
   description = "Tags common to all resources"
 }
 
 variable "name_prefix" {
-  type = string
+  type        = string
   description = "Name of service to be used as prefix for resources"
 }
