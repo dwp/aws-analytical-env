@@ -1,7 +1,3 @@
-
-
-
-
 resource "aws_lambda_function" "aws_analytical_env_emr_launcher" {
   filename      = "${var.aws_analytical_env_emr_launcher_zip["base_path"]}/emr-launcher-${var.aws_analytical_env_emr_launcher_zip["version"]}.zip"
   function_name = "aws_analytical_env_emr_launcher"
@@ -25,4 +21,5 @@ resource "aws_lambda_function" "aws_analytical_env_emr_launcher" {
       EMR_LAUNCHER_LOG_LEVEL        = "debug"
     }
   }
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-lambda" })
 }

@@ -89,4 +89,5 @@ resource "aws_wafregional_web_acl" "acl" {
     rule_id  = aws_wafregional_rule.detect_admin_access.id
     type     = "REGULAR"
   }
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-acl" })
 }

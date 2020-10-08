@@ -9,6 +9,7 @@ resource "aws_s3_bucket_object" "cluster" {
     costcode               = var.costcode
     release_version        = var.release_version
   })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-cluster" })
 }
 
 resource "aws_s3_bucket_object" "instances" {
@@ -20,6 +21,7 @@ resource "aws_s3_bucket_object" "instances" {
     slave_security_group   = var.slave_security_group
     service_security_group = var.service_security_group
   })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-instances" })
 }
 
 resource "aws_s3_bucket_object" "steps" {
@@ -28,6 +30,7 @@ resource "aws_s3_bucket_object" "steps" {
   content = templatefile("../../../cluster_config/steps.yaml.tpl", {
     config_bucket = var.emr_bucket.id
   })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
 
 resource "aws_s3_bucket_object" "configurations" {
@@ -39,4 +42,5 @@ resource "aws_s3_bucket_object" "configurations" {
     proxy_host    = var.proxy_host
     full_no_proxy = var.full_no_proxy
   })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-config" })
 }

@@ -18,6 +18,7 @@ resource "aws_s3_bucket_object" "squid_conf" {
   key        = "${local.squid_config_s3_main_prefix}/squid.conf"
   content    = data.template_file.squid_conf.rendered
   kms_key_id = var.config_bucket.cmk_arn
+  tags       = merge(var.common_tags, { Name : "${var.name_prefix}-squid-config" })
 }
 
 data template_file "whitelist" {
@@ -29,4 +30,5 @@ resource "aws_s3_bucket_object" "ecs_whitelists" {
   key        = "${local.squid_config_s3_main_prefix}/conf.d/whitelist"
   content    = data.template_file.whitelist.rendered
   kms_key_id = var.config_bucket.cmk_arn
+  tags       = merge(var.common_tags, { Name : "${var.name_prefix}-ecs-whitelists" })
 }

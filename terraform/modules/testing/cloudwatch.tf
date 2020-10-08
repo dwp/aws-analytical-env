@@ -2,6 +2,7 @@ resource "aws_cloudwatch_event_rule" "every_ten_minutes" {
   name                = "every-ten-minutes"
   description         = "Fires every ten minutes"
   schedule_expression = "rate(10 minutes)"
+  tags                = merge(var.common_tags, { Name : "${var.name_prefix}-ten-min-event" })
 }
 
 resource "aws_cloudwatch_event_target" "trigger_metric_lambda_every_ten_minutes" {

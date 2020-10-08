@@ -12,6 +12,11 @@ variable root_dns_names {
   type        = list(string)
 }
 
+variable name_prefix {
+  description = "Service name to be used as resource prefix"
+  type        = string
+}
+
 variable auth_lambdas {
   description = "ARNs of auth trigger lambdas"
 

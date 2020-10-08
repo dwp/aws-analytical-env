@@ -1,6 +1,7 @@
 resource "aws_iam_role" "aws_analytical_env_emr_launcher_lambda_role" {
   name               = "aws_analytical_env_emr_launcher_lambda_role"
   assume_role_policy = data.aws_iam_policy_document.aws_analytical_env_emr_launcher_assume_policy.json
+  tags               = merge(var.common_tags, { Name : "${var.name_prefix}-emr-lambda-role" })
 }
 
 data "aws_iam_policy_document" "aws_analytical_env_emr_launcher_assume_policy" {

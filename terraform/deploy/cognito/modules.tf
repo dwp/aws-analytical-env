@@ -18,6 +18,7 @@ module "cognito-fs" {
     post_authentication            = module.custom-auth-flow.post-auth-lambda.arn
     pre_token_generation           = module.custom-auth-flow.pre-token-generation-lambda.arn
   }
+  name_prefix = local.name
 }
 
 module "custom-auth-flow" {

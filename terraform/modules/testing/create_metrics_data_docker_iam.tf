@@ -18,6 +18,7 @@ data aws_iam_policy_document policy_assume_role_batch_service {
 resource "aws_iam_role" "service_role_for_create_metrics_data_batch" {
   name               = "${var.name_prefix}-create-metrics-data-batch-service-role"
   assume_role_policy = data.aws_iam_policy_document.policy_assume_role_batch_service.json
+  tags               = merge(var.common_tags, { Name : "${var.name_prefix}-metrics-service-role" })
 }
 
 resource "aws_iam_role_policy_attachment" "create_metrics_data_batch_service_role_attachment" {
@@ -87,6 +88,7 @@ data aws_iam_policy_document policy_assume_role_batch_instance {
 resource "aws_iam_role" "instance_role_for_create_metrics_data_batch" {
   name               = "${var.name_prefix}-create-metrics-data-batch-instance-role"
   assume_role_policy = data.aws_iam_policy_document.policy_assume_role_batch_instance.json
+  tags               = merge(var.common_tags, { Name : "${var.name_prefix}-metrics-instance-role" })
 }
 
 resource "aws_iam_instance_profile" "create_metrics_data_instance_profile" {
@@ -153,6 +155,7 @@ data aws_iam_policy_document policy_assume_role_batch_job {
 resource "aws_iam_role" "job_role_for_create_metrics_data_batch" {
   name               = "${var.name_prefix}-create-metrics-data-batch-role"
   assume_role_policy = data.aws_iam_policy_document.policy_assume_role_batch_job.json
+  tags               = merge(var.common_tags, { Name : "${var.name_prefix}-metrics-job-role" })
 }
 
 data "aws_iam_policy_document" "create_metrics_data_batch_policy" {

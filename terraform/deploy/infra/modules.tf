@@ -75,7 +75,8 @@ module waf {
   log_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.arn
 
   whitelist_cidr_blocks = local.whitelist_cidr_blocks
-
+  common_tags           = local.common_tags
+  name_prefix           = local.name
 }
 
 module alb {

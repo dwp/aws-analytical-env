@@ -18,4 +18,5 @@ resource "aws_ecs_service" "service" {
     container_name   = var.container_name
     container_port   = var.container_port
   }
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-ecs-service" })
 }
