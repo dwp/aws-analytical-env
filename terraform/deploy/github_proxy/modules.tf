@@ -19,7 +19,6 @@ module "github_proxy" {
   vpc_id               = data.terraform_remote_state.concourse.outputs.aws_vpc.id
   interface_vpce_sg_id = data.terraform_remote_state.concourse.outputs.interface_vpce_sg_id
 
-
   common_tags = local.common_tags
-
+  name_prefix = local.name
 }

@@ -63,7 +63,7 @@ resource "aws_ecs_task_definition" "proxy" {
   }
 ]
 DEFINITION
-
+  tags = merge(var.common_tags, {Name: "${var.name_prefix}-proxy-td"})
 }
 
 resource "aws_ecs_service" "proxy" {
@@ -83,5 +83,6 @@ resource "aws_ecs_service" "proxy" {
     container_name   = "squid-s3"
     container_port   = var.proxy_port
   }
+  tags = merge(var.common_tags, {Name: "${var.name_prefix}-proxy-ecs"})
 }
 
