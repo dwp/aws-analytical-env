@@ -89,4 +89,6 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
   done
 done
 
-
+%%%%% Fix up Hive
+echo "export AWS_STS_REGIONAL_ENDPOINTS=regional" | sudo tee -a /etc/hive/conf/hive_env.sh
+chmod 444 /var/aws/emr/userData.json
