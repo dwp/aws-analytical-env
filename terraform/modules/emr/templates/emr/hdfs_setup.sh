@@ -23,4 +23,3 @@ done
 
 sudo cp /usr/share/java/mariadb-connector-java.jar /usr/lib/spark/jars/
 
-sudo /usr/lib/spark/sbin/start-thriftserver.sh --master yarn --executor-cores 2
