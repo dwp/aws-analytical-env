@@ -44,8 +44,8 @@ module "emr" {
   mgmt_certificate_bucket = local.mgmt_certificate_bucket
   dataset_glue_db         = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.analytical_dataset_generation.job_name
   security_configuration_groups = {
-    UC_DataScience_PII     = ["AnalyticalDatasetCrownReadOnly"],
-    UC_DataScience_Non_PII = ["AnalyticalDatasetCrownReadOnlyNonPii"]
+    UC_DataScience_PII     = ["AnalyticalDatasetCrownReadOnly", "ReadPDMPiiAndNonPii"],
+    UC_DataScience_Non_PII = ["AnalyticalDatasetCrownReadOnlyNonPii", "ReadPDMNonPiiOnly"]
   }
   monitoring_sns_topic_arn = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
   logging_bucket           = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
@@ -127,4 +127,3 @@ module launcher {
   common_tags                         = local.common_tags
   name_prefix                         = local.name
 }
-
