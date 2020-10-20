@@ -6,7 +6,7 @@ module "emr_ami" {
   }
 
   ami_filter_name   = "name"
-  ami_filter_values = ["dw-emr-ami-*"]
+  ami_filter_values = ["dw-al2-emr-ami-*"]
 }
 
 // TODO: replace with Analytical Env credentials
@@ -27,6 +27,7 @@ module "emr" {
   log_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
 
   ami_id                  = module.emr_ami.ami_id
+  emr_release_label       = "emr-5.31.0"
   cognito_user_pool_id    = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
   dks_sg_id               = data.terraform_remote_state.crypto.outputs.dks_sg_id[local.environment]
   dks_subnet              = data.terraform_remote_state.crypto.outputs.dks_subnet
@@ -117,7 +118,7 @@ module launcher {
   account                             = local.account[local.environment]
   security_configuration              = module.emr.security_configuration
   costcode                            = var.costcode
-  release_version                     = "5.29.0"
+  release_version                     = "5.31.0"
   common_security_group               = module.emr.common_security_group
   master_security_group               = module.emr.master_security_group
   slave_security_group                = module.emr.slave_security_group

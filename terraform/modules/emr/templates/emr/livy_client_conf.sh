@@ -25,6 +25,6 @@ sudo chown root:root /etc/livy/conf/livy-client.conf
 sudo chmod 644 /etc/livy/conf/livy-client.conf
 sudo ln -s /etc/livy/conf/livy-client.conf /etc/spark/conf/livy-client.conf
 
-sudo stop livy-server
+sudo systemctl stop livy-server
 sleep 5
-sudo start livy-server
+sudo systemctl start livy-server

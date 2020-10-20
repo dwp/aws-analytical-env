@@ -41,7 +41,7 @@ trust.store.password=$TRUSTSTORE_PASSWORD
 data.key.service.url=${dks_endpoint}
 EOF
 
-/usr/local/bin/acm-cert-retriever \
+acm-cert-retriever \
     --acm-cert-arn "${acm_cert_arn}" \
     --acm-key-passphrase "$ACM_KEY_PASSWORD" \
     --keystore-path "/opt/emr/keystore.jks" \

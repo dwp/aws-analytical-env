@@ -30,8 +30,6 @@ export AWS_ACCESS_KEY_ID=$(echo "$CREDS" | jq -r .AccessKeyId)
 export AWS_SECRET_ACCESS_KEY=$(echo "$CREDS" | jq -r .SecretAccessKey)
 export AWS_SESSION_TOKEN=$(echo "$CREDS" | jq -r .SessionToken)
 
-set -x
-
 COGNITO_GROUPS=$(aws cognito-idp list-groups --user-pool-id "${user_pool_id}" | jq '.Groups' | jq -r '.[].GroupName')
 
 sudo mkdir -p /opt/dataworks

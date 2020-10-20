@@ -27,6 +27,6 @@ sudo cp /usr/share/java/mariadb-connector-java.jar /usr/lib/spark/jars/
 echo -e "\nexport AWS_STS_REGIONAL_ENDPOINTS=regional" | sudo tee -a /etc/hive/conf/hive-env.sh
 chmod 444 /var/aws/emr/userData.json
 
-sudo stop hive-server2
+sudo systemctl stop hive-server2
 sleep 5
-sudo start hive-server2
+sudo systemctl start hive-server2
