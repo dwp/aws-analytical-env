@@ -166,3 +166,12 @@ resource "aws_security_group" "emr_service_access" {
   revoke_rules_on_delete = true
   tags                   = merge(var.common_tags, { Name : "${var.name_prefix}-emr-access-sg" })
 }
+
+resource "aws_security_group_rule" "allow_tcp_from_master_to_service" {
+  type                     = "ingress"
+  from_port                = 9443
+  to_port                  = 9443
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.emr_service_access.id
+  source_security_group_id = aws_security_group.emr_master_private.id
+}
