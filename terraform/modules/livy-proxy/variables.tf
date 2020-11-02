@@ -35,7 +35,7 @@ variable "parent_domain_name" {
 
 variable "image_ecr_repository" {
   type        = string
-  description = "(Required) The ECR repo containing the Prometheus Pushgateway image"
+  description = "(Required) The ECR repo containing the Livy Proxy image"
 }
 
 variable "interface_vpce_sg_id" {

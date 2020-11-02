@@ -10,7 +10,7 @@ resource "aws_ecs_task_definition" "livy-proxy" {
 [
   {
     "image": "${var.image_ecr_repository}:latest",
-    "name": "squid-s3",
+    "name": "${var.name}",
     "networkMode": "awsvpc",
     "portMappings": [
       {
@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "livy-proxy" {
       "options": {
         "awslogs-group": "${aws_cloudwatch_log_group.livy-proxy.name}",
         "awslogs-region": "${data.aws_region.current.name}",
-        "awslogs-stream-prefix": "container-internet-proxy"
+        "awslogs-stream-prefix": "container-livy-proxy"
       }
     },
     "placementStrategy": [
@@ -61,7 +61,7 @@ resource "aws_ecs_service" "livy-proxy" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.lb_tg.arn
-    container_name   = "squid-s3"
+    container_name   = var.name
     container_port   = var.container_port
   }
   tags = merge(var.common_tags, { Name : "${var.name}-proxy-ecs" })

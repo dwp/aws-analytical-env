@@ -1,4 +1,4 @@
-resource "aws_acm_certificate" "pushgateway" {
+resource "aws_acm_certificate" "certificate" {
   domain_name               = local.fqdn
   certificate_authority_arn = var.cert_authority_arn
 
