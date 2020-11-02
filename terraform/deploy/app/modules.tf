@@ -95,6 +95,30 @@ module "pushgateway" {
   root_dns_suffix    = local.root_dns_name[local.environment]
 }
 
+module "livy_proxy" {
+  source = "../../modules/livy-proxy"
+
+  base64_keystore_data = base64encode(data.http.keystore_data.body)
+  livy_dns_name        = module.emr.emr_cluster_cname
+
+  image_ecr_repository = data.terraform_remote_state.management.outputs.ecr_livy-proxy_url
+  log_bucket_id        = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+
+  management_role_arn = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
+
+  cert_authority_arn = data.terraform_remote_state.certificate_authority.outputs.root_ca.arn
+  parent_domain_name = local.parent_domain_name[local.environment]
+  root_dns_suffix    = local.root_dns_name[local.environment]
+
+  vpc_id               = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
+  subnet_ids           = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
+  s3_prefix_list_id    = data.terraform_remote_state.aws_analytical_environment_infra.outputs.s3_prefix_list_id
+  interface_vpce_sg_id = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
+
+  common_tags = local.common_tags
+
+}
+
 module "codecommit" {
   source = "../../modules/codecommit"
 
