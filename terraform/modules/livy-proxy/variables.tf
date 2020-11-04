@@ -3,6 +3,11 @@ variable "name" {
   default = "livy-proxy"
 }
 
+variable "ecs_cluster_name" {
+  type        = string
+  description = "Name of ECS cluster to deploy the service to"
+}
+
 variable "container_port" {
   default = 8080
 }

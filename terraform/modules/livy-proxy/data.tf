@@ -14,5 +14,5 @@ data "aws_route53_zone" "main" {
 }
 
 data "aws_ecs_cluster" "ecs_main_cluster" {
-  cluster_name = "main"
+  cluster_name = var.ecs_cluster_name
 }

@@ -98,6 +98,8 @@ module "pushgateway" {
 module "livy_proxy" {
   source = "../../modules/livy-proxy"
 
+  ecs_cluster_name = "orchestration-service-user-host"
+
   base64_keystore_data = base64encode(data.http.keystore_data.body)
   livy_dns_name        = module.emr.emr_cluster_cname
 
