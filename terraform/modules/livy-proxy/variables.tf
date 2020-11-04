@@ -47,6 +47,11 @@ variable "interface_vpce_sg_id" {
   type = string
 }
 
+variable "livy_sg_id" {
+  type        = string
+  description = "ID of the Livy security group"
+}
+
 variable "management_role_arn" {
   type        = string
   description = "(Required) The role to assume when accessing resources in management"

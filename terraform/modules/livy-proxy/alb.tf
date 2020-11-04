@@ -25,6 +25,7 @@ resource "aws_lb_target_group" "lb_tg" {
     path     = "/"
     port     = var.container_port
     protocol = "HTTP"
+    matcher  = "200-299,401"
   }
   tags = merge(var.common_tags, { Name = "${var.name}-tg" })
 }

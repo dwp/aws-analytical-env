@@ -116,6 +116,7 @@ module "livy_proxy" {
   subnet_ids           = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
   s3_prefix_list_id    = data.terraform_remote_state.aws_analytical_environment_infra.outputs.s3_prefix_list_id
   interface_vpce_sg_id = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
+  livy_sg_id           = module.emr.emr_security_group_id
 
   common_tags = local.common_tags
 

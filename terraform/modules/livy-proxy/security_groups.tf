@@ -61,3 +61,23 @@ resource aws_security_group_rule egress_to_s3_pl {
   type              = "egress"
   prefix_list_ids   = [var.s3_prefix_list_id]
 }
+
+resource "aws_security_group_rule" "egress_proxy_tcp_to_livy" {
+  description              = "Allow TCP egress on 8998 to Livy"
+  type                     = "egress"
+  from_port                = 8998
+  to_port                  = 8998
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.ecs_tasks_sg.id
+  source_security_group_id = var.livy_sg_id
+}
+
+resource "aws_security_group_rule" "ingress_livy_tcp_from_proxy" {
+  description              = "Allow TCP ingress on 8998 from Livy proxy"
+  type                     = "ingress"
+  from_port                = 8998
+  to_port                  = 8998
+  protocol                 = "tcp"
+  security_group_id        = var.livy_sg_id
+  source_security_group_id = aws_security_group.ecs_tasks_sg.id
+}
