@@ -57,6 +57,7 @@ resource aws_cognito_user_pool emr {
 
   lifecycle {
     prevent_destroy = true
+    ignore_changes  = [schema]
   }
 }
 
