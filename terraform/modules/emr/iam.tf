@@ -62,6 +62,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:DescribeVolumeStatus",
       "ec2:DescribeVolumes",
       "application-autoscaling:DescribeScalableTargets",
+      "application-autoscaling:RegisterScalableTarget",
       "ec2:DeleteNetworkInterface",
     ]
     # Majority of these actions don't accept conditions or resource restriction
