@@ -49,7 +49,10 @@
       "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
       "javax.jdo.option.ConnectionUserName": "${hive_metastore_username}",
       "javax.jdo.option.ConnectionPassword": "${hive_metastore_pwd}",
-      "hive.server2.authentication": "nosasl"
+      "hive.server2.authentication": "nosasl",
+      "hive.support.concurrency": "true",
+      "hive.exec.dynamic.partition.mode": "nonstrict",
+      "hive.txn.manager": "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager"
     }
   },
   {
@@ -59,7 +62,10 @@
       "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
       "javax.jdo.option.ConnectionUserName": "${hive_metastore_username}",
       "javax.jdo.option.ConnectionPassword": "${hive_metastore_pwd}",
-      "hive.server2.authentication": "nosasl"
+      "hive.server2.authentication": "nosasl",
+      "hive.support.concurrency": "true",
+      "hive.exec.dynamic.partition.mode": "nonstrict",
+      "hive.txn.manager": "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager"
     }
   },
   {
