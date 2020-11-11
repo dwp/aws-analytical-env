@@ -63,7 +63,12 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "ec2:DescribeVolumes",
       "application-autoscaling:DescribeScalableTargets",
       "application-autoscaling:RegisterScalableTarget",
+      "application-autoscaling:DeregisterScalableTarget",
+      "application-autoscaling:PutScalingPolicy",
+      "application-autoscaling:DeleteScalingPolicy",
+      "application-autoscaling:DescribeScalingPolicies",
       "ec2:DeleteNetworkInterface",
+      "cloudwatch:PutMetricAlarm",
     ]
     # Majority of these actions don't accept conditions or resource restriction
     resources = ["*"]
@@ -558,19 +563,12 @@ data "aws_iam_policy_document" "elastic_map_reduce_for_auto_scaling_role" {
     resources = ["arn:aws:cloudwatch:${var.region}:${var.account}:alarm:*"]
   }
   statement {
-    sid    = "AllowEMRInstanceGroupModify"
+    sid    = "AllowModifyInstanceGroups"
     effect = "Allow"
     actions = [
       "elasticmapreduce:ListInstanceGroups",
       "elasticmapreduce:ModifyInstanceGroups"
     ]
-    resources = ["arn:aws:elasticmapreduce:${var.region}:${var.account}:cluster:${var.emr_cluster_name}"]
-    condition {
-      test     = "StringLike"
-      variable = "aws:ResourceTag/Application"
-      values = [
-        "aws-analytical-env"
-      ]
-    }
+    resources = ["*"] // Required by AutoScaling-CheckPermissions 
   }
 }
