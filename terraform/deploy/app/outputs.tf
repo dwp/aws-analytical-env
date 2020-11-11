@@ -17,3 +17,7 @@ output "pushgateway" {
 output "emr_common_sg_id" {
   value = module.emr.common_security_group
 }
+
+output "livy_proxy" {
+  value = module.livy_proxy
+}
