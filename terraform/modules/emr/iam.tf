@@ -69,6 +69,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
       "application-autoscaling:DescribeScalingPolicies",
       "ec2:DeleteNetworkInterface",
       "cloudwatch:PutMetricAlarm",
+      "cloudwatch:DescribeAlarms",
     ]
     # Majority of these actions don't accept conditions or resource restriction
     resources = ["*"]
