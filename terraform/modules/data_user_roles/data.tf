@@ -1,4 +1,4 @@
-data "external" "test" {
+data "external" "user_roles" {
   program = [
     "python",
     "${path.module}/data_cognito_user_roles.py"
