@@ -154,3 +154,12 @@ module launcher {
   common_tags                         = local.common_tags
   name_prefix                         = local.name
 }
+
+module "data" {
+  source = "../../modules/data_user_roles"
+  user_pool_id = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
+}
+
+output "data" {
+  value = module.data.output
+}
