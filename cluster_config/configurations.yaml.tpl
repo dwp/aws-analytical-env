@@ -42,9 +42,9 @@ Configurations:
     "hive.support.concurrency": "true"
     "hive.txn.manager": "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager"
     "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver"
-    "javax.jdo.option.ConnectionPassword": "${hive_metastore_pwd}"
+    "javax.jdo.option.ConnectionPassword": "metadata-store-analytical-env"
     "javax.jdo.option.ConnectionURL": "jdbc:mysql://${hive_metastore_endpoint}:3306/${hive_metastore_database_name}"
-    "javax.jdo.option.ConnectionUserName": "${hive_metastore_username}"
+    "javax.jdo.option.ConnectionUserName": "analytical-env"
 - Classification: "hive-site"
   Properties:
     "hive.exec.dynamic.partition.mode": "nonstrict"
@@ -52,9 +52,9 @@ Configurations:
     "hive.support.concurrency": "true"
     "hive.txn.manager": "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager"
     "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver"
-    "javax.jdo.option.ConnectionPassword": "${hive_metastore_pwd}"
+    "javax.jdo.option.ConnectionPassword": "metadata-store-analytical-env"
     "javax.jdo.option.ConnectionURL": "jdbc:mysql://${hive_metastore_endpoint}:3306/${hive_metastore_database_name}"
-    "javax.jdo.option.ConnectionUserName": "${hive_metastore_username}"
+    "javax.jdo.option.ConnectionUserName": "analytical-env"
 - Classification: "emrfs-site"
   Properties:
     "fs.s3.consistent": "true"
