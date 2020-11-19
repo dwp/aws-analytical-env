@@ -16,7 +16,7 @@ Configurations:
   Properties:
     "yarn.log-aggregation-enable": "true"
     "yarn.log-aggregation.retain-seconds": "-1"
-    "yarn.nodemanager.remote-app-log-dir": "${logs_bucket_path}/yarn/"
+    "yarn.nodemanager.remote-app-log-dir": "s3://${log_bucket}/logs/yarn/"
 - Classification: "spark"
   Properties:
     "maximizeResourceAllocation": "false"
@@ -31,10 +31,10 @@ Configurations:
       -XX:+CMSClassUnloadingEnabled -XX:OnOutOfMemoryError='kill -9 %p' -Dhttp.proxyHost='${proxy_host}'
       -Dhttp.proxyPort='3128' -Dhttp.nonProxyHosts='${full_no_proxy}' -Dhttps.proxyHost='${proxy_host}'
       -Dhttps.proxyPort='3128'"
-    "spark.r.command": "/opt/R/R-${r_version}/bin/Rscript"
-    "spark.r.shell.command": "/opt/R/R-${r_version}/bin/R"
+    "spark.r.command": "/opt/R/R-3.6.3/bin/Rscript"
+    "spark.r.shell.command": "/opt/R/R-3.6.3/bin/R"
     "spark.sql.catalogImplementation": "hive"
-    "spark.sql.warehouse.dir": "${data_bucket_path}/external"
+    "spark.sql.warehouse.dir": "s3://${config_bucket}/data/external"
 - Classification: "spark-hive-site"
   Properties:
     "hive.exec.dynamic.partition.mode": "nonstrict"
@@ -44,7 +44,7 @@ Configurations:
     "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver"
     "javax.jdo.option.ConnectionPassword": "metadata-store-analytical-env"
     "javax.jdo.option.ConnectionURL": "jdbc:mysql://${hive_metastore_endpoint}:3306/${hive_metastore_database_name}"
-    "javax.jdo.option.ConnectionUserName": "analytical-env"
+    "javax.jdo.option.ConnectionUserName": "${hive_metastore_username}"
 - Classification: "hive-site"
   Properties:
     "hive.exec.dynamic.partition.mode": "nonstrict"
@@ -54,7 +54,7 @@ Configurations:
     "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver"
     "javax.jdo.option.ConnectionPassword": "metadata-store-analytical-env"
     "javax.jdo.option.ConnectionURL": "jdbc:mysql://${hive_metastore_endpoint}:3306/${hive_metastore_database_name}"
-    "javax.jdo.option.ConnectionUserName": "analytical-env"
+    "javax.jdo.option.ConnectionUserName": "${hive_metastore_username}"
 - Classification: "emrfs-site"
   Properties:
     "fs.s3.consistent": "true"

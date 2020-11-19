@@ -37,10 +37,12 @@ resource "aws_s3_bucket_object" "configurations" {
   bucket = var.config_bucket.id
   key    = "emr/aws-analytical-env/configurations.yaml"
   content = templatefile("../../../cluster_config/configurations.yaml.tpl", {
-    config_bucket = var.emr_bucket.id
-    log_bucket    = var.log_bucket
-    proxy_host    = var.proxy_host
-    full_no_proxy = var.full_no_proxy
+    config_bucket                = var.emr_bucket.id
+    log_bucket                   = var.log_bucket
+    proxy_host                   = var.proxy_host
+    full_no_proxy                = var.full_no_proxy
+    hive_metastore_endpoint      = var.hive_metastore_endpoint
+    hive_metastore_database_name = var.hive_metastore_database_name
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-config" })
 }
