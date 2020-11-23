@@ -573,3 +573,55 @@ data "aws_iam_policy_document" "elastic_map_reduce_for_auto_scaling_role" {
     resources = ["*"] // Required by AutoScaling-CheckPermissions 
   }
 }
+
+data "aws_iam_policy_document" "group_hive_data_access_documents" {
+  for_each = var.security_configuration_groups
+
+  policy_id = "hive_data_access_${each.key}"
+
+  statement {
+    sid = "hive_data_${each.key}"
+
+    actions = [
+      "s3:DeleteObject",
+      "s3:DeleteObjectVersion",
+      "s3:GetObject",
+      "s3:ListBucket",
+      "s3:PutObject",
+      "s3:ReplicateObject",
+      "s3:RestoreObject",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.hive_data.arn}/${each.key}",
+      "${aws_s3_bucket.hive_data.arn}/${each.key}/*",
+      "arn:aws:kms:${var.region}:${var.account}:alias/${each.key}-shared"
+    ]
+  }
+
+  statement {
+    sid = "hive_data_kms_${each.key}"
+
+    actions = [
+      "kms:DescribeKey",
+      "kms:Decrypt",
+      "kms:Encrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*"
+    ]
+
+    resources = [
+      "${aws_s3_bucket.hive_data.arn}/${each.key}",
+      "${aws_s3_bucket.hive_data.arn}/${each.key}/*",
+      "arn:aws:kms:${var.region}:${var.account}:alias/${each.key}-shared"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "group_hive_data_access_policy" {
+  depends_on = [data.aws_iam_policy_document.group_hive_data_access_documents]
+  for_each = data.aws_iam_policy_document.group_hive_data_access_documents
+
+  policy_id = each.value.policy_id
+  policy = each.value.json
+}
