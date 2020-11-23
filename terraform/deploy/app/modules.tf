@@ -153,4 +153,7 @@ module launcher {
   full_no_proxy                       = module.emr.full_no_proxy
   common_tags                         = local.common_tags
   name_prefix                         = local.name
+  hive_metastore_endpoint             = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.endpoint
+  hive_metastore_database_name        = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.database_name
+  hive_metastore_username             = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["username"]
 }
