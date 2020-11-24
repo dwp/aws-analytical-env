@@ -152,3 +152,11 @@ resource "aws_s3_bucket_policy" "hive_data_bucket_https_only" {
   policy = data.aws_iam_policy_document.hive_data_bucket_https_only.json
 }
 
+resource "aws_s3_bucket_object" "hive_data_bucket_group_folders" {
+  depends_on = [aws_s3_bucket.hive_data]
+
+  for_each = data.aws_iam_policy_document.group_hive_data_access_documents
+  bucket   = aws_s3_bucket.hive_data.id
+  key      = each.key
+}
+
