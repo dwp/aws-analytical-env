@@ -34,6 +34,7 @@ data "template_file" "emr_setup_sh" {
     full_no_proxy      = join(",", local.no_proxy_hosts)
     cognito_role_arn   = aws_iam_role.cogntio_read_only_role.arn
     user_pool_id       = var.cognito_user_pool_id
+    hive_data_s3       = aws_s3_bucket.hive_data.arn
   }
 }
 

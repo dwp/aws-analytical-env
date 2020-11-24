@@ -38,6 +38,9 @@ sudo touch /opt/dataworks/users
 for GROUP in $${COGNITO_GROUPS[@]}; do
   echo "Creating group $GROUP"
 
+  echo "Creating group DB in S3 for '$GROUP'"
+  usr/bin/hive -e "CREATE DATABASE IF NOT EXISTS $GROUP LOCATION ${hive_data_s3}/${GROUP}"
+
   echo "Creating group level user for '$GROUP'"
   if id -u "$GROUP"; then
     echo "User already exists"

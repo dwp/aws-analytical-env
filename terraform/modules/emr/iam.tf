@@ -620,8 +620,8 @@ data "aws_iam_policy_document" "group_hive_data_access_documents" {
 
 resource "aws_iam_policy" "group_hive_data_access_policy" {
   depends_on = [data.aws_iam_policy_document.group_hive_data_access_documents]
-  for_each = data.aws_iam_policy_document.group_hive_data_access_documents
+  for_each   = data.aws_iam_policy_document.group_hive_data_access_documents
 
   policy_id = each.value.policy_id
-  policy = each.value.json
+  policy    = each.value.json
 }
