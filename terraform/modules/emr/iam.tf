@@ -167,6 +167,19 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
+    sid    = "AllowEmrToReadHiveDataBucket"
+    effect = "Allow"
+    actions = [
+      "s3:Get*",
+      "s3:ListBucket",
+    ]
+    resources = [
+      "arn:aws:s3:::${aws_s3_bucket.hive_data.id}",
+      "arn:aws:s3:::${aws_s3_bucket.hive_data.id}/*"
+    ]
+  }
+
+  statement {
     sid       = "CreateServiceLinkedRoleAllow"
     effect    = "Allow"
     actions   = ["iam:CreateServiceLinkedRole"]
@@ -359,6 +372,8 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     resources = [
       "arn:aws:s3:::${aws_s3_bucket.emr.id}",
       "arn:aws:s3:::${aws_s3_bucket.emr.id}/*",
+      "arn:aws:s3:::${aws_s3_bucket.hive_data.id}",
+      "arn:aws:s3:::${aws_s3_bucket.hive_data.id}/*",
       "arn:aws:s3:::eu-west-2.elasticmapreduce",
       "arn:aws:s3:::eu-west-2.elasticmapreduce/*",
       "arn:aws:s3:::${var.env_certificate_bucket}",
