@@ -40,7 +40,7 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
   echo "Creating group $GROUP"
 
   echo "Creating group DB in S3 for '$GROUP'"
-  /bin/hive -e "CREATE DATABASE IF NOT EXISTS $GROUP LOCATION '${S3_FILE_PATH}/${GROUP}'"
+  /bin/hive -e "CREATE DATABASE IF NOT EXISTS ${GROUP}_db LOCATION '${S3_FILE_PATH}/${GROUP}'"
 
   echo "Creating group level user for '$GROUP'"
   if id -u "$GROUP"; then

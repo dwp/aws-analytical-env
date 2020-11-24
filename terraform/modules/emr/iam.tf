@@ -592,7 +592,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_for_auto_scaling_role" {
 data "aws_iam_policy_document" "group_hive_data_access_documents" {
   for_each = var.security_configuration_groups
 
-  policy_id = "hive_data_access_${each.key}"
+  policy_id = "HiveDataAccess${each.key}"
 
   statement {
     sid = "hive_data_${each.key}"

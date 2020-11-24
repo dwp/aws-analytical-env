@@ -35,6 +35,7 @@ locals {
 }
 
 resource "aws_emr_security_configuration" "emrfs_em" {
+  depends_on = [aws_iam_policy.group_hive_data_access_policy]
   name          = md5(jsonencode(local.emrfs_em))
   configuration = jsonencode(local.emrfs_em)
 }
