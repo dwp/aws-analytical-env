@@ -29,18 +29,15 @@ CREDS=$(aws sts assume-role --role-arn "${cognito_role_arn}" --role-session-name
 export AWS_ACCESS_KEY_ID=$(echo "$CREDS" | jq -r .AccessKeyId)
 export AWS_SECRET_ACCESS_KEY=$(echo "$CREDS" | jq -r .SecretAccessKey)
 export AWS_SESSION_TOKEN=$(echo "$CREDS" | jq -r .SessionToken)
-export S3_FILE_PATH=$(echo ${hive_data_s3} | awk -F ':' '{print $3 "://" $6}')
 
 COGNITO_GROUPS=$(aws cognito-idp list-groups --user-pool-id "${user_pool_id}" | jq '.Groups' | jq -r '.[].GroupName')
 
 sudo mkdir -p /opt/dataworks
 sudo touch /opt/dataworks/users
+sudo touch /opt/dataworks/groups
 
 for GROUP in $${COGNITO_GROUPS[@]}; do
   echo "Creating group $GROUP"
-
-  echo "Creating group DB in S3 for '$GROUP'"
-  /bin/hive -e "CREATE DATABASE IF NOT EXISTS $GROUP LOCATION '${S3_FILE_PATH}/${GROUP}'"
 
   echo "Creating group level user for '$GROUP'"
   if id -u "$GROUP"; then
@@ -49,6 +46,7 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
     echo "Creating user '$GROUP'"
     if sudo useradd -m "$GROUP"; then
       echo "$GROUP" | sudo tee -a /opt/dataworks/users
+      echo "$GROUP" | sudo tee -a /opt/dataworks/groups
     else
       echo "Cannot create user '$GROUP'"
       continue
@@ -90,4 +88,3 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
 
   done
 done
-

@@ -35,15 +35,21 @@ data "template_file" "emr_setup_sh" {
     full_no_proxy      = join(",", local.no_proxy_hosts)
     cognito_role_arn   = aws_iam_role.cogntio_read_only_role.arn
     user_pool_id       = var.cognito_user_pool_id
-    hive_data_s3       = aws_s3_bucket.hive_data.arn
   }
 }
 
 resource "aws_s3_bucket_object" "hdfs_setup_sh" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/emr/hdfs_setup.sh"
-  content = file(format("%s/templates/emr/hdfs_setup.sh", path.module))
+  content = data.template_file.hdfs_setup_sh.rendered
   tags    = merge(var.common_tags, { Name : "${var.name_prefix}-hdfs-setup" })
+}
+
+data "template_file" "hdfs_setup_sh" {
+  template = file(format("%s/templates/emr/hdfs_setup.sh", path.module))
+  vars = {
+    hive_data_s3 = aws_s3_bucket.hive_data.arn
+  }
 }
 
 resource "aws_s3_bucket_object" "livy_client_conf_sh" {
