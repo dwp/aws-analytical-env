@@ -592,10 +592,10 @@ data "aws_iam_policy_document" "elastic_map_reduce_for_auto_scaling_role" {
 data "aws_iam_policy_document" "group_hive_data_access_documents" {
   for_each = var.security_configuration_groups
 
-  policy_id = "hive_data_access_${each.key}"
+  policy_id = "HiveData${replace(regex("((Non_)?PII)", each.key)[0], "_", "")}"
 
   statement {
-    sid = "hive_data_${each.key}"
+    sid = "HiveDataS3${replace(regex("((Non_)?PII)", each.key)[0], "_", "")}"
 
     actions = [
       "s3:DeleteObject",
@@ -615,7 +615,7 @@ data "aws_iam_policy_document" "group_hive_data_access_documents" {
   }
 
   statement {
-    sid = "hive_data_kms_${each.key}"
+    sid = "HiveDataKms${replace(regex("((Non_)?PII)", each.key)[0], "_", "")}"
 
     actions = [
       "kms:DescribeKey",

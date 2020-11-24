@@ -14,8 +14,10 @@ else
 fi
 
 USERS=$(< /opt/dataworks/users)
+GROUPS=$(< /opt/dataworks/groups)
+S3_FILE_PATH=$(echo ${hive_data_s3} | awk -F ':' '{print $3 "://" $6}')
 
-for USER in ${USERS[@]}; do
+for USER in $${USERS[@]}; do
   sudo -H -u hdfs bash -c "hdfs dfs -mkdir /user/$USER"
   sudo -H -u hdfs bash -c "hdfs dfs -chown -R $USER:$USER /user/$USER"
   sudo -H -u hdfs bash -c "hdfs dfs -chmod 770 /user/$USER"
@@ -26,6 +28,11 @@ sudo cp /usr/share/java/mariadb-connector-java.jar /usr/lib/spark/jars/
 ##### Fix up Hive
 echo -e "\nexport AWS_STS_REGIONAL_ENDPOINTS=regional" | sudo tee -a /etc/hive/conf/hive-env.sh
 chmod 444 /var/aws/emr/userData.json
+
+for GROUP in $${GROUPS[@]}; do
+  echo "Creating group DB in S3 for '$GROUP'"
+  /bin/hive -e "CREATE DATABASE IF NOT EXISTS '$GROUP'_db LOCATION '$S3_FILE_PATH/$GROUP'"
+done
 
 sudo systemctl stop hive-server2
 sleep 5

@@ -57,6 +57,7 @@ locals {
 }
 
 resource "aws_iam_role_policy_attachment" "attach_policies_to_roles" {
+  depends_on = [aws_iam_policy.group_hive_data_access_policy]
   count      = length(local.user_policies)
   role       = aws_iam_role.emrfs_iam[local.user_policies[count.index].group].name
   policy_arn = local.user_policies[count.index].policy_arn
