@@ -76,5 +76,11 @@
       "fs.s3.consistent": "true",
       "fs.s3.consistent.metadata.tableName": "EmrFSMetadata"
     }
+  },
+  {
+    "Classification": "tez-site",
+    "Properties": {
+      "tez.aux.uris": "/libs/hbase-client.jar"
+    }
   }
 ]

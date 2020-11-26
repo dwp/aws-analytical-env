@@ -30,3 +30,8 @@ chmod 444 /var/aws/emr/userData.json
 sudo systemctl stop hive-server2
 sleep 5
 sudo systemctl start hive-server2
+
+#### Fix up Tez
+sudo -H -u hdfs bash -c "hdfs dfs -mkdir /libs"
+sudo -H -u hdfs bash -c "hdfs dfs -put /usr/lib/hbase/hbase-client.jar /libs"
+
