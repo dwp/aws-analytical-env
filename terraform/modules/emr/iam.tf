@@ -150,6 +150,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
     resources = [
       aws_kms_key.emr_ebs.arn,
       aws_kms_key.emr_s3.arn,
+      aws_kms_key.hive_data_s3.arn,
     ]
   }
 
@@ -346,7 +347,8 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     resources = [
       aws_kms_key.emr_ebs.arn,
       aws_kms_key.emr_s3.arn,
-      var.artefact_bucket.kms_arn
+      var.artefact_bucket.kms_arn,
+      aws_kms_key.hive_data_s3.arn
     ]
   }
 
@@ -610,7 +612,8 @@ data "aws_iam_policy_document" "group_hive_data_access_documents" {
     resources = [
       "${aws_s3_bucket.hive_data.arn}/${each.key}",
       "${aws_s3_bucket.hive_data.arn}/${each.key}/*",
-      "arn:aws:kms:${var.region}:${var.account}:alias/${each.key}-shared"
+      "arn:aws:kms:${var.region}:${var.account}:alias/${each.key}-shared",
+      aws_kms_key.hive_data_s3.arn
     ]
   }
 
@@ -628,7 +631,8 @@ data "aws_iam_policy_document" "group_hive_data_access_documents" {
     resources = [
       "${aws_s3_bucket.hive_data.arn}/${each.key}",
       "${aws_s3_bucket.hive_data.arn}/${each.key}/*",
-      "arn:aws:kms:${var.region}:${var.account}:alias/${each.key}-shared"
+      "arn:aws:kms:${var.region}:${var.account}:alias/${each.key}-shared",
+      aws_kms_key.hive_data_s3.arn
     ]
   }
 }
