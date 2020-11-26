@@ -612,8 +612,22 @@ data "aws_iam_policy_document" "group_hive_data_access_documents" {
     resources = [
       "${aws_s3_bucket.hive_data.arn}/${each.key}",
       "${aws_s3_bucket.hive_data.arn}/${each.key}/*",
-      "arn:aws:kms:${var.region}:${var.account}:alias/${each.key}-shared",
-      aws_kms_key.hive_data_s3.arn
+    ]
+  }
+
+  statement {
+    sid = "HiveDataS3",
+    actions = [
+      "s3:GetBucketPublicAccessBlock",
+      "s3:ListBucket",
+      "s3:GetBucketVersioning",
+      "s3:ListMultipartUploadParts",
+      "s3:GetObject",
+      "s3:GetBucketLocation"
+    ],
+    resources = [
+      "${aws_s3_bucket.hive_data.arn}/*",
+      "${aws_s3_bucket.hive_data.arn}/"
     ]
   }
 
@@ -629,8 +643,8 @@ data "aws_iam_policy_document" "group_hive_data_access_documents" {
     ]
 
     resources = [
-      "${aws_s3_bucket.hive_data.arn}/${each.key}",
-      "${aws_s3_bucket.hive_data.arn}/${each.key}/*",
+      "${aws_s3_bucket.hive_data.arn}",
+      "${aws_s3_bucket.hive_data.arn}/*",
       "arn:aws:kms:${var.region}:${var.account}:alias/${each.key}-shared",
       aws_kms_key.hive_data_s3.arn
     ]
