@@ -600,13 +600,7 @@ data "aws_iam_policy_document" "group_hive_data_access_documents" {
     sid = "HiveDataS3${join("", regexall("[a-zA-Z0-9]", each.key))}"
 
     actions = [
-      "s3:DeleteObject",
-      "s3:DeleteObjectVersion",
-      "s3:GetObject",
-      "s3:ListBucket",
-      "s3:PutObject",
-      "s3:ReplicateObject",
-      "s3:RestoreObject",
+      "s3:*"
     ]
 
     resources = [
@@ -616,29 +610,20 @@ data "aws_iam_policy_document" "group_hive_data_access_documents" {
   }
 
   statement {
-    sid = "HiveDataS3"
+    sid = "HiveDataS3Kms${join("", regexall("[a-zA-Z0-9]", each.key))}"
     actions = [
       "s3:GetBucketPublicAccessBlock",
+      "s3:ListBucketMultipartUploads",
+      "kms:Decrypt",
+      "s3:ListBucketVersions",
       "s3:ListBucket",
       "s3:GetBucketVersioning",
       "s3:ListMultipartUploadParts",
-      "s3:GetBucketLocation"
-    ]
-    resources = [
-      "${aws_s3_bucket.hive_data.arn}/*",
-      "${aws_s3_bucket.hive_data.arn}/"
-    ]
-  }
-
-  statement {
-    sid = "HiveDataKms${join("", regexall("[a-zA-Z0-9]", each.key))}"
-
-    actions = [
-      "kms:DescribeKey",
-      "kms:Decrypt",
-      "kms:Encrypt",
       "kms:ReEncrypt*",
-      "kms:GenerateDataKey*"
+      "kms:GenerateDataKey*",
+      "kms:Encrypt",
+      "kms:DescribeKey",
+      "s3:GetBucketLocation"
     ]
 
     resources = [

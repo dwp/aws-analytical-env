@@ -48,7 +48,7 @@ locals {
         for policy_suffix in policy_suffixes :
         {
           group      = group
-          policy_arn = "arn:aws:iam::${var.account}:policy/${policy_suffix}"
+          policy_arn = "arn:aws:iam::${var.account}:policy/${join("", regexall("[a-zA-Z0-9]", policy_suffix))}"
         }
       ]
     ]
