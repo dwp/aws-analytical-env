@@ -121,7 +121,8 @@ resource "aws_cloudwatch_event_rule" "cluster_bootstrap_event_rule" {
   event_pattern = <<PATTERN
     {
       "detail": {
-        "state": ["TERMINATED_WITH_ERRORS"]
+        "state": ["TERMINATED_WITH_ERRORS"],
+        "name": ["${aws_emr_cluster.cluster.name}"]
       },
       "source": ["aws.emr"]
     }
