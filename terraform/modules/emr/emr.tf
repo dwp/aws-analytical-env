@@ -130,7 +130,7 @@ resource "aws_cloudwatch_event_rule" "cluster_bootstrap_event_rule" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "emr_terminated_with_errors_alarm" {
-  alarm_name          = "${var.emr_cluster_name} EMR Cluster Terminated with Errors (${var.environment})"
+  alarm_name          = "EMR Cluster Terminated with Errors (${var.environment})"
   statistic           = "Sum"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   threshold           = "1"
