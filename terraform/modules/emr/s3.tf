@@ -148,8 +148,9 @@ data "aws_iam_policy_document" "hive_data_bucket_https_only" {
 }
 
 resource "aws_s3_bucket_policy" "hive_data_bucket_https_only" {
-  bucket = aws_s3_bucket.hive_data.id
-  policy = data.aws_iam_policy_document.hive_data_bucket_https_only.json
+  depends_on = [aws_s3_bucket.hive_data]
+  bucket     = aws_s3_bucket.hive_data.id
+  policy     = data.aws_iam_policy_document.hive_data_bucket_https_only.json
 }
 
 resource "aws_s3_bucket_object" "hive_data_bucket_group_folders" {
@@ -159,5 +160,7 @@ resource "aws_s3_bucket_object" "hive_data_bucket_group_folders" {
   bucket       = aws_s3_bucket.hive_data.id
   key          = "${each.key}/"
   content_type = "application/x-directory"
+
+  tags = merge({ "Name" = "${var.emr_cluster_name}-hive-data-s3" }, var.common_tags)
 }
 
