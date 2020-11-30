@@ -2,7 +2,7 @@ resource "aws_lambda_function" "aws_analytical_env_emr_launcher" {
   filename      = "${var.aws_analytical_env_emr_launcher_zip["base_path"]}/emr-launcher-${var.aws_analytical_env_emr_launcher_zip["version"]}.zip"
   function_name = "aws_analytical_env_emr_launcher"
   role          = aws_iam_role.aws_analytical_env_emr_launcher_lambda_role.arn
-  handler       = "emr_launcher.handler"
+  handler       = "emr_launcher.handler.handler"
   runtime       = "python3.7"
   source_code_hash = filebase64sha256(
     format(
