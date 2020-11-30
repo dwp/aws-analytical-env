@@ -34,6 +34,7 @@ COGNITO_GROUPS=$(aws cognito-idp list-groups --user-pool-id "${user_pool_id}" | 
 
 sudo mkdir -p /opt/dataworks
 sudo touch /opt/dataworks/users
+sudo touch /opt/dataworks/groups
 
 for GROUP in $${COGNITO_GROUPS[@]}; do
   echo "Creating group $GROUP"
@@ -45,6 +46,7 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
     echo "Creating user '$GROUP'"
     if sudo useradd -m "$GROUP"; then
       echo "$GROUP" | sudo tee -a /opt/dataworks/users
+      echo "$GROUP" | sudo tee -a /opt/dataworks/groups
     else
       echo "Cannot create user '$GROUP'"
       continue
@@ -86,4 +88,3 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
 
   done
 done
-

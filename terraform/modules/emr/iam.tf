@@ -150,6 +150,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
     resources = [
       aws_kms_key.emr_ebs.arn,
       aws_kms_key.emr_s3.arn,
+      aws_kms_key.hive_data_s3.arn,
     ]
   }
 
@@ -163,6 +164,19 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
     resources = [
       "arn:aws:s3:::${aws_s3_bucket.emr.id}",
       "arn:aws:s3:::${aws_s3_bucket.emr.id}/*"
+    ]
+  }
+
+  statement {
+    sid    = "AllowEmrToReadHiveDataBucket"
+    effect = "Allow"
+    actions = [
+      "s3:Get*",
+      "s3:ListBucket",
+    ]
+    resources = [
+      "arn:aws:s3:::${aws_s3_bucket.hive_data.id}",
+      "arn:aws:s3:::${aws_s3_bucket.hive_data.id}/*"
     ]
   }
 
@@ -333,7 +347,8 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     resources = [
       aws_kms_key.emr_ebs.arn,
       aws_kms_key.emr_s3.arn,
-      var.artefact_bucket.kms_arn
+      var.artefact_bucket.kms_arn,
+      aws_kms_key.hive_data_s3.arn
     ]
   }
 
@@ -359,6 +374,8 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     resources = [
       "arn:aws:s3:::${aws_s3_bucket.emr.id}",
       "arn:aws:s3:::${aws_s3_bucket.emr.id}/*",
+      "arn:aws:s3:::${aws_s3_bucket.hive_data.id}",
+      "arn:aws:s3:::${aws_s3_bucket.hive_data.id}/*",
       "arn:aws:s3:::eu-west-2.elasticmapreduce",
       "arn:aws:s3:::eu-west-2.elasticmapreduce/*",
       "arn:aws:s3:::${var.env_certificate_bucket}",
@@ -572,4 +589,56 @@ data "aws_iam_policy_document" "elastic_map_reduce_for_auto_scaling_role" {
     ]
     resources = ["*"] // Required by AutoScaling-CheckPermissions 
   }
+}
+
+data "aws_iam_policy_document" "group_hive_data_access_documents" {
+  for_each = var.security_configuration_groups
+
+  policy_id = "HiveData${join("", regexall("[a-zA-Z0-9]", each.key))}"
+
+  statement {
+    sid = "HiveDataS3${join("", regexall("[a-zA-Z0-9]", each.key))}"
+
+    actions = [
+      "s3:*"
+    ]
+
+    resources = [
+      "${aws_s3_bucket.hive_data.arn}/${each.key}",
+      "${aws_s3_bucket.hive_data.arn}/${each.key}/*",
+    ]
+  }
+
+  statement {
+    sid = "HiveDataS3Kms${join("", regexall("[a-zA-Z0-9]", each.key))}"
+    actions = [
+      "s3:GetBucketPublicAccessBlock",
+      "s3:ListBucketMultipartUploads",
+      "kms:Decrypt",
+      "s3:ListBucketVersions",
+      "s3:ListBucket",
+      "s3:GetBucketVersioning",
+      "s3:ListMultipartUploadParts",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:Encrypt",
+      "kms:DescribeKey",
+      "s3:GetBucketLocation"
+    ]
+
+    resources = [
+      "${aws_s3_bucket.hive_data.arn}",
+      "${aws_s3_bucket.hive_data.arn}/*",
+      "arn:aws:kms:${var.region}:${var.account}:alias/${each.key}-shared",
+      aws_kms_key.hive_data_s3.arn
+    ]
+  }
+}
+
+resource "aws_iam_policy" "group_hive_data_access_policy" {
+  depends_on = [data.aws_iam_policy_document.group_hive_data_access_documents]
+  for_each   = data.aws_iam_policy_document.group_hive_data_access_documents
+
+  name   = each.value.policy_id
+  policy = each.value.json
 }

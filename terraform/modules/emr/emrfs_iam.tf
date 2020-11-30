@@ -48,7 +48,7 @@ locals {
         for policy_suffix in policy_suffixes :
         {
           group      = group
-          policy_arn = "arn:aws:iam::${var.account}:policy/${policy_suffix}"
+          policy_arn = "arn:aws:iam::${var.account}:policy/${join("", regexall("[a-zA-Z0-9]", policy_suffix))}"
         }
       ]
     ]
@@ -57,6 +57,7 @@ locals {
 }
 
 resource "aws_iam_role_policy_attachment" "attach_policies_to_roles" {
+  depends_on = [aws_iam_policy.group_hive_data_access_policy]
   count      = length(local.user_policies)
   role       = aws_iam_role.emrfs_iam[local.user_policies[count.index].group].name
   policy_arn = local.user_policies[count.index].policy_arn
