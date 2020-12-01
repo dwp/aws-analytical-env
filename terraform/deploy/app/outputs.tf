@@ -21,3 +21,7 @@ output "emr_common_sg_id" {
 output "livy_proxy" {
   value = module.livy_proxy
 }
+
+output "emr_launcher_lambda" {
+  value = module.launcher.lambda
+}
