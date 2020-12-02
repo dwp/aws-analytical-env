@@ -215,8 +215,8 @@ meta:
         TF_CLI_ARGS_plan: -lock-timeout=300s
         TF_INPUT: "false"
 
-    vcs-to-s3:
-      task: vcs-to-s3
+    mirror-git-repo:
+      task: mirror-git-repo
       config:
         platform: linux
         image_resource:
@@ -235,10 +235,12 @@ meta:
             - |
               export AWS_DEFAULT_REGION
               source /assume-role
-              set -x
-              AWS_COMMOM_BUCKET="$(cat terraform-output-common/outputs.json |  jq -r '.config_bucket.value.id')"
-              cd chs-uc-lab-repo
+              AWS_COMMOM_BUCKET="$(cat ../terraform-output-common/outputs.json |  jq -r '.config_bucket.value.id')"
               aws s3 sync . s3://$AWS_COMMOM_BUCKET/$S3_ROOT --include "*"
+          dir: chs-uc-lab-repo
+        inputs:
+          - name: chs-uc-lab-repo
+          - name: terraform-output-common
 
     terraform-output-common:
       task: terraform-output-common

@@ -43,4 +43,4 @@ groups:
       - gh-proxy-mgmt
   - name: mirror-git-repo-s3
     jobs:
-      - mirror-git-repo-s3
+      - mirror-uc-lab-repo
