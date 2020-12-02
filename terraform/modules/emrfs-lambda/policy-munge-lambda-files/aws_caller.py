@@ -12,19 +12,26 @@ rds_data_client = boto3.client('rds-data')
 
 def list_all_policies_in_account():
     policy_array = []
-    get_paginated_policies_using_marker(iam_client.list_policies(Scope='All'), policy_array)
+    get_paginated_results_using_marker(
+        aws_api_reponse=iam_client.list_policies(Scope='All'),
+        array=policy_array,
+        iam_client_call=iam_client.list_policies,
+        field_name='Policies',
+        client_call_args={'Scope':'All'}
+    )
     return policy_array
 
 
-# list_policies() call is paginated - set a marker and continue recursively
-def get_paginated_policies_using_marker(aws_api_reponse, policy_array):
-    policy_array.extend(aws_api_reponse['Policies'])
-    if (aws_api_reponse['IsTruncated']):
-        res = iam_client.list_policies(Scope='All', Marker=aws_api_reponse['Marker'])
-        policy_array.extend(res['Policies'])
-        get_paginated_policies_using_marker(res, policy_array)
+def get_paginated_results_using_marker(aws_api_reponse, array, iam_client_call, field_name=None, client_call_args={}):
+    if field_name == None:
+        array.extend(aws_api_reponse)
     else:
-        return policy_array
+        array.extend(aws_api_reponse[field_name])
+    if (aws_api_reponse['IsTruncated']):
+        res = iam_client_call(Marker=aws_api_reponse['Marker'], **client_call_args)
+        get_paginated_results_using_marker(res, array, iam_client_call, field_name, client_call_args)
+    else:
+        return array
 
 
 def get_policy_statement_as_list(arn, default_version_id):
@@ -81,7 +88,18 @@ def get_emrfs_roles():
     aws_api_reponse = iam_client.list_roles(
         PathPrefix=path_prefix,
     )
-    return get_paginated_roles_using_marker(aws_api_reponse, role_array, path_prefix)
+    get_paginated_results_using_marker(
+        aws_api_reponse=aws_api_reponse,
+        array=role_array,
+        iam_client_call=iam_client.list_roles,
+        field_name='Roles',
+        client_call_args={'PathPrefix': path_prefix})
+
+    return_array=[]
+    for role in role_array:
+        return_array.append(role['RoleName'])
+
+    return return_array
 
 
 def create_role_and_await_consistency(role_name, assumeRoleDoc):
@@ -98,32 +116,20 @@ def create_role_and_await_consistency(role_name, assumeRoleDoc):
     )
     return role_name
 
-def get_paginated_roles_using_marker(aws_api_reponse, role_array, path_prefix):
-    for role in aws_api_reponse['Roles']:
-        role_array.append(role['RoleName'])
-    if aws_api_reponse['IsTruncated']:
-        res = iam_client.list_roles(PathPrefix=path_prefix, Marker=aws_api_reponse['Marker'])
-        get_paginated_roles_using_marker(res, role_array, path_prefix)
-    return role_array
-
 
 def get_all_role_tags(role_name):
     result = iam_client.list_role_tags(
         RoleName=role_name,
     )
     result_array = []
-    return get_paginated_role_tags_using_marker(result, result_array, role_name)
-
-
-# list_role_tags() call is paginated - set a marker and continue recursively
-def get_paginated_role_tags_using_marker(result, result_array, role_name):
-    result_array.extend(result['Tags'])
-    if (result['IsTruncated']):
-        res = iam_client.list_role_tags(RoleName=role_name, Marker=result['Marker'])
-        result_array.extend(res['Policies'])
-        get_paginated_role_tags_using_marker(res, result_array, role_name)
-    else:
-        return result_array
+    get_paginated_results_using_marker(
+        aws_api_reponse=result,
+        array=result_array,
+        iam_client_call=iam_client.list_role_tags,
+        field_name='Tags',
+        client_call_args={'RoleName': role_name}
+    )
+    return result_array
 
 
 def tag_role(role_name, tag_list):

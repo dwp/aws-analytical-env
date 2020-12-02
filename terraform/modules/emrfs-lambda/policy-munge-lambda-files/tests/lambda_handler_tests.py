@@ -74,7 +74,7 @@ mocked_role_tags_response = [
 ]
 
 
-class TestLambdaHandler(TestCase):
+class LambdaHandlerTests(TestCase):
 
     @patch('lambda_handler.execute_statement')
     def test_get_user_userstatus_policy_dict(self, mock_execute_statement):
