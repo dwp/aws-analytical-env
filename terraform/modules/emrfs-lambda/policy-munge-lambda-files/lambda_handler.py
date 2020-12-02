@@ -10,6 +10,8 @@ from aws_caller import list_all_policies_in_account, get_policy_statement_as_lis
 
 # policy json template to be copied and amended as needed
 iam_template = {"Version": "2012-10-17", "Statement": []}
+chars_in_empty_iam_template = 42
+char_limit_of_json_policy = 6144
 
 """
 ============================================================================================================
@@ -62,7 +64,7 @@ def lambda_handler(event, context):
 
     for user_name in user_state_and_policy:
         if user_state_and_policy[user_name]['role_name'] in existing_role_array:
-            if user_state_and_policy[user_name]['active'] is "t":
+            if user_state_and_policy[user_name]['active']:
 
                 array_of_policy_objects = create_policy_object_array_from_policy_name_array(
                     user_state_and_policy[user_name]['policy_names']
@@ -117,10 +119,13 @@ def get_env_vars():
 def check_roles_exist_and_create_if_not(existing_role_array, user_state_and_policy, assumeRoleDocument):
     roles_after_creation = existing_role_array.copy()
     for user in user_state_and_policy:
-        if user_state_and_policy[user]['role_name'] not in existing_role_array and user_state_and_policy[user]['active']:
-            created_role = create_role_and_await_consistency(user_state_and_policy[user]['role_name'], assumeRoleDocument)
+        if user_state_and_policy[user]['role_name'] not in existing_role_array \
+                and user_state_and_policy[user]['active']:
+            created_role = create_role_and_await_consistency(user_state_and_policy[user]['role_name'],
+                                                             assumeRoleDocument)
             roles_after_creation.append(created_role)
     return roles_after_creation
+
 
 # gets list of all policies available then creates a map of policy name to statement json based on requested policies
 def create_policy_object_array_from_policy_name_array(names):
@@ -143,27 +148,28 @@ def create_policy_object_array_from_policy_name_array(names):
 
 # checks original input against map used for policy
 def verify_policies(names, array_of_policy_objects):
-    if len(names) > len(array_of_policy_objects):
+    policy_object_names = []
+    for policy_object in array_of_policy_objects:
+        policy_object_names.append(policy_object.get('policy_name'))
+    if not names == policy_object_names:
         raise Exception("Policy missing from Map.")
 
 
 # creates json of policy documents mapped to their policy name using iam_policy_template and statements
 # from existing policies.
 def chunk_policies_and_return_dict_of_policy_name_to_json(policy_object_array, user_name, role_name):
-    chars_in_empty_iam_template = 42
-    char_limit_of_json_policy = 6144
     policy_object_array = assign_chunk_number_to_objects(policy_object_array, chars_in_empty_iam_template,
                                                          char_limit_of_json_policy)
-    total_number_of_chunks = policy_object_array[(len(policy_object_array) - 1)]['chunk_number'] + 1
+    total_number_of_chunks = policy_object_array[(len(policy_object_array) - 1)]['chunk_number'] +1
     dict_of_policy_name_to_munged_policy_objects = {}
     for policy in policy_object_array:
-        file_name = f'{user_name}-{policy["chunk_number"] + 1}of{total_number_of_chunks}'
-        if file_name in dict_of_policy_name_to_munged_policy_objects:
-            dict_of_policy_name_to_munged_policy_objects[file_name]['Statement'].extend(policy['statement'])
+        munged_policy_name = f'{user_name}-{policy["chunk_number"] + 1}of{total_number_of_chunks}'
+        if munged_policy_name in dict_of_policy_name_to_munged_policy_objects:
+            dict_of_policy_name_to_munged_policy_objects[munged_policy_name]['Statement'].extend(policy['statement'])
         else:
             iam_policy = copy.deepcopy(iam_template)
             iam_policy['Statement'] = policy['statement']
-            dict_of_policy_name_to_munged_policy_objects[file_name] = iam_policy
+            dict_of_policy_name_to_munged_policy_objects[munged_policy_name] = iam_policy
 
     # checks to see if 20 policy attachment limit is reached before creating policies
     if (len(dict_of_policy_name_to_munged_policy_objects) > 20):
@@ -176,15 +182,12 @@ def chunk_policies_and_return_dict_of_policy_name_to_json(policy_object_array, u
 def assign_chunk_number_to_objects(object_array, start_char, max_char):
     count = 0
     chars = start_char
-    print(f'this is tha policy object array: {object_array}')
     for object in object_array:
-        print(f'this it the policy_object value: {object}')
         if (chars + object['chars']) >= max_char:
             count += 1
             chars = start_char
         object['chunk_number'] = count
         chars += object['chars']
-        print(f'current chars: {chars}')
     return object_array
 
 
@@ -201,7 +204,8 @@ def remove_existing_user_policies(role_name):
 def create_policies_from_dict_and_return_list_of_policy_arns(dict_of_policy_name_to_munged_policy_objects):
     list_of_policy_arns = []
     for policy in dict_of_policy_name_to_munged_policy_objects:
-        policy_arn = create_policy_from_json_and_return_arn(policy, json.dumps(dict_of_policy_name_to_munged_policy_objects[policy]))
+        policy_arn = create_policy_from_json_and_return_arn(policy, json.dumps(
+            dict_of_policy_name_to_munged_policy_objects[policy]))
         list_of_policy_arns.append(policy_arn)
     return list_of_policy_arns
 
@@ -209,7 +213,6 @@ def create_policies_from_dict_and_return_list_of_policy_arns(dict_of_policy_name
 def attach_policies_to_role(list_of_policy_arns, role_name):
     for arn in list_of_policy_arns:
         attach_policy_to_role(arn, role_name)
-
 
 
 def delete_tags(role_name):
@@ -276,7 +279,6 @@ def create_tag_array(tag_keys_to_value_list, common_tags):
     return tag_list
 
 
-
 def get_user_userstatus_policy_dict(variables):
     return_dict = {}
     sql = f'USE {variables["database_name"]} \
@@ -293,8 +295,8 @@ def get_user_userstatus_policy_dict(variables):
             variables["database_arn"]
         )
         for record in response['records']:
-            user_name =  ''.join(record[0].values())
-            active = ''.join(record[1].values())
+            user_name = ''.join(record[0].values())
+            active = list(record[1].values())[0]
             policy_name = [''.join(record[2].values())]
             if return_dict.get(user_name) == None:
                 return_dict[user_name] = {
