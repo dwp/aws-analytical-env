@@ -226,7 +226,6 @@ meta:
             version: ((dataworks.docker_awscli_version))
             tag: ((dataworks.docker_awscli_version))
         params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
         run:
           path: sh
