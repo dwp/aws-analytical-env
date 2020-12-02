@@ -14,10 +14,10 @@ resource "aws_lambda_function" "policy_munge_lambda" {
   }
 
   environment {
-    DATABASE_ARN   = "${} - TO PASS IN *********"
-    DATABASE_NAME  = "${} - TO PASS IN *********"
-    SECRET_ARN     = "${} - TO PASS IN *********"
-    COMMON_TAGS    = var.common_tags
-    ASSUME_ROLE_POLICY_JSON = "${} - TO PASS IN *********"
+    DATABASE_ARN            = "********* TO PASS IN *********"
+    DATABASE_NAME           = "********* TO PASS IN *********"
+    SECRET_ARN              = "********* TO PASS IN *********"
+    COMMON_TAGS             = var.common_tags
+    ASSUME_ROLE_POLICY_JSON = var.emrfs_iam_assume_role_json
   }
 }

@@ -157,3 +157,17 @@ module launcher {
   hive_metastore_database_name        = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.database_name
   hive_metastore_username             = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["username"]
 }
+
+module "emrfs_lambda" {
+  source = "../../modules/emrfs-lambda"
+
+  emrfs_iam_assume_role_json = module.emr.emrfs_iam_assume_role_json
+  account                    = local.account[local.environment]
+  aws_subnets_private        = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
+  common_tags                = local.common_tags
+  name_prefix                = "analytical-env-munge-lambda"
+  region                     = var.region
+  vpc_id                     = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
+  vpc_security_group_id      = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
+
+}

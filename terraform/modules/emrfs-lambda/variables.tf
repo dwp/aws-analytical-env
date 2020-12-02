@@ -4,7 +4,7 @@ variable "name_prefix" {
 }
 
 variable "common_tags" {
-  type = map(string)
+  type        = map(string)
   description = "(Required) common tags to apply to aws resources"
 }
 
@@ -23,7 +23,7 @@ variable "aws_subnets_private" {
   description = "(Required) The subnet in which the lambda will run"
 }
 
-variable "vpc_security_group_ids" {
+variable "vpc_security_group_id" {
   type        = string
   description = "(Required) The VPC security group IDs"
 }
@@ -33,17 +33,8 @@ variable "vpc_id" {
   description = "(Required) The VPC ID"
 }
 
-variable "master_password" {
+variable "emrfs_iam_assume_role_json" {
   type        = string
-  description = "(Required) The master password for the cognito permissions db"
+  description = "(Required) JSON of assume role policy to be used for new emrfs roles"
 }
 
-variable "master_username" {
-  type        = string
-  description = "(Required) The master username for the cognito permissions db"
-}
-
-variable "db_port" {
-  type        = string
-  description = "(Required) The port for connection to the db"
-}
