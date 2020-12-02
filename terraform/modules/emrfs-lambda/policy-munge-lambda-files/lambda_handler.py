@@ -12,6 +12,8 @@ from aws_caller import list_all_policies_in_account, get_policy_statement_as_lis
 iam_template = {"Version": "2012-10-17", "Statement": []}
 chars_in_empty_iam_template = 42
 char_limit_of_json_policy = 6144
+chars_in_empty_tag = 0
+char_limit_for_tag_value = 200
 
 """
 ============================================================================================================
@@ -62,12 +64,15 @@ def lambda_handler(event, context):
         variables['assume_role_policy_json']
     )
 
+    all_policy_list = list_all_policies_in_account()
+
     for user_name in user_state_and_policy:
         if user_state_and_policy[user_name]['role_name'] in existing_role_array:
             if user_state_and_policy[user_name]['active']:
 
                 array_of_policy_objects = create_policy_object_array_from_policy_name_array(
-                    user_state_and_policy[user_name]['policy_names']
+                    user_state_and_policy[user_name]['policy_names'],
+                    all_policy_list
                 )
 
                 dict_of_policy_name_to_munged_policy_objects = chunk_policies_and_return_dict_of_policy_name_to_json(
@@ -75,7 +80,7 @@ def lambda_handler(event, context):
                     user_state_and_policy[user_name]['role_name']
                 )
 
-                remove_existing_user_policies(user_state_and_policy[user_name]['role_name'])
+                remove_existing_user_policies(user_state_and_policy[user_name]['role_name'], all_policy_list)
 
                 list_of_policy_arns = create_policies_from_dict_and_return_list_of_policy_arns(
                     dict_of_policy_name_to_munged_policy_objects
@@ -90,7 +95,7 @@ def lambda_handler(event, context):
                 )
 
             else:
-                remove_existing_user_policies(user_state_and_policy[user_name]['role_name'])
+                remove_existing_user_policies(user_state_and_policy[user_name]['role_name'], all_policy_list)
                 remove_user_role(user_state_and_policy[user_name]['role_name'])
 
 
@@ -128,10 +133,9 @@ def check_roles_exist_and_create_if_not(existing_role_array, user_state_and_poli
 
 
 # gets list of all policies available then creates a map of policy name to statement json based on requested policies
-def create_policy_object_array_from_policy_name_array(names):
+def create_policy_object_array_from_policy_name_array(names, all_policy_list):
     policy_object_array = []
-    returned_policies = list_all_policies_in_account()
-    for policy in returned_policies:
+    for policy in all_policy_list:
         if (policy['PolicyName'] in names):
             statement = get_policy_statement_as_list(policy['Arn'], policy['DefaultVersionId'])
             policy_object_array.append(
@@ -192,10 +196,9 @@ def assign_chunk_number_to_objects(object_array, start_char, max_char):
 
 
 # deletes any existing policies made by the lambda to apply the fresh set to user
-def remove_existing_user_policies(role_name):
-    returned_policies = list_all_policies_in_account()
+def remove_existing_user_policies(role_name, all_policy_list):
     regex = re.compile(f"{role_name}-\d*of\d*")
-    for policy in returned_policies:
+    for policy in all_policy_list:
         if (regex.match(policy['PolicyName'])):
             remove_policy_being_replaced(policy['Arn'], role_name)
 
@@ -229,8 +232,6 @@ def delete_tags(role_name):
 # creates tag values mapped to their tag name to avoid hitting the maximum tag per role
 def tag_role_with_policies(policy_array, role_name, common_tags):
     tag_object_array = []
-    chars_in_empty_tag = 0
-    char_limit_for_tag_value = 200
     for name in policy_array:
         tag_object_array.append(
             {
@@ -251,7 +252,7 @@ def tag_role_with_policies(policy_array, role_name, common_tags):
         else:
             tag_keys_to_value_list[tag_key] = [tag['policy_name']]
 
-    if len(tag_keys_to_value_list) > 50:
+    if len(tag_keys_to_value_list) > (50-len(common_tags)):
         raise Exception("Tag limit for role exceeded")
 
     tag_list = create_tag_array(tag_keys_to_value_list, common_tags)
