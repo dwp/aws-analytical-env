@@ -6,7 +6,7 @@ resource "aws_s3_bucket_object" "analytical_env_cluster" {
     log_bucket             = var.log_bucket
     ami                    = var.ami
     account                = var.account
-    security_configuration = var.security_configuration
+    security_configuration = var.analytical_env_security_configuration
     costcode               = var.costcode
     release_version        = var.release_version
   })
@@ -57,7 +57,7 @@ resource "aws_s3_bucket_object" "batch_cluster" {
     log_bucket             = var.log_bucket
     ami                    = var.ami
     account                = var.account
-    security_configuration = var.security_configuration
+    security_configuration = var.batch_security_configuration
     costcode               = var.costcode
     release_version        = var.release_version
   })

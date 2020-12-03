@@ -135,25 +135,26 @@ module "codecommit" {
 module launcher {
   source = "../../modules/emr-launcher"
 
-  emr_bucket                          = module.emr.emr_bucket
-  config_bucket                       = data.terraform_remote_state.common.outputs.config_bucket
-  config_bucket_cmk                   = data.terraform_remote_state.common.outputs.config_bucket_cmk
-  aws_analytical_env_emr_launcher_zip = var.aws_analytical_env_emr_launcher_zip
-  ami                                 = module.emr_ami.ami_id
-  log_bucket                          = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
-  account                             = local.account[local.environment]
-  security_configuration              = module.emr.security_configuration
-  costcode                            = var.costcode
-  release_version                     = "5.31.0"
-  common_security_group               = module.emr.common_security_group
-  master_security_group               = module.emr.master_security_group
-  slave_security_group                = module.emr.slave_security_group
-  service_security_group              = module.emr.service_security_group
-  proxy_host                          = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_dns_name
-  full_no_proxy                       = module.emr.full_no_proxy
-  common_tags                         = local.common_tags
-  name_prefix                         = local.name
-  hive_metastore_endpoint             = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.endpoint
-  hive_metastore_database_name        = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.database_name
-  hive_metastore_username             = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["username"]
+  emr_bucket                            = module.emr.emr_bucket
+  config_bucket                         = data.terraform_remote_state.common.outputs.config_bucket
+  config_bucket_cmk                     = data.terraform_remote_state.common.outputs.config_bucket_cmk
+  aws_analytical_env_emr_launcher_zip   = var.aws_analytical_env_emr_launcher_zip
+  ami                                   = module.emr_ami.ami_id
+  log_bucket                            = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+  account                               = local.account[local.environment]
+  analytical_env_security_configuration = module.emr.analytical_env_security_configuration
+  costcode                              = var.costcode
+  release_version                       = "5.31.0"
+  common_security_group                 = module.emr.common_security_group
+  master_security_group                 = module.emr.master_security_group
+  slave_security_group                  = module.emr.slave_security_group
+  service_security_group                = module.emr.service_security_group
+  proxy_host                            = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_dns_name
+  full_no_proxy                         = module.emr.full_no_proxy
+  common_tags                           = local.common_tags
+  name_prefix                           = local.name
+  hive_metastore_endpoint               = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.endpoint
+  hive_metastore_database_name          = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.database_name
+  hive_metastore_username               = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["username"]
+  batch_security_configuration          = module.emr.batch_security_configuration
 }
