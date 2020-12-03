@@ -1,5 +1,3 @@
-
-
 resource "aws_rds_cluster" "database_cluster" {
   cluster_identifier = "${var.name_prefix}-database"
   database_name      = local.database_name

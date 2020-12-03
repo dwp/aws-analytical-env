@@ -47,3 +47,36 @@ resource "aws_iam_role_policy" "lambda_manage_mysql_user" {
   role   = aws_iam_role.lambda_manage_mysql_user.name
   policy = data.aws_iam_policy_document.lambda_manage_mysql_user.json
 }
+
+
+resource "aws_iam_role" "lambda_initialise_db" {
+  name               = "${var.name_prefix}_lambda_initialise_db"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+  tags               = var.common_tags
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_initialise_db_basic" {
+  role       = aws_iam_role.lambda_initialise_db.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+data "aws_iam_policy_document" "lambda_initialise_db" {
+  statement {
+    sid    = "AllowGetCredentials"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:DescribeSecret",
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:ListSecretVersionIds"
+
+    ]
+    resources = [
+      aws_secretsmanager_secret.initialise_db_credentials.arn,
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "lambda_initialise_db" {
+  role   = aws_iam_role.lambda_initialise_db.name
+  policy = data.aws_iam_policy_document.lambda_initialise_db.json
+}

@@ -36,7 +36,7 @@ variable "scaling_configuration" {
     auto_pause               = false
     max_capacity             = 8
     min_capacity             = 1
-    seconds_until_auto_pause = 0
+    seconds_until_auto_pause = 300
     timeout_action           = "RollbackCapacityChange"
   }
 }
@@ -61,4 +61,13 @@ variable "manage_mysql_user_lambda_zip" {
     base_path = ""
     version   = ""
   }
+}
+
+variable "init_db_sql_path" {
+  type        = string
+  description = "Path pointing to db initialisation SQL file"
+}
+
+variable "config_bucket_id" {
+  type        = string
 }
