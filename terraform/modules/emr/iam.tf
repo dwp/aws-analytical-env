@@ -415,7 +415,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "AllowEmrToReadConfigBucket"
+    sid    = "AllowEmrToListConfigBucket"
     effect = "Allow"
 
     actions = [
