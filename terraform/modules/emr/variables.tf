@@ -192,11 +192,11 @@ variable "use_mysql_hive_metastore" {
 }
 
 variable "config_bucket_arn" {
-  description = "config bucket arn "
+  description = "Arn for the Config bucket to read code"
   type        = string
 }
 
 variable "config_bucket_cmk" {
-  description =  "config bucket cmk "
+  description =  "CMK for the Config bucket to read code"
   type        = string
 }
