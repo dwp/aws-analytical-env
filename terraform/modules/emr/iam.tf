@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "emr_role_assume_role" {
 resource "aws_iam_role_policy" "elastic_map_reduce_role" {
   name   = "AE_ElasticMapReduceRole"
   role   = aws_iam_role.emr_role.id
-  policy = data.aws_iam_policy_document.elastic_map_reduce_role.json
+    policy = data.aws_iam_policy_document.elastic_map_reduce_role.json
 }
 
 data "aws_iam_policy_document" "elastic_map_reduce_role" {
@@ -414,6 +414,47 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     resources = [aws_iam_role.cogntio_read_only_role.arn]
   }
 
+  statement {
+    sid    = "AllowEmrToReadConfigBucket"
+    effect = "Allow"
+
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      data.terraform_remote_state.common.outputs.config_bucket.arn,
+    ]
+  }
+
+  statement {
+    sid    = "AllowEmrToReadConfigBucket"
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject*",
+    ]
+
+    resources = [
+      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/*",
+    ]
+  }
+
+  statement {
+    sid    = "AllowEmrToUseConfigKMSKeys"
+    effect = "Allow"
+
+    actions = [
+      "kms:Decrypt",
+      "kms:DescribeKey",
+    ]
+
+    resources = [
+      "${data.terraform_remote_state.common.outputs.config_bucket_cmk.arn}",
+    ]
+  }
+
 }
 
 resource "aws_iam_role" "cogntio_read_only_role" {
@@ -587,7 +628,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_for_auto_scaling_role" {
       "elasticmapreduce:ListInstanceGroups",
       "elasticmapreduce:ModifyInstanceGroups"
     ]
-    resources = ["*"] // Required by AutoScaling-CheckPermissions 
+    resources = ["*"] // Required by AutoScaling-CheckPermissions
   }
 }
 
