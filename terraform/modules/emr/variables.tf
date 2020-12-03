@@ -197,6 +197,6 @@ variable "config_bucket_arn" {
 }
 
 variable "config_bucket_cmk" {
-  description =  "CMK for the Config bucket to read code"
+  description = "CMK for the Config bucket to read code"
   type        = string
 }
