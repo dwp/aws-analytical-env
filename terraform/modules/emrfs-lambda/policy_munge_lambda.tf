@@ -14,10 +14,14 @@ resource "aws_lambda_function" "policy_munge_lambda" {
   }
 
   environment {
-    DATABASE_ARN            = "********* TO PASS IN *********"
-    DATABASE_NAME           = "********* TO PASS IN *********"
-    SECRET_ARN              = "********* TO PASS IN *********"
-    COMMON_TAGS             = var.common_tags
-    ASSUME_ROLE_POLICY_JSON = var.emrfs_iam_assume_role_json
+    variables = {
+      DATABASE_ARN            = "********* TO PASS IN *********"
+      DATABASE_NAME           = "********* TO PASS IN *********"
+      SECRET_ARN              = "********* TO PASS IN *********"
+      COMMON_TAGS             = join(",", [for key, val in var.common_tags : "${key}:${val}"])
+      ASSUME_ROLE_POLICY_JSON = "${var.emrfs_iam_assume_role_json}"
+    }
   }
+
+  depends_on = [data.archive_file.policy_munge_lambda_zip]
 }

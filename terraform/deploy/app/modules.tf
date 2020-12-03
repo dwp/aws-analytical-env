@@ -168,6 +168,5 @@ module "emrfs_lambda" {
   name_prefix                = "analytical-env-munge-lambda"
   region                     = var.region
   vpc_id                     = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
-  vpc_security_group_id      = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
-
+  internet_proxy_sg_id       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_sg
 }

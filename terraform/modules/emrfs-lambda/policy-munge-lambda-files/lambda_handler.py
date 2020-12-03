@@ -14,6 +14,7 @@ chars_in_empty_iam_template = 42
 char_limit_of_json_policy = 6144
 chars_in_empty_tag = 0
 char_limit_for_tag_value = 200
+variables = {}
 
 """
 ============================================================================================================
@@ -107,15 +108,23 @@ def lambda_handler(event, context):
 
 
 def get_env_vars():
-    variables = {}
+    common_tags_string = os.getenv('COMMON_TAGS')
+    tag_separator = ","
+    key_val_separator = ":"
+
     variables['database_arn'] = os.getenv('DATABASE_ARN')
     variables['database_name'] = os.getenv('DATABASE_NAME')
     variables['secret_arn'] = os.getenv('SECRET_ARN')
-    variables['common_tags'] = os.getenv('COMMON_TAGS')
+    variables['common_tags'] ={}
     variables['assume_role_policy_json'] = os.getenv('ASSUME_ROLE_POLICY_JSON')
 
+    common_tags = common_tags_string.split(tag_separator)
+    for tag in common_tags:
+        tag_key_val_list = tag.split(key_val_separator)
+        variables['common_tags'][tag_key_val_list[0]] = tag_key_val_list[1]
+
     for var in variables:
-        if var is None:
+        if var is None or var == {}:
             raise Exception(f'Variable: {var} has not been provided.')
 
     return variables

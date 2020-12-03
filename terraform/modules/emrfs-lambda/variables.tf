@@ -23,11 +23,6 @@ variable "aws_subnets_private" {
   description = "(Required) The subnet in which the lambda will run"
 }
 
-variable "vpc_security_group_id" {
-  type        = string
-  description = "(Required) The VPC security group IDs"
-}
-
 variable "vpc_id" {
   type        = string
   description = "(Required) The VPC ID"
@@ -38,3 +33,7 @@ variable "emrfs_iam_assume_role_json" {
   description = "(Required) JSON of assume role policy to be used for new emrfs roles"
 }
 
+variable "internet_proxy_sg_id" {
+  type        = string
+  description = "(Required) Internet proxy SG ID"
+}

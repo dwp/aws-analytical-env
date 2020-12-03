@@ -76,12 +76,27 @@ mocked_role_tags_response = [
 
 class LambdaHandlerTests(TestCase):
 
+    @patch('lambda_handler.os.getenv')
+    def test_get_env_vars(self, mock_get_env):
+        mock_get_env.side_effect = ["tag1:val1,tag2:val2,tag3:val3", variables['database_arn'],
+                                    variables['database_name'], variables['secret_arn'],
+                                    variables['assume_role_policy_json']]
+        lambda_handler.get_env_vars()
+
+        assert lambda_handler.variables['common_tags']['tag1'] == 'val1'
+        assert lambda_handler.variables['common_tags']['tag2'] == 'val2'
+        assert lambda_handler.variables['common_tags']['tag3'] == 'val3'
+        assert lambda_handler.variables['database_arn'] == variables['database_arn']
+        assert lambda_handler.variables['database_name'] == variables['database_name']
+        assert lambda_handler.variables['secret_arn'] == variables['secret_arn']
+        assert lambda_handler.variables['assume_role_policy_json'] == variables['assume_role_policy_json']
+
     @patch('lambda_handler.execute_statement')
     def test_get_user_userstatus_policy_dict(self, mock_execute_statement):
         mock_execute_statement.return_value = mocked_db_response
-        response = lambda_handler.get_user_userstatus_policy_dict(variables)
+        result = lambda_handler.get_user_userstatus_policy_dict(variables)
 
-        assert response == mocked_user_dict
+        assert result == mocked_user_dict
 
     @patch('lambda_handler.create_role_and_await_consistency')
     def test_check_roles_exist_and_create_if_not(self, mock_create_role_and_await_consistency):
