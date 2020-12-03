@@ -232,7 +232,6 @@ meta:
           args:
             - -exc
             - |
-              export AWS_DEFAULT_REGION
               source /assume-role
               AWS_COMMOM_BUCKET="$(cat ../terraform-output-common/outputs.json |  jq -r '.config_bucket.value.id')"
               aws s3 sync . s3://$AWS_COMMOM_BUCKET/$S3_ROOT --include "*"
