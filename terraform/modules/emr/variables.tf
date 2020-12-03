@@ -190,3 +190,13 @@ variable "use_mysql_hive_metastore" {
   type        = bool
   default     = false
 }
+
+variable "config_bucket_arn" {
+  description = "config bucket arn "
+  type        = string
+}
+
+variable "config_bucket_cmk" {
+  description =  "config bucket cmk "
+  type        = string
+}

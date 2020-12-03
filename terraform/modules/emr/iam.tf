@@ -424,7 +424,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
 
     resources = [
-      "data.terraform_remote_state.common.outputs.config_bucket.arn"
+      var.config_bucket_arn
     ]
   }
 
@@ -437,7 +437,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
 
     resources = [
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/*"
+      "${var.config_bucket_arn}/*"
     ]
   }
 
@@ -451,7 +451,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
 
     resources = [
-      "${data.terraform_remote_state.common.outputs.config_bucket_cmk.arn}"
+      var.config_bucket_cmk
     ]
   }
 
