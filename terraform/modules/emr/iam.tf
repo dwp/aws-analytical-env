@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "emr_role_assume_role" {
 resource "aws_iam_role_policy" "elastic_map_reduce_role" {
   name   = "AE_ElasticMapReduceRole"
   role   = aws_iam_role.emr_role.id
-    policy = data.aws_iam_policy_document.elastic_map_reduce_role.json
+  policy = data.aws_iam_policy_document.elastic_map_reduce_role.json
 }
 
 data "aws_iam_policy_document" "elastic_map_reduce_role" {
