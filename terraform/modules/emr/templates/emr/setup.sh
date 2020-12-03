@@ -95,7 +95,4 @@ chmod u+x /opt/emr/cloudwatch.sh
 
 sudo /opt/emr/cloudwatch.sh \
     "${cwa_metrics_collection_interval}" "${cwa_log_group_name}" "${aws_default_region}" \
-    "${cwa_namespace}"   
-    
-
-    
+    "${cwa_namespace}"
