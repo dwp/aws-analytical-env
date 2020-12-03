@@ -11,29 +11,31 @@ rds_data_client = boto3.client('rds-data')
 
 
 def list_all_policies_in_account():
-    policy_array = []
+    policy_list = []
     get_paginated_results_using_marker(
         aws_api_reponse=iam_client.list_policies(Scope='All'),
-        array=policy_array,
+        list=policy_list,
         iam_client_call=iam_client.list_policies,
         field_name='Policies',
-        client_call_args={'Scope':'All'}
+        client_call_args={'Scope': 'All'}
     )
-    return policy_array
+    return policy_list
 
 
-def get_paginated_results_using_marker(aws_api_reponse, array, iam_client_call, field_name=None, client_call_args={}):
+# cycles through paginated API response, using a marker, and returns full list
+def get_paginated_results_using_marker(aws_api_reponse, list, iam_client_call, field_name=None, client_call_args={}):
     if field_name == None:
-        array.extend(aws_api_reponse)
+        list.extend(aws_api_reponse)
     else:
-        array.extend(aws_api_reponse[field_name])
+        list.extend(aws_api_reponse[field_name])
     if (aws_api_reponse['IsTruncated']):
         res = iam_client_call(Marker=aws_api_reponse['Marker'], **client_call_args)
-        get_paginated_results_using_marker(res, array, iam_client_call, field_name, client_call_args)
+        get_paginated_results_using_marker(res, list, iam_client_call, field_name, client_call_args)
     else:
-        return array
+        return list
 
 
+# returns a list of JSON policy statements from an existing policy
 def get_policy_statement_as_list(arn, default_version_id):
     policy_version = iam_client.get_policy_version(
         PolicyArn=arn,
@@ -42,6 +44,7 @@ def get_policy_statement_as_list(arn, default_version_id):
     return policy_version['PolicyVersion']['Document']['Statement']
 
 
+# creates a new policy in AWS, waits for it to exist, then returns the ARN
 def create_policy_from_json_and_return_arn(policy_name, json_document):
     policy = iam_client.create_policy(
         PolicyName=policy_name,
@@ -52,6 +55,7 @@ def create_policy_from_json_and_return_arn(policy_name, json_document):
     return policy_arn
 
 
+# detaches and deletes policies from a role in order for them to be replaced
 def remove_policy_being_replaced(policy_arn, role_name):
     # removes from role
     iam_client.detach_role_policy(
@@ -82,24 +86,25 @@ def wait_for_policy_to_exist(arn):
     )
 
 
+# returns list of names of all roles previously created by this lambda
 def get_emrfs_roles():
-    role_array = []
+    role_list = []
     path_prefix = '/emrfs_*'
     aws_api_reponse = iam_client.list_roles(
         PathPrefix=path_prefix,
     )
     get_paginated_results_using_marker(
         aws_api_reponse=aws_api_reponse,
-        array=role_array,
+        list=role_list,
         iam_client_call=iam_client.list_roles,
         field_name='Roles',
         client_call_args={'PathPrefix': path_prefix})
 
-    return_array=[]
-    for role in role_array:
-        return_array.append(role['RoleName'])
+    return_list = []
+    for role in role_list:
+        return_list.append(role['RoleName'])
 
-    return return_array
+    return return_list
 
 
 def create_role_and_await_consistency(role_name, assumeRoleDoc):
@@ -117,19 +122,20 @@ def create_role_and_await_consistency(role_name, assumeRoleDoc):
     return role_name
 
 
+# returns all tags associated with the given role
 def get_all_role_tags(role_name):
     result = iam_client.list_role_tags(
         RoleName=role_name,
     )
-    result_array = []
+    result_list = []
     get_paginated_results_using_marker(
         aws_api_reponse=result,
-        array=result_array,
+        list=result_list,
         iam_client_call=iam_client.list_role_tags,
         field_name='Tags',
         client_call_args={'RoleName': role_name}
     )
-    return result_array
+    return result_list
 
 
 def tag_role(role_name, tag_list):
@@ -139,11 +145,12 @@ def tag_role(role_name, tag_list):
     )
 
 
-def delete_role_tags(tag_name_array, role_name):
+def delete_role_tags(tag_name_list, role_name):
     iam_client.untag_role(
         RoleName=role_name,
-        TagKeys=tag_name_array
+        TagKeys=tag_name_list
     )
+
 
 def remove_user_role(role_name):
     iam_client.delete_role(
@@ -151,6 +158,7 @@ def remove_user_role(role_name):
     )
 
 
+# connects to RDS instance and executes the SQL statement passed in
 def execute_statement(sql, db_credentials_secrets_store_arn, database_name, db_cluster_arn):
     response = rds_data_client.execute_statement(
         secretArn=db_credentials_secrets_store_arn,

@@ -27,8 +27,8 @@ to a single IAM role than would otherwise be possible.
  - All roles previously created by the lambda are collated into a list and compared with what is in the rds 
  db and roles present in the db and not in aws are created.
  - All existing AWS policies are collected into a list, the list is filtered to find the policies in the 
- input array.
- - The lambda sets up an array of objects, one for each policy name provided in the policyname array created 
+ input list.
+ - The lambda sets up an list of objects, one for each policy name provided in the policyname list created 
  from the db:
  [
     {
@@ -53,14 +53,14 @@ to a single IAM role than would otherwise be possible.
 
 
 def lambda_handler(event, context):
-    variables = get_env_vars()
+    get_env_vars()
 
     user_state_and_policy = get_user_userstatus_policy_dict(variables)
 
-    pre_creation_existing_role_array = get_emrfs_roles()
+    pre_creation_existing_role_list = get_emrfs_roles()
 
-    existing_role_array = check_roles_exist_and_create_if_not(
-        pre_creation_existing_role_array,
+    existing_role_list = check_roles_exist_and_create_if_not(
+        pre_creation_existing_role_list,
         user_state_and_policy,
         variables['assume_role_policy_json']
     )
@@ -68,16 +68,16 @@ def lambda_handler(event, context):
     all_policy_list = list_all_policies_in_account()
 
     for user_name in user_state_and_policy:
-        if user_state_and_policy[user_name]['role_name'] in existing_role_array:
+        if user_state_and_policy[user_name]['role_name'] in existing_role_list:
             if user_state_and_policy[user_name]['active']:
 
-                array_of_policy_objects = create_policy_object_array_from_policy_name_array(
+                list_of_policy_objects = create_policy_object_list_from_policy_name_list(
                     user_state_and_policy[user_name]['policy_names'],
                     all_policy_list
                 )
 
                 dict_of_policy_name_to_munged_policy_objects = chunk_policies_and_return_dict_of_policy_name_to_json(
-                    array_of_policy_objects, user_name,
+                    list_of_policy_objects, user_name,
                     user_state_and_policy[user_name]['role_name']
                 )
 
@@ -107,6 +107,7 @@ def lambda_handler(event, context):
 """
 
 
+# Gets env vars passed in from terraform as strings and builds the variables global dict.
 def get_env_vars():
     common_tags_string = os.getenv('COMMON_TAGS')
     tag_separator = ","
@@ -130,10 +131,11 @@ def get_env_vars():
     return variables
 
 
-def check_roles_exist_and_create_if_not(existing_role_array, user_state_and_policy, assumeRoleDocument):
-    roles_after_creation = existing_role_array.copy()
+# loops through the desired state (from RDS) and what exists in AWS and creates any missing roles
+def check_roles_exist_and_create_if_not(existing_role_list, user_state_and_policy, assumeRoleDocument):
+    roles_after_creation = existing_role_list.copy()
     for user in user_state_and_policy:
-        if user_state_and_policy[user]['role_name'] not in existing_role_array \
+        if user_state_and_policy[user]['role_name'] not in existing_role_list \
                 and user_state_and_policy[user]['active']:
             created_role = create_role_and_await_consistency(user_state_and_policy[user]['role_name'],
                                                              assumeRoleDocument)
@@ -142,12 +144,12 @@ def check_roles_exist_and_create_if_not(existing_role_array, user_state_and_poli
 
 
 # gets list of all policies available then creates a map of policy name to statement json based on requested policies
-def create_policy_object_array_from_policy_name_array(names, all_policy_list):
-    policy_object_array = []
+def create_policy_object_list_from_policy_name_list(names, all_policy_list):
+    policy_object_list = []
     for policy in all_policy_list:
         if (policy['PolicyName'] in names):
             statement = get_policy_statement_as_list(policy['Arn'], policy['DefaultVersionId'])
-            policy_object_array.append(
+            policy_object_list.append(
                 {
                     'policy_name': policy['PolicyName'],
                     'statement': statement,
@@ -155,14 +157,14 @@ def create_policy_object_array_from_policy_name_array(names, all_policy_list):
                     'chunk_number': None
                 }
             )
-    verify_policies(names, policy_object_array)
-    return policy_object_array
+    verify_policies(names, policy_object_list)
+    return policy_object_list
 
 
 # checks original input against map used for policy
-def verify_policies(names, array_of_policy_objects):
+def verify_policies(names, list_of_policy_objects):
     policy_object_names = []
-    for policy_object in array_of_policy_objects:
+    for policy_object in list_of_policy_objects:
         policy_object_names.append(policy_object.get('policy_name'))
     if not names == policy_object_names:
         raise Exception("Policy missing from Map.")
@@ -170,12 +172,12 @@ def verify_policies(names, array_of_policy_objects):
 
 # creates json of policy documents mapped to their policy name using iam_policy_template and statements
 # from existing policies.
-def chunk_policies_and_return_dict_of_policy_name_to_json(policy_object_array, user_name, role_name):
-    policy_object_array = assign_chunk_number_to_objects(policy_object_array, chars_in_empty_iam_template,
+def chunk_policies_and_return_dict_of_policy_name_to_json(policy_object_list, user_name, role_name):
+    policy_object_list = assign_chunk_number_to_objects(policy_object_list, chars_in_empty_iam_template,
                                                          char_limit_of_json_policy)
-    total_number_of_chunks = policy_object_array[(len(policy_object_array) - 1)]['chunk_number'] +1
+    total_number_of_chunks = policy_object_list[(len(policy_object_list) - 1)]['chunk_number'] +1
     dict_of_policy_name_to_munged_policy_objects = {}
-    for policy in policy_object_array:
+    for policy in policy_object_list:
         munged_policy_name = f'{user_name}-{policy["chunk_number"] + 1}of{total_number_of_chunks}'
         if munged_policy_name in dict_of_policy_name_to_munged_policy_objects:
             dict_of_policy_name_to_munged_policy_objects[munged_policy_name]['Statement'].extend(policy['statement'])
@@ -192,16 +194,16 @@ def chunk_policies_and_return_dict_of_policy_name_to_json(policy_object_array, u
 
 
 # fills chunk_number attribute of object based on AWS imposed character allowance
-def assign_chunk_number_to_objects(object_array, start_char, max_char):
+def assign_chunk_number_to_objects(object_list, start_char, max_char):
     count = 0
     chars = start_char
-    for object in object_array:
+    for object in object_list:
         if (chars + object['chars']) >= max_char:
             count += 1
             chars = start_char
         object['chunk_number'] = count
         chars += object['chars']
-    return object_array
+    return object_list
 
 
 # deletes any existing policies made by the lambda to apply the fresh set to user
@@ -227,34 +229,35 @@ def attach_policies_to_role(list_of_policy_arns, role_name):
         attach_policy_to_role(arn, role_name)
 
 
+# finds all tags created by this lambda on a given role and deletes them
 def delete_tags(role_name):
     tags = get_all_role_tags(role_name)
     regex = re.compile(f"InputPolicies-\d*of\d*")
-    tag_name_array = []
+    tag_name_list = []
     for tag in tags:
         if (regex.match(tag['Key'])):
-            tag_name_array.append(tag['Key'])
-    if (len(tag_name_array) > 0):
-        delete_role_tags(tag_name_array, role_name)
+            tag_name_list.append(tag['Key'])
+    if (len(tag_name_list) > 0):
+        delete_role_tags(tag_name_list, role_name)
 
 
 # creates tag values mapped to their tag name to avoid hitting the maximum tag per role
-def tag_role_with_policies(policy_array, role_name, common_tags):
-    tag_object_array = []
-    for name in policy_array:
-        tag_object_array.append(
+def tag_role_with_policies(policy_list, role_name, common_tags):
+    tag_object_list = []
+    for name in policy_list:
+        tag_object_list.append(
             {
                 "policy_name": name,
                 "chars": len(name),
                 "chunk_number": None
             }
         )
-    chunked_tag_object_array = assign_chunk_number_to_objects(tag_object_array,
+    chunked_tag_object_list = assign_chunk_number_to_objects(tag_object_list,
                                                               chars_in_empty_tag,
                                                               char_limit_for_tag_value)
     tag_keys_to_value_list = {}
-    total_number_of_chunks = chunked_tag_object_array[(len(chunked_tag_object_array) - 1)]['chunk_number'] + 1
-    for tag in chunked_tag_object_array:
+    total_number_of_chunks = chunked_tag_object_list[(len(chunked_tag_object_list) - 1)]['chunk_number'] + 1
+    for tag in chunked_tag_object_list:
         tag_key = f'InputPolicies-{tag["chunk_number"] + 1}of{total_number_of_chunks}'
         if tag_key in tag_keys_to_value_list:
             tag_keys_to_value_list[tag_key].append(tag['policy_name'])
@@ -264,12 +267,13 @@ def tag_role_with_policies(policy_array, role_name, common_tags):
     if len(tag_keys_to_value_list) > (50-len(common_tags)):
         raise Exception("Tag limit for role exceeded")
 
-    tag_list = create_tag_array(tag_keys_to_value_list, common_tags)
+    tag_list = create_tag_list(tag_keys_to_value_list, common_tags)
 
     tag_role(role_name, tag_list)
 
 
-def create_tag_array(tag_keys_to_value_list, common_tags):
+# creates a list of tag objects to be added to a role
+def create_tag_list(tag_keys_to_value_list, common_tags):
     separator = '/'
     tag_list = []
     for tag in common_tags:
@@ -289,6 +293,8 @@ def create_tag_array(tag_keys_to_value_list, common_tags):
     return tag_list
 
 
+# queries RDS and returns a dict, indexed by user_name with child values of: active (if user is marked for deletion),
+# policy_names (list of policies to assign to the user's role) and role_name
 def get_user_userstatus_policy_dict(variables):
     return_dict = {}
     sql = f'USE {variables["database_name"]} \

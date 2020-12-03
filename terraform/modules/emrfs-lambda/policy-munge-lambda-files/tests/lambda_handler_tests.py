@@ -25,7 +25,7 @@ mocked_user_dict = {
     'user_two': {'active': True, 'policy_names': ['policy_one'], 'role_name': 'emrfs_user_two'}
 }
 
-mocked_policy_object_array = [
+mocked_policy_object_list = [
     {'policy_name': 'policy_one', 'statement': [{'test': 'statement1'}], 'chars': 23, 'chunk_number': None},
     {'policy_name': 'policy_three', 'statement': [{'test': 'statement2'}], 'chars': 23, 'chunk_number': None}
 ]
@@ -122,10 +122,10 @@ class LambdaHandlerTests(TestCase):
         assert result2 == ['emrfs_user_one', 'created_user']
 
     @patch('lambda_handler.get_policy_statement_as_list')
-    def test_create_policy_object_array_from_policy_name_array(self, mock_get_policy_statement_as_list):
+    def test_create_policy_object_list_from_policy_name_list(self, mock_get_policy_statement_as_list):
         mock_get_policy_statement_as_list.return_value = [{'test': 'statement'}]
 
-        result = lambda_handler.create_policy_object_array_from_policy_name_array(
+        result = lambda_handler.create_policy_object_list_from_policy_name_list(
             ['policy_one', 'policy_three'],
             mocked_all_policy_list
         )
@@ -137,7 +137,7 @@ class LambdaHandlerTests(TestCase):
     @patch('lambda_handler.char_limit_of_json_policy', 70)
     def test_chunk_policies_and_return_dict_of_policy_name_to_json_CHUNKED(self):
         result = lambda_handler.chunk_policies_and_return_dict_of_policy_name_to_json(
-            mocked_policy_object_array,
+            mocked_policy_object_list,
             'user_one',
             'emrfs_user_one'
         )
@@ -148,7 +148,7 @@ class LambdaHandlerTests(TestCase):
     @patch('lambda_handler.char_limit_of_json_policy', 100)
     def test_chunk_policies_and_return_dict_of_policy_name_to_json_NO_CHUNKS(self):
         result = lambda_handler.chunk_policies_and_return_dict_of_policy_name_to_json(
-            mocked_policy_object_array,
+            mocked_policy_object_list,
             'user_one',
             'emrfs_user_one'
         )
