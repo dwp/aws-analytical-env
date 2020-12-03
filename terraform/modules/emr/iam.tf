@@ -411,7 +411,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     actions = [
       "sts:AssumeRole"
     ]
-    resources = ["aws_iam_role.cogntio_read_only_role.arn"]
+    resources = [aws_iam_role.cogntio_read_only_role.arn]
   }
 
   statement {
