@@ -94,7 +94,6 @@ locals {
   name        = "aws-analytical-env"
   environment = terraform.workspace == "default" ? "development" : terraform.workspace
 
-
   root_dns_name = {
     development = "dev.wip.{{dataworks_domain_name}}"
     qa          = "qa.wip.{{dataworks_domain_name}}"
