@@ -23,7 +23,15 @@ resource "aws_s3_bucket_object" "emr_setup_sh" {
   depends_on = [aws_s3_bucket.hive_data, aws_s3_bucket_object.hive_data_bucket_group_folders]
   bucket     = aws_s3_bucket.emr.id
   key        = "scripts/emr/setup.sh"
-  content    = data.template_file.emr_setup_sh.rendered
+  content = templatefile("${path.module}/templates/emr/setup.sh",
+  {
+      logging_shell = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.cloudwatch_sh.key)
+      cloudwatch_shell = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.logging_sh.key)
+      cwa_namespace                   = local.cw_agent_namespace
+      cwa_log_group_name = local.cw_agent_log_group_name
+      aws_default_region              = "eu-west-2"
+      cwa_metrics_collection_interval = local.cw_agent_metrics_collection_interval
+  })
   tags       = merge(var.common_tags, { Name : "${var.name_prefix}-emr-setup" })
 }
 
@@ -95,4 +103,26 @@ data "template_file" "livy_client_conf_sh" {
     livy_rsc_retained_statements               = "200"
     livy_rsc_server_connect_timeout            = "360s"
   }
+}
+
+resource "aws_s3_bucket_object" "logging_sh" {
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/logging.sh"
+  content = file("${path.module}/templates/emr/logging.sh")
+}
+
+resource "aws_s3_bucket_object" "get_scripts_sh" {
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/get_scripts.sh"
+  content = templatefile("${path.module}/templates/emr/get_scripts.sh",
+    {
+      config_bucket = aws_s3_bucket.emr.id
+    }
+  )
+}
+
+resource "aws_s3_bucket_object" "cloudwatch_sh" {
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/cloudwatch.sh"
+  content = file("${path.module}/templates/emr/cloudwatch.sh")
 }
