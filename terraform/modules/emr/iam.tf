@@ -411,7 +411,9 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     actions = [
       "sts:AssumeRole"
     ]
-    resources = [aws_iam_role.cogntio_read_only_role.arn]
+    resources = [
+      "aws_iam_role.cogntio_read_only_role.arn"
+    ]
   }
 
   statement {
@@ -424,7 +426,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
 
     resources = [
-      data.terraform_remote_state.common.outputs.config_bucket.arn,
+      "data.terraform_remote_state.common.outputs.config_bucket.arn"
     ]
   }
 
@@ -437,7 +439,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
 
     resources = [
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/*",
+      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/*"
     ]
   }
 
@@ -451,7 +453,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
 
     resources = [
-      "${data.terraform_remote_state.common.outputs.config_bucket_cmk.arn}",
+      "${data.terraform_remote_state.common.outputs.config_bucket_cmk.arn}"
     ]
   }
 
