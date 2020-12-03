@@ -18,17 +18,26 @@ variable "subnet_ids" {
   description = "Subnets to deploy resources into"
 }
 
-variable "engine_config" {
+variable "engine_version" {
+  type        = string
+  description = "Version to use for the Aurora MySQL engine. Must be compatible with the serverless engine mode and aurora-mysql5.7 parameter group family"
+  default     = "5.7.mysql_aurora.2.07.1"
+}
+
+variable "scaling_configuration" {
   type = object({
-    engine         = string
-    engine_version = string
-    engine_mode    = string
+    auto_pause               = bool
+    max_capacity             = number
+    min_capacity             = number
+    seconds_until_auto_pause = number
+    timeout_action           = string
   })
   default = {
-    engine                 = "aurora-mysql"
-    engine_version         = "5.7.mysql_aurora.2.07.1"
-    engine_mode            = "serverless"
-    parameter_group_family = "aurora-mysql5.7"
+    auto_pause               = false
+    max_capacity             = 8
+    min_capacity             = 1
+    seconds_until_auto_pause = 0
+    timeout_action           = "RollbackCapacityChange"
   }
 }
 

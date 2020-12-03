@@ -3,9 +3,11 @@
 resource "aws_rds_cluster" "database_cluster" {
   cluster_identifier = "${var.name_prefix}-database"
   database_name      = local.database_name
-  engine             = var.engine_config.engine
-  engine_version     = var.engine_config.engine_version
-  engine_mode        = var.engine_config.engine_mode
+
+  engine               = "aurora-mysql"
+  engine_version       = var.engine_version
+  engine_mode          = "serverless"
+  enable_http_endpoint = true
 
   master_username = local.database_master_username
   master_password = local.database_master_password
@@ -19,6 +21,14 @@ resource "aws_rds_cluster" "database_cluster" {
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.database.name
   availability_zones              = data.aws_availability_zones.current.names
   vpc_security_group_ids          = [aws_security_group.database.id]
+
+  scaling_configuration {
+    auto_pause               = var.scaling_configuration.auto_pause
+    max_capacity             = var.scaling_configuration.max_capacity
+    min_capacity             = var.scaling_configuration.min_capacity
+    seconds_until_auto_pause = var.scaling_configuration.seconds_until_auto_pause
+    timeout_action           = var.scaling_configuration.timeout_action
+  }
 
   lifecycle {
     ignore_changes = [master_password]
@@ -37,7 +47,7 @@ resource "aws_db_subnet_group" "database" {
 
 resource "aws_rds_cluster_parameter_group" "database" {
   name        = "${var.name_prefix}-database"
-  family      = var.engine_config.parameter_group_family
+  family      = "aurora-mysql5.7"
   description = "Parameters for the ${var.name_prefix} database"
 
   parameter {
