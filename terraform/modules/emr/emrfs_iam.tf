@@ -19,6 +19,10 @@ data "aws_iam_policy_document" "emrfs_iam_assume_role" {
   }
 }
 
+output "emrfs_iam_assume_role_json" {
+  value = data.aws_iam_policy_document.emrfs_iam_assume_role.json
+}
+
 resource "aws_iam_policy" "emrfs_iam" {
   name   = "emrfs_iam"
   policy = data.aws_iam_policy_document.emrfs_iam.json
