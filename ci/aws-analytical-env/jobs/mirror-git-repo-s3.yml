@@ -1,0 +1,13 @@
+jobs:
+  - name: mirror-uc-lab-repo
+    plan:
+      - get: chs-uc-lab-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          params:
+            S3_ROOT: component/uc_repos/chs-uc-lab/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci

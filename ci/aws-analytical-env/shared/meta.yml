@@ -214,3 +214,46 @@ meta:
       params:
         TF_CLI_ARGS_plan: -lock-timeout=300s
         TF_INPUT: "false"
+
+    mirror-git-repo:
+      task: mirror-git-repo
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              source /assume-role
+              AWS_COMMOM_BUCKET="$(cat ../terraform-output-common/outputs.json |  jq -r '.config_bucket.value.id')"
+              aws s3 sync . s3://$AWS_COMMOM_BUCKET/$S3_ROOT --include "*"
+          dir: chs-uc-lab-repo
+        inputs:
+          - name: chs-uc-lab-repo
+          - name: terraform-output-common
+
+    terraform-output-common:
+      task: terraform-output-common
+      .: (( inject meta.plan.terraform-common-config ))
+      config:
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              terraform workspace show
+              terraform init
+              terraform output --json > ../terraform-output-common/outputs.json
+          dir: aws-common-infrastructure
+        inputs:
+          - name: aws-common-infrastructure
+        outputs:
+          - name: terraform-output-common
