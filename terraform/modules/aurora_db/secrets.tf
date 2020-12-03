@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "master_credentials" {
-  name        = "${var.name_prefix}-master-rds-credentials"
+  name        = "${var.name_prefix}-database/credentials/master"
   description = "${var.name_prefix} master database credentials"
 
   lifecycle {
@@ -8,7 +8,7 @@ resource "aws_secretsmanager_secret" "master_credentials" {
 }
 
 resource "aws_secretsmanager_secret" "initialise_db_credentials" {
-  name        = "${var.name_prefix}-initialise-db-rds-credentials"
+  name        = "${var.name_prefix}-database/credentials/client-initialise-db"
   description = "${var.name_prefix} initialise-db database credentials"
 
   lifecycle {

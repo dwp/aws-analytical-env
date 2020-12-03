@@ -1,6 +1,6 @@
 data "aws_iam_policy_document" "lambda_assume_role" {
   statement {
-    sid    = "${var.name_prefix}LambdaAssumeRolePolicy"
+    sid    = "LambdaAssumeRolePolicy"
     effect = "Allow"
     actions = [
       "sts:AssumeRole",
@@ -72,6 +72,19 @@ data "aws_iam_policy_document" "lambda_initialise_db" {
     ]
     resources = [
       aws_secretsmanager_secret.initialise_db_credentials.arn,
+    ]
+  }
+
+  statement {
+    sid    = "AllowGetInitSql"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "kms:Decrypt"
+    ]
+    resources = [
+      "arn:aws:s3:::${aws_s3_bucket_object.init_sql.bucket}/${aws_s3_bucket_object.init_sql.key}",
+      var.config_bucket.cmk_arn
     ]
   }
 }

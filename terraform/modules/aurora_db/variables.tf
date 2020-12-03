@@ -68,6 +68,9 @@ variable "init_db_sql_path" {
   description = "Path pointing to db initialisation SQL file"
 }
 
-variable "config_bucket_id" {
-  type        = string
+variable "config_bucket" {
+  type = object({
+    id      = string
+    cmk_arn = string
+  })
 }
