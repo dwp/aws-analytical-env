@@ -144,6 +144,16 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/chs-uc-lab.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+
+  - name: aws-common-infrastructure
+    type: git
+    source:
+      branch: master
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-common-infrastructure.git
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
 #  - name: chs-uc-lab-incoming-repo
 #    type: git
 #    source:
