@@ -23,15 +23,7 @@ resource "aws_s3_bucket_object" "emr_setup_sh" {
   depends_on = [aws_s3_bucket.hive_data, aws_s3_bucket_object.hive_data_bucket_group_folders]
   bucket     = aws_s3_bucket.emr.id
   key        = "scripts/emr/setup.sh"
-  content = templatefile("${path.module}/templates/emr/setup.sh",
-  {
-      logging_shell = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.cloudwatch_sh.key)
-      cloudwatch_shell = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.logging_sh.key)
-      cwa_namespace                   = local.cw_agent_namespace
-      cwa_log_group_name = local.cw_agent_log_group_name
-      aws_default_region              = "eu-west-2"
-      cwa_metrics_collection_interval = local.cw_agent_metrics_collection_interval
-  })
+  content    = data.template_file.emr_setup_sh.rendered
   tags       = merge(var.common_tags, { Name : "${var.name_prefix}-emr-setup" })
 }
 
@@ -43,6 +35,12 @@ data "template_file" "emr_setup_sh" {
     full_no_proxy      = join(",", local.no_proxy_hosts)
     cognito_role_arn   = aws_iam_role.cogntio_read_only_role.arn
     user_pool_id       = var.cognito_user_pool_id
+    logging_shell = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.cloudwatch_sh.key)
+    cloudwatch_shell = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.logging_sh.key)
+    cwa_namespace                   = local.cw_agent_namespace
+    cwa_log_group_name = local.cw_agent_log_group_name
+    aws_default_region              = "eu-west-2"
+    cwa_metrics_collection_interval = local.cw_agent_metrics_collection_interval
   }
 }
 
