@@ -185,8 +185,10 @@ module "rbac_db" {
   }
   init_db_sql_path = "${path.module}/rbac-db-init.ddl.sql"
 
-  vpc_id     = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
-  subnet_ids = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
+  vpc_id               = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
+  subnet_ids           = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
+  interface_vpce_sg_id = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
+
 
   manage_mysql_user_lambda_zip = {
     base_path = var.manage_mysql_user_lambda_zip.base_path

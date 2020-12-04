@@ -37,9 +37,14 @@ data "aws_iam_policy_document" "lambda_manage_mysql_user" {
       "secretsmanager:ListSecretVersionIds"
 
     ]
-    resources = [
+    resources = concat([
       aws_secretsmanager_secret.master_credentials.arn,
-    ]
+      aws_secretsmanager_secret.initialise_db_credentials.arn
+      ],
+      [
+        for client in var.client_names :
+        aws_secretsmanager_secret.client_db_credentials[client].arn
+    ])
   }
 }
 
@@ -68,7 +73,6 @@ data "aws_iam_policy_document" "lambda_initialise_db" {
       "secretsmanager:DescribeSecret",
       "secretsmanager:GetSecretValue",
       "secretsmanager:ListSecretVersionIds"
-
     ]
     resources = [
       aws_secretsmanager_secret.initialise_db_credentials.arn,
@@ -86,6 +90,13 @@ data "aws_iam_policy_document" "lambda_initialise_db" {
       "arn:aws:s3:::${aws_s3_bucket_object.init_sql.bucket}/${aws_s3_bucket_object.init_sql.key}",
       var.config_bucket.cmk_arn
     ]
+  }
+
+  statement {
+    sid       = "AllowRdsDataExecute"
+    effect    = "Allow"
+    actions   = ["rds-data:ExecuteStatement"]
+    resources = [aws_rds_cluster.database_cluster.arn]
   }
 }
 

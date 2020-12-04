@@ -2,7 +2,7 @@ import os
 import logging
 import boto3
 
-RDS_CREDENTIALS_SECRET_NAME = os.environ["RDS_CREDENTIALS_SECRET_NAME"]
+RDS_CREDENTIALS_SECRET_ARN = os.environ["RDS_CREDENTIALS_SECRET_ARN"]
 RDS_DATABASE_NAME = os.environ["RDS_DATABASE_NAME"]
 RDS_CLUSTER_ARN = os.environ["RDS_CLUSTER_ARN"]
 
@@ -17,12 +17,15 @@ logger.info("Logging at {} level".format(log_level.upper()))
 
 
 def execute_statement(sql, database_name=None):
-    response = rds_client.execute_statement(
-        secretArn=RDS_CREDENTIALS_SECRET_NAME,
-        database=database_name,
-        resourceArn=RDS_CLUSTER_ARN,
-        sql=sql
-    )
+    args = {
+        "secretArn": RDS_CREDENTIALS_SECRET_ARN,
+        "resourceArn": RDS_CLUSTER_ARN,
+        "sql": sql
+    }
+    if database_name is not None:
+        args["database"] = database_name
+
+    response = rds_client.execute_statement(**args)
     return response
 
 
@@ -34,8 +37,27 @@ def get_init_sql_from_s3():
     return response["Body"].read().decode("utf8")
 
 
+def split_statements(sql: str) -> list:
+    clean_sql = " ".join(sql.strip().split())
+    return [statement + ";" for statement in clean_sql.split(";") if statement != '']
+
+
+def get_database_tables_schema(database_name):
+    records = execute_statement(f"""
+    SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, COLUMN_TYPE
+    FROM information_schema.columns
+    WHERE table_schema = "{database_name}" ORDER BY TABLE_NAME, ORDINAL_POSITION;""")["records"]
+
+    return [{
+        "table_name": record[0]["stringValue"],
+        "column_name": record[1]["stringValue"],
+        "data_type": record[2]["stringValue"],
+        "column_type": record[3]["stringValue"],
+    } for record in records]
+
+
 def handler(event: dict, context):
-    logger.info(f"Using credentials from Secrets Manager secret with name {RDS_CREDENTIALS_SECRET_NAME}")
+    logger.info(f"Using credentials from Secrets Manager secret with arn {RDS_CREDENTIALS_SECRET_ARN}")
 
     if "drop_existing" in event and event["drop_existing"] == "true":
         logger.warning(f"Dropping all existing tables from database {RDS_DATABASE_NAME}")
@@ -44,6 +66,11 @@ def handler(event: dict, context):
     logger.info(f"Initialising database with arn {RDS_CLUSTER_ARN}")
 
     init_sql = get_init_sql_from_s3()
-    logger.debug(f"SQL Statements:\n{init_sql}")
+    statements = split_statements(init_sql)
+    logger.debug(f"SQL Statements:\n{statements}")
 
-    return execute_statement(init_sql, RDS_DATABASE_NAME)
+    for statement in statements:
+        execute_statement(statement, RDS_DATABASE_NAME)
+
+    logger.info("Successfully initialised database")
+    return {"database_schema": get_database_tables_schema(RDS_DATABASE_NAME)}

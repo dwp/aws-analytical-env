@@ -16,6 +16,10 @@ jobs:
         passed:
           - preprod
         trigger: true
+      - get: manage-mysql-user-release
+        passed:
+          - preprod
+        trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra
@@ -44,6 +48,7 @@ jobs:
           inputs:
             - name: emp-release
             - name: emr-launcher-release
+            - name: manage-mysql-user-release
         params:
           TF_WORKSPACE: 'production'
           TF_VAR_emp_dir_path: ../../../../emp-release
@@ -55,6 +60,7 @@ jobs:
           inputs:
             - name: emp-release
             - name: emr-launcher-release
+            - name: manage-mysql-user-release
         params:
           TF_WORKSPACE: 'production'
           TF_VAR_emp_dir_path: ../../../../emp-release

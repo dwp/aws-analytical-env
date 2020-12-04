@@ -160,7 +160,7 @@ def remove_user_role(role_name):
 
 # connects to RDS instance and executes the SQL statement passed in
 def execute_statement(sql, db_credentials_secrets_store_arn, database_name, db_cluster_arn):
-    response = rds_data_client.execute_statement(
+    response = rds_data_client.execute_sql(
         secretArn=db_credentials_secrets_store_arn,
         database=database_name,
         resourceArn=db_cluster_arn,

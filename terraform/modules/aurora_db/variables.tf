@@ -74,3 +74,13 @@ variable "config_bucket" {
     cmk_arn = string
   })
 }
+
+variable "client_names" {
+  description = "List of client names to create credentials for"
+  type        = set(string)
+  default     = []
+}
+
+variable "interface_vpce_sg_id" {
+  type = string
+}

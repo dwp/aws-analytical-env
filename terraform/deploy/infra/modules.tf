@@ -27,7 +27,8 @@ module analytical_env_vpc {
     "ssm",
     "ssmmessages",
     "git-codecommit",
-    "sts"
+    "sts",
+    "secretsmanager"
   ]
 
   custom_vpce_services = [

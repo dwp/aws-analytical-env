@@ -1,7 +1,7 @@
 resource "aws_lambda_function" "initialise_database" {
   filename         = "${path.module}/lambda.zip"
   function_name    = "${var.name_prefix}-initialise-db"
-  role             = aws_iam_role.lambda_manage_mysql_user.arn
+  role             = aws_iam_role.lambda_initialise_db.arn
   handler          = "initialise_db.handler"
   runtime          = "python3.7"
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
@@ -10,10 +10,12 @@ resource "aws_lambda_function" "initialise_database" {
   reserved_concurrent_executions = 1
   environment {
     variables = {
-      RDS_DATABASE_NAME           = local.database_name
-      RDS_CLUSTER_ARN             = aws_rds_cluster.database_cluster.arn
-      RDS_CREDENTIALS_SECRET_NAME = aws_secretsmanager_secret.initialise_db_credentials.name
-      LOG_LEVEL                   = "DEBUG"
+      RDS_DATABASE_NAME          = local.database_name
+      RDS_CLUSTER_ARN            = aws_rds_cluster.database_cluster.arn
+      RDS_CREDENTIALS_SECRET_ARN = aws_secretsmanager_secret.initialise_db_credentials.arn
+      INIT_SQL_S3_BUCKET         = aws_s3_bucket_object.init_sql.bucket
+      INIT_SQL_S3_KEY            = aws_s3_bucket_object.init_sql.key
+      LOG_LEVEL                  = "DEBUG"
     }
   }
   tracing_config {
