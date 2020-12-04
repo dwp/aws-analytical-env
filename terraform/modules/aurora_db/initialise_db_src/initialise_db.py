@@ -15,10 +15,11 @@ log_level = os.environ["LOG_LEVEL"] if "LOG_LEVEL" in os.environ else "INFO"
 logger.setLevel(logging.getLevelName(log_level.upper()))
 logger.info("Logging at {} level".format(log_level.upper()))
 
-def execute_statement(sql):
+
+def execute_statement(sql, database_name=None):
     response = rds_client.execute_statement(
         secretArn=RDS_CREDENTIALS_SECRET_NAME,
-        database=RDS_DATABASE_NAME,
+        database=database_name,
         resourceArn=RDS_CLUSTER_ARN,
         sql=sql
     )
@@ -45,4 +46,4 @@ def handler(event: dict, context):
     init_sql = get_init_sql_from_s3()
     logger.debug(f"SQL Statements:\n{init_sql}")
 
-    return execute_statement(init_sql)
+    return execute_statement(init_sql, RDS_DATABASE_NAME)
