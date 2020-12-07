@@ -172,6 +172,9 @@ module "emrfs_lambda" {
   region                     = var.region
   vpc_id                     = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
   internet_proxy_sg_id       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_sg
+  db_client_secret_arn       = module.rbac_db.secrets.client_credentials["emrfs-lambda"].arn
+  db_cluster_arn             = module.rbac_db.rds_cluster.arn
+  db_name                    = module.rbac_db.db_name
 }
 
 module "rbac_db" {
@@ -194,6 +197,8 @@ module "rbac_db" {
     base_path = var.manage_mysql_user_lambda_zip.base_path
     version   = var.manage_mysql_user_lambda_zip.version
   }
+
+  client_names = ["emrfs-lambda"]
 
   common_tags = local.common_tags
 
