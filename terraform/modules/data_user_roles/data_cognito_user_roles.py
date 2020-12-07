@@ -32,14 +32,14 @@ def get_roles_for_users(usernames, account_id):
 def main():
     tf_input = json.loads(sys.stdin.read())
 
-    for var in ['role', 'user_pool_id', 'account_id']:
+    for var in ['role', 'user_pool_id', 'account_id', 'region']:
         if var not in tf_input:
             sys.stderr.write("Missing required variable {}".format(var))
             sys.exit(1)
 
     session = get_session(tf_input['role'])
 
-    users = get_cognito_users(session.client('cognito-idp'), tf_input['user_pool_id'])
+    users = get_cognito_users(session.client('cognito-idp', region_name=tf_input['region']), tf_input['user_pool_id'])
     users_with_roles = get_roles_for_users(map(lambda user_obj: user_obj['Username'], users), tf_input['account_id'])
 
     result = {

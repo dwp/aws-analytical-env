@@ -6,6 +6,8 @@ data "external" "user_roles" {
   ]
   query = {
     user_pool_id = var.user_pool_id,
+    account_id   = data.aws_arn.current_session.account,
+    region       = data.aws_arn.current_session.region,
 
     role = format("arn:%s:%s:%s:%s:%s",
       data.aws_arn.current_session.partition,
@@ -14,8 +16,6 @@ data "external" "user_roles" {
       data.aws_arn.current_session.account,
       "role/${split("/", data.aws_arn.current_session.resource)[1]}"
     )
-
-    account_id = data.aws_arn.current_session.account
   }
 }
 
