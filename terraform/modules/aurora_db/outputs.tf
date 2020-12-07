@@ -21,3 +21,7 @@ output "manage_mysql_user_lambda" {
 output "initialise_db_lambda" {
   value = aws_lambda_function.initialise_database
 }
+
+output "db_name" {
+    value = local.database_name
+}
