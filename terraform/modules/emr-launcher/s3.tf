@@ -97,5 +97,5 @@ resource "aws_s3_bucket_object" "batch_configurations" {
     hive_metastore_database_name = var.hive_metastore_database_name
     hive_metastore_username      = var.hive_metastore_username
   })
-  tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-config" })
+  tags = merge(var.common_tags, { Name : "batch-emr-launch-config" })
 }
