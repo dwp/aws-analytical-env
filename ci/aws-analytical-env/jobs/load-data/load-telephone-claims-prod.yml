@@ -1,0 +1,18 @@
+jobs:
+- name: load-telephone-claims-prod
+  serial: true
+  plan:
+  - get: aws-analytical-dataset-generation
+  - get: aws-analytical-env
+  - .: (( inject meta.plan.terraform-bootstrap-crown ))
+  - .: (( inject meta.plan.terraform-output-adg ))
+  - .: (( inject meta.plan.create-aws-profiles ))
+    config:
+      params:
+        AWS_ROLE: arn:aws:iam::((aws_account.production)):role/ci
+  - .: (( inject meta.plan.create-crown-credentials ))
+  - .: (( inject meta.plan.get-telephone-claims-files ))
+    config:
+      params:
+        SOURCE_PATH: "/home/telephone_claims_tables/"
+  - .: (( inject meta.plan.load-s3 ))

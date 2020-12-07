@@ -1,0 +1,20 @@
+resources:
+  - name: aws-analytical-env
+    type: git
+    source:
+      username: ((github_com.username))
+      password: ((github_com.token))
+      uri: https://github.com/dwp/aws-analytical-env.git
+    check_every: 15m
+
+  - name: aws-analytical-dataset-generation
+    type: git
+    source:
+      branch: master
+      username: ((github_com.username))
+      password: ((github_com.token))
+      uri: https://github.com/dwp/aws-analytical-dataset-generation.git
+    check_every: 15m
+
+
+
