@@ -16,9 +16,9 @@ data "aws_iam_policy_document" "assume_role_policy_munge_lambda" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "policy_munge_lambda_basic_policy_attach" {
+resource "aws_iam_role_policy_attachment" "policy_munge_lambda_VPC_access_policy_attach" {
   role       = aws_iam_role.policy_munge_lambda_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
 resource "aws_iam_role_policy" "policy_munge_lambda_logging_policy" {
