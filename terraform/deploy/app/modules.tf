@@ -175,7 +175,6 @@ module "emrfs_lambda" {
   internet_proxy_sg_id       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_sg
 }
 
-<<<<<<< HEAD
 module "rbac_db" {
   source = "../../modules/aurora_db"
 
