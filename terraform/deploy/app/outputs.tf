@@ -25,3 +25,7 @@ output "livy_proxy" {
 output "emr_launcher_lambda" {
   value = module.launcher.lambda
 }
+
+output "rbac_db" {
+  value = module.rbac_db
+}

@@ -10,6 +10,8 @@ jobs:
         trigger: true
       - get: emr-launcher-release
         trigger: true
+      - get: manage-mysql-user-release
+        trigger: false
       - get: aws-dataworks-e2e-framework
         trigger: false
       - get: aws-analytical-dataset-generation
@@ -40,6 +42,7 @@ jobs:
           inputs:
             - name: emp-release
             - name: emr-launcher-release
+            - name: manage-mysql-user-release
         params:
           TF_VAR_emp_dir_path: ../../../../emp-release
       - .: (( inject meta.plan.terraform-plan ))
@@ -50,5 +53,6 @@ jobs:
           inputs:
             - name: emp-release
             - name: emr-launcher-release
+            - name: manage-mysql-user-release
         params:
           TF_VAR_emp_dir_path: ../../../../emp-release
