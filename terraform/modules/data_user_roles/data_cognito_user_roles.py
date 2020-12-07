@@ -5,7 +5,7 @@ import math
 from functools import reduce
 
 
-def get_session(role_arn):
+def get_session(role_arn, region):
     creds = boto3.client('sts').assume_role(
         RoleArn=role_arn,
         RoleSessionName="CognitoUserGetIamRoles"
@@ -14,7 +14,9 @@ def get_session(role_arn):
     return boto3.Session(
         aws_access_key_id=creds['AccessKeyId'],
         aws_secret_access_key=creds['SecretAccessKey'],
-        aws_session_token=creds['SessionToken'])
+        aws_session_token=creds['SessionToken'],
+        region_name=region
+    )
 
 
 def get_cognito_users(cognitoidp_client, user_pool_id):
@@ -37,9 +39,9 @@ def main():
             sys.stderr.write("Missing required variable {}".format(var))
             sys.exit(1)
 
-    session = get_session(tf_input['role'])
+    session = get_session(tf_input['role'], tf_input['region'])
 
-    users = get_cognito_users(session.client('cognito-idp', region_name=tf_input['region']), tf_input['user_pool_id'])
+    users = get_cognito_users(session.client('cognito-idp'), tf_input['user_pool_id'])
     users_with_roles = get_roles_for_users(map(lambda user_obj: user_obj['Username'], users), tf_input['account_id'])
 
     result = {
