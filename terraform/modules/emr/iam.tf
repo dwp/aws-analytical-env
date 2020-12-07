@@ -414,6 +414,47 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     resources = [aws_iam_role.cogntio_read_only_role.arn]
   }
 
+  statement {
+    sid    = "AllowEmrToListConfigBucket"
+    effect = "Allow"
+
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      var.config_bucket_arn
+    ]
+  }
+
+  statement {
+    sid    = "AllowEmrToReadConfigBucket"
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject*",
+    ]
+
+    resources = [
+      "${var.config_bucket_arn}/*"
+    ]
+  }
+
+  statement {
+    sid    = "AllowEmrToUseConfigKMSKeys"
+    effect = "Allow"
+
+    actions = [
+      "kms:Decrypt",
+      "kms:DescribeKey",
+    ]
+
+    resources = [
+      var.config_bucket_cmk
+    ]
+  }
+
 }
 
 resource "aws_iam_role" "cogntio_read_only_role" {
@@ -587,7 +628,7 @@ data "aws_iam_policy_document" "elastic_map_reduce_for_auto_scaling_role" {
       "elasticmapreduce:ListInstanceGroups",
       "elasticmapreduce:ModifyInstanceGroups"
     ]
-    resources = ["*"] // Required by AutoScaling-CheckPermissions 
+    resources = ["*"] // Required by AutoScaling-CheckPermissions
   }
 }
 

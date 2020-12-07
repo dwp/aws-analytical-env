@@ -69,6 +69,8 @@ module "emr" {
 
   truststore_certs   = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
   truststore_aliases = "dataworks_root_ca,dataworks_mgt_root_ca"
+  config_bucket_arn  = data.terraform_remote_state.common.outputs.config_bucket.arn
+  config_bucket_cmk  = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
 
 module "pushgateway" {
