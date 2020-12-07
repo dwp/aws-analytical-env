@@ -181,19 +181,19 @@ module "rbac_db" {
   name_prefix = "analytical-env-rbac"
 
   config_bucket = {
-    id = data.terraform_remote_state.common.outputs.config_bucket.id
+    id      = data.terraform_remote_state.common.outputs.config_bucket.id
     cmk_arn = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   }
   init_db_sql_path = "${path.module}/rbac-db-init.ddl.sql"
 
-  vpc_id = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
-  subnet_ids = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
+  vpc_id               = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
+  subnet_ids           = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
   interface_vpce_sg_id = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
 
 
   manage_mysql_user_lambda_zip = {
     base_path = var.manage_mysql_user_lambda_zip.base_path
-    version = var.manage_mysql_user_lambda_zip.version
+    version   = var.manage_mysql_user_lambda_zip.version
   }
 
   common_tags = local.common_tags

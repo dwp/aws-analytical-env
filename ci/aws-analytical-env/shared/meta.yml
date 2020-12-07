@@ -51,7 +51,7 @@ meta:
             - |
               apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
               python3 -m ensurepip
-              pip3 install --no-cache --upgrade pip setuptools boto3 sys json math
+              pip3 install --no-cache --upgrade pip setuptools boto3
               cp ../../../../terraform-config/terraform.tf .
               cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
