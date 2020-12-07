@@ -17,7 +17,7 @@ resource "aws_lambda_function" "aws_analytical_env_emr_launcher" {
   environment {
     variables = {
       EMR_LAUNCHER_CONFIG_S3_BUCKET = var.config_bucket.id
-      EMR_LAUNCHER_CONFIG_S3_FOLDER = "emr/aws-analytical-env"
+      EMR_LAUNCHER_CONFIG_S3_FOLDER = "emr/batch-cluster"
       EMR_LAUNCHER_LOG_LEVEL        = "debug"
     }
   }

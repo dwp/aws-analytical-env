@@ -23,7 +23,8 @@ variable "log_bucket" {}
 variable "emr_bucket" {}
 variable "ami" {}
 variable "account" {}
-variable "security_configuration" {}
+variable "analytical_env_security_configuration" {}
+variable "batch_security_configuration" {}
 variable "costcode" {}
 variable "release_version" {}
 variable "common_security_group" {}
