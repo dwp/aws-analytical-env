@@ -25,14 +25,14 @@ def get_cognito_users(cognitoidp_client, user_pool_id):
     return res['Users']
 
 
-def get_roles_for_users(usernames):
-    return dict(map(lambda user: (user, "arn:test_role"), usernames))
+def get_roles_for_users(usernames, account_id):
+    return dict(map(lambda user: (user, f'arn:aws:iam::{account_id}:role/emrfs_{user}'), usernames))
 
 
 def main():
     tf_input = json.loads(sys.stdin.read())
 
-    for var in ['role', 'user_pool_id']:
+    for var in ['role', 'user_pool_id', 'account_id']:
         if var not in tf_input:
             sys.stderr.write("Missing required variable {}".format(var))
             sys.exit(1)
@@ -40,7 +40,7 @@ def main():
     session = get_session(tf_input['role'])
 
     users = get_cognito_users(session.client('cognito-idp'), tf_input['user_pool_id'])
-    users_with_roles = get_roles_for_users(map(lambda user_obj: user_obj['Username'], users))
+    users_with_roles = get_roles_for_users(map(lambda user_obj: user_obj['Username'], users), tf_input['account_id'])
 
     result = {
         'users': json.dumps(users_with_roles),

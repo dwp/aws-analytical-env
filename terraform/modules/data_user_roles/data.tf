@@ -14,6 +14,8 @@ data "external" "user_roles" {
       data.aws_arn.current_session.account,
       "role/${split("/", data.aws_arn.current_session.resource)[1]}"
     )
+
+    account_id = data.aws_arn.current_session.account
   }
 }
 
