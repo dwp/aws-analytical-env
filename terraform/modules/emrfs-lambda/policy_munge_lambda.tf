@@ -15,7 +15,7 @@ resource "aws_lambda_function" "policy_munge_lambda" {
 
   environment {
     variables = {
-      DATABASE_ARN            = var.db_cluster_arn
+      DATABASE_CLUSTER_ARN    = var.db_cluster_arn
       DATABASE_NAME           = var.db_name
       SECRET_ARN              = var.db_client_secret_arn
       COMMON_TAGS             = join(",", [for key, val in var.common_tags : "${key}:${val}"])
