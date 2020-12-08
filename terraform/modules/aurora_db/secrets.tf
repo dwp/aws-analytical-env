@@ -5,6 +5,8 @@ resource "aws_secretsmanager_secret" "master_credentials" {
   lifecycle {
     ignore_changes = [tags]
   }
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-database-master" })
 }
 
 resource "aws_secretsmanager_secret_version" "initial_master_credentials" {
@@ -27,6 +29,8 @@ resource "aws_secretsmanager_secret" "initialise_db_credentials" {
   lifecycle {
     ignore_changes = [tags]
   }
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-init-db" })
 }
 
 resource "aws_secretsmanager_secret" "client_db_credentials" {
@@ -38,4 +42,6 @@ resource "aws_secretsmanager_secret" "client_db_credentials" {
   lifecycle {
     ignore_changes = [tags]
   }
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-client-db" })
 }

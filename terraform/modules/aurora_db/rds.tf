@@ -57,4 +57,6 @@ resource "aws_rds_cluster_parameter_group" "database" {
     name  = "general_log"
     value = "1"
   }
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-database" })
 }
