@@ -1,5 +1,5 @@
 jobs:
-- name: load-telephone-claims-prod
+- name: load-uc-labs-prod
   serial: true
   plan:
   - get: aws-analytical-dataset-generation

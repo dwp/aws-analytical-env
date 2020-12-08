@@ -1,4 +1,4 @@
 groups:
   - name: load-data
     jobs:
-      - load-telephone-claims-prod
+      - load-uc-labs-prod
