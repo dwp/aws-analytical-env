@@ -6,6 +6,9 @@ jobs:
   - get: aws-analytical-env
   - .: (( inject meta.plan.terraform-bootstrap-crown ))
   - .: (( inject meta.plan.terraform-output-adg ))
+    config:
+      params:
+        TF_WORKSPACE: production
   - .: (( inject meta.plan.create-aws-profiles ))
     config:
       params:
@@ -14,5 +17,5 @@ jobs:
   - .: (( inject meta.plan.get-telephone-claims-files ))
     config:
       params:
-        SOURCE_PATH: "/home/telephone_claims_tables/"
+        SOURCE_PATH: "/home/uc-labs-export"
   - .: (( inject meta.plan.load-s3 ))

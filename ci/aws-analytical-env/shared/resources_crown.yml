@@ -2,6 +2,7 @@ resources:
   - name: aws-analytical-env
     type: git
     source:
+      branch: DW-5339-Migrate-telephone-Claims
       username: ((github_com.username))
       password: ((github_com.token))
       uri: https://github.com/dwp/aws-analytical-env.git
