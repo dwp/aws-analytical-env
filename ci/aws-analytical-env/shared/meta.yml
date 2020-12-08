@@ -387,8 +387,8 @@ meta:
           AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
           AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
 
-    get-telephone-claims-files:
-      task: get-telephone-claims-files
+    get-uc-labs-files:
+      task: get-uc-labs-files
       attempts: 50
       config:
         platform: linux
@@ -438,4 +438,4 @@ meta:
             - -exc
             - |
               AWS_PUBLISHED_BUCKET="$(cat terraform-output-adg/outputs.json |  jq -r '.published_bucket.value.id')"
-              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync uc_labs/ s3://${AWS_PUBLISHED_BUCKET}/uc-labs/telephony_claims
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync uc_labs/ s3://${AWS_PUBLISHED_BUCKET}/uc-labs/

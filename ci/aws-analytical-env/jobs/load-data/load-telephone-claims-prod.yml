@@ -14,7 +14,7 @@ jobs:
       params:
         AWS_ROLE: arn:aws:iam::((aws_account.production)):role/ci
   - .: (( inject meta.plan.create-crown-credentials ))
-  - .: (( inject meta.plan.get-telephone-claims-files ))
+  - .: (( inject meta.plan.get-uc-labs-files ))
     config:
       params:
         SOURCE_PATH: "/home/uc-labs-export"
