@@ -32,10 +32,50 @@ locals {
       }
     }
   }
+
+  batch_emrfs_em = {
+    EncryptionConfiguration = {
+      EnableInTransitEncryption = false
+
+      EnableAtRestEncryption = true
+      AtRestEncryptionConfiguration = {
+        S3EncryptionConfiguration = {
+          EncryptionMode             = "CSE-Custom"
+          S3Object                   = "s3://${var.artefact_bucket.id}/emr-encryption-materials-provider/encryption-materials-provider-all.jar"
+          EncryptionKeyProviderClass = "uk.gov.dwp.dataworks.dks.encryptionmaterialsprovider.DKSEncryptionMaterialsProvider"
+        }
+        LocalDiskEncryptionConfiguration = {
+          EncryptionKeyProviderType = "AwsKms"
+          AwsKmsKey                 = aws_kms_alias.emr_ebs.arn
+          EnableEbsEncryption       = true
+        }
+      }
+    }
+
+    AuthorizationConfiguration = {
+      EmrFsConfiguration = {
+        RoleMappings = flatten([
+          for group, policy_suffixes in var.security_configuration_groups : [
+            {
+              Role           = aws_iam_role.emrfs_iam[group].arn
+              IdentifierType = "Group"
+              Identifiers    = [group]
+            }
+          ]
+        ])
+      }
+    }
+  }
 }
 
-resource "aws_emr_security_configuration" "emrfs_em" {
+resource "aws_emr_security_configuration" "analytical_env_emrfs_em" {
   depends_on    = [aws_iam_policy.group_hive_data_access_policy]
   name          = md5(jsonencode(local.emrfs_em))
   configuration = jsonencode(local.emrfs_em)
+}
+
+resource "aws_emr_security_configuration" "batch_emrfs_em" {
+  depends_on    = [aws_iam_policy.group_hive_data_access_policy]
+  name          = md5(jsonencode(local.batch_emrfs_em))
+  configuration = jsonencode(local.batch_emrfs_em)
 }

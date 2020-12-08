@@ -1,21 +1,22 @@
-resource "aws_s3_bucket_object" "cluster" {
+# Analytical-Environment cluster config files
+resource "aws_s3_bucket_object" "analytical_env_cluster" {
   bucket = var.config_bucket.id
   key    = "emr/aws-analytical-env/cluster.yaml"
-  content = templatefile("../../../cluster_config/cluster.yaml.tpl", {
+  content = templatefile("../../../analytical_env_cluster_config/cluster.yaml.tpl", {
     log_bucket             = var.log_bucket
     ami                    = var.ami
     account                = var.account
-    security_configuration = var.security_configuration
+    security_configuration = var.analytical_env_security_configuration
     costcode               = var.costcode
     release_version        = var.release_version
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-cluster" })
 }
 
-resource "aws_s3_bucket_object" "instances" {
+resource "aws_s3_bucket_object" "analytical_env_instances" {
   bucket = var.config_bucket.id
   key    = "emr/aws-analytical-env/instances.yaml"
-  content = templatefile("../../../cluster_config/instances.yaml.tpl", {
+  content = templatefile("../../../analytical_env_cluster_config/instances.yaml.tpl", {
     common_security_group  = var.common_security_group
     master_security_group  = var.master_security_group
     slave_security_group   = var.slave_security_group
@@ -24,19 +25,19 @@ resource "aws_s3_bucket_object" "instances" {
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-instances" })
 }
 
-resource "aws_s3_bucket_object" "steps" {
+resource "aws_s3_bucket_object" "analytical_env_steps" {
   bucket = var.config_bucket.id
   key    = "emr/aws-analytical-env/steps.yaml"
-  content = templatefile("../../../cluster_config/steps.yaml.tpl", {
+  content = templatefile("../../../analytical_env_cluster_config/steps.yaml.tpl", {
     config_bucket = var.emr_bucket.id
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
 
-resource "aws_s3_bucket_object" "configurations" {
+resource "aws_s3_bucket_object" "analytical_env_configurations" {
   bucket = var.config_bucket.id
   key    = "emr/aws-analytical-env/configurations.yaml"
-  content = templatefile("../../../cluster_config/configurations.yaml.tpl", {
+  content = templatefile("../../../analytical_env_cluster_config/configurations.yaml.tpl", {
     config_bucket                = var.emr_bucket.id
     log_bucket                   = var.log_bucket
     proxy_host                   = var.proxy_host
@@ -46,4 +47,55 @@ resource "aws_s3_bucket_object" "configurations" {
     hive_metastore_username      = var.hive_metastore_username
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-config" })
+}
+
+# Batch EMR cluster config files
+resource "aws_s3_bucket_object" "batch_cluster" {
+  bucket = var.config_bucket.id
+  key    = "emr/batch-cluster/cluster.yaml"
+  content = templatefile("../../../batch_cluster_config/cluster.yaml.tpl", {
+    log_bucket             = var.log_bucket
+    ami                    = var.ami
+    account                = var.account
+    security_configuration = var.batch_security_configuration
+    costcode               = var.costcode
+    release_version        = var.release_version
+  })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-cluster" })
+}
+
+resource "aws_s3_bucket_object" "batch_instances" {
+  bucket = var.config_bucket.id
+  key    = "emr/batch-cluster/instances.yaml"
+  content = templatefile("../../../batch_cluster_config/instances.yaml.tpl", {
+    common_security_group  = var.common_security_group
+    master_security_group  = var.master_security_group
+    slave_security_group   = var.slave_security_group
+    service_security_group = var.service_security_group
+  })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-instances" })
+}
+
+resource "aws_s3_bucket_object" "batch_steps" {
+  bucket = var.config_bucket.id
+  key    = "emr/batch-cluster/steps.yaml"
+  content = templatefile("../../../batch_cluster_config/steps.yaml.tpl", {
+    config_bucket = var.emr_bucket.id
+  })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
+}
+
+resource "aws_s3_bucket_object" "batch_configurations" {
+  bucket = var.config_bucket.id
+  key    = "emr/batch-cluster/configurations.yaml"
+  content = templatefile("../../../batch_cluster_config/configurations.yaml.tpl", {
+    config_bucket                = var.emr_bucket.id
+    log_bucket                   = var.log_bucket
+    proxy_host                   = var.proxy_host
+    full_no_proxy                = var.full_no_proxy
+    hive_metastore_endpoint      = var.hive_metastore_endpoint
+    hive_metastore_database_name = var.hive_metastore_database_name
+    hive_metastore_username      = var.hive_metastore_username
+  })
+  tags = merge(var.common_tags, { Name : "batch-emr-launch-config" })
 }

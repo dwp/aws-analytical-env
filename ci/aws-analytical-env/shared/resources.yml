@@ -144,6 +144,16 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/chs-uc-lab.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+
+  - name: aws-common-infrastructure
+    type: git
+    source:
+      branch: master
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-common-infrastructure.git
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
 #  - name: chs-uc-lab-incoming-repo
 #    type: git
 #    source:
@@ -176,6 +186,23 @@ resources:
     source:
       owner: dwp
       repository: emr-launcher
+    check_every: 1h
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: secrets-management
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/secrets-management.git
+    check_every: 5m
+
+  - name: manage-mysql-user-release
+    type: github-release
+    source:
+      owner: dwp
+      repository: manage-mysql-user
     check_every: 1h
     webhook_token: ((dataworks.concourse_github_webhook_token))
 

@@ -13,6 +13,8 @@ spruce:
         regexp: ".*yml"
       - with_in: ci/aws-analytical-env/jobs/github_proxy/
         regexp: ".*yml"
+      - with_in: ci/aws-analytical-env/jobs/rbac_admin/
+        regexp: ".*yml"
       - with_in: ci/aws-analytical-env/shared/
         regexp: ".*yml"
 

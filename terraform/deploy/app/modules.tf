@@ -69,6 +69,8 @@ module "emr" {
 
   truststore_certs   = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
   truststore_aliases = "dataworks_root_ca,dataworks_mgt_root_ca"
+  config_bucket_arn  = data.terraform_remote_state.common.outputs.config_bucket.arn
+  config_bucket_cmk  = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
 
 module "pushgateway" {
@@ -135,25 +137,69 @@ module "codecommit" {
 module launcher {
   source = "../../modules/emr-launcher"
 
-  emr_bucket                          = module.emr.emr_bucket
-  config_bucket                       = data.terraform_remote_state.common.outputs.config_bucket
-  config_bucket_cmk                   = data.terraform_remote_state.common.outputs.config_bucket_cmk
-  aws_analytical_env_emr_launcher_zip = var.aws_analytical_env_emr_launcher_zip
-  ami                                 = module.emr_ami.ami_id
-  log_bucket                          = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
-  account                             = local.account[local.environment]
-  security_configuration              = module.emr.security_configuration
-  costcode                            = var.costcode
-  release_version                     = "5.31.0"
-  common_security_group               = module.emr.common_security_group
-  master_security_group               = module.emr.master_security_group
-  slave_security_group                = module.emr.slave_security_group
-  service_security_group              = module.emr.service_security_group
-  proxy_host                          = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_dns_name
-  full_no_proxy                       = module.emr.full_no_proxy
-  common_tags                         = local.common_tags
-  name_prefix                         = local.name
-  hive_metastore_endpoint             = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.endpoint
-  hive_metastore_database_name        = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.database_name
-  hive_metastore_username             = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["username"]
+  emr_bucket                            = module.emr.emr_bucket
+  config_bucket                         = data.terraform_remote_state.common.outputs.config_bucket
+  config_bucket_cmk                     = data.terraform_remote_state.common.outputs.config_bucket_cmk
+  aws_analytical_env_emr_launcher_zip   = var.aws_analytical_env_emr_launcher_zip
+  ami                                   = module.emr_ami.ami_id
+  log_bucket                            = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+  account                               = local.account[local.environment]
+  analytical_env_security_configuration = module.emr.analytical_env_security_configuration
+  costcode                              = var.costcode
+  release_version                       = "5.31.0"
+  common_security_group                 = module.emr.common_security_group
+  master_security_group                 = module.emr.master_security_group
+  slave_security_group                  = module.emr.slave_security_group
+  service_security_group                = module.emr.service_security_group
+  proxy_host                            = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_dns_name
+  full_no_proxy                         = module.emr.full_no_proxy
+  common_tags                           = local.common_tags
+  name_prefix                           = local.name
+  hive_metastore_endpoint               = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.endpoint
+  hive_metastore_database_name          = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.database_name
+  hive_metastore_username               = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["username"]
+  batch_security_configuration          = module.emr.batch_security_configuration
+}
+
+module "emrfs_lambda" {
+  source = "../../modules/emrfs-lambda"
+
+  emrfs_iam_assume_role_json = module.emr.emrfs_iam_assume_role_json
+  account                    = local.account[local.environment]
+  aws_subnets_private        = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
+  common_tags                = local.common_tags
+  name_prefix                = "analytical-env-munge-lambda"
+  region                     = var.region
+  vpc_id                     = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
+  internet_proxy_sg_id       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_sg
+  db_client_secret_arn       = module.rbac_db.secrets.client_credentials["emrfs-lambda"].arn
+  db_cluster_arn             = module.rbac_db.rds_cluster.arn
+  db_name                    = module.rbac_db.db_name
+}
+
+module "rbac_db" {
+  source = "../../modules/aurora_db"
+
+  name_prefix = "analytical-env-rbac"
+
+  config_bucket = {
+    id      = data.terraform_remote_state.common.outputs.config_bucket.id
+    cmk_arn = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  }
+  init_db_sql_path = "${path.module}/rbac-db-init.ddl.sql"
+
+  vpc_id               = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
+  subnet_ids           = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
+  interface_vpce_sg_id = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
+
+
+  manage_mysql_user_lambda_zip = {
+    base_path = var.manage_mysql_user_lambda_zip.base_path
+    version   = var.manage_mysql_user_lambda_zip.version
+  }
+
+  client_names = ["emrfs-lambda"]
+
+  common_tags = local.common_tags
+
 }

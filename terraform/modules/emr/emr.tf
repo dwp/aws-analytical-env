@@ -4,7 +4,7 @@ resource "aws_emr_cluster" "cluster" {
   applications                      = var.emr_applications
   termination_protection            = var.termination_protection
   keep_job_flow_alive_when_no_steps = var.keep_flow_alive
-  security_configuration            = aws_emr_security_configuration.emrfs_em.id
+  security_configuration            = aws_emr_security_configuration.analytical_env_emrfs_em.id
   service_role                      = aws_iam_role.emr_role.arn
   log_uri                           = format("s3n://%s/logs/", var.log_bucket)
   ebs_root_volume_size              = local.ebs_root_volume_size

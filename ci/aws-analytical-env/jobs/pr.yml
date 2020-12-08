@@ -7,6 +7,7 @@ jobs:
         trigger: true
         version: every
       - get: emr-launcher-release
+      - get: manage-mysql-user-release
       - put: aws-analytical-env
         resource: aws-analytical-env-pr
         params:
@@ -31,6 +32,7 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/app'
           inputs:
             - name: emr-launcher-release
+            - name: manage-mysql-user-release
         params:
           TF_WORKSPACE: 'qa'
           TF_CLI_ARGS_plan: -lock-timeout=300s # overwrite removes -detailed-exitcode

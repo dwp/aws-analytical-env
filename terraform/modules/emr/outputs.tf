@@ -10,8 +10,12 @@ output "emr_bucket" {
   value = aws_s3_bucket.emr
 }
 
-output "security_configuration" {
-  value = aws_emr_security_configuration.emrfs_em.id
+output "analytical_env_security_configuration" {
+  value = aws_emr_security_configuration.analytical_env_emrfs_em.id
+}
+
+output "batch_security_configuration" {
+  value = aws_emr_security_configuration.batch_emrfs_em.id
 }
 
 output "common_security_group" {
