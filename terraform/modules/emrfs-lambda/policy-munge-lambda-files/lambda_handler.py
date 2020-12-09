@@ -113,7 +113,7 @@ def get_env_vars():
     tag_separator = ","
     key_val_separator = ":"
 
-    variables['database_arn'] = os.getenv('DATABASE_ARN')
+    variables['database_cluster_arn'] = os.getenv('DATABASE_CLUSTER_ARN')
     variables['database_name'] = os.getenv('DATABASE_NAME')
     variables['secret_arn'] = os.getenv('SECRET_ARN')
     variables['common_tags'] ={}
@@ -297,18 +297,17 @@ def create_tag_list(tag_keys_to_value_list, common_tags):
 # policy_names (list of policies to assign to the user's role) and role_name
 def get_user_userstatus_policy_dict(variables):
     return_dict = {}
-    sql = f'USE {variables["database_name"]} \
-    SELECT user.username, user.active, policy.policyname \
-    FROM user \
-    JOIN usergroup ON user.userid = usergroup.userid \
-    JOIN grouppolicy ON usergroup.groupid = grouppolicy.groupid \
-    JOIN policy ON grouppolicy.policyid = policy.id;'
+    sql = f'SELECT User.userName, User.active, Policy.policyName \
+        FROM User \
+        JOIN UserGroup ON User.id = UserGroup.userId \
+        JOIN GroupPolicy ON UserGroup.groupId = GroupPolicy.groupId \
+        JOIN Policy ON GroupPolicy.policyId = Policy.id;'
     try:
         response = execute_statement(
             sql,
             variables['secret_arn'],
             variables["database_name"],
-            variables["database_arn"]
+            variables["database_cluster_arn"]
         )
         for record in response['records']:
             user_name = ''.join(record[0].values())
