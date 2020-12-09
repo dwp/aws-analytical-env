@@ -20,15 +20,7 @@ locals {
 
     AuthorizationConfiguration = {
       EmrFsConfiguration = {
-        RoleMappings = concat([
-          for group, policy_suffixes in var.security_configuration_groups : [
-            {
-              Role           = aws_iam_role.emrfs_iam[group].arn
-              IdentifierType = "Group"
-              Identifiers    = [group]
-            }
-          ]
-          ], [
+        RoleMappings = [
           for user, role in var.security_configuration_user_roles : [
             {
               Role           = role
@@ -36,7 +28,7 @@ locals {
               Identifiers    = [user]
             }
           ]
-        ])
+        ]
       }
     }
   }
