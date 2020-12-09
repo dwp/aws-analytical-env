@@ -37,3 +37,18 @@ variable "internet_proxy_sg_id" {
   type        = string
   description = "(Required) Internet proxy SG ID"
 }
+
+variable "db_client_secret_arn" {
+  type        = string
+  description = "(Required) The ARN of the client secret for the lambda"
+}
+
+variable "db_cluster_arn" {
+  type        = string
+  description = "(Required) The ARN of the RDS cluster"
+}
+
+variable "db_name" {
+  type        = string
+  description = "(Required) The name of the RDS Database"
+}

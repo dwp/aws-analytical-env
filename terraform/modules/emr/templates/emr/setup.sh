@@ -22,6 +22,15 @@ export NO_PROXY="$FULL_NO_PROXY"
 sudo yum update -y amazon-ssm-agent
 sudo yum install -y jq
 
+aws s3 cp "${logging_shell}"     /opt/emr/logging.sh
+aws s3 cp "${cloudwatch_shell}"  /opt/emr/cloudwatch.sh
+chmod u+x /opt/emr/cloudwatch.sh
+chmod u+x /opt/emr/logging.sh
+
+sudo /opt/emr/cloudwatch.sh \
+    "${cwa_metrics_collection_interval}" "${cwa_log_group_name}" "${aws_default_region}" \
+    "${cwa_namespace}"
+
 echo "Assuming Cognito Role. Output hidden"
 set +x
 
@@ -88,3 +97,5 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
 
   done
 done
+
+

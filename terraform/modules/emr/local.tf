@@ -117,6 +117,12 @@ locals {
     "YaleToolkit",
     "zoo"
   ]
+
+  cw_agent_namespace                   = "/app/analytical_batch"
+  cw_agent_log_group_name              = "/app/analytical_batch/get_scripts"
+  cw_agent_metrics_collection_interval = 60
+  aws_defaut_region                    = "eu-west-2"
+
 }
 
 #S3 Required in no proxy list as it is a gateway endpoint

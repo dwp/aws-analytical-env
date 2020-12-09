@@ -1,0 +1,50 @@
+jobs:
+  - name: rotate-mysql-master-credentials-development
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - get: secrets-management
+        trigger: false
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-output-app))
+      - .: (( inject meta.plan.rotate-mysql-master-password ))
+        config:
+          params:
+            AWS_ACC: ((aws_account.development))
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+        input_mapping:
+           terraform-output: terraform-output-app
+
+  - name: rotate-mysql-client-credentials-development
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-output-app))
+      - .: (( inject meta.plan.rotate-mysql-client-password ))
+        config:
+          params:
+            AWS_ACC: ((aws_account.development))
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+        input_mapping:
+         terraform-output: terraform-output-app
+
+  - name: initialise-rbac-db-development
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-output-app))
+      - .: (( inject meta.plan.initialise-rbac-db ))
+        config:
+          params:
+            AWS_ACC: ((aws_account.development))
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+        input_mapping:
+          terraform-output: terraform-output-app

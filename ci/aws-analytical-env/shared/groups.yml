@@ -44,3 +44,25 @@ groups:
   - name: mirror-git-repo-s3
     jobs:
       - mirror-uc-lab-repo
+
+  - name: admin-rbac
+    jobs:
+      - rotate-mysql-master-credentials-development
+      - rotate-mysql-client-credentials-development
+      - initialise-rbac-db-development
+
+      - rotate-mysql-master-credentials-qa
+      - rotate-mysql-client-credentials-qa
+      - initialise-rbac-db-qa
+
+      - rotate-mysql-master-credentials-integration
+      - rotate-mysql-client-credentials-integration
+      - initialise-rbac-db-integration
+
+      - rotate-mysql-master-credentials-preprod
+      - rotate-mysql-client-credentials-preprod
+      - initialise-rbac-db-preprod
+
+      - rotate-mysql-master-credentials-production
+      - rotate-mysql-client-credentials-production
+      - initialise-rbac-db-production

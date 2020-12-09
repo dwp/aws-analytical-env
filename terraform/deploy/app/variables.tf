@@ -21,3 +21,12 @@ variable "aws_analytical_env_emr_launcher_zip" {
     version   = ""
   }
 }
+
+variable "manage_mysql_user_lambda_zip" {
+  type = map(string)
+
+  default = {
+    base_path = ""
+    version   = ""
+  }
+}
