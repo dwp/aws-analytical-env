@@ -20,7 +20,7 @@ locals {
 
     AuthorizationConfiguration = {
       EmrFsConfiguration = {
-        RoleMappings = [
+        RoleMappings = flatten([
           for user, role in var.security_configuration_user_roles : [
             {
               Role           = role
@@ -28,7 +28,7 @@ locals {
               Identifiers    = [user]
             }
           ]
-        ]
+        ])
       }
     }
   }
