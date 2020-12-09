@@ -7,6 +7,8 @@ jobs:
         trigger: false
       - get: emr-launcher-release
         trigger: false
+      - get: manage-mysql-user-release
+        trigger: false
 
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
@@ -23,6 +25,7 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/app'
           inputs:
             - name: emr-launcher-release
+            - name: manage-mysql-user-release
         params:
           DEPLOY_PATH: app
           TF_WORKSPACE: 'production'
@@ -34,6 +37,7 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/app'
           inputs:
             - name: emr-launcher-release
+            - name: manage-mysql-user-release
         params:
           DEPLOY_PATH: app
           TF_WORKSPACE: 'production'
