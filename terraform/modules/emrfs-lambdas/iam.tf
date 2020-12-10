@@ -109,6 +109,23 @@ resource "aws_iam_role_policy_attachment" "cognito_rds_sync_lambda_basic_policy_
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+data "aws_iam_policy_document" "cognito_rds_sync_lambda_execution_policy" {
+  statement {
+    sid       = "cognito-rds-sync-mgmt"
+    actions   = ["sts:AssumeRole"]
+    resources = [aws_iam_role.mgmt_cognito_rds_sync_lambda_role.arn]
+  }
+  statement {
+    sid = "lambda_basic_execution"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["*"]
+  }
+}
+
 resource "aws_iam_role_policy" "cognito_rds_sync_lambda_logging_policy" {
   role   = aws_iam_role.cognito_rds_sync_lambda_role.id
   policy = data.aws_iam_policy_document.cognito_rds_sync_lambda_logging_policy_document.json
@@ -131,16 +148,6 @@ resource "aws_iam_role_policy" "cognito_rds_sync_lambda_iam_service_policy" {
 }
 
 data aws_iam_policy_document cognito_rds_sync_lambda_document {
-  statement {
-    sid = "cognitoSyncLambda"
-    actions = [
-      "cognito-idp:AdminListGroupsForUser",
-      "cognito-idp:ListUsers",
-    ]
-    resources = [
-      "arn:aws:cognito-idp:${var.region}:${var.mgmt_account}:userpool/${var.cognito_user_pool_id}"
-    ]
-  }
   statement {
     sid    = "AllowGetCredentials"
     effect = "Allow"
@@ -167,4 +174,42 @@ resource "aws_cloudwatch_log_group" "cognito_rds_sync_lambda_logs" {
   name              = "${var.name_prefix}-cognito-rds-sync-lambda"
   retention_in_days = 180
   tags              = merge(var.common_tags, { "Name" : "${var.name_prefix}-cognito-rds-sync-lambda-logs" })
+}
+
+resource "aws_iam_role" "mgmt_cognito_rds_sync_lambda_role" {
+  name               = "${var.name_prefix}-mgmt-cognito-rds-sync-role"
+  assume_role_policy = data.aws_iam_policy_document.mgmt_trust_policy.json
+  tags               = var.common_tags
+  provider           = aws.management
+}
+
+data "aws_iam_policy_document" "mgmt_trust_policy" {
+
+  statement {
+    sid     = "mgmtLambdaAssumeRole"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "AWS"
+      identifiers = aws_iam_role.cognito_rds_sync_lambda_role.arn
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "mgmt_cognito_rds_sync_lambda_policy" {
+  policy = data.aws_iam_policy_document.mgmt_cognito_rds_sync_lambda_document.json
+  role   = aws_iam_role.mgmt_cognito_rds_sync_lambda_role.id
+}
+
+data aws_iam_policy_document mgmt_cognito_rds_sync_lambda_document {
+  statement {
+    sid = "cognitoSyncLambda"
+    actions = [
+      "cognito-idp:AdminListGroupsForUser",
+      "cognito-idp:ListUsers",
+    ]
+    resources = [
+      "arn:aws:cognito-idp:${var.region}:${var.mgmt_account}:userpool/${var.cognito_user_pool_id}"
+    ]
+  }
 }

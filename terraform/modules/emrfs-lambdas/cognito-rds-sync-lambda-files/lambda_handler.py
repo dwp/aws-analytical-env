@@ -1,9 +1,10 @@
 import os
-from aws_sync_caller import get_groups_for_user, get_users_in_userpool, execute_statement
+from aws_sync_caller import get_groups_for_user, get_users_in_userpool, execute_statement, create_cognito_client
 variables = {}
 
 def lambda_handler(event, context):
     get_env_vars()
+    create_cognito_client(variables['MGMT_ACCOUNT_ROLE_ARN'])
 
     cognito_user_dict = get_user_dict_from_cognito(variables['cognito_userpool_id'])
     rds_user_dict = get_user_dict_from_rds(variables)
@@ -17,6 +18,7 @@ def get_env_vars():
     variables['database_name'] = os.getenv('DATABASE_NAME')
     variables['secret_arn'] = os.getenv('SECRET_ARN')
     variables['cognito_userpool_id'] = os.getenv('COGNITO_USERPOOL_ID')
+    variables['mgmt_account_role_arn'] = os.getenv('MGMT_ACCOUNT_ROLE_ARN')
 
     for var in variables:
         if var is None or var == {}:

@@ -62,3 +62,8 @@ variable "mgmt_account" {
   type        = string
   description = "(Required) The associated management account's ID"
 }
+
+variable "management_role_arn" {
+  type        = string
+  description = "(Required) The associated management account role for mgmt provider"
+}

@@ -10,10 +10,11 @@ resource "aws_lambda_function" "cognito_rds_sync_lambda" {
 
   environment {
     variables = {
-      DATABASE_CLUSTER_ARN = var.db_cluster_arn
-      DATABASE_NAME        = var.db_name
-      SECRET_ARN           = var.db_client_secret_arn
-      COGNITO_USERPOOL_ID  = var.cognito_user_pool_id
+      DATABASE_CLUSTER_ARN  = var.db_cluster_arn
+      DATABASE_NAME         = var.db_name
+      SECRET_ARN            = var.db_client_secret_arn
+      COGNITO_USERPOOL_ID   = var.cognito_user_pool_id
+      MGMT_ACCOUNT_ROLE_ARN = aws_iam_role.mgmt_cognito_rds_sync_lambda_role.arn
     }
   }
 

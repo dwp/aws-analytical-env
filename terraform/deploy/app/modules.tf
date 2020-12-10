@@ -177,8 +177,8 @@ module "emrfs_lambda" {
   db_cluster_arn             = module.rbac_db.rds_cluster.arn
   db_name                    = module.rbac_db.db_name
   cognito_user_pool_id       = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
-  mgmt_account               = local.account["management"]
-
+  mgmt_account               = local.account[local.management_account[local.environment]]
+  management_role_arn        = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
 }
 
 module "rbac_db" {
