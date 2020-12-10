@@ -71,6 +71,7 @@ module "emr" {
   truststore_aliases = "dataworks_root_ca,dataworks_mgt_root_ca"
   config_bucket_arn  = data.terraform_remote_state.common.outputs.config_bucket.arn
   config_bucket_cmk  = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  config_bucket_id   = data.terraform_remote_state.common.outputs.config_bucket.id
 }
 
 module "pushgateway" {
