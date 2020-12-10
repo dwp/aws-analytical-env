@@ -1,0 +1,23 @@
+spruce:
+  - base: ci/aws-analytical-env/shared/meta.yml
+    prune:
+      - meta
+    merge:
+      - with_in: ci/aws-analytical-env
+        regexp: ".*yml"
+        except:
+          - groups.yml
+          - resources.yml
+      - with_in: ci/aws-analytical-env/jobs/load-data/
+      - with_in: ci/aws-analytical-env/shared/
+        regexp: ".*yml"
+        except:
+          - groups.yml
+          - resources.yml
+    to: aviator_pipeline.yml
+fly:
+  name: analytical-env
+  target: concourse
+  expose: true
+  check_creds: true
+  config: aviator_pipeline.yml
