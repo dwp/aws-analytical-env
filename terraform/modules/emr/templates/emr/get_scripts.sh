@@ -12,8 +12,6 @@ SOURCE_PATH=$BUCKET/$SOURCE_LOCATION
     # Import the logging functions
     source /opt/emr/logging.sh
     
-    sudo mkdir -p $DESTINATION_LOCATION
-
     START_MESSAGE="Start Downloading files from $SOURCE_LOCATION to $DESTINATION_LOCATION"
     log_message $START_MESSAGE "INFO" "NOT_SET" "$${PID}" "batch_emr" "get_scripts.sh" "NOT_SET"
 
