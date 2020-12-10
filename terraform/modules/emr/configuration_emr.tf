@@ -108,7 +108,7 @@ resource "aws_s3_bucket_object" "logging_sh" {
   key     = "scripts/emr/logging.sh"
   content = file("${path.module}/templates/emr/logging.sh")
 
-  tags = merge(var.common_tags, { Name : "${var.name_prefix}-logging-sh" })
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-logging-sh" })
 }
 
 resource "aws_s3_bucket_object" "get_scripts_sh" {
@@ -120,7 +120,7 @@ resource "aws_s3_bucket_object" "get_scripts_sh" {
     }
   )
 
-  tags = merge(var.common_tags, { Name : "${var.name_prefix}-scripts-sh" })
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-get-scripts-sh" })
 }
 
 resource "aws_s3_bucket_object" "cloudwatch_sh" {
@@ -128,5 +128,5 @@ resource "aws_s3_bucket_object" "cloudwatch_sh" {
   key     = "scripts/emr/cloudwatch.sh"
   content = file("${path.module}/templates/emr/cloudwatch.sh")
 
-  tags = merge(var.common_tags, { Name : "${var.name_prefix}-cw-sh" })
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-cw-sh" })
 }
