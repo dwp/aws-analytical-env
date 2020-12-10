@@ -108,6 +108,7 @@ resource "aws_emr_cluster" "cluster" {
         format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.get_scripts_sh.key), "component/uc_repos", "/opt/emr/external"
       ]
     }
+  }
 
   depends_on = [
     aws_s3_bucket_object.get_dks_cert_sh,
