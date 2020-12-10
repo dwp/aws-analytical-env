@@ -31,6 +31,6 @@ Steps:
 - Name: "get-scripts"
   HadoopJarStep:
     Args:
-    - "s3://${config_bucket}/scripts/emr/get_scripts.sh component/uc_repos /opt/emr"
+    - "s3://${config_bucket}/scripts/emr/get_scripts.sh component/uc_repos  /opt/emr/external"
     Jar: "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
   ActionOnFailure: "CONTINUE"
