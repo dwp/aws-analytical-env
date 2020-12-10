@@ -52,3 +52,13 @@ variable "db_name" {
   type        = string
   description = "(Required) The name of the RDS Database"
 }
+
+variable "cognito_user_pool_id" {
+  type        = string
+  description = "(Required) The Cognito userpool ID"
+}
+
+variable "mgmt_account" {
+  type        = string
+  description = "(Required) The associated management account's ID"
+}

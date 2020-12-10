@@ -1,10 +1,10 @@
 resource "aws_iam_role" "policy_munge_lambda_role" {
   name               = "${var.name_prefix}-policy-munge-role"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy_munge_lambda.json
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
   tags               = var.common_tags
 }
 
-data "aws_iam_policy_document" "assume_role_policy_munge_lambda" {
+data "aws_iam_policy_document" "assume_role_lambda" {
   statement {
     sid     = "policyMungeLambdaAssumeRole"
     actions = ["sts:AssumeRole"]
@@ -69,10 +69,102 @@ data aws_iam_policy_document policy_munge_lambda_document {
       "arn:aws:iam::${var.account}:role/emrfs_*"
     ]
   }
+
+  statement {
+    sid    = "AllowGetCredentials"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:DescribeSecret",
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:ListSecretVersionIds"
+    ]
+    resources = [
+      var.db_client_secret_arn,
+    ]
+  }
+
+  statement {
+    sid       = "AllowRdsDataExecute"
+    effect    = "Allow"
+    actions   = ["rds-data:ExecuteStatement"]
+    resources = [var.db_cluster_arn]
+  }
 }
 
 resource "aws_cloudwatch_log_group" "policy_munge_lambda_logs" {
   name              = "${var.name_prefix}-policy-munge-lambda"
   retention_in_days = 180
   tags              = merge(var.common_tags, { "Name" : "${var.name_prefix}-policy-munge-lambda-logs" })
+}
+
+
+resource "aws_iam_role" "cognito_rds_sync_lambda_role" {
+  name               = "${var.name_prefix}-cognito-rds-sync-role"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
+  tags               = var.common_tags
+}
+
+resource "aws_iam_role_policy_attachment" "cognito_rds_sync_lambda_basic_policy_attach" {
+  role       = aws_iam_role.cognito_rds_sync_lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy" "cognito_rds_sync_lambda_logging_policy" {
+  role   = aws_iam_role.cognito_rds_sync_lambda_role.id
+  policy = data.aws_iam_policy_document.cognito_rds_sync_lambda_logging_policy_document.json
+}
+
+data aws_iam_policy_document cognito_rds_sync_lambda_logging_policy_document {
+  statement {
+    sid = "cognitoRdsSyncLambdaLogging"
+    actions = [
+      "logs:PutLogEvents",
+      "logs:CreateLogStream"
+    ]
+    resources = [aws_cloudwatch_log_group.cognito_rds_sync_lambda_logs.arn]
+  }
+}
+
+resource "aws_iam_role_policy" "cognito_rds_sync_lambda_iam_service_policy" {
+  role   = aws_iam_role.cognito_rds_sync_lambda_role.id
+  policy = data.aws_iam_policy_document.cognito_rds_sync_lambda_document.json
+}
+
+data aws_iam_policy_document cognito_rds_sync_lambda_document {
+  statement {
+    sid = "cognitoSyncLambda"
+    actions = [
+      "cognito-idp:AdminListGroupsForUser",
+      "cognito-idp:ListUsers",
+    ]
+    resources = [
+      "arn:aws:cognito-idp:${var.region}:${var.mgmt_account}:userpool/${var.cognito_user_pool_id}"
+    ]
+  }
+  statement {
+    sid    = "AllowGetCredentials"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:DescribeSecret",
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:ListSecretVersionIds"
+    ]
+    resources = [
+      var.db_client_secret_arn,
+    ]
+  }
+
+  statement {
+    sid       = "AllowRdsDataExecute"
+    effect    = "Allow"
+    actions   = ["rds-data:ExecuteStatement"]
+    resources = [var.db_cluster_arn]
+  }
+
+}
+
+resource "aws_cloudwatch_log_group" "cognito_rds_sync_lambda_logs" {
+  name              = "${var.name_prefix}-cognito-rds-sync-lambda"
+  retention_in_days = 180
+  tags              = merge(var.common_tags, { "Name" : "${var.name_prefix}-cognito-rds-sync-lambda-logs" })
 }
