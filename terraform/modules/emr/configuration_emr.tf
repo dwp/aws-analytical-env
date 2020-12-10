@@ -116,7 +116,7 @@ resource "aws_s3_bucket_object" "get_scripts_sh" {
   key    = "scripts/emr/get_scripts.sh"
   content = templatefile("${path.module}/templates/emr/get_scripts.sh",
     {
-      config_bucket = aws_s3_bucket.emr.id
+      config_bucket = var.config_bucket_arn
     }
   )
 
