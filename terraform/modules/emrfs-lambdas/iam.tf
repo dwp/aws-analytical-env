@@ -104,9 +104,9 @@ resource "aws_iam_role" "cognito_rds_sync_lambda_role" {
   tags               = var.common_tags
 }
 
-resource "aws_iam_role_policy_attachment" "cognito_rds_sync_lambda_basic_policy_attach" {
-  role       = aws_iam_role.cognito_rds_sync_lambda_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+resource "aws_iam_role_policy" "cognito_rds_sync_lambda_basic_policy_attach" {
+  role   = aws_iam_role.cognito_rds_sync_lambda_role.name
+  policy = data.aws_iam_policy_document.cognito_rds_sync_lambda_execution_policy.json
 }
 
 data "aws_iam_policy_document" "cognito_rds_sync_lambda_execution_policy" {
@@ -191,7 +191,7 @@ data "aws_iam_policy_document" "mgmt_trust_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = aws_iam_role.cognito_rds_sync_lambda_role.arn
+      identifiers = [aws_iam_role.cognito_rds_sync_lambda_role.arn]
     }
   }
 }

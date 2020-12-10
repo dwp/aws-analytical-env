@@ -7,6 +7,7 @@ variables['database_cluster_arn'] = 'arn:12345432::test_arn'
 variables['database_name'] = 'test_db'
 variables['secret_arn'] = 'arn:12345432::secret_test_arn'
 variables['cognito_userpool_id'] = '1234abcd-e5'
+variables['mgmt_account_role_arn'] = 'arn:12345432::mgmt_role_arn'
 
 mocked_db_response = {
     'numberOfRecordsUpdated': 0,
@@ -98,13 +99,15 @@ class LambdaHandlerTests(TestCase):
         mock_get_env.side_effect = [variables['database_cluster_arn'],
                                     variables['database_name'],
                                     variables['secret_arn'],
-                                    variables['cognito_userpool_id']]
+                                    variables['cognito_userpool_id'],
+                                    variables['mgmt_account_role_arn']]
         lambda_handler.get_env_vars()
 
         assert lambda_handler.variables['database_cluster_arn'] == variables['database_cluster_arn']
         assert lambda_handler.variables['database_name'] == variables['database_name']
         assert lambda_handler.variables['secret_arn'] == variables['secret_arn']
         assert lambda_handler.variables['cognito_userpool_id'] == variables['cognito_userpool_id']
+        assert lambda_handler.variables['mgmt_account_role_arn'] == variables['mgmt_account_role_arn']
 
     @patch('lambda_handler.execute_statement')
     def test_get_user_dict_from_rds(self, mock_execute_statement):
