@@ -105,7 +105,7 @@ resource "aws_emr_cluster" "cluster" {
     hadoop_jar_step {
       jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
       args = [
-        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.get_scripts_sh.key), "component/uc_repos", "/opt/emr/repo"
+        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.get_scripts_sh.key), "component/uc_repos", "/opt/emr/repos"
       ]
     }
   }
