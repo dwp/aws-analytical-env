@@ -6,9 +6,6 @@ BootstrapActions:
 - Name: "emr-setup"
   ScriptBootstrapAction:
     Path: "s3://${config_bucket}/scripts/emr/setup.sh"
-- Name: "install-r-packages"
-  ScriptBootstrapAction:
-    Path: "s3://${config_bucket}/scripts/emr/r_packages_install.sh"
 Steps:
 - Name: "hdfs-setup"
   HadoopJarStep:

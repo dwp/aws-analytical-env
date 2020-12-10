@@ -1,0 +1,21 @@
+jobs:
+- name: load-uc-labs-prod
+  serial: true
+  plan:
+  - get: aws-analytical-dataset-generation
+  - get: aws-analytical-env
+  - .: (( inject meta.plan.terraform-bootstrap-crown ))
+  - .: (( inject meta.plan.terraform-output-adg ))
+    config:
+      params:
+        TF_WORKSPACE: production
+  - .: (( inject meta.plan.create-aws-profiles ))
+    config:
+      params:
+        AWS_ROLE: arn:aws:iam::((aws_account.production)):role/ci
+  - .: (( inject meta.plan.create-crown-credentials ))
+  - .: (( inject meta.plan.get-uc-labs-files ))
+    config:
+      params:
+        SOURCE_PATH: "/home/uc-labs-export"
+  - .: (( inject meta.plan.load-s3 ))
