@@ -129,7 +129,7 @@ class LambdaHandlerTests(TestCase):
         lambda_handler.sync_values(mocked_cognito_user_dict, mocked_rds_user_dict, variables)
 
         name, args, kwargs = mock_execute_statement.mock_calls[0]
-        assert 'UPDATE Users SET active = True WHERE userName = user_one; UPDATE Users SET active = False WHERE userName = user_two; INSERT INTO User (userName, active) VALUES (user_three, True)' in args[0]
+        assert 'UPDATE Users SET active = True WHERE userName = "user_one"; UPDATE Users SET active = False WHERE userName = "user_two"; INSERT INTO User (userName, active) VALUES ("user_three", True)' in args[0]
         mock_execute_statement.assert_called_with(
             AnyArg(),
             variables['secret_arn'],

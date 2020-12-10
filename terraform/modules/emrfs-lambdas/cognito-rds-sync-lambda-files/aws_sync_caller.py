@@ -3,6 +3,7 @@ import boto3
 rds_data_client = boto3.client('rds-data')
 sts_connection = boto3.client('sts')
 
+# assumes mgmt role to set up cognito client associated with mgmt account
 def create_cognito_client(mgmt_account_role_arn):
     mgmt_account = sts_connection.assume_role(
         RoleArn=mgmt_account_role_arn,

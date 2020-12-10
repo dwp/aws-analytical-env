@@ -25,6 +25,7 @@ def get_env_vars():
             raise Exception(f'Variable: {var} has not been provided.')
 
 
+# queries RDS for all user data and returns a dict mapping username to active, group_names and user_name_sub
 def get_user_dict_from_rds(variables):
     return_dict = {}
     sql = f'SELECT User.userName, User.active, `Group`.groupname \
@@ -57,7 +58,7 @@ def get_user_dict_from_rds(variables):
     return return_dict
 
 
-# Creates map of all users to their status and groups
+# queries Cognito userpool for all user data and returns a dict mapping username to active, group_names and user_name_sub
 def get_user_dict_from_cognito(user_pool_id):
     users = get_users_in_userpool(user_pool_id)
 
@@ -89,14 +90,15 @@ def sync_values(cognito_user_dict, rds_user_dict, variables):
                 # sql statement to update existing user status
                 sql = ''.join([
                     sql,
-                    f'UPDATE Users SET active = {cognito_user_dict[key].get("active")} WHERE userName = {key}; '
+                    f'UPDATE User SET active = {cognito_user_dict[key].get("active")} WHERE userName = "{key}"; '
                 ])
         else:
             # sql to add user to user table
             sql = ''.join([
                 sql,
-                f'INSERT INTO User (userName, active) VALUES ({key}, {cognito_user_dict[key].get("active")}); '
+                f'INSERT INTO User (userName, active) VALUES ("{key}", {cognito_user_dict[key].get("active")}); '
             ])
+    print(sql)
     try:
         execute_statement(
             sql,
