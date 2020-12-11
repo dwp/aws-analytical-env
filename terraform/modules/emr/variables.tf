@@ -200,3 +200,9 @@ variable "config_bucket_cmk" {
   description = "CMK for the Config bucket to read code"
   type        = string
 }
+
+variable "config_bucket_id" {
+  description = "Id for config bucket"
+  type        = string
+}
+
