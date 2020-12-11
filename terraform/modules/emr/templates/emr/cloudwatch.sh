@@ -11,7 +11,7 @@ mkdir -p /opt/aws/amazon-cloudwatch-agent/etc
 cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGENTCONFIG
 {
   "agent": {
-    "metrics_collection_interval": "$${cwa_metrics_collection_interval}",
+    "metrics_collection_interval": $${cwa_metrics_collection_interval},
     "logfile": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log"
   },
   "logs": {
