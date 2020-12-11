@@ -199,7 +199,10 @@ module "rbac_db" {
     version   = var.manage_mysql_user_lambda_zip.version
   }
 
-  client_names = ["emrfs-lambda"]
+  client_names = [
+    "emrfs-lambda",
+    "analytical_env_support"
+  ]
 
   common_tags = local.common_tags
 
