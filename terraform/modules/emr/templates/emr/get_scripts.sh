@@ -20,7 +20,7 @@ SOURCE_PATH=$BUCKET/$SOURCE_LOCATION
     END_MESSAGE="Finish Downloading files from $SOURCE_LOCATION to $DESTINATION_LOCATION"
     log_message $END_MESSAGE "INFO" "NOT_SET" "$${PID}" "batch_emr" "get_scripts.sh" "NOT_SET"
 
-)  >> /var/log/get_scripts.log 2>&1
+)  >> /var/log/batch/get_scripts.log 2>&1
 
 
 
