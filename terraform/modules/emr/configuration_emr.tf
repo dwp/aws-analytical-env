@@ -35,8 +35,8 @@ data "template_file" "emr_setup_sh" {
     full_no_proxy                   = join(",", local.no_proxy_hosts)
     cognito_role_arn                = aws_iam_role.cogntio_read_only_role.arn
     user_pool_id                    = var.cognito_user_pool_id
-    logging_shell                   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.cloudwatch_sh.key)
-    cloudwatch_shell                = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.logging_sh.key)
+    logging_shell                   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.logging_sh.key)
+    cloudwatch_shell                = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.cloudwatch_sh.key)
     cwa_namespace                   = local.cw_agent_namespace
     cwa_log_group_name              = local.cw_agent_log_group_name
     aws_default_region              = "eu-west-2"
