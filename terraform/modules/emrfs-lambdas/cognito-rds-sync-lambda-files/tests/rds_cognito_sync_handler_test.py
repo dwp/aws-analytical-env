@@ -134,7 +134,10 @@ class LambdaHandlerTests(TestCase):
         name, args, kwargs = mock_execute_statement.mock_calls[0]
         assert 'UPDATE User SET active = True WHERE userName = "user_one";' in args[0]
         assert 'UPDATE User SET active = False WHERE userName = "user_two";' in args[0]
-        assert 'INSERT INTO User (userName, active) VALUES ("user_three", True);' in args[0]
+        assert 'INSERT INTO User (userName, active, accountname) VALUES (' \
+               '"user_three", ' \
+               'True, ' \
+               '"account_name_only");' in args[0]
         assert 'UPDATE User SET active = False WHERE userName = "user_four";' in args[0]
         mock_execute_statement.assert_called_with(
             AnyArg(),

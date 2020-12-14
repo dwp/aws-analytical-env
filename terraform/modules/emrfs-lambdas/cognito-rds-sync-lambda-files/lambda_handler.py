@@ -91,7 +91,9 @@ def sync_values(cognito_user_dict, rds_user_dict, variables_dict):
             # sql to add user to user table
             sql = ''.join([
                 sql,
-                f'INSERT INTO User (userName, active) VALUES ("{key}", {cognito_user_dict[key].get("active")}); '
+                f'INSERT INTO User (userName, active, accountname) VALUES ("{key}", '
+                f'{cognito_user_dict[key].get("active")}, '
+                f'"{cognito_user_dict[key].get("account_name")}"); '
             ])
         elif key in rds_only:
             sql = ''.join([
