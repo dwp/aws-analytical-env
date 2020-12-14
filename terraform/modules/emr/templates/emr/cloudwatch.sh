@@ -19,7 +19,7 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
       "files": {
         "collect_list": [
           {
-            "file_path": "/var/log/get_scripts.log",
+            "file_path": "/var/log/batch/get_scripts.log",
             "log_group_name": "$${cwa_log_group_name}",
             "log_stream_name": "get_scripts.log",
             "timezone": "UTC"

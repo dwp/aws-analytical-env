@@ -22,6 +22,9 @@ export NO_PROXY="$FULL_NO_PROXY"
 sudo yum update -y amazon-ssm-agent
 sudo yum install -y jq
 
+sudo mkdir -p /var/log/batch
+sudo chown hadoop:hadoop /var/log/batch
+
 aws s3 cp "${logging_shell}"     /opt/emr/logging.sh
 aws s3 cp "${cloudwatch_shell}"  /opt/emr/cloudwatch.sh
 chmod u+x /opt/emr/cloudwatch.sh
