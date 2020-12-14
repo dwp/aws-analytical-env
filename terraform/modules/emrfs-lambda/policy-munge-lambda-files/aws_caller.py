@@ -108,11 +108,11 @@ def get_emrfs_roles():
     return return_list
 
 
-def create_role_and_await_consistency(role_name, assumeRoleDoc):
+def create_role_and_await_consistency(role_name, assume_role_doc):
     iam_client.create_role(
         Path="/emrfs/",
         RoleName=role_name,
-        AssumeRolePolicyDocument=assumeRoleDoc
+        AssumeRolePolicyDocument=assume_role_doc
     )
     waiter = iam_client.get_waiter('role_exists')
     waiter.wait(
