@@ -1,6 +1,7 @@
 import os
-from aws_sync_caller import get_groups_for_user, get_users_in_userpool, execute_statement, create_cognito_client
+from aws_sync_caller import get_users_in_userpool, execute_statement, create_cognito_client
 variables = {}
+
 
 def lambda_handler(event, context):
     get_env_vars()
@@ -26,35 +27,25 @@ def get_env_vars():
 
 
 # queries RDS for all user data and returns a dict mapping username to active, group_names and user_name_sub
-def get_user_dict_from_rds(variables):
+def get_user_dict_from_rds(variables_dict):
     return_dict = {}
-    sql = f'SELECT User.userName, User.active, `Group`.groupname \
-    FROM User \
-    JOIN UserGroup ON User.id = UserGroup.userId \
-    JOIN `Group` ON UserGroup.groupId = `Group`.id;'
+    sql = f'SELECT User.userName, User.active FROM User'
 
-    try:
-        response = execute_statement(
-            sql,
-            variables['secret_arn'],
-            variables["database_name"],
-            variables["database_cluster_arn"]
-        )
-        for record in response['records']:
-            user_name = ''.join(record[0].values())
-            user_name_raw = user_name[0:-3]
-            active = list(record[1].values())[0]
-            group_name = [''.join(record[2].values())]
-            if return_dict.get(user_name_raw) == None:
-                return_dict[user_name[0:-3]] = {
-                    'active': active,
-                    'group_names': group_name,
-                    'user_name_sub': user_name
-                }
-            else:
-                return_dict[user_name_raw]['group_names'].extend(group_name)
-    except Exception as e:
-        raise e
+    response = execute_statement(
+        sql,
+        variables_dict['secret_arn'],
+        variables_dict["database_name"],
+        variables_dict["database_cluster_arn"]
+    )
+    for record in response['records']:
+        user_name = ''.join(record[0].values())
+        user_name_raw = user_name[0:-3]
+        active = list(record[1].values())[0]
+        if return_dict.get(user_name_raw) == None:
+            return_dict[user_name[0:-3]] = {
+                'active': active,
+                'user_name_sub': user_name
+            }
     return return_dict
 
 
@@ -63,48 +54,63 @@ def get_user_dict_from_cognito(user_pool_id):
     users = get_users_in_userpool(user_pool_id)
 
     return_dict = {}
-    user_groups = lambda user_name_no_sub: [
-        x.get('GroupName') for x in
-        get_groups_for_user(user_name_no_sub, user_pool_id)
-    ]
 
-    user_object = lambda user_name_no_sub: {
-        user.get('Username'): {
+    user_object = lambda user, username: {
+        username: {
             'active': user.get('Enabled'),
-            'group_names': user_groups(user.get('Username')),
-            'user_name_sub':''.join([user.get('Username'), user.get('Attributes')[0].get('Value')[0:3]])
+            'user_name_sub':''.join([username, get_attribute(user.get('Attributes'), 'sub')[0:3]]),
+            'account_name': user.get('Username')
         }
     }
 
     for user in users:
-        return_dict.update(user_object(user))
-
+        username = get_attribute(user.get('Attributes'), 'preferred_username') or user.get('Username')
+        return_dict.update(user_object(user, username))
     return return_dict
 
+
+def get_attribute(attributes, name):
+    for attribute in attributes:
+        if attribute.get('Name') == name:
+            return attribute.get('Value')
+    return None
+
+
 # compares rds user dict to cognito user dict and updates rds with values from cognito
-def sync_values(cognito_user_dict, rds_user_dict, variables):
+def sync_values(cognito_user_dict, rds_user_dict, variables_dict):
+    cognito_keys = list(cognito_user_dict.keys())
+    rds_keys = list(rds_user_dict.keys())
+    cognito_only = [key for key in cognito_keys if key not in rds_keys]
+    rds_only = [key for key in rds_keys if key not in cognito_keys]
+    all_keys = cognito_keys
+    all_keys.extend(rds_only)
+
     sql=''
-    for key, val in cognito_user_dict.items():
-        if key in rds_user_dict:
-            if rds_user_dict[key].get('active') != cognito_user_dict[key].get('active'):
-                # sql statement to update existing user status
-                sql = ''.join([
-                    sql,
-                    f'UPDATE User SET active = {cognito_user_dict[key].get("active")} WHERE userName = "{key}"; '
-                ])
-        else:
+    for key in all_keys:
+        if key in cognito_only:
             # sql to add user to user table
             sql = ''.join([
                 sql,
                 f'INSERT INTO User (userName, active) VALUES ("{key}", {cognito_user_dict[key].get("active")}); '
             ])
+        elif key in rds_only:
+            sql = ''.join([
+                sql,
+                f'UPDATE User SET active = {False} WHERE userName = "{key}"; '
+            ])
+        elif key in cognito_keys \
+                and key in rds_keys \
+                and rds_user_dict[key].get('active') != cognito_user_dict[key].get('active'):
+            # sql statement to update existing user status
+            sql = ''.join([
+                sql,
+                f'UPDATE User SET active = {cognito_user_dict[key].get("active")} WHERE userName = "{key}"; '
+            ])
+
     print(sql)
-    try:
-        execute_statement(
-            sql,
-            variables['secret_arn'],
-            variables["database_name"],
-            variables["database_cluster_arn"]
-        )
-    except Exception as e:
-        raise e
+    execute_statement(
+        sql,
+        variables_dict['secret_arn'],
+        variables_dict["database_name"],
+        variables_dict["database_cluster_arn"]
+    )

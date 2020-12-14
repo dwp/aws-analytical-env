@@ -23,18 +23,7 @@ def create_cognito_client(mgmt_account_role_arn):
 def get_users_in_userpool(user_pool_id):
     return cognito_client.list_users(
         UserPoolId=user_pool_id,
-        AttributesToGet=[
-            'sub',
-        ],
     ).get('Users')
-
-
-# returns list of all groups assigned to a user
-def get_groups_for_user(user_name_no_sub, user_pool_id):
-    return cognito_client.admin_list_groups_for_user(
-        Username=user_name_no_sub,
-        UserPoolId=user_pool_id,
-    ).get('Groups')
 
 
 # connects to RDS instance and executes the SQL statement passed in
