@@ -98,6 +98,4 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
   done
 done
 
-aws s3 cp s3://${config_bucket}/workflow-manager/azkaban/step.sh /home/hadoop/step.sh
-chmod 755 /home/hadoop/step.sh
 
