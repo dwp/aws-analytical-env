@@ -113,7 +113,7 @@ data "aws_iam_policy_document" "cognito_rds_sync_lambda_execution_policy" {
   statement {
     sid       = "cognito-rds-sync-mgmt"
     actions   = ["sts:AssumeRole"]
-    resources = [aws_iam_role.mgmt_cognito_rds_sync_lambda_role[0].arn]
+    resources = ["arn:aws:iam::${var.mgmt_account}:role/${var.name_prefix}-mgmt-cognito-rds-sync-role"]
   }
   statement {
     sid = "lambda_basic_execution"
@@ -198,8 +198,10 @@ data "aws_iam_policy_document" "mgmt_trust_policy" {
 }
 
 resource "aws_iam_role_policy" "mgmt_cognito_rds_sync_lambda_policy" {
-  policy = data.aws_iam_policy_document.mgmt_cognito_rds_sync_lambda_document.json
-  role   = aws_iam_role.mgmt_cognito_rds_sync_lambda_role[0].id
+  count      = var.environment == "development" || var.environment == "preprod" ? 1 : 0
+  depends_on = [aws_iam_role.mgmt_cognito_rds_sync_lambda_role[0]]
+  policy     = data.aws_iam_policy_document.mgmt_cognito_rds_sync_lambda_document.json
+  role       = aws_iam_role.mgmt_cognito_rds_sync_lambda_role[0].id
 }
 
 data aws_iam_policy_document mgmt_cognito_rds_sync_lambda_document {
