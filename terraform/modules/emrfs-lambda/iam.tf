@@ -6,7 +6,7 @@ resource "aws_iam_role" "policy_munge_lambda_role" {
 
 data "aws_iam_policy_document" "assume_role_lambda" {
   statement {
-    sid     = "policyMungeLambdaAssumeRole"
+    sid     = "PolicyMungeLambdaAssumeRole"
     actions = ["sts:AssumeRole"]
 
     principals {
@@ -28,7 +28,7 @@ resource "aws_iam_role_policy" "policy_munge_lambda_logging_policy" {
 
 data aws_iam_policy_document policy_munge_lambda_logging_policy_document {
   statement {
-    sid = "policyMungeLambdaLogging"
+    sid = "PolicyMungeLambdaLogging"
     actions = [
       "logs:PutLogEvents",
       "logs:CreateLogStream"
@@ -44,7 +44,7 @@ resource "aws_iam_role_policy" "policy_munge_lambda_iam_service_policy" {
 
 data aws_iam_policy_document policy_munge_lambda_document {
   statement {
-    sid = "policyMungeLambdaIam"
+    sid = "PolicyMungeLambdaIam"
     actions = [
       "iam:AttachRolePolicy",
       "iam:CreatePolicy",
@@ -111,12 +111,12 @@ resource "aws_iam_role_policy" "cognito_rds_sync_lambda_basic_policy_attach" {
 
 data "aws_iam_policy_document" "cognito_rds_sync_lambda_execution_policy" {
   statement {
-    sid       = "cognito-rds-sync-mgmt"
+    sid       = "CognitoRdsSyncMgmt"
     actions   = ["sts:AssumeRole"]
     resources = ["arn:aws:iam::${var.mgmt_account}:role/${var.name_prefix}-mgmt-cognito-rds-sync-role"]
   }
   statement {
-    sid = "lambda_basic_execution"
+    sid = "LambdaBasicExecution"
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
@@ -133,7 +133,7 @@ resource "aws_iam_role_policy" "cognito_rds_sync_lambda_logging_policy" {
 
 data aws_iam_policy_document cognito_rds_sync_lambda_logging_policy_document {
   statement {
-    sid = "cognitoRdsSyncLambdaLogging"
+    sid = "CognitoRdsSyncLambdaLogging"
     actions = [
       "logs:PutLogEvents",
       "logs:CreateLogStream"
@@ -187,7 +187,7 @@ resource "aws_iam_role" "mgmt_cognito_rds_sync_lambda_role" {
 data "aws_iam_policy_document" "mgmt_trust_policy" {
 
   statement {
-    sid     = "mgmtLambdaAssumeRole"
+    sid     = "MgmtLambdaAssumeRole"
     actions = ["sts:AssumeRole"]
 
     principals {
@@ -202,11 +202,12 @@ resource "aws_iam_role_policy" "mgmt_cognito_rds_sync_lambda_policy" {
   depends_on = [aws_iam_role.mgmt_cognito_rds_sync_lambda_role[0]]
   policy     = data.aws_iam_policy_document.mgmt_cognito_rds_sync_lambda_document.json
   role       = aws_iam_role.mgmt_cognito_rds_sync_lambda_role[0].id
+  provider   = aws.management
 }
 
 data aws_iam_policy_document mgmt_cognito_rds_sync_lambda_document {
   statement {
-    sid = "cognitoSyncLambda"
+    sid = "CognitoSyncLambda"
     actions = [
       "cognito-idp:AdminListGroupsForUser",
       "cognito-idp:ListUsers",
