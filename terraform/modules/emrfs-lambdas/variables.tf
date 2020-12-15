@@ -67,3 +67,8 @@ variable "management_role_arn" {
   type        = string
   description = "(Required) The associated management account role for mgmt provider"
 }
+
+variable "environment" {
+  type        = string
+  description = "(Required) The local environment that Terraform is running in"
+}
