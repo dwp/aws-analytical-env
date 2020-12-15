@@ -163,7 +163,7 @@ module launcher {
 }
 
 module "emrfs_lambda" {
-  source = "../../modules/emrfs-lambda"
+  source = "../../modules/emrfs-lambdas"
 
   emrfs_iam_assume_role_json = module.emr.emrfs_iam_assume_role_json
   account                    = local.account[local.environment]
@@ -176,6 +176,10 @@ module "emrfs_lambda" {
   db_client_secret_arn       = module.rbac_db.secrets.client_credentials["emrfs-lambda"].arn
   db_cluster_arn             = module.rbac_db.rds_cluster.arn
   db_name                    = module.rbac_db.db_name
+  cognito_user_pool_id       = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
+  mgmt_account               = local.account[local.management_account[local.environment]]
+  management_role_arn        = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
+  environment                = local.environment
 }
 
 module "rbac_db" {

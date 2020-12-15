@@ -52,3 +52,23 @@ variable "db_name" {
   type        = string
   description = "(Required) The name of the RDS Database"
 }
+
+variable "cognito_user_pool_id" {
+  type        = string
+  description = "(Required) The Cognito userpool ID"
+}
+
+variable "mgmt_account" {
+  type        = string
+  description = "(Required) The associated management account's ID"
+}
+
+variable "management_role_arn" {
+  type        = string
+  description = "(Required) The associated management account role for mgmt provider"
+}
+
+variable "environment" {
+  type        = string
+  description = "(Required) The local environment that Terraform is running in"
+}
