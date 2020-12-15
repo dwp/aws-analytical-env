@@ -30,6 +30,9 @@ aws s3 cp "${cloudwatch_shell}"  /opt/emr/cloudwatch.sh
 chmod u+x /opt/emr/cloudwatch.sh
 chmod u+x /opt/emr/logging.sh
 
+aws s3 cp s3://${config_bucket}/workflow-manager/azkaban/step.sh /home/hadoop/step.sh
+chmod u+x /home/hadoop/step.sh
+
 sudo /opt/emr/cloudwatch.sh \
     "${cwa_metrics_collection_interval}" "${cwa_log_group_name}" "${aws_default_region}" \
     "${cwa_namespace}"
