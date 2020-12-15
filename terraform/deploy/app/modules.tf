@@ -163,7 +163,7 @@ module launcher {
 }
 
 module "emrfs_lambda" {
-  source = "..\/..\/modules\/emrfs-lambda"
+  source = "../../modules/emrfs-lambda"
 
   emrfs_iam_assume_role_json = module.emr.emrfs_iam_assume_role_json
   account                    = local.account[local.environment]
