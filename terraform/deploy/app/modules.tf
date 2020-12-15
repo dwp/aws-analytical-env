@@ -169,7 +169,7 @@ module "emrfs_lambda" {
   account                    = local.account[local.environment]
   aws_subnets_private        = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
   common_tags                = local.common_tags
-  name_prefix                = "analytical-env-munge-lambda"
+  name_prefix                = "analytical-env-emrfs-lambda"
   region                     = var.region
   vpc_id                     = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
   internet_proxy_sg_id       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_sg

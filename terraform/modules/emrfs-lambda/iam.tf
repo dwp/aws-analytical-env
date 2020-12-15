@@ -202,6 +202,7 @@ resource "aws_iam_role_policy" "mgmt_cognito_rds_sync_lambda_policy" {
   depends_on = [aws_iam_role.mgmt_cognito_rds_sync_lambda_role[0]]
   policy     = data.aws_iam_policy_document.mgmt_cognito_rds_sync_lambda_document.json
   role       = aws_iam_role.mgmt_cognito_rds_sync_lambda_role[0].id
+  provider   = aws.management
 }
 
 data aws_iam_policy_document mgmt_cognito_rds_sync_lambda_document {
