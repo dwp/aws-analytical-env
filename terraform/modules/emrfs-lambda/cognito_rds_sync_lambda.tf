@@ -2,7 +2,7 @@ resource "aws_lambda_function" "cognito_rds_sync_lambda" {
   filename         = data.archive_file.cognito_rds_sync_lambda_zip.output_path
   function_name    = "${var.name_prefix}-cognito-rds-sync"
   role             = aws_iam_role.cognito_rds_sync_lambda_role.arn
-  handler          = "lambda_function.lambda_handler"
+  handler          = "lambda_handler.lambda_handler"
   runtime          = "python3.8"
   source_code_hash = data.archive_file.cognito_rds_sync_lambda_zip.output_base64sha256
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-cognito-rds-sync", "ProtectSensitiveData" = "False" })

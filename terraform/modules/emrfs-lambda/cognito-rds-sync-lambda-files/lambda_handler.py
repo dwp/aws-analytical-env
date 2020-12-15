@@ -5,7 +5,7 @@ variables = {}
 
 def lambda_handler(event, context):
     get_env_vars()
-    create_cognito_client(variables['MGMT_ACCOUNT_ROLE_ARN'])
+    create_cognito_client(variables['mgmt_account_role_arn'])
 
     cognito_user_dict = get_user_dict_from_cognito(variables['cognito_userpool_id'])
     rds_user_dict = get_user_dict_from_rds(variables)
@@ -85,34 +85,65 @@ def sync_values(cognito_user_dict, rds_user_dict, variables_dict):
     all_keys = cognito_keys
     all_keys.extend(rds_only)
 
-    sql=''
+    inserts='INSERT INTO User (username, active, accountname) VALUES '
+    updates_pt_1='UPDATE User SET active =(case '
+    updates_pt_2='WHERE username in ('
     for key in all_keys:
         if key in cognito_only:
             # sql to add user to user table
-            sql = ''.join([
-                sql,
-                f'INSERT INTO User (userName, active, accountname) VALUES ("{key}", '
+            inserts = ''.join([
+                inserts,
+                f'("{cognito_user_dict[key].get("user_name_sub")}", '
                 f'{cognito_user_dict[key].get("active")}, '
-                f'"{cognito_user_dict[key].get("account_name")}"); '
+                f'"{cognito_user_dict[key].get("account_name")}"), '
             ])
         elif key in rds_only:
-            sql = ''.join([
-                sql,
-                f'UPDATE User SET active = {False} WHERE userName = "{key}"; '
+            updates_pt_1 = ''.join([
+                updates_pt_1,
+                f'when username = "{rds_user_dict[key].get("user_name_sub")}" then false '
             ])
+            updates_pt_2 = ''.join([
+                updates_pt_2,
+                f'"{rds_user_dict[key].get("user_name_sub")}", '
+            ])
+            # sql = ''.join([
+            #     sql,
+            #     f'UPDATE User SET active = {False} WHERE userName = "{key}"; '
+            # ])
         elif key in cognito_keys \
                 and key in rds_keys \
                 and rds_user_dict[key].get('active') != cognito_user_dict[key].get('active'):
             # sql statement to update existing user status
-            sql = ''.join([
-                sql,
-                f'UPDATE User SET active = {cognito_user_dict[key].get("active")} WHERE userName = "{key}"; '
+            updates_pt_1 = ''.join([
+                updates_pt_1,
+                f'when username = "{cognito_user_dict[key].get("user_name_sub")}" then "{"true" if cognito_user_dict[key].get("active") else "false"}" '
             ])
+            updates_pt_2 = ''.join([
+                updates_pt_2,
+                f'"{key}", '
+            ])
+            # sql = ''.join([
+            #     sql,
+            #     f'UPDATE User SET active = {cognito_user_dict[key].get("active")} WHERE userName = "{key}"; '
+            # ])
 
-    print(sql)
-    execute_statement(
-        sql,
-        variables_dict['secret_arn'],
-        variables_dict["database_name"],
-        variables_dict["database_cluster_arn"]
-    )
+    if "VALUES (" in inserts:
+        sql = ''.join([inserts[:-2], ';'])
+        print(sql)
+        execute_statement(
+            sql,
+            variables_dict['secret_arn'],
+            variables_dict["database_name"],
+            variables_dict["database_cluster_arn"]
+        )
+
+    if "case when" in updates_pt_1:
+        sql = ''.join([updates_pt_1, 'end) ', updates_pt_2[:-2], ');'])
+        print(sql)
+        execute_statement(
+            sql,
+            variables_dict['secret_arn'],
+            variables_dict["database_name"],
+            variables_dict["database_cluster_arn"]
+        )
+
