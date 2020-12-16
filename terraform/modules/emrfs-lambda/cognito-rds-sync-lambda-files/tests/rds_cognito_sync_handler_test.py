@@ -132,16 +132,18 @@ class LambdaHandlerTests(TestCase):
         lambda_handler.sync_values(mocked_cognito_user_dict, mocked_rds_user_dict, variables)
 
         name, args, kwargs = mock_execute_statement.mock_calls[0]
-        assert 'UPDATE User SET active = True WHERE userName = "user_one";' in args[0]
-        assert 'UPDATE User SET active = False WHERE userName = "user_two";' in args[0]
-        assert 'INSERT INTO User (userName, active, accountname) VALUES (' \
-               '"user_three", ' \
-               'True, ' \
-               '"account_name_only");' in args[0]
-        assert 'UPDATE User SET active = False WHERE userName = "user_four";' in args[0]
+        assert 'INSERT INTO User (username, active, accountname) ' \
+               'VALUES ("user_three876", True, "account_name_only");' in args[0]
+
+        name, args, kwargs = mock_execute_statement.mock_calls[1]
+        assert 'when username = "user_one123" then "1" ' \
+               'when username = "user_two654" then "0" ' \
+               'when username = "user_four987" then 0 end) ' \
+               'WHERE username in ("user_one", "user_two", "user_four987");' in args[0]
         mock_execute_statement.assert_called_with(
             AnyArg(),
             variables['secret_arn'],
             variables["database_name"],
             variables["database_cluster_arn"]
         )
+        assert 2 == mock_execute_statement.call_count
