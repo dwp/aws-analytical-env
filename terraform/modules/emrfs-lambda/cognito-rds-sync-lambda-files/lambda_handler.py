@@ -100,32 +100,24 @@ def sync_values(cognito_user_dict, rds_user_dict, variables_dict):
         elif key in rds_only:
             updates_pt_1 = ''.join([
                 updates_pt_1,
-                f'when username = "{rds_user_dict[key].get("user_name_sub")}" then false '
+                f'when username = "{rds_user_dict[key].get("user_name_sub")}" then 0 '
             ])
             updates_pt_2 = ''.join([
                 updates_pt_2,
                 f'"{rds_user_dict[key].get("user_name_sub")}", '
             ])
-            # sql = ''.join([
-            #     sql,
-            #     f'UPDATE User SET active = {False} WHERE userName = "{key}"; '
-            # ])
         elif key in cognito_keys \
                 and key in rds_keys \
                 and rds_user_dict[key].get('active') != cognito_user_dict[key].get('active'):
             # sql statement to update existing user status
             updates_pt_1 = ''.join([
                 updates_pt_1,
-                f'when username = "{cognito_user_dict[key].get("user_name_sub")}" then "{"true" if cognito_user_dict[key].get("active") else "false"}" '
+                f'when username = "{cognito_user_dict[key].get("user_name_sub")}" then "{1 if cognito_user_dict[key].get("active") else 0}" '
             ])
             updates_pt_2 = ''.join([
                 updates_pt_2,
                 f'"{key}", '
             ])
-            # sql = ''.join([
-            #     sql,
-            #     f'UPDATE User SET active = {cognito_user_dict[key].get("active")} WHERE userName = "{key}"; '
-            # ])
 
     if "VALUES (" in inserts:
         sql = ''.join([inserts[:-2], ';'])
