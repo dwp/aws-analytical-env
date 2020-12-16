@@ -84,43 +84,38 @@ def sync_values(cognito_user_dict, rds_user_dict, variables_dict):
     rds_only = [key for key in rds_keys if key not in cognito_keys]
     all_keys = cognito_keys
     all_keys.extend(rds_only)
+    inserts_added = False
+    updates_added = False
 
     inserts='INSERT INTO User (username, active, accountname) VALUES '
-    updates_pt_1='UPDATE User SET active =(case '
-    updates_pt_2='WHERE username in ('
+    active_cases='UPDATE User SET active =(case '
+    update_condition='WHERE username in ('
     for key in all_keys:
         if key in cognito_only:
             # sql to add user to user table
-            inserts = ''.join([
-                inserts,
-                f'("{cognito_user_dict[key].get("user_name_sub")}", '
-                f'{cognito_user_dict[key].get("active")}, '
-                f'"{cognito_user_dict[key].get("account_name")}"), '
-            ])
+            inserts = f'{inserts}' \
+                      f'("{cognito_user_dict[key].get("user_name_sub")}", ' \
+                      f'{cognito_user_dict[key].get("active")}, ' \
+                      f'"{cognito_user_dict[key].get("account_name")}"), '
+            inserts_added = True
+
         elif key in rds_only:
-            updates_pt_1 = ''.join([
-                updates_pt_1,
-                f'when username = "{rds_user_dict[key].get("user_name_sub")}" then 0 '
-            ])
-            updates_pt_2 = ''.join([
-                updates_pt_2,
-                f'"{rds_user_dict[key].get("user_name_sub")}", '
-            ])
+            active_cases = f'{active_cases}when username = "{rds_user_dict[key].get("user_name_sub")}" then 0 '
+            update_condition = f'{update_condition}"{rds_user_dict[key].get("user_name_sub")}", '
+            updates_added = True
+
         elif key in cognito_keys \
                 and key in rds_keys \
                 and rds_user_dict[key].get('active') != cognito_user_dict[key].get('active'):
             # sql statement to update existing user status
-            updates_pt_1 = ''.join([
-                updates_pt_1,
-                f'when username = "{cognito_user_dict[key].get("user_name_sub")}" then "{1 if cognito_user_dict[key].get("active") else 0}" '
-            ])
-            updates_pt_2 = ''.join([
-                updates_pt_2,
-                f'"{key}", '
-            ])
+            active_cases = f'{active_cases}' \
+                           f'when username = "{cognito_user_dict[key].get("user_name_sub")}" ' \
+                           f'then {1 if cognito_user_dict[key].get("active") else 0} '
+            update_condition = f'{update_condition}"{cognito_user_dict[key].get("user_name_sub")}", '
+            updates_added = True
 
-    if "VALUES (" in inserts:
-        sql = ''.join([inserts[:-2], ';'])
+    if inserts_added:
+        sql = f'{inserts[:-2]};'
         print(sql)
         execute_statement(
             sql,
@@ -129,8 +124,8 @@ def sync_values(cognito_user_dict, rds_user_dict, variables_dict):
             variables_dict["database_cluster_arn"]
         )
 
-    if "case when" in updates_pt_1:
-        sql = ''.join([updates_pt_1, 'end) ', updates_pt_2[:-2], ');'])
+    if updates_added:
+        sql = f'{active_cases} end) {update_condition[:-2]});'
         print(sql)
         execute_statement(
             sql,

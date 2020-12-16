@@ -136,10 +136,7 @@ class LambdaHandlerTests(TestCase):
                'VALUES ("user_three876", True, "account_name_only");' in args[0]
 
         name, args, kwargs = mock_execute_statement.mock_calls[1]
-        assert 'when username = "user_one123" then "1" ' \
-               'when username = "user_two654" then "0" ' \
-               'when username = "user_four987" then 0 end) ' \
-               'WHERE username in ("user_one", "user_two", "user_four987");' in args[0]
+        assert 'when username = "user_one123" then 1 when username = "user_two654" then 0 when username = "user_four987" then 0  end) WHERE username in ("user_one123", "user_two654", "user_four987");' in args[0]
         mock_execute_statement.assert_called_with(
             AnyArg(),
             variables['secret_arn'],
