@@ -8,11 +8,6 @@ resource "aws_lambda_function" "policy_munge_lambda" {
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-policy-munge", "ProtectSensitiveData" = "False" })
   timeout          = 60
 
-  vpc_config {
-    subnet_ids         = var.aws_subnets_private
-    security_group_ids = [aws_security_group.policy_munge_lambda_sg.id]
-  }
-
   environment {
     variables = {
       DATABASE_CLUSTER_ARN    = var.db_cluster_arn
