@@ -57,3 +57,42 @@ jobs:
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
         input_mapping:
           terraform-output: terraform-output-app
+
+  - name: sync-cognito-users-to-rds-preprod
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-output-app))
+        config:
+          params:
+            TF_WORKSPACE: 'preprod'
+      - .: (( inject meta.plan.sync_rbac_db_from_cognito ))
+        config:
+          params:
+            AWS_ACC: ((aws_account.preprod))
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+        input_mapping:
+          terraform-output: terraform-output-app
+
+  - name: create-roles-and-munged-policies-preprod
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-output-app))
+        config:
+          params:
+            TF_WORKSPACE: 'preprod'
+      - .: (( inject meta.plan.create_roles_and_policies_for_emr_users ))
+        config:
+          params:
+            AWS_ACC: ((aws_account.preprod))
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+        input_mapping:
+          terraform-output: terraform-output-app
+
