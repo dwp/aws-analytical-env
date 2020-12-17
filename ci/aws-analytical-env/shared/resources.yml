@@ -242,6 +242,9 @@ resources:
   - name: meta-testing-integration
     type: meta
 
+  - name: meta-sync-development
+    type: meta
+
   - name: midnight-trigger
     type: time
     source:

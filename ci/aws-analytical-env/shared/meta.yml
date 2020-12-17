@@ -351,6 +351,64 @@ meta:
               jq < output.json
               jq -eC "if .errorMessage? then error(.errorMessage) else true end" < output.json
 
+    sync_rbac_db_from_cognito:
+      task: sync-rbac-db
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+          AWS_REGION: ((dataworks.aws_region))
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        inputs:
+          - name: terraform-output
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              source /assume-role
+
+              SYNC_RDS_FUNCTION_NAME=$(jq -r ".emrfs_lambdas.value.rds_sync_lambda.function_name" < ./terraform-output/outputs.json)
+              aws lambda invoke --function-name SYNC_RDS_FUNCTION_NAME --invocation-type RequestResponse --cli-connect-timeout 600 --cli-read-timeout 600 output.json
+
+              jq < output.json
+              jq -eC "if .errorMessage? then error(.errorMessage) else true end" < output.json
+
+    create_roles_and_policies_for_emr_users:
+      task: create-roles-and-policies
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+          AWS_REGION: ((dataworks.aws_region))
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        inputs:
+          - name: terraform-output
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              source /assume-role
+
+              POLICY_MUNGE_FUNCTION_NAME=$(jq -r ".emrfs_lambdas.value.policy_munge_lambda.function_name" < ./terraform-output/outputs.json)
+              aws lambda invoke --function-name POLICY_MUNGE_FUNCTION_NAME --invocation-type RequestResponse --cli-connect-timeout 600 --cli-read-timeout 600 output.json
+
+              jq < output.json
+              jq -eC "if .errorMessage? then error(.errorMessage) else true end" < output.json
+
     terraform-bootstrap-crown:
       task: terraform-bootstrap-crown
       config:
