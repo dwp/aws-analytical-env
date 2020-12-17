@@ -1,6 +1,6 @@
 import lambda_handler
 from unittest import TestCase
-from mock import patch
+from mock import call, patch
 
 variables = {}
 variables['database_cluster_arn'] = 'arn:12345432::test_arn'
@@ -129,18 +129,29 @@ class LambdaHandlerTests(TestCase):
 
     @patch('lambda_handler.execute_statement')
     def test_sync_values(self, mock_execute_statement):
+        calls = [
+            call(
+                'UPDATE User SET active = 0 WHERE username = "user_four987";',
+                variables['secret_arn'],
+                variables["database_name"],
+                variables["database_cluster_arn"]),
+            call(
+                'INSERT INTO User (username, active, accountname) VALUES ("user_three876", 1, "account_name_only");',
+                variables['secret_arn'],
+                variables["database_name"],
+                variables["database_cluster_arn"]),
+            call(
+                'UPDATE User SET active = 0 WHERE username = "user_two654";',
+                variables['secret_arn'],
+                variables["database_name"],
+                variables["database_cluster_arn"]),
+            call(
+                'UPDATE User SET active = 1 WHERE username = "user_one123";',
+                variables['secret_arn'],
+                variables["database_name"],
+                variables["database_cluster_arn"])
+        ]
         lambda_handler.sync_values(mocked_cognito_user_dict, mocked_rds_user_dict, variables)
 
-        name, args, kwargs = mock_execute_statement.mock_calls[0]
-        assert 'INSERT INTO User (username, active, accountname) ' \
-               'VALUES ("user_three876", True, "account_name_only");' in args[0]
-
-        name, args, kwargs = mock_execute_statement.mock_calls[1]
-        assert 'when username = "user_one123" then 1 when username = "user_two654" then 0 when username = "user_four987" then 0  end) WHERE username in ("user_one123", "user_two654", "user_four987");' in args[0]
-        mock_execute_statement.assert_called_with(
-            AnyArg(),
-            variables['secret_arn'],
-            variables["database_name"],
-            variables["database_cluster_arn"]
-        )
-        assert 2 == mock_execute_statement.call_count
+        mock_execute_statement.assert_has_calls(calls, any_order=True)
+        assert 4 == mock_execute_statement.call_count

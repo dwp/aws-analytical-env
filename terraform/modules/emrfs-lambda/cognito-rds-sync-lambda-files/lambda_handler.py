@@ -1,5 +1,6 @@
 import os
 from aws_sync_caller import get_users_in_userpool, execute_statement, create_cognito_client
+
 variables = {}
 
 
@@ -26,7 +27,7 @@ def get_env_vars():
             raise Exception(f'Variable: {var} has not been provided.')
 
 
-# queries RDS for all user data and returns a dict mapping username to active, group_names and user_name_sub
+# queries RDS for all user data and returns a dict mapping username to active and user_name_sub
 def get_user_dict_from_rds(variables_dict):
     return_dict = {}
     sql = f'SELECT User.userName, User.active FROM User'
@@ -49,7 +50,7 @@ def get_user_dict_from_rds(variables_dict):
     return return_dict
 
 
-# queries Cognito userpool for all user data and returns a dict mapping username to active, group_names and user_name_sub
+# queries Cognito userpool for all user data, returns a dict mapping username to active and user_name_sub
 def get_user_dict_from_cognito(user_pool_id):
     users = get_users_in_userpool(user_pool_id)
 
@@ -58,7 +59,7 @@ def get_user_dict_from_cognito(user_pool_id):
     user_object = lambda user, username: {
         username: {
             'active': user.get('Enabled'),
-            'user_name_sub':''.join([username, get_attribute(user.get('Attributes'), 'sub')[0:3]]),
+            'user_name_sub': ''.join([username, get_attribute(user.get('Attributes'), 'sub')[0:3]]),
             'account_name': user.get('Username')
         }
     }
@@ -78,59 +79,39 @@ def get_attribute(attributes, name):
 
 # compares rds user dict to cognito user dict and updates rds with values from cognito
 def sync_values(cognito_user_dict, rds_user_dict, variables_dict):
-    cognito_keys = list(cognito_user_dict.keys())
-    rds_keys = list(rds_user_dict.keys())
-    cognito_only = [key for key in cognito_keys if key not in rds_keys]
-    rds_only = [key for key in rds_keys if key not in cognito_keys]
-    all_keys = cognito_keys
-    all_keys.extend(rds_only)
-    inserts_added = False
-    updates_added = False
+    users_from_cognito = list(cognito_user_dict.keys())
+    users_from_rds = list(rds_user_dict.keys())
+    missing_from_rds = [key for key in users_from_cognito if key not in users_from_rds]
+    removed_from_cognito = [key for key in users_from_rds if key not in users_from_cognito]
 
-    inserts='INSERT INTO User (username, active, accountname) VALUES '
-    active_cases='UPDATE User SET active =(case '
-    update_condition='WHERE username in ('
-    for key in all_keys:
-        if key in cognito_only:
-            # sql to add user to user table
-            inserts = f'{inserts}' \
-                      f'("{cognito_user_dict[key].get("user_name_sub")}", ' \
-                      f'{cognito_user_dict[key].get("active")}, ' \
-                      f'"{cognito_user_dict[key].get("account_name")}"), '
-            inserts_added = True
+    for user in removed_from_cognito:
+        update_user_status(rds_user_dict[user].get('user_name_sub'), variables_dict, 0)
 
-        elif key in rds_only:
-            active_cases = f'{active_cases}when username = "{rds_user_dict[key].get("user_name_sub")}" then 0 '
-            update_condition = f'{update_condition}"{rds_user_dict[key].get("user_name_sub")}", '
-            updates_added = True
+    for user in missing_from_rds:
+        add_user_to_rds(cognito_user_dict[user], variables_dict, 1 if cognito_user_dict[user].get('active') else 0)
 
-        elif key in cognito_keys \
-                and key in rds_keys \
-                and rds_user_dict[key].get('active') != cognito_user_dict[key].get('active'):
-            # sql statement to update existing user status
-            active_cases = f'{active_cases}' \
-                           f'when username = "{cognito_user_dict[key].get("user_name_sub")}" ' \
-                           f'then {1 if cognito_user_dict[key].get("active") else 0} '
-            update_condition = f'{update_condition}"{cognito_user_dict[key].get("user_name_sub")}", '
-            updates_added = True
+    for user in set(users_from_cognito).intersection(users_from_rds):
+        if rds_user_dict[user].get('active') != cognito_user_dict[user].get('active'):
+            update_user_status(cognito_user_dict[user].get('user_name_sub'), variables_dict,
+                               1 if cognito_user_dict[user].get('active') else 0)
 
-    if inserts_added:
-        sql = f'{inserts[:-2]};'
-        print(sql)
-        execute_statement(
-            sql,
-            variables_dict['secret_arn'],
-            variables_dict["database_name"],
-            variables_dict["database_cluster_arn"]
-        )
 
-    if updates_added:
-        sql = f'{active_cases} end) {update_condition[:-2]});'
-        print(sql)
-        execute_statement(
-            sql,
-            variables_dict['secret_arn'],
-            variables_dict["database_name"],
-            variables_dict["database_cluster_arn"]
-        )
+def add_user_to_rds(user_object, variables_dict, status):
+    sql = f'INSERT INTO User (username, active, accountname) ' \
+          f'VALUES ("{user_object.get("user_name_sub")}", {status}, "{user_object.get("account_name")}");'
+    execute_statement(
+        sql,
+        variables_dict['secret_arn'],
+        variables_dict["database_name"],
+        variables_dict["database_cluster_arn"]
+    )
 
+
+def update_user_status(user_name, variables_dict, new_status):
+    sql = f'UPDATE User SET active = {new_status} WHERE username = "{user_name}";'
+    execute_statement(
+        sql,
+        variables_dict['secret_arn'],
+        variables_dict["database_name"],
+        variables_dict["database_cluster_arn"]
+    )
