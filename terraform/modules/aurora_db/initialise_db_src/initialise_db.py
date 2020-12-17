@@ -61,7 +61,8 @@ def handler(event: dict, context):
 
     if "drop_existing" in event and event["drop_existing"] == "true":
         logger.warning(f"Dropping all existing tables from database {RDS_DATABASE_NAME}")
-        execute_statement(f"DROP DATABASE {RDS_DATABASE_NAME}; CREATE DATABASE {RDS_DATABASE_NAME};")
+        execute_statement(f"DROP DATABASE {RDS_DATABASE_NAME};")
+        execute_statement(f"CREATE DATABASE {RDS_DATABASE_NAME};")
 
     logger.info(f"Initialising database with arn {RDS_CLUSTER_ARN}")
 
