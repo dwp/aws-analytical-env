@@ -1,6 +1,6 @@
 import lambda_handler
 from unittest import TestCase
-from mock import patch
+from mock import call, patch
 
 variables = {}
 variables['database_cluster_arn'] = 'arn:12345432::test_arn'
@@ -129,19 +129,29 @@ class LambdaHandlerTests(TestCase):
 
     @patch('lambda_handler.execute_statement')
     def test_sync_values(self, mock_execute_statement):
+        calls = [
+            call(
+                'UPDATE User SET active = 0 WHERE username = "user_four987";',
+                variables['secret_arn'],
+                variables["database_name"],
+                variables["database_cluster_arn"]),
+            call(
+                'INSERT INTO User (username, active, accountname) VALUES ("user_three876", 1, "account_name_only");',
+                variables['secret_arn'],
+                variables["database_name"],
+                variables["database_cluster_arn"]),
+            call(
+                'UPDATE User SET active = 0 WHERE username = "user_two654";',
+                variables['secret_arn'],
+                variables["database_name"],
+                variables["database_cluster_arn"]),
+            call(
+                'UPDATE User SET active = 1 WHERE username = "user_one123";',
+                variables['secret_arn'],
+                variables["database_name"],
+                variables["database_cluster_arn"])
+        ]
         lambda_handler.sync_values(mocked_cognito_user_dict, mocked_rds_user_dict, variables)
 
-        name, args, kwargs = mock_execute_statement.mock_calls[0]
-        assert 'UPDATE User SET active = True WHERE userName = "user_one";' in args[0]
-        assert 'UPDATE User SET active = False WHERE userName = "user_two";' in args[0]
-        assert 'INSERT INTO User (userName, active, accountname) VALUES (' \
-               '"user_three", ' \
-               'True, ' \
-               '"account_name_only");' in args[0]
-        assert 'UPDATE User SET active = False WHERE userName = "user_four";' in args[0]
-        mock_execute_statement.assert_called_with(
-            AnyArg(),
-            variables['secret_arn'],
-            variables["database_name"],
-            variables["database_cluster_arn"]
-        )
+        mock_execute_statement.assert_has_calls(calls, any_order=True)
+        assert 4 == mock_execute_statement.call_count

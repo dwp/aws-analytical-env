@@ -297,18 +297,18 @@ def create_tag_list(tag_keys_to_value_list, common_tags):
 # policy_names (list of policies to assign to the user's role) and role_name
 def get_user_userstatus_policy_dict(variables):
     return_dict = {}
-    sql = f'SELECT User.userName, User.active, Policy.policyName \
+    sql = f'SELECT User.username, User.active, Policy.policyname \
         FROM User \
         JOIN UserGroup ON User.id = UserGroup.userId \
         JOIN GroupPolicy ON UserGroup.groupId = GroupPolicy.groupId \
         JOIN Policy ON GroupPolicy.policyId = Policy.id;'
-    try:
-        response = execute_statement(
-            sql,
-            variables['secret_arn'],
-            variables["database_name"],
-            variables["database_cluster_arn"]
-        )
+    response = execute_statement(
+        sql,
+        variables['secret_arn'],
+        variables["database_name"],
+        variables["database_cluster_arn"]
+    )
+    if len(response['records']) > 0:
         for record in response['records']:
             user_name = ''.join(record[0].values())
             active = list(record[1].values())[0]
@@ -321,6 +321,6 @@ def get_user_userstatus_policy_dict(variables):
                 }
             else:
                 return_dict[user_name]['policy_names'].extend(policy_name)
-    except Exception as e:
-        raise e
+    else:
+        raise ValueError("No records returned from RDS")
     return return_dict
