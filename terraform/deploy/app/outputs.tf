@@ -29,3 +29,7 @@ output "emr_launcher_lambda" {
 output "rbac_db" {
   value = module.rbac_db
 }
+
+output "emrfs_lambdas" {
+  value = module.emrfs_lambda
+}

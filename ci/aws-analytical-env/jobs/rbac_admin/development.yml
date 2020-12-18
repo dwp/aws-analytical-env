@@ -48,3 +48,41 @@ jobs:
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
         input_mapping:
           terraform-output: terraform-output-app
+
+  - name: sync-cognito-users-to-rds-development
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - get: midnight-trigger
+        trigger: true
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-output-app))
+      - .: (( inject meta.plan.sync_rbac_db_from_cognito ))
+        config:
+          params:
+            AWS_ACC: ((aws_account.development))
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+        input_mapping:
+          terraform-output: terraform-output-app
+    on_success:
+      put: meta-sync-development
+
+  - name: create-roles-and-munged-policies-development
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - get: meta-sync-development
+        trigger: true
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-output-app))
+      - .: (( inject meta.plan.create_roles_and_policies_for_emr_users ))
+        config:
+          params:
+            AWS_ACC: ((aws_account.development))
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+        input_mapping:
+          terraform-output: terraform-output-app
