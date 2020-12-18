@@ -21,9 +21,9 @@ meta:
         image_resource:
           type: docker-image
           source:
-            repository: ((docker-awscli.repository))
-            version: ((docker-awscli.version))
-            tag: ((docker-awscli.version))
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
         run:
           path: sh
           args:
@@ -375,7 +375,7 @@ meta:
               source /assume-role
 
               SYNC_RDS_FUNCTION_NAME=$(jq -r ".emrfs_lambdas.value.rds_sync_lambda.function_name" < ./terraform-output/outputs.json)
-              aws lambda invoke --function-name SYNC_RDS_FUNCTION_NAME --invocation-type RequestResponse --cli-connect-timeout 600 --cli-read-timeout 600 output.json
+              aws lambda invoke --function-name $SYNC_RDS_FUNCTION_NAME --invocation-type RequestResponse --cli-connect-timeout 600 --cli-read-timeout 600 output.json
 
               jq < output.json
               jq -eC "if .errorMessage? then error(.errorMessage) else true end" < output.json
@@ -404,7 +404,7 @@ meta:
               source /assume-role
 
               POLICY_MUNGE_FUNCTION_NAME=$(jq -r ".emrfs_lambdas.value.policy_munge_lambda.function_name" < ./terraform-output/outputs.json)
-              aws lambda invoke --function-name POLICY_MUNGE_FUNCTION_NAME --invocation-type RequestResponse --cli-connect-timeout 600 --cli-read-timeout 600 output.json
+              aws lambda invoke --function-name $POLICY_MUNGE_FUNCTION_NAME --invocation-type RequestResponse --cli-connect-timeout 600 --cli-read-timeout 600 output.json
 
               jq < output.json
               jq -eC "if .errorMessage? then error(.errorMessage) else true end" < output.json
