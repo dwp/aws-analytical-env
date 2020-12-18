@@ -31,5 +31,5 @@ output "rbac_db" {
 }
 
 output "emrfs_lambdas" {
-    value = module.emrfs-lambda
+  value = module.emrfs-lambda
 }
