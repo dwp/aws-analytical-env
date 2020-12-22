@@ -178,7 +178,7 @@ def chunk_policies_and_return_dict_of_policy_name_to_json(policy_object_list, us
     total_number_of_chunks = policy_object_list[(len(policy_object_list) - 1)]['chunk_number'] +1
     dict_of_policy_name_to_munged_policy_objects = {}
     for policy in policy_object_list:
-        munged_policy_name = f'{user_name}-{policy["chunk_number"] + 1}of{total_number_of_chunks}'
+        munged_policy_name = f'emrfs_{user_name}-{policy["chunk_number"] + 1}of{total_number_of_chunks}'
         if munged_policy_name in dict_of_policy_name_to_munged_policy_objects:
             dict_of_policy_name_to_munged_policy_objects[munged_policy_name]['Statement'].extend(policy['statement'])
         else:

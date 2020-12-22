@@ -71,6 +71,20 @@ data aws_iam_policy_document policy_munge_lambda_document {
   }
 
   statement {
+    sid = "ReadPoliciesAndRoles"
+    actions = [
+      "iam:GetPolicy",
+      "iam:GetPolicyVersion",
+      "iam:GetRole",
+      "iam:GetRolePolicy"
+    ]
+    resources = [
+      "arn:aws:iam::${var.account}:policy/*",
+      "arn:aws:iam::${var.account}:role/*"
+    ]
+  }
+
+  statement {
     sid    = "AllowGetCredentials"
     effect = "Allow"
     actions = [
