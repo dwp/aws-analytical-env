@@ -13,11 +13,11 @@ rds_data_client = boto3.client('rds-data')
 def list_all_policies_in_account():
     policy_list = []
     get_paginated_results_using_marker(
-        aws_api_reponse=iam_client.list_policies(Scope='All'),
+        aws_api_reponse=iam_client.list_policies(Scope='All',PathPrefix='/emrfs_*/'),
         list=policy_list,
         iam_client_call=iam_client.list_policies,
         field_name='Policies',
-        client_call_args={'Scope': 'All'}
+        client_call_args={'Scope': 'All', 'PathPrefix': '/emrfs_*/'}
     )
     return policy_list
 
@@ -89,7 +89,7 @@ def wait_for_policy_to_exist(arn):
 # returns list of names of all roles previously created by this lambda
 def get_emrfs_roles():
     role_list = []
-    path_prefix = '/emrfs_*'
+    path_prefix = '/emrfs_*/'
     aws_api_reponse = iam_client.list_roles(
         PathPrefix=path_prefix,
     )
