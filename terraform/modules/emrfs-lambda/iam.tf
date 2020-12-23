@@ -76,7 +76,8 @@ data aws_iam_policy_document policy_munge_lambda_document {
       "iam:GetPolicy",
       "iam:GetPolicyVersion",
       "iam:GetRole",
-      "iam:GetRolePolicy"
+      "iam:GetRolePolicy",
+      "iam:ListPolicies"
     ]
     resources = [
       "arn:aws:iam::${var.account}:policy/*",

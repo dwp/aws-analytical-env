@@ -13,11 +13,11 @@ rds_data_client = boto3.client('rds-data')
 def list_all_policies_in_account():
     policy_list = []
     get_paginated_results_using_marker(
-        aws_api_reponse=iam_client.list_policies(Scope='All',PathPrefix='/emrfs/'),
+        aws_api_reponse=iam_client.list_policies(Scope='All'),
         list=policy_list,
         iam_client_call=iam_client.list_policies,
         field_name='Policies',
-        client_call_args={'Scope': 'All', 'PathPrefix': '/emrfs/'}
+        client_call_args={'Scope': 'All'}
     )
     return policy_list
 
