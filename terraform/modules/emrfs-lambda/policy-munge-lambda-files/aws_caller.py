@@ -47,6 +47,7 @@ def get_policy_statement_as_list(arn, default_version_id):
 # creates a new policy in AWS, waits for it to exist, then returns the ARN
 def create_policy_from_json_and_return_arn(policy_name, json_document):
     policy = iam_client.create_policy(
+        Path="/emrfs/",
         PolicyName=policy_name,
         PolicyDocument=json_document
     )
