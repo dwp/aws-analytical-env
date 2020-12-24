@@ -238,9 +238,7 @@ meta:
               source /assume-role
               AWS_COMMOM_BUCKET="$(cat ../terraform-output-common/outputs.json |  jq -r '.config_bucket.value.id')"
               aws s3 sync . s3://$AWS_COMMOM_BUCKET/$S3_ROOT --include "*"
-          dir: chs-uc-lab-repo
         inputs:
-          - name: chs-uc-lab-repo
           - name: terraform-output-common
 
     terraform-output-common:

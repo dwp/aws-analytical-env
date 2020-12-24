@@ -44,6 +44,7 @@ groups:
   - name: mirror-git-repo-s3
     jobs:
       - mirror-uc-lab-repo
+      - mirror-ops-mi-repo
 
   - name: admin-rbac
     jobs:
