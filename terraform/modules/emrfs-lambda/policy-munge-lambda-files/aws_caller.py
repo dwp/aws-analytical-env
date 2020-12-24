@@ -13,11 +13,11 @@ rds_data_client = boto3.client('rds-data')
 def list_all_policies_in_account():
     policy_list = []
     get_paginated_results_using_marker(
-        aws_api_reponse=iam_client.list_policies(Scope='All',PathPrefix='/emrfs_*/'),
+        aws_api_reponse=iam_client.list_policies(Scope='All'),
         list=policy_list,
         iam_client_call=iam_client.list_policies,
         field_name='Policies',
-        client_call_args={'Scope': 'All', 'PathPrefix': '/emrfs_*/'}
+        client_call_args={'Scope': 'All'}
     )
     return policy_list
 
@@ -47,6 +47,7 @@ def get_policy_statement_as_list(arn, default_version_id):
 # creates a new policy in AWS, waits for it to exist, then returns the ARN
 def create_policy_from_json_and_return_arn(policy_name, json_document):
     policy = iam_client.create_policy(
+        Path="/emrfs/",
         PolicyName=policy_name,
         PolicyDocument=json_document
     )
@@ -89,7 +90,7 @@ def wait_for_policy_to_exist(arn):
 # returns list of names of all roles previously created by this lambda
 def get_emrfs_roles():
     role_list = []
-    path_prefix = '/emrfs_*/'
+    path_prefix = '/emrfs/'
     aws_api_reponse = iam_client.list_roles(
         PathPrefix=path_prefix,
     )
@@ -109,6 +110,7 @@ def get_emrfs_roles():
 
 def create_role_and_await_consistency(role_name, assumeRoleDoc):
     iam_client.create_role(
+        Path="/emrfs/",
         RoleName=role_name,
         AssumeRolePolicyDocument=assumeRoleDoc
     )
