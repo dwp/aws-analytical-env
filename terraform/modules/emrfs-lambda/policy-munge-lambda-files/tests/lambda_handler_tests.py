@@ -233,5 +233,8 @@ class LambdaHandlerTests(TestCase):
 
 
     def test_verify_policies(self):
-        self.assertRaises(Exception, lambda_handler.verify_policies(['policy_one'], mocked_policy_object_list))
+        with self.assertRaises(Exception):
+            lambda_handler.verify_policies(['policy_two', 'policy_four'], mocked_policy_object_list)
+        self.assertEqual(None, lambda_handler.verify_policies(['policy_one', 'policy_three'], mocked_policy_object_list))
+        self.assertEqual(None, lambda_handler.verify_policies(['policy_one'], mocked_policy_object_list))
 
