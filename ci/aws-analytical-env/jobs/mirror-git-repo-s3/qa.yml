@@ -1,0 +1,40 @@
+jobs:
+  - name: mirror-git-repo-uc-lab-repo-qa
+    plan:
+      - get: chs-uc-lab-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: qa
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: chs-uc-lab-repo
+          inputs:
+            - name: chs-uc-lab-repo
+          params:
+            S3_ROOT: component/uc_repos/chs-uc-lab/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+
+  - name: mirror-git-repo-ops-mi-repo-qa
+    plan:
+      - get: chs-ops-mi-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: qa
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: chs-ops-mi-repo
+          inputs:
+            - name: chs-ops-mi-repo
+          params:
+            S3_ROOT: component/uc_repos/chs-ops-mi/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
