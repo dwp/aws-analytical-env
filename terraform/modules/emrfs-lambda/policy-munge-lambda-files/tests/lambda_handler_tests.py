@@ -21,8 +21,8 @@ mocked_db_response = {
 }
 
 mocked_user_dict = {
-    'user_one': {'active': False, 'policy_names': ['policy_one', 'policy_two'], 'role_name': 'emrfs_user_one'},
-    'user_two': {'active': True, 'policy_names': ['policy_one'], 'role_name': 'emrfs_user_two'}
+    'user_one': {'active': False, 'policy_names': ['emrfs_iam', 'policy_one', 'policy_two'], 'role_name': 'emrfs_user_one'},
+    'user_two': {'active': True, 'policy_names': ['emrfs_iam', 'policy_one'], 'role_name': 'emrfs_user_two'}
 }
 
 mocked_policy_object_list = [
@@ -93,16 +93,17 @@ class LambdaHandlerTests(TestCase):
 
     @patch('lambda_handler.execute_statement')
     def test_get_user_userstatus_policy_dict(self, mock_execute_statement):
-        mock_execute_statement.side_effect = [mocked_db_response, {'numberOfRecordsUpdated': 0,'records': []}]
+        mock_execute_statement.side_effect = [mocked_db_response, {'numberOfRecordsUpdated': 0, 'records': []}]
         result1 = lambda_handler.get_user_userstatus_policy_dict(variables)
 
+        print(result1)
+        print(result1)
         assert result1 == mocked_user_dict
         self.assertRaises(
             ValueError,
             lambda_handler.get_user_userstatus_policy_dict,
             variables
         )
-
 
     @patch('lambda_handler.create_role_and_await_consistency')
     def test_check_roles_exist_and_create_if_not(self, mock_create_role_and_await_consistency):
@@ -212,29 +213,17 @@ class LambdaHandlerTests(TestCase):
     def test_tag_role_with_policies_CHUNKED(self, mock_tag_role):
         lambda_handler.tag_role_with_policies(['policy_one', 'policy_two'], 'emrfs_user_one', variables['common_tags'])
 
-        mock_tag_role.assert_called_with('emrfs_user_one', [
-            {
-                'Key': 'tag1key',
-                'Value': 'tag1val'
-            },
-            {
-                'Key': 'tag2key',
-                'Value': 'tag2val'
-            },
-            {
-                'Key': 'InputPolicies-1of2',
-                'Value': 'policy_one'
-            },
-            {
-                'Key': 'InputPolicies-2of2',
-                'Value': 'policy_two'
-            },
-        ])
-
+        mock_tag_role.assert_called_with(
+            'emrfs_user_one', [
+                {'Key': 'tag1key', 'Value': 'tag1val'},
+                {'Key': 'tag2key', 'Value': 'tag2val'},
+                {'Key': 'InputPolicies-1of2', 'Value': 'policy_one'},
+                {'Key': 'InputPolicies-2of2', 'Value': 'policy_two'},
+            ]
+        )
 
     def test_verify_policies(self):
-        with self.assertRaises(Exception):
-            lambda_handler.verify_policies(['policy_two', 'policy_four'], mocked_policy_object_list)
-        self.assertEqual(None, lambda_handler.verify_policies(['policy_one', 'policy_three'], mocked_policy_object_list))
-        self.assertEqual(None, lambda_handler.verify_policies(['policy_one'], mocked_policy_object_list))
-
+        with self.assertRaises(NameError):
+            lambda_handler.verify_policies(['policy_two'], mocked_policy_object_list)
+        self.assertIsNone(lambda_handler.verify_policies(['policy_one', 'policy_three'], mocked_policy_object_list))
+        self.assertIsNone(lambda_handler.verify_policies(['policy_one'], mocked_policy_object_list))
