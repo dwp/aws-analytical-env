@@ -163,11 +163,10 @@ def create_policy_object_list_from_policy_name_list(names, all_policy_list):
 
 # checks original input against map used for policy
 def verify_policies(names, list_of_policy_objects):
-    policy_object_names = []
-    for policy_object in list_of_policy_objects:
-        policy_object_names.append(policy_object.get('policy_name'))
-    if not names == policy_object_names:
-        raise Exception("Policy missing from Map.")
+    policy_object_names = [policy.get('policy_name') for policy in list_of_policy_objects]
+    for policy_name in names:
+        if policy_name not in policy_object_names:
+            raise Exception(f'Policy missing from Map: {policy_name}')
 
 
 # creates json of policy documents mapped to their policy name using iam_policy_template and statements

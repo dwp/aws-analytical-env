@@ -148,8 +148,8 @@ class LambdaHandlerTests(TestCase):
             'emrfs_user_one'
         )
 
-        assert result.get('user_one-1of2') == {"Version": "2012-10-17", "Statement": [{'test': 'statement1'}]}
-        assert result.get('user_one-2of2') == {"Version": "2012-10-17", "Statement": [{'test': 'statement2'}]}
+        assert result.get('emrfs_user_one-1of2') == {"Version": "2012-10-17", "Statement": [{'test': 'statement1'}]}
+        assert result.get('emrfs_user_one-2of2') == {"Version": "2012-10-17", "Statement": [{'test': 'statement2'}]}
 
     @patch('lambda_handler.char_limit_of_json_policy', 100)
     def test_chunk_policies_and_return_dict_of_policy_name_to_json_NO_CHUNKS(self):
@@ -159,7 +159,7 @@ class LambdaHandlerTests(TestCase):
             'emrfs_user_one'
         )
 
-        assert result.get('user_one-1of1') == {
+        assert result.get('emrfs_user_one-1of1') == {
             "Version": "2012-10-17",
             "Statement": [{'test': 'statement1'}, {'test': 'statement2'}]
         }
@@ -230,4 +230,8 @@ class LambdaHandlerTests(TestCase):
                 'Value': 'policy_two'
             },
         ])
+
+
+    def test_verify_policies(self):
+        self.assertRaises(Exception, lambda_handler.verify_policies(['policy_one'], mocked_policy_object_list))
 
