@@ -20,3 +20,4 @@
     log_message $END_MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "create_dbs.sh" "NOT_SET"
 
 )  >> /var/log/batch/create_dbs.log 2>&1
+
