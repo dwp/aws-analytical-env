@@ -127,18 +127,17 @@ def get_env_vars():
     for var in variables:
         if var is None or var == {}:
             raise NameError(f'Variable: {var} has not been provided.')
-
     return variables
 
 
 # loops through the desired state (from RDS) and what exists in AWS and creates any missing roles
-def check_roles_exist_and_create_if_not(existing_role_list, user_state_and_policy, assumeRoleDocument):
+def check_roles_exist_and_create_if_not(existing_role_list, user_state_and_policy, assume_role_document):
     roles_after_creation = existing_role_list.copy()
     for user in user_state_and_policy:
         if user_state_and_policy[user]['role_name'] not in existing_role_list \
                 and user_state_and_policy[user]['active']:
             created_role = create_role_and_await_consistency(user_state_and_policy[user]['role_name'],
-                                                             assumeRoleDocument)
+                                                             assume_role_document)
             roles_after_creation.append(created_role)
     return roles_after_creation
 
@@ -188,7 +187,6 @@ def chunk_policies_and_return_dict_of_policy_name_to_json(policy_object_list, us
     # checks to see if 20 policy attachment limit is reached before creating policies
     if (len(dict_of_policy_name_to_munged_policy_objects) > 20):
         raise IndexError(f"Maximum policy assignment exceeded for role: {role_name}")
-
     return dict_of_policy_name_to_munged_policy_objects
 
 

@@ -24,7 +24,7 @@ def get_env_vars():
 
     for var in variables:
         if var is None or var == {}:
-            raise Exception(f'Variable: {var} has not been provided.')
+            raise AttributeError(f'Variable: {var} has not been provided.')
 
 
 # queries RDS for all user data and returns a dict mapping username to active and user_name_sub
