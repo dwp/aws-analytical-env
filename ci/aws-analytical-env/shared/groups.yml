@@ -43,9 +43,20 @@ groups:
       - gh-proxy-mgmt
   - name: mirror-git-repo-s3
     jobs:
-      - mirror-uc-lab-repo
-      - mirror-ops-mi-repo
+      - mirror-git-repo-uc-lab-repo-development
+      - mirror-git-repo-ops-mi-repo-development
 
+      - mirror-git-repo-uc-lab-repo-qa
+      - mirror-git-repo-ops-mi-repo-qa
+
+      - mirror-git-repo-uc-lab-repo-integration
+      - mirror-git-repo-ops-mi-repo-integration
+
+      - mirror-git-repo-uc-lab-repo-preprod
+      - mirror-git-repo-ops-mi-repo-preprod
+
+      - mirror-git-repo-uc-lab-repo-prod
+      - mirror-git-repo-ops-mi-repo-prod
   - name: admin-rbac
     jobs:
       - rotate-mysql-master-credentials-development
