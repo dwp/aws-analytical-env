@@ -169,8 +169,14 @@ resource "aws_cloudwatch_metric_alarm" "emr_terminated_with_errors_alarm" {
   tags                      = merge(var.common_tags, { Name : "${var.name_prefix}-with-errors-alarm" })
 }
 
-resource "aws_cloudwatch_log_group" "analytical_batch_step_logs" {
+resource "aws_cloudwatch_log_group" "analytical_batch_get_scripts_logs" {
   name              = local.cw_agent_log_group_name
   retention_in_days = 180
-  tags              = merge(var.common_tags, { Name : "${var.name_prefix}-batch-step-logs" })
+  tags              = merge(var.common_tags, { Name : "${var.name_prefix}-get-scripts-logs" })
+}
+
+resource "aws_cloudwatch_log_group" "analytical_batch_step_logs" {
+  name              = local.cw_agent_step_log_group_name
+  retention_in_days = 180
+  tags              = merge(var.common_tags, { Name : "${var.name_prefix}-get-step-logs" })
 }
