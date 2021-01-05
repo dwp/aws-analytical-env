@@ -131,3 +131,11 @@ resource "aws_s3_bucket_object" "cloudwatch_sh" {
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-cw-sh" })
 }
+
+resource "aws_s3_bucket_object" "create_dbs_sh" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/emr/create_dbs.sh"
+  content = templatefile("${path.module}/templates/emr/create_dbs.sh", {})
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-create-dbs-sh" })
+}
