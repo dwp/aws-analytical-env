@@ -110,7 +110,7 @@ resource "aws_emr_cluster" "cluster" {
     }
   }
 
-    step {
+  step {
     name              = "create-dbs"
     action_on_failure = "CONTINUE"
     hadoop_jar_step {
