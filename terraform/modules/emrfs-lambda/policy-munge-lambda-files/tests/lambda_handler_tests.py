@@ -96,8 +96,6 @@ class LambdaHandlerTests(TestCase):
         mock_execute_statement.side_effect = [mocked_db_response, {'numberOfRecordsUpdated': 0, 'records': []}]
         result1 = lambda_handler.get_user_userstatus_policy_dict(variables)
 
-        print(result1)
-        print(result1)
         assert result1 == mocked_user_dict
         self.assertRaises(
             ValueError,
@@ -222,8 +220,12 @@ class LambdaHandlerTests(TestCase):
             ]
         )
 
-    def test_verify_policies(self):
+    def test_verify_policies_raises_error_on_missing_existing_policy(self):
         with self.assertRaises(NameError):
             lambda_handler.verify_policies(['policy_two'], mocked_policy_object_list)
+
+    def test_verify_policies_does_not_raise_error_when_all_policies_found(self):
         self.assertIsNone(lambda_handler.verify_policies(['policy_one', 'policy_three'], mocked_policy_object_list))
+
+    def test_verify_policies_does_not_raise_error_when_additional_policy_found_in_rds(self):
         self.assertIsNone(lambda_handler.verify_policies(['policy_one'], mocked_policy_object_list))
