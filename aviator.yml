@@ -18,6 +18,8 @@ spruce:
         regexp: ".*yml"
       - with_in: ci/aws-analytical-env/jobs/rbac_admin/
         regexp: ".*yml"
+      - with_in: ci/aws-analytical-env/jobs/mirror-git-repo-s3/
+        regexp: ".*yml"
       - with_in: ci/aws-analytical-env/shared/
         regexp: ".*yml"
         except:
