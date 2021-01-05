@@ -88,7 +88,7 @@ def lambda_handler(event, context):
                 )
 
                 attach_policies_to_role(list_of_policy_arns, user_state_and_policy[user_name]['role_name'])
-                delete_tags(user_state_and_policy[user_name]['user_name'])
+                delete_tags(user_state_and_policy[user_name]['role_name'])
                 tag_role_with_policies(
                     user_state_and_policy[user_name]['policy_names'],
                     user_state_and_policy[user_name]['role_name'],
@@ -126,7 +126,7 @@ def get_env_vars():
 
     for var in variables:
         if var is None or var == {}:
-            raise Exception(f'Variable: {var} has not been provided.')
+            raise NameError(f'Variable: {var} has not been provided.')
 
     return variables
 
@@ -163,11 +163,10 @@ def create_policy_object_list_from_policy_name_list(names, all_policy_list):
 
 # checks original input against map used for policy
 def verify_policies(names, list_of_policy_objects):
-    policy_object_names = []
-    for policy_object in list_of_policy_objects:
-        policy_object_names.append(policy_object.get('policy_name'))
-    if not names == policy_object_names:
-        raise Exception("Policy missing from Map.")
+    policy_object_names = [policy.get('policy_name') for policy in list_of_policy_objects]
+    for policy_name in names:
+        if policy_name not in policy_object_names:
+            raise NameError(f'Policy missing from Map: {policy_name}')
 
 
 # creates json of policy documents mapped to their policy name using iam_policy_template and statements
@@ -188,7 +187,7 @@ def chunk_policies_and_return_dict_of_policy_name_to_json(policy_object_list, us
 
     # checks to see if 20 policy attachment limit is reached before creating policies
     if (len(dict_of_policy_name_to_munged_policy_objects) > 20):
-        raise Exception(f"Maximum policy assignment exceeded for role: {role_name}")
+        raise IndexError(f"Maximum policy assignment exceeded for role: {role_name}")
 
     return dict_of_policy_name_to_munged_policy_objects
 
@@ -265,7 +264,7 @@ def tag_role_with_policies(policy_list, role_name, common_tags):
             tag_keys_to_value_list[tag_key] = [tag['policy_name']]
 
     if len(tag_keys_to_value_list) > (50-len(common_tags)):
-        raise Exception("Tag limit for role exceeded")
+        raise IndexError("Tag limit for role exceeded")
 
     tag_list = create_tag_list(tag_keys_to_value_list, common_tags)
 
@@ -312,15 +311,15 @@ def get_user_userstatus_policy_dict(variables):
         for record in response['records']:
             user_name = ''.join(record[0].values())
             active = list(record[1].values())[0]
-            policy_name = [''.join(record[2].values())]
+            policy_name = ''.join(record[2].values())
             if return_dict.get(user_name) == None:
                 return_dict[user_name] = {
                     'active': active,
-                    'policy_names': policy_name,
+                    'policy_names': ["emrfs_iam", policy_name],
                     'role_name': f'emrfs_{user_name}'
                 }
             else:
-                return_dict[user_name]['policy_names'].extend(policy_name)
+                return_dict[user_name]['policy_names'].append(policy_name)
     else:
         raise ValueError("No records returned from RDS")
     return return_dict
