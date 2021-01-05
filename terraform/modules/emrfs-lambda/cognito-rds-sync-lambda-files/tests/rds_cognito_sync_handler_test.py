@@ -93,7 +93,7 @@ mocked_cognito_user_dict = {'user_one': {'active': True,
 
 # helper function to return true for assertion
 class AnyArg(object):
-    def __eq__(a, b):
+    def __eq__(self, b):
         return True
 
 
