@@ -110,6 +110,17 @@ resource "aws_emr_cluster" "cluster" {
     }
   }
 
+  step {
+    name              = "create-dbs"
+    action_on_failure = "CONTINUE"
+    hadoop_jar_step {
+      jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
+      args = [
+        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.create_dbs_sh.key)
+      ]
+    }
+  }
+
   depends_on = [
     aws_s3_bucket_object.get_dks_cert_sh,
     aws_s3_bucket_object.livy_client_conf_sh,
@@ -158,8 +169,8 @@ resource "aws_cloudwatch_metric_alarm" "emr_terminated_with_errors_alarm" {
   tags                      = merge(var.common_tags, { Name : "${var.name_prefix}-with-errors-alarm" })
 }
 
-resource "aws_cloudwatch_log_group" "analytical_batch_get_scripts_logs" {
+resource "aws_cloudwatch_log_group" "analytical_batch_step_logs" {
   name              = local.cw_agent_log_group_name
   retention_in_days = 180
-  tags              = merge(var.common_tags, { Name : "${var.name_prefix}-get-scripts-logs" })
+  tags              = merge(var.common_tags, { Name : "${var.name_prefix}-batch-step-logs" })
 }

@@ -33,3 +33,9 @@ Steps:
     - "/opt/emr/repos"
     Jar: "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
   ActionOnFailure: "CONTINUE"
+- Name: "create-dbs"
+  HadoopJarStep:
+    Args:
+    - "s3://${config_bucket}/scripts/emr/create_dbs.sh"
+    Jar: "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
+  ActionOnFailure: "CONTINUE"
