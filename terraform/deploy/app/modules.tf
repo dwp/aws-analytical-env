@@ -72,8 +72,8 @@ module "emr" {
   config_bucket_arn  = data.terraform_remote_state.common.outputs.config_bucket.arn
   config_bucket_cmk  = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   config_bucket_id   = data.terraform_remote_state.common.outputs.config_bucket.id
-  dataset_s3                    = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket
-  published_bucket_cmk          = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket_cmk.arn
+  dataset_s3           = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket
+  published_bucket_cmk = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket_cmk.arn
 }
 
 module "pushgateway" {
