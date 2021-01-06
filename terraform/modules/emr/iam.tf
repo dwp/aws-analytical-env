@@ -455,6 +455,34 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
   }
 
+  statement {
+    sid    = "AllowEmrToReadPublishedBucket"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket*",
+      "s3:GetObject*",
+      "s3:GetBucketLocation",
+    ]
+    resources = [
+      var.dataset_s3.arn,
+      "${var.dataset_s3.arn}/*"
+    ]
+  }
+
+  statement {
+    sid    = "KmsToAccessPublishedBucket"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:Describe*",
+      "kms:List*",
+      "kms:Get*",
+      "kms:Encrypt",
+    ]
+    resources = [
+      var.published_bucket_cmk
+    ]
+  }
 }
 
 resource "aws_iam_role" "cogntio_read_only_role" {

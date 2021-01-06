@@ -30,3 +30,4 @@ variable "manage_mysql_user_lambda_zip" {
     version   = ""
   }
 }
+
