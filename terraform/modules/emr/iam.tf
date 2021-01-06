@@ -475,6 +475,9 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     actions = [
       "kms:Decrypt",
       "kms:DescribeKey",
+      "kms:Encrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*"
     ]
     resources = [
       var.published_bucket_cmk
