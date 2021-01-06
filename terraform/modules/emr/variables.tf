@@ -206,3 +206,12 @@ variable "config_bucket_id" {
   type        = string
 }
 
+variable "dataset_s3" {
+  type        = map(string)
+  description = "the data set bucket - id (name) and arn included"
+}
+
+variable "published_bucket_cmk" {
+  description = "(Required) KMS key arn for accessing the published_bucket"
+  type        = string
+}
