@@ -1,0 +1,34 @@
+[
+  {
+    "Sid": "jupyters3accessdocument",
+    "Effect": "Allow",
+    "Action": [
+      "s3:PutObject",
+      "s3:GetObject",
+      "s3:PutObjectAcl",
+      "s3:GetObjectVersion",
+      "s3:DeleteObject"
+    ],
+    "Resource": []
+  },
+  {
+    "Sid": "jupyterkmsaccessdocument",
+    "Effect": "Allow",
+    "Action": [
+      "kms:Decrypt",
+      "kms:Encrypt",
+      "kms:DescribeKey",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*"
+    ],
+    "Resource": []
+  },
+  {
+    "Sid": "jupyters3list",
+    "Effect": "Allow",
+    "Action": [
+      "s3:ListBucket"
+    ],
+    "Resource": []
+  }
+]

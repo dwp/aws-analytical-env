@@ -76,6 +76,9 @@ def lambda_handler(event, context):
                     all_policy_list
                 )
 
+                # todo: append policy object for s3fs access here
+                list_of_policy_objects.append()
+
                 dict_of_policy_name_to_munged_policy_objects = chunk_policies_and_return_dict_of_policy_name_to_json(
                     list_of_policy_objects, user_name,
                     user_state_and_policy[user_name]['role_name']
@@ -118,6 +121,7 @@ def get_env_vars():
     variables['secret_arn'] = os.getenv('SECRET_ARN')
     variables['common_tags'] ={}
     variables['assume_role_policy_json'] = os.getenv('ASSUME_ROLE_POLICY_JSON')
+    variables['s3fs_bucket_arn'] = os.getenv('FILE_SYSTEM_BUCKET_ARN')
 
     common_tags = common_tags_string.split(tag_separator)
     for tag in common_tags:
@@ -291,12 +295,14 @@ def create_tag_list(tag_keys_to_value_list, common_tags):
 
 
 # queries RDS and returns a dict, indexed by user_name with child values of: active (if user is marked for deletion),
-# policy_names (list of policies to assign to the user's role) and role_name
+# policy_names (list of policies to assign to the user's role), group_name (list of groups the user is assigned to)
+# and role_name
 def get_user_userstatus_policy_dict(variables):
     return_dict = {}
-    sql = f'SELECT User.username, User.active, Policy.policyname \
+    sql = f'SELECT User.username, User.active, Policy.policyname, `Group`.groupname \
         FROM User \
         JOIN UserGroup ON User.id = UserGroup.userId \
+        JOIN `Group` ON UserGroup.groupId = `Group`.id \
         JOIN GroupPolicy ON UserGroup.groupId = GroupPolicy.groupId \
         JOIN Policy ON GroupPolicy.policyId = Policy.id;'
     response = execute_statement(
@@ -310,14 +316,28 @@ def get_user_userstatus_policy_dict(variables):
             user_name = ''.join(record[0].values())
             active = list(record[1].values())[0]
             policy_name = ''.join(record[2].values())
+            group_name = ''.join(record[3].values())
             if return_dict.get(user_name) == None:
                 return_dict[user_name] = {
                     'active': active,
                     'policy_names': ["emrfs_iam", policy_name],
+                    'group_names' : [group_name],
                     'role_name': f'emrfs_{user_name}'
                 }
             else:
-                return_dict[user_name]['policy_names'].append(policy_name)
+                # todo: test this logic with 2x same policy
+                if policy_name not in return_dict[user_name]['policy_names']:
+                    return_dict[user_name]['policy_names'].append(policy_name)
+                # todo: test group_names are returned and parsed properly
+                if group_name not in return_dict[user_name]['group_names']:
+                    return_dict[user_name]['group_names'].append(group_name)
     else:
         raise ValueError("No records returned from RDS")
     return return_dict
+
+
+def create_policy_object_for_s3fs_access(user_name, group_names):
+    # todo: parse s3fs json file to dict, insert bucket and paths to allow access to home and group dirs
+    # todo: Should return a policy_object from line 157 to be appended in handler
+    # todo: do we need KMS adding too?
+    return None
