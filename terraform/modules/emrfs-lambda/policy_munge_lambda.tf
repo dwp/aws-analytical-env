@@ -15,6 +15,9 @@ resource "aws_lambda_function" "policy_munge_lambda" {
       SECRET_ARN              = var.db_client_secret_arn
       COMMON_TAGS             = join(",", [for key, val in var.common_tags : "${key}:${val}"])
       ASSUME_ROLE_POLICY_JSON = "${var.emrfs_iam_assume_role_json}"
+      FILE_SYSTEM_BUCKET_ARN  = "arn:aws:s3:::${var.s3fs_bucket_id}"
+      REGION                  = var.region
+      ACCOUNT                 = var.account
     }
   }
 

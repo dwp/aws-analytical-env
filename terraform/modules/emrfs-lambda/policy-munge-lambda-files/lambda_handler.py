@@ -76,6 +76,11 @@ def lambda_handler(event, context):
                     all_policy_list
                 )
 
+                statement = create_policy_document_from_template(user_name, user_state_and_policy[user_name].get('group_names'), variables)
+                s3fs_access_policy_object = create_policy_object(statement)
+
+                list_of_policy_objects.append(s3fs_access_policy_object)
+
                 dict_of_policy_name_to_munged_policy_objects = chunk_policies_and_return_dict_of_policy_name_to_json(
                     list_of_policy_objects, user_name,
                     user_state_and_policy[user_name]['role_name']
@@ -118,6 +123,9 @@ def get_env_vars():
     variables['secret_arn'] = os.getenv('SECRET_ARN')
     variables['common_tags'] ={}
     variables['assume_role_policy_json'] = os.getenv('ASSUME_ROLE_POLICY_JSON')
+    variables['s3fs_bucket_arn'] = os.getenv('FILE_SYSTEM_BUCKET_ARN')
+    variables['region'] = os.getenv('REGION')
+    variables['account'] = os.getenv('ACCOUNT')
 
     common_tags = common_tags_string.split(tag_separator)
     for tag in common_tags:
@@ -291,12 +299,14 @@ def create_tag_list(tag_keys_to_value_list, common_tags):
 
 
 # queries RDS and returns a dict, indexed by user_name with child values of: active (if user is marked for deletion),
-# policy_names (list of policies to assign to the user's role) and role_name
+# policy_names (list of policies to assign to the user's role), group_name (list of groups the user is assigned to)
+# and role_name
 def get_user_userstatus_policy_dict(variables):
     return_dict = {}
-    sql = f'SELECT User.username, User.active, Policy.policyname \
+    sql = f'SELECT User.username, User.active, Policy.policyname, `Group`.groupname \
         FROM User \
         JOIN UserGroup ON User.id = UserGroup.userId \
+        JOIN `Group` ON UserGroup.groupId = `Group`.id \
         JOIN GroupPolicy ON UserGroup.groupId = GroupPolicy.groupId \
         JOIN Policy ON GroupPolicy.policyId = Policy.id;'
     response = execute_statement(
@@ -310,14 +320,62 @@ def get_user_userstatus_policy_dict(variables):
             user_name = ''.join(record[0].values())
             active = list(record[1].values())[0]
             policy_name = ''.join(record[2].values())
+            group_name = ''.join(record[3].values())
             if return_dict.get(user_name) == None:
                 return_dict[user_name] = {
                     'active': active,
                     'policy_names': ["emrfs_iam", policy_name],
+                    'group_names' : [group_name],
                     'role_name': f'emrfs_{user_name}'
                 }
             else:
-                return_dict[user_name]['policy_names'].append(policy_name)
+                if policy_name not in return_dict[user_name]['policy_names']:
+                    return_dict[user_name]['policy_names'].append(policy_name)
+                if group_name not in return_dict[user_name]['group_names']:
+                    return_dict[user_name]['group_names'].append(group_name)
     else:
         raise ValueError("No records returned from RDS")
     return return_dict
+
+
+def create_policy_document_from_template(user_name, group_names, variables):
+    with open('s3fs_policy_template.json', 'r') as statement_raw:
+        statement = json.load(statement_raw)
+
+    s3fsaccessdocument = statement[0].get('Resource')
+    s3fskmsaccessdocument = statement[1].get('Resource')
+    s3fslist = statement[2].get('Resource')
+
+    s3fsaccessdocument.extend([
+        f'{variables["s3fs_bucket_arn"]}/*',
+        f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{user_name}-home'
+    ])
+
+    for group_name in group_names:
+        s3fsaccessdocument.append(
+            f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{group_name}-shared'
+        )
+        s3fskmsaccessdocument.append(
+            f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{group_name}-shared'
+        )
+
+    s3fskmsaccessdocument.extend([
+        f'{variables["s3fs_bucket_arn"]}/*',
+        f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{user_name}-home'
+
+    ])
+
+    s3fslist.append(
+        variables["s3fs_bucket_arn"]
+    )
+
+    return statement
+
+
+def create_policy_object(policy_dict):
+    return {
+        'policy_name': 's3fsAccess',
+        'statement': policy_dict,
+        'chars': len(json.dumps(policy_dict)),
+        'chunk_number': None
+    }

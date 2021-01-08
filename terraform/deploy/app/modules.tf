@@ -182,6 +182,7 @@ module "emrfs_lambda" {
   mgmt_account               = local.account[local.management_account[local.environment]]
   management_role_arn        = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
   environment                = local.environment
+  s3fs_bucket_id             = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_id
 }
 
 module "rbac_db" {

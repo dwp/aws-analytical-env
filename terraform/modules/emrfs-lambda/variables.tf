@@ -72,3 +72,8 @@ variable "environment" {
   type        = string
   description = "(Required) The local environment that Terraform is running in"
 }
+
+variable "s3fs_bucket_id" {
+  type        = string
+  description = "(Required) The bucket ID for s3fs shared and home dir bucket"
+}
