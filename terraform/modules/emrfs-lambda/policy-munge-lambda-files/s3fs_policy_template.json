@@ -1,6 +1,6 @@
 [
   {
-    "Sid": "jupyters3accessdocument",
+    "Sid": "s3fsaccessdocument",
     "Effect": "Allow",
     "Action": [
       "s3:PutObject",
@@ -12,7 +12,7 @@
     "Resource": []
   },
   {
-    "Sid": "jupyterkmsaccessdocument",
+    "Sid": "s3fskmsaccessdocument",
     "Effect": "Allow",
     "Action": [
       "kms:Decrypt",
@@ -24,7 +24,7 @@
     "Resource": []
   },
   {
-    "Sid": "jupyters3list",
+    "Sid": "s3fslist",
     "Effect": "Allow",
     "Action": [
       "s3:ListBucket"

@@ -76,8 +76,10 @@ def lambda_handler(event, context):
                     all_policy_list
                 )
 
-                # todo: append policy object for s3fs access here
-                list_of_policy_objects.append()
+                statement = create_policy_document_from_template(user_name, user_state_and_policy[user_name].get('group_names'))
+                s3fs_access_policy_object = create_policy_object_list_from_policy_name_list(statement)
+
+                list_of_policy_objects.append(s3fs_access_policy_object)
 
                 dict_of_policy_name_to_munged_policy_objects = chunk_policies_and_return_dict_of_policy_name_to_json(
                     list_of_policy_objects, user_name,
@@ -336,8 +338,45 @@ def get_user_userstatus_policy_dict(variables):
     return return_dict
 
 
-def create_policy_object_for_s3fs_access(user_name, group_names):
-    # todo: parse s3fs json file to dict, insert bucket and paths to allow access to home and group dirs
-    # todo: Should return a policy_object from line 157 to be appended in handler
-    # todo: do we need KMS adding too?
-    return None
+    # todo: test policy creation logic
+def create_policy_document_from_template(user_name, group_names):
+    with open('s3fs_policy_template.json', 'r') as statement_raw:
+        statement = json.load(statement_raw)
+
+    s3fsaccessdocument = statement[0].get('Resource')
+    s3fskmsaccessdocument = statement[1].get('Resource')
+    s3fslist = statement[2].get('Resource')
+
+    s3fsaccessdocument.extend([
+        f'{variables["s3fs_bucket_arn"]}/*',
+        f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{user_name}-home'
+    ])
+
+    for group_name in group_names:
+        s3fsaccessdocument.append(
+            f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{group_name}-shared'
+        )
+        s3fskmsaccessdocument.append(
+            f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{group_name}-shared'
+        )
+
+    s3fskmsaccessdocument.extend([
+        f'{variables["s3fs_bucket_arn"]}/*',
+        f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{user_name}-home'
+
+    ])
+
+    s3fslist.append(
+        variables["s3fs_bucket_arn"]
+    )
+
+    return statement
+
+
+def create_policy_object(policy_dict):
+    return {
+        'policy_name': 's3fsAccess',
+        'statement': policy_dict,
+        'chars': len(json.dumps(policy_dict)),
+        'chunk_number': None
+    }
