@@ -76,8 +76,8 @@ def lambda_handler(event, context):
                     all_policy_list
                 )
 
-                statement = create_policy_document_from_template(user_name, user_state_and_policy[user_name].get('group_names'))
-                s3fs_access_policy_object = create_policy_object_list_from_policy_name_list(statement)
+                statement = create_policy_document_from_template(user_name, user_state_and_policy[user_name].get('group_names'), variables)
+                s3fs_access_policy_object = create_policy_object(statement)
 
                 list_of_policy_objects.append(s3fs_access_policy_object)
 
@@ -124,6 +124,8 @@ def get_env_vars():
     variables['common_tags'] ={}
     variables['assume_role_policy_json'] = os.getenv('ASSUME_ROLE_POLICY_JSON')
     variables['s3fs_bucket_arn'] = os.getenv('FILE_SYSTEM_BUCKET_ARN')
+    variables['region'] = os.getenv('REGION')
+    variables['account'] = os.getenv('ACCOUNT')
 
     common_tags = common_tags_string.split(tag_separator)
     for tag in common_tags:
@@ -327,10 +329,8 @@ def get_user_userstatus_policy_dict(variables):
                     'role_name': f'emrfs_{user_name}'
                 }
             else:
-                # todo: test this logic with 2x same policy
                 if policy_name not in return_dict[user_name]['policy_names']:
                     return_dict[user_name]['policy_names'].append(policy_name)
-                # todo: test group_names are returned and parsed properly
                 if group_name not in return_dict[user_name]['group_names']:
                     return_dict[user_name]['group_names'].append(group_name)
     else:
@@ -338,8 +338,7 @@ def get_user_userstatus_policy_dict(variables):
     return return_dict
 
 
-    # todo: test policy creation logic
-def create_policy_document_from_template(user_name, group_names):
+def create_policy_document_from_template(user_name, group_names, variables):
     with open('s3fs_policy_template.json', 'r') as statement_raw:
         statement = json.load(statement_raw)
 

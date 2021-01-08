@@ -10,19 +10,32 @@ variables['database_name'] = 'test_db'
 variables['secret_arn'] = 'arn:12345432::secret_test_arn'
 variables['common_tags'] = {'tag1key': 'tag1val', 'tag2key': 'tag2val'}
 variables['assume_role_policy_json'] = '{"json": "policy string"}'
+variables['s3fs_bucket_arn'] = 'arn:12345432::s3_test_arn'
+variables['region'] = 'eu-west-7'
+variables['account'] = '1234567'
 
 mocked_db_response = {
     'numberOfRecordsUpdated': 0,
     'records': [
-        [{'stringValue': 'user_one'}, {'booleanValue': False}, {'stringValue': 'policy_one'}],
-        [{'stringValue': 'user_two'}, {'booleanValue': True}, {'stringValue': 'policy_one'}],
-        [{'stringValue': 'user_one'}, {'booleanValue': False}, {'stringValue': 'policy_two'}],
+        [{'stringValue': 'user_one'}, {'booleanValue': False}, {'stringValue': 'policy_one'}, {'stringValue': 'group_one'}],
+        [{'stringValue': 'user_two'}, {'booleanValue': True}, {'stringValue': 'policy_one'}, {'stringValue': 'group_two'}],
+        [{'stringValue': 'user_one'}, {'booleanValue': False}, {'stringValue': 'policy_two'}, {'stringValue': 'group_two'}],
     ]
 }
 
 mocked_user_dict = {
-    'user_one': {'active': False, 'policy_names': ['emrfs_iam', 'policy_one', 'policy_two'], 'role_name': 'emrfs_user_one'},
-    'user_two': {'active': True, 'policy_names': ['emrfs_iam', 'policy_one'], 'role_name': 'emrfs_user_two'}
+    'user_one': {
+        'active': False,
+        'policy_names': ['emrfs_iam', 'policy_one', 'policy_two'],
+        'role_name': 'emrfs_user_one',
+        'group_names': ['group_one', 'group_two']
+    },
+    'user_two': {
+        'active': True,
+        'policy_names': ['emrfs_iam', 'policy_one'],
+        'role_name': 'emrfs_user_two',
+        'group_names': ['group_two']
+    }
 }
 
 mocked_policy_object_list = [
@@ -73,6 +86,41 @@ mocked_role_tags_response = [
     }
 ]
 
+mock_statement_one =   {
+    "Sid": "s3fsaccessdocument",
+    "Effect": "Allow",
+    "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:PutObjectAcl",
+        "s3:GetObjectVersion",
+        "s3:DeleteObject"
+    ],
+    "Resource": ["arn:12345432::s3_test_arn/*", "arn:aws:kms:eu-west-7:1234567:alias/test_user-home", "arn:aws:kms:eu-west-7:1234567:alias/group_one-shared", "arn:aws:kms:eu-west-7:1234567:alias/group_two-shared"]
+}
+
+mock_statement_two =   {
+    "Sid": "s3fskmsaccessdocument",
+    "Effect": "Allow",
+    "Action": [
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:DescribeKey",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*"
+    ],
+    "Resource":  ['arn:aws:kms:eu-west-7:1234567:alias/group_one-shared', 'arn:aws:kms:eu-west-7:1234567:alias/group_two-shared', 'arn:12345432::s3_test_arn/*', 'arn:aws:kms:eu-west-7:1234567:alias/test_user-home']
+}
+
+mock_statement_three = {
+    "Sid": "s3fslist",
+    "Effect": "Allow",
+    "Action": [
+        "s3:ListBucket"
+    ],
+    "Resource": ["arn:12345432::s3_test_arn"]
+}
+
 
 class LambdaHandlerTests(TestCase):
 
@@ -80,7 +128,11 @@ class LambdaHandlerTests(TestCase):
     def test_get_env_vars(self, mock_get_env):
         mock_get_env.side_effect = ["tag1:val1,tag2:val2,tag3:val3", variables['database_cluster_arn'],
                                     variables['database_name'], variables['secret_arn'],
-                                    variables['assume_role_policy_json']]
+                                    variables['assume_role_policy_json'],
+                                    variables['s3fs_bucket_arn'],
+                                    variables['region'],
+                                    variables['account']
+                                    ]
         lambda_handler.get_env_vars()
 
         assert lambda_handler.variables['common_tags']['tag1'] == 'val1'
@@ -90,6 +142,8 @@ class LambdaHandlerTests(TestCase):
         assert lambda_handler.variables['database_name'] == variables['database_name']
         assert lambda_handler.variables['secret_arn'] == variables['secret_arn']
         assert lambda_handler.variables['assume_role_policy_json'] == variables['assume_role_policy_json']
+        assert lambda_handler.variables['s3fs_bucket_arn'] == variables['s3fs_bucket_arn']
+
 
     @patch('lambda_handler.execute_statement')
     def test_get_user_userstatus_policy_dict(self, mock_execute_statement):
@@ -229,3 +283,10 @@ class LambdaHandlerTests(TestCase):
 
     def test_verify_policies_does_not_raise_error_when_additional_policy_found_in_rds(self):
         self.assertIsNone(lambda_handler.verify_policies(['policy_one'], mocked_policy_object_list))
+
+    def test_create_policy_document_from_template(self):
+        result = lambda_handler.create_policy_document_from_template('test_user', ['group_one', 'group_two'], variables)
+        assert result[0] == mock_statement_one
+        assert result[1] == mock_statement_two
+        assert result[2] == mock_statement_three
+
