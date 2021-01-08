@@ -37,6 +37,7 @@ data "template_file" "emr_setup_sh" {
     user_pool_id                    = var.cognito_user_pool_id
     logging_shell                   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.logging_sh.key)
     cloudwatch_shell                = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.cloudwatch_sh.key)
+    get_scripts_shell               = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.get_scripts_sh.key)
     cwa_namespace                   = local.cw_agent_namespace
     cwa_log_group_name              = local.cw_agent_step_log_group_name
     config_bucket                   = var.config_bucket_id
