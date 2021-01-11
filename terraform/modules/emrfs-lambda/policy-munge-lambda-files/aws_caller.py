@@ -2,6 +2,7 @@ import boto3
 
 iam_client = boto3.client('iam')
 rds_data_client = boto3.client('rds-data')
+sts_connection = boto3.client('sts')
 
 """
 ============================================================================================================
@@ -9,6 +10,28 @@ rds_data_client = boto3.client('rds-data')
 ============================================================================================================
 """
 
+# assumes mgmt role to set up cognito client associated with mgmt account
+def create_cognito_client(mgmt_account_role_arn):
+    mgmt_account = sts_connection.assume_role(
+        RoleArn=mgmt_account_role_arn,
+        RoleSessionName="mgmt_cognito_rds_sync_lambda"
+    )
+    # create cognito client using the assumed role credentials in mgmt acc
+    global cognito_client
+    cognito_client = boto3.client(
+        'cognito-idp',
+        aws_access_key_id=mgmt_account['Credentials']['AccessKeyId'],
+        aws_secret_access_key=mgmt_account['Credentials']['SecretAccessKey'],
+        aws_session_token=mgmt_account['Credentials']['SessionToken']
+    )
+
+
+def get_groups_for_user(user_name_no_sub, user_pool_id):
+    response = cognito_client.admin_list_groups_for_user(
+        Username=user_name_no_sub,
+        UserPoolId=user_pool_id,
+    )
+    return [group.get('GroupName') for group in response.get('Groups')]
 
 def list_all_policies_in_account():
     policy_list = []

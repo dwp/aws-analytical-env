@@ -14,7 +14,7 @@ resource "aws_lambda_function" "cognito_rds_sync_lambda" {
       DATABASE_NAME         = var.db_name
       SECRET_ARN            = var.db_client_secret_arn
       COGNITO_USERPOOL_ID   = var.cognito_user_pool_id
-      MGMT_ACCOUNT_ROLE_ARN = "arn:aws:iam::${var.mgmt_account}:role/${var.name_prefix}-mgmt-cognito-rds-sync-role"
+      MGMT_ACCOUNT_ROLE_ARN = "arn:aws:iam::${var.mgmt_account}:role/${var.name_prefix}-mgmt-cognito-rbac-role"
     }
   }
 

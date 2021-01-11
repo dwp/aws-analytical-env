@@ -6,7 +6,8 @@ import os
 from aws_caller import list_all_policies_in_account, get_policy_statement_as_list, \
     create_policy_from_json_and_return_arn, attach_policy_to_role, \
     remove_policy_being_replaced, tag_role, get_all_role_tags, delete_role_tags, \
-    execute_statement, create_role_and_await_consistency, get_emrfs_roles, remove_user_role
+    execute_statement, create_role_and_await_consistency, get_emrfs_roles, remove_user_role, \
+    get_groups_for_user
 
 # policy json template to be copied and amended as needed
 iam_template = {"Version": "2012-10-17", "Statement": []}
@@ -55,7 +56,8 @@ to a single IAM role than would otherwise be possible.
 def lambda_handler(event, context):
     get_env_vars()
 
-    user_state_and_policy = get_user_userstatus_policy_dict(variables)
+    user_state_and_policy_without_groups = get_user_userstatus_policy_dict(variables)
+    user_state_and_policy = update_user_groups_from_cognito(user_state_and_policy_without_groups)
 
     pre_creation_existing_role_list = get_emrfs_roles()
 
@@ -126,6 +128,8 @@ def get_env_vars():
     variables['s3fs_bucket_arn'] = os.getenv('FILE_SYSTEM_BUCKET_ARN')
     variables['region'] = os.getenv('REGION')
     variables['account'] = os.getenv('ACCOUNT')
+    variables['mgmt_account'] = os.getenv('MGMT_ACCOUNT_ROLE_ARN')
+    variables['user_pool_id'] = os.getenv('COGNITO_USERPOOL_ID')
 
     common_tags = common_tags_string.split(tag_separator)
     for tag in common_tags:
@@ -303,10 +307,9 @@ def create_tag_list(tag_keys_to_value_list, common_tags):
 # and role_name
 def get_user_userstatus_policy_dict(variables):
     return_dict = {}
-    sql = f'SELECT User.username, User.active, Policy.policyname, `Group`.groupname \
+    sql = f'SELECT User.username, User.active, Policy.policyname \
         FROM User \
         JOIN UserGroup ON User.id = UserGroup.userId \
-        JOIN `Group` ON UserGroup.groupId = `Group`.id \
         JOIN GroupPolicy ON UserGroup.groupId = GroupPolicy.groupId \
         JOIN Policy ON GroupPolicy.policyId = Policy.id;'
     response = execute_statement(
@@ -320,19 +323,16 @@ def get_user_userstatus_policy_dict(variables):
             user_name = ''.join(record[0].values())
             active = list(record[1].values())[0]
             policy_name = ''.join(record[2].values())
-            group_name = ''.join(record[3].values())
             if return_dict.get(user_name) == None:
                 return_dict[user_name] = {
                     'active': active,
                     'policy_names': ["emrfs_iam", policy_name],
-                    'group_names' : [group_name],
-                    'role_name': f'emrfs_{user_name}'
+                    'role_name': f'emrfs_{user_name}',
+                    'group_names': []
                 }
             else:
                 if policy_name not in return_dict[user_name]['policy_names']:
                     return_dict[user_name]['policy_names'].append(policy_name)
-                if group_name not in return_dict[user_name]['group_names']:
-                    return_dict[user_name]['group_names'].append(group_name)
     else:
         raise ValueError("No records returned from RDS")
     return return_dict
@@ -379,3 +379,10 @@ def create_policy_object(policy_dict):
         'chars': len(json.dumps(policy_dict)),
         'chunk_number': None
     }
+
+
+# queries Cognito Userpool for user_groups and fills attribute in dict
+def update_user_groups_from_cognito(user_state_and_policy_dict):
+    for user in user_state_and_policy_dict:
+        groups = get_groups_for_user(user[0:-3], variables['user_pool_id'])
+        user_state_and_policy_dict[user]['group_names'].extend(groups)

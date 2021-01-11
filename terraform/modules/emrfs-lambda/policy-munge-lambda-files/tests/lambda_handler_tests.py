@@ -1,5 +1,6 @@
 import lambda_handler
 from unittest import TestCase
+import copy
 from mock import call, patch
 
 iam_template = {"Version": "2012-10-17", "Statement": []}
@@ -13,6 +14,8 @@ variables['assume_role_policy_json'] = '{"json": "policy string"}'
 variables['s3fs_bucket_arn'] = 'arn:12345432::s3_test_arn'
 variables['region'] = 'eu-west-7'
 variables['account'] = '1234567'
+variables['mgmt_account'] = 'arn:12345432::mgmt_acc_test_arn'
+variables['user_pool_id'] = '12345432_ea2'
 
 mocked_db_response = {
     'numberOfRecordsUpdated': 0,
@@ -21,6 +24,21 @@ mocked_db_response = {
         [{'stringValue': 'user_two'}, {'booleanValue': True}, {'stringValue': 'policy_one'}, {'stringValue': 'group_two'}],
         [{'stringValue': 'user_one'}, {'booleanValue': False}, {'stringValue': 'policy_two'}, {'stringValue': 'group_two'}],
     ]
+}
+
+mocked_user_dict_without_groups = {
+    'user_one': {
+        'active': False,
+        'policy_names': ['emrfs_iam', 'policy_one', 'policy_two'],
+        'role_name': 'emrfs_user_one',
+        'group_names': []
+    },
+    'user_two': {
+        'active': True,
+        'policy_names': ['emrfs_iam', 'policy_one'],
+        'role_name': 'emrfs_user_two',
+        'group_names': []
+    }
 }
 
 mocked_user_dict = {
@@ -131,7 +149,9 @@ class LambdaHandlerTests(TestCase):
                                     variables['assume_role_policy_json'],
                                     variables['s3fs_bucket_arn'],
                                     variables['region'],
-                                    variables['account']
+                                    variables['account'],
+                                    variables['mgmt_account'],
+                                    variables['user_pool_id']
                                     ]
         lambda_handler.get_env_vars()
 
@@ -143,6 +163,8 @@ class LambdaHandlerTests(TestCase):
         assert lambda_handler.variables['secret_arn'] == variables['secret_arn']
         assert lambda_handler.variables['assume_role_policy_json'] == variables['assume_role_policy_json']
         assert lambda_handler.variables['s3fs_bucket_arn'] == variables['s3fs_bucket_arn']
+        assert lambda_handler.variables['mgmt_account'] == variables['mgmt_account']
+        assert lambda_handler.variables['user_pool_id'] == variables['user_pool_id']
 
 
     @patch('lambda_handler.execute_statement')
@@ -150,7 +172,7 @@ class LambdaHandlerTests(TestCase):
         mock_execute_statement.side_effect = [mocked_db_response, {'numberOfRecordsUpdated': 0, 'records': []}]
         result1 = lambda_handler.get_user_userstatus_policy_dict(variables)
 
-        assert result1 == mocked_user_dict
+        assert result1 == mocked_user_dict_without_groups
         self.assertRaises(
             ValueError,
             lambda_handler.get_user_userstatus_policy_dict,
@@ -290,3 +312,10 @@ class LambdaHandlerTests(TestCase):
         assert result[1] == mock_statement_two
         assert result[2] == mock_statement_three
 
+    @patch('lambda_handler.get_groups_for_user')
+    def test_update_user_groups_from_cognito(self, mock_get_groups_for_user):
+        mock_get_groups_for_user.side_effect = [['group_one', 'group_two'], ['group_two']]
+        result = copy.deepcopy(mocked_user_dict_without_groups)
+        lambda_handler.update_user_groups_from_cognito(result)
+
+        assert result == mocked_user_dict
