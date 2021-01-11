@@ -167,7 +167,7 @@ class LambdaHandlerTests(TestCase):
         assert lambda_handler.variables['user_pool_id'] == variables['user_pool_id']
 
 
-    @patch('lambda_handler.execute_statement')
+    @patch('aws_caller.execute_statement')
     def test_get_user_userstatus_policy_dict(self, mock_execute_statement):
         mock_execute_statement.side_effect = [mocked_db_response, {'numberOfRecordsUpdated': 0, 'records': []}]
         result1 = lambda_handler.get_user_userstatus_policy_dict(variables)
@@ -179,7 +179,7 @@ class LambdaHandlerTests(TestCase):
             variables
         )
 
-    @patch('lambda_handler.create_role_and_await_consistency')
+    @patch('aws_caller.create_role_and_await_consistency')
     def test_check_roles_exist_and_create_if_not(self, mock_create_role_and_await_consistency):
         one_role_does_not_exist = ['emrfs_user_one']
         both_roles_exist = ['emrfs_user_one', 'emrfs_user_two']
@@ -202,7 +202,7 @@ class LambdaHandlerTests(TestCase):
         mock_create_role_and_await_consistency.assert_called_once_with('emrfs_user_two', '{"json": "policy string"}')
         assert result2 == ['emrfs_user_one', 'created_user']
 
-    @patch('lambda_handler.get_policy_statement_as_list')
+    @patch('aws_caller.get_policy_statement_as_list')
     def test_create_policy_object_list_from_policy_name_list(self, mock_get_policy_statement_as_list):
         mock_get_policy_statement_as_list.return_value = [{'test': 'statement'}]
 
@@ -239,7 +239,7 @@ class LambdaHandlerTests(TestCase):
             "Statement": [{'test': 'statement1'}, {'test': 'statement2'}]
         }
 
-    @patch('lambda_handler.remove_policy_being_replaced')
+    @patch('aws_caller.remove_policy_being_replaced')
     def test_remove_existing_user_policies(self, mock_remove_policy_being_replaced):
         calls = [
             call('arn:iam:123432/Policy/emrfs_test1', 'emrfs_user_one'),
@@ -253,8 +253,8 @@ class LambdaHandlerTests(TestCase):
 
         mock_remove_policy_being_replaced.assert_has_calls(calls, any_order=True)
 
-    @patch('lambda_handler.get_all_role_tags')
-    @patch('lambda_handler.delete_role_tags')
+    @patch('aws_caller.get_all_role_tags')
+    @patch('aws_caller.delete_role_tags')
     def test_delete_tags(self, mock_delete_role_tags, mock_get_all_role_tags):
         mock_get_all_role_tags.return_value = mocked_role_tags_response
 
@@ -263,7 +263,7 @@ class LambdaHandlerTests(TestCase):
         mock_get_all_role_tags.assert_called_once()
         mock_delete_role_tags.assert_called_with(['InputPolicies-1of20', 'InputPolicies-18of20'], 'emrfs_user_one')
 
-    @patch('lambda_handler.tag_role')
+    @patch('aws_caller.tag_role')
     def test_tag_role_with_policies_NOT_CHUNKED(self, mock_tag_role):
         lambda_handler.tag_role_with_policies(['policy_one', 'policy_two'], 'emrfs_user_one', variables['common_tags'])
 
@@ -283,7 +283,7 @@ class LambdaHandlerTests(TestCase):
         ])
 
     @patch('lambda_handler.char_limit_for_tag_value', 20)
-    @patch('lambda_handler.tag_role')
+    @patch('aws_caller.tag_role')
     def test_tag_role_with_policies_CHUNKED(self, mock_tag_role):
         lambda_handler.tag_role_with_policies(['policy_one', 'policy_two'], 'emrfs_user_one', variables['common_tags'])
 
@@ -312,8 +312,9 @@ class LambdaHandlerTests(TestCase):
         assert result[1] == mock_statement_two
         assert result[2] == mock_statement_three
 
-    @patch('lambda_handler.get_groups_for_user')
-    def test_update_user_groups_from_cognito(self, mock_get_groups_for_user):
+    @patch('aws_caller.create_cognito_client')
+    @patch('aws_caller.get_groups_for_user')
+    def test_update_user_groups_from_cognito(self, mock_get_groups_for_user, mock_create_cognito_client):
         mock_get_groups_for_user.side_effect = [['group_one', 'group_two'], ['group_two']]
         result = copy.deepcopy(mocked_user_dict_without_groups)
         lambda_handler.update_user_groups_from_cognito(result)

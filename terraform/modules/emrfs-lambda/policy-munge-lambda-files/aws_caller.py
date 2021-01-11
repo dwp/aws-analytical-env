@@ -17,16 +17,16 @@ def create_cognito_client(mgmt_account_role_arn):
         RoleSessionName="mgmt_cognito_rds_sync_lambda"
     )
     # create cognito client using the assumed role credentials in mgmt acc
-    global cognito_client
     cognito_client = boto3.client(
         'cognito-idp',
         aws_access_key_id=mgmt_account['Credentials']['AccessKeyId'],
         aws_secret_access_key=mgmt_account['Credentials']['SecretAccessKey'],
         aws_session_token=mgmt_account['Credentials']['SessionToken']
     )
+    return cognito_client
 
 
-def get_groups_for_user(user_name_no_sub, user_pool_id):
+def get_groups_for_user(user_name_no_sub, user_pool_id, cognito_client):
     response = cognito_client.admin_list_groups_for_user(
         Username=user_name_no_sub,
         UserPoolId=user_pool_id,
