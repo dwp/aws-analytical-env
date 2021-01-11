@@ -3,10 +3,7 @@ import copy
 import re
 import os
 
-from aws_caller import list_all_policies_in_account, get_policy_statement_as_list, \
-    create_policy_from_json_and_return_arn, attach_policy_to_role, \
-    remove_policy_being_replaced, tag_role, get_all_role_tags, delete_role_tags, \
-    execute_statement, create_role_and_await_consistency, get_emrfs_roles, remove_user_role
+import aws_caller
 
 # policy json template to be copied and amended as needed
 iam_template = {"Version": "2012-10-17", "Statement": []}
@@ -55,9 +52,10 @@ to a single IAM role than would otherwise be possible.
 def lambda_handler(event, context):
     get_env_vars()
 
-    user_state_and_policy = get_user_userstatus_policy_dict(variables)
+    user_state_and_policy_without_groups = get_user_userstatus_policy_dict(variables)
+    user_state_and_policy = update_user_groups_from_cognito(user_state_and_policy_without_groups)
 
-    pre_creation_existing_role_list = get_emrfs_roles()
+    pre_creation_existing_role_list = aws_caller.get_emrfs_roles()
 
     existing_role_list = check_roles_exist_and_create_if_not(
         pre_creation_existing_role_list,
@@ -65,7 +63,7 @@ def lambda_handler(event, context):
         variables['assume_role_policy_json']
     )
 
-    all_policy_list = list_all_policies_in_account()
+    all_policy_list = aws_caller.list_all_policies_in_account()
 
     for user_name in user_state_and_policy:
         if user_state_and_policy[user_name]['role_name'] in existing_role_list:
@@ -102,7 +100,7 @@ def lambda_handler(event, context):
 
             else:
                 remove_existing_user_policies(user_state_and_policy[user_name]['role_name'], all_policy_list)
-                remove_user_role(user_state_and_policy[user_name]['role_name'])
+                aws_caller.remove_user_role(user_state_and_policy[user_name]['role_name'])
 
 
 """
@@ -126,6 +124,8 @@ def get_env_vars():
     variables['s3fs_bucket_arn'] = os.getenv('FILE_SYSTEM_BUCKET_ARN')
     variables['region'] = os.getenv('REGION')
     variables['account'] = os.getenv('ACCOUNT')
+    variables['mgmt_account'] = os.getenv('MGMT_ACCOUNT_ROLE_ARN')
+    variables['user_pool_id'] = os.getenv('COGNITO_USERPOOL_ID')
 
     common_tags = common_tags_string.split(tag_separator)
     for tag in common_tags:
@@ -144,7 +144,7 @@ def check_roles_exist_and_create_if_not(existing_role_list, user_state_and_polic
     for user in user_state_and_policy:
         if user_state_and_policy[user]['role_name'] not in existing_role_list \
                 and user_state_and_policy[user]['active']:
-            created_role = create_role_and_await_consistency(user_state_and_policy[user]['role_name'],
+            created_role = aws_caller.create_role_and_await_consistency(user_state_and_policy[user]['role_name'],
                                                              assume_role_document)
             roles_after_creation.append(created_role)
     return roles_after_creation
@@ -155,7 +155,7 @@ def create_policy_object_list_from_policy_name_list(names, all_policy_list):
     policy_object_list = []
     for policy in all_policy_list:
         if (policy['PolicyName'] in names):
-            statement = get_policy_statement_as_list(policy['Arn'], policy['DefaultVersionId'])
+            statement = aws_caller.get_policy_statement_as_list(policy['Arn'], policy['DefaultVersionId'])
             policy_object_list.append(
                 {
                     'policy_name': policy['PolicyName'],
@@ -216,14 +216,14 @@ def remove_existing_user_policies(role_name, all_policy_list):
     regex = re.compile(f"{role_name}-\d*of\d*")
     for policy in all_policy_list:
         if (regex.match(policy['PolicyName'])):
-            remove_policy_being_replaced(policy['Arn'], role_name)
+            aws_caller.remove_policy_being_replaced(policy['Arn'], role_name)
 
 
 # creates policies in IAM from JSON files and removes JSON files
 def create_policies_from_dict_and_return_list_of_policy_arns(dict_of_policy_name_to_munged_policy_objects):
     list_of_policy_arns = []
     for policy in dict_of_policy_name_to_munged_policy_objects:
-        policy_arn = create_policy_from_json_and_return_arn(policy, json.dumps(
+        policy_arn = aws_caller.create_policy_from_json_and_return_arn(policy, json.dumps(
             dict_of_policy_name_to_munged_policy_objects[policy]))
         list_of_policy_arns.append(policy_arn)
     return list_of_policy_arns
@@ -231,19 +231,19 @@ def create_policies_from_dict_and_return_list_of_policy_arns(dict_of_policy_name
 
 def attach_policies_to_role(list_of_policy_arns, role_name):
     for arn in list_of_policy_arns:
-        attach_policy_to_role(arn, role_name)
+        aws_caller.attach_policy_to_role(arn, role_name)
 
 
 # finds all tags created by this lambda on a given role and deletes them
 def delete_tags(role_name):
-    tags = get_all_role_tags(role_name)
+    tags = aws_caller.get_all_role_tags(role_name)
     regex = re.compile(f"InputPolicies-\d*of\d*")
     tag_name_list = []
     for tag in tags:
         if (regex.match(tag['Key'])):
             tag_name_list.append(tag['Key'])
     if (len(tag_name_list) > 0):
-        delete_role_tags(tag_name_list, role_name)
+        aws_caller.delete_role_tags(tag_name_list, role_name)
 
 
 # creates tag values mapped to their tag name to avoid hitting the maximum tag per role
@@ -274,7 +274,7 @@ def tag_role_with_policies(policy_list, role_name, common_tags):
 
     tag_list = create_tag_list(tag_keys_to_value_list, common_tags)
 
-    tag_role(role_name, tag_list)
+    aws_caller.tag_role(role_name, tag_list)
 
 
 # creates a list of tag objects to be added to a role
@@ -303,13 +303,12 @@ def create_tag_list(tag_keys_to_value_list, common_tags):
 # and role_name
 def get_user_userstatus_policy_dict(variables):
     return_dict = {}
-    sql = f'SELECT User.username, User.active, Policy.policyname, `Group`.groupname \
+    sql = f'SELECT User.username, User.active, Policy.policyname \
         FROM User \
         JOIN UserGroup ON User.id = UserGroup.userId \
-        JOIN `Group` ON UserGroup.groupId = `Group`.id \
         JOIN GroupPolicy ON UserGroup.groupId = GroupPolicy.groupId \
         JOIN Policy ON GroupPolicy.policyId = Policy.id;'
-    response = execute_statement(
+    response = aws_caller.execute_statement(
         sql,
         variables['secret_arn'],
         variables["database_name"],
@@ -320,19 +319,16 @@ def get_user_userstatus_policy_dict(variables):
             user_name = ''.join(record[0].values())
             active = list(record[1].values())[0]
             policy_name = ''.join(record[2].values())
-            group_name = ''.join(record[3].values())
             if return_dict.get(user_name) == None:
                 return_dict[user_name] = {
                     'active': active,
                     'policy_names': ["emrfs_iam", policy_name],
-                    'group_names' : [group_name],
-                    'role_name': f'emrfs_{user_name}'
+                    'role_name': f'emrfs_{user_name}',
+                    'group_names': []
                 }
             else:
                 if policy_name not in return_dict[user_name]['policy_names']:
                     return_dict[user_name]['policy_names'].append(policy_name)
-                if group_name not in return_dict[user_name]['group_names']:
-                    return_dict[user_name]['group_names'].append(group_name)
     else:
         raise ValueError("No records returned from RDS")
     return return_dict
@@ -379,3 +375,11 @@ def create_policy_object(policy_dict):
         'chars': len(json.dumps(policy_dict)),
         'chunk_number': None
     }
+
+
+# queries Cognito Userpool for user_groups and fills attribute in dict
+def update_user_groups_from_cognito(user_state_and_policy_dict):
+    cognito_client = aws_caller.create_cognito_client(variables['mgmt_account'])
+    for user in user_state_and_policy_dict:
+        groups = aws_caller.get_groups_for_user(user[0:-3], variables['user_pool_id'], cognito_client)
+        user_state_and_policy_dict[user]['group_names'].extend(groups)

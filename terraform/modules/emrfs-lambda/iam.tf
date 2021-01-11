@@ -16,24 +16,26 @@ data "aws_iam_policy_document" "assume_role_lambda" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "policy_munge_lambda_basic_policy_attach" {
-  role       = aws_iam_role.policy_munge_lambda_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+resource "aws_iam_role_policy" "policy_munge_lambda_basic_policy_attach" {
+  role   = aws_iam_role.policy_munge_lambda_role.name
+  policy = data.aws_iam_policy_document.policy_munge_lambda_execution_policy_document.json
 }
 
-resource "aws_iam_role_policy" "policy_munge_lambda_logging_policy" {
-  role   = aws_iam_role.policy_munge_lambda_role.id
-  policy = data.aws_iam_policy_document.policy_munge_lambda_logging_policy_document.json
-}
-
-data aws_iam_policy_document policy_munge_lambda_logging_policy_document {
+data aws_iam_policy_document policy_munge_lambda_execution_policy_document {
   statement {
-    sid = "PolicyMungeLambdaLogging"
+    sid       = "CognitoRdsSyncMgmt"
+    actions   = ["sts:AssumeRole"]
+    resources = ["arn:aws:iam::${var.mgmt_account}:role/${var.name_prefix}-mgmt-cognito-rbac-role"]
+  }
+
+  statement {
+    sid = "LambdaBasicExecution"
     actions = [
-      "logs:PutLogEvents",
-      "logs:CreateLogStream"
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
     ]
-    resources = [aws_cloudwatch_log_group.policy_munge_lambda_logs.arn]
+    resources = ["*"]
   }
 }
 
@@ -128,8 +130,9 @@ data "aws_iam_policy_document" "cognito_rds_sync_lambda_execution_policy" {
   statement {
     sid       = "CognitoRdsSyncMgmt"
     actions   = ["sts:AssumeRole"]
-    resources = ["arn:aws:iam::${var.mgmt_account}:role/${var.name_prefix}-mgmt-cognito-rds-sync-role"]
+    resources = ["arn:aws:iam::${var.mgmt_account}:role/${var.name_prefix}-mgmt-cognito-rbac-role"]
   }
+
   statement {
     sid = "LambdaBasicExecution"
     actions = [
@@ -191,9 +194,9 @@ resource "aws_cloudwatch_log_group" "cognito_rds_sync_lambda_logs" {
   tags              = merge(var.common_tags, { "Name" : "${var.name_prefix}-cognito-rds-sync-lambda-logs" })
 }
 
-resource "aws_iam_role" "mgmt_cognito_rds_sync_lambda_role" {
+resource "aws_iam_role" "mgmt_rbac_lambda_role" {
   count              = var.environment == "development" || var.environment == "preprod" ? 1 : 0
-  name               = "${var.name_prefix}-mgmt-cognito-rds-sync-role"
+  name               = "${var.name_prefix}-mgmt-cognito-rbac-role"
   assume_role_policy = data.aws_iam_policy_document.mgmt_trust_policy.json
   tags               = var.common_tags
   provider           = aws.management
@@ -207,20 +210,20 @@ data "aws_iam_policy_document" "mgmt_trust_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = [aws_iam_role.cognito_rds_sync_lambda_role.arn]
+      identifiers = [aws_iam_role.cognito_rds_sync_lambda_role.arn, aws_iam_role.policy_munge_lambda_role.arn]
     }
   }
 }
 
 resource "aws_iam_role_policy" "mgmt_cognito_rds_sync_lambda_policy" {
   count      = var.environment == "development" || var.environment == "preprod" ? 1 : 0
-  depends_on = [aws_iam_role.mgmt_cognito_rds_sync_lambda_role[0]]
-  policy     = data.aws_iam_policy_document.mgmt_cognito_rds_sync_lambda_document.json
-  role       = aws_iam_role.mgmt_cognito_rds_sync_lambda_role[0].id
+  depends_on = [aws_iam_role.mgmt_rbac_lambda_role[0]]
+  policy     = data.aws_iam_policy_document.mgmt_rbac_lambda_document.json
+  role       = aws_iam_role.mgmt_rbac_lambda_role[0].id
   provider   = aws.management
 }
 
-data aws_iam_policy_document mgmt_cognito_rds_sync_lambda_document {
+data aws_iam_policy_document mgmt_rbac_lambda_document {
   statement {
     sid = "CognitoSyncLambda"
     actions = [
