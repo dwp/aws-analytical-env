@@ -1,9 +1,14 @@
 import json
+import logging
 import copy
 import re
 import os
+import sys
 
 import aws_caller
+logger = logging.getLogger()
+logger.level = logging.INFO
+logger.addHandler(logging.StreamHandler(sys.stdout))
 
 # policy json template to be copied and amended as needed
 iam_template = {"Version": "2012-10-17", "Statement": []}
@@ -66,6 +71,7 @@ def lambda_handler(event, context):
     all_policy_list = aws_caller.list_all_policies_in_account()
 
     for user_name in user_state_and_policy:
+        logging.info(f'Starting to process policies for user: {user_name}')
         if user_state_and_policy[user_name]['role_name'] in existing_role_list:
             if user_state_and_policy[user_name]['active']:
 
@@ -79,17 +85,22 @@ def lambda_handler(event, context):
 
                 list_of_policy_objects.append(s3fs_access_policy_object)
 
+                logging.info(f'Munging policy statements for {[policy.get("policy_name") for policy in list_of_policy_objects]}')
                 dict_of_policy_name_to_munged_policy_objects = chunk_policies_and_return_dict_of_policy_name_to_json(
                     list_of_policy_objects, user_name,
                     user_state_and_policy[user_name]['role_name']
                 )
+                logging.info(f'Policy statements successfully munged')
 
                 remove_existing_user_policies(user_state_and_policy[user_name]['role_name'], all_policy_list)
 
+                logging.info(f'Creating munged policy/policies for {user_name}...')
                 list_of_policy_arns = create_policies_from_dict_and_return_list_of_policy_arns(
                     dict_of_policy_name_to_munged_policy_objects
                 )
+                logging.info(f'Munged policy/policies created')
 
+                logging.info(f'Attaching munged policy/policies to role for {user_name}...')
                 attach_policies_to_role(list_of_policy_arns, user_state_and_policy[user_name]['role_name'])
                 delete_tags(user_state_and_policy[user_name]['role_name'])
                 tag_role_with_policies(
@@ -97,10 +108,18 @@ def lambda_handler(event, context):
                     user_state_and_policy[user_name]['role_name'],
                     variables['common_tags']
                 )
+                logging.info(f'Munged policy/policies attached')
 
             else:
+                logging.info(f'User: {user_name} has been removed from UserPool - removing user IAM resources')
                 remove_existing_user_policies(user_state_and_policy[user_name]['role_name'], all_policy_list)
+                logging.info(f'Removing role: {user_state_and_policy[user_name]["role_name"]}')
                 aws_caller.remove_user_role(user_state_and_policy[user_name]['role_name'])
+                logging.info(f'Role: {user_state_and_policy[user_name]["role_name"]} - Removed')
+                logging.info(f'Removed User: {user_name} - IAM resources')
+
+
+        logging.info(f'Finished processing policies for user: {user_name}')
 
 
 """
@@ -144,8 +163,10 @@ def check_roles_exist_and_create_if_not(existing_role_list, user_state_and_polic
     for user in user_state_and_policy:
         if user_state_and_policy[user]['role_name'] not in existing_role_list \
                 and user_state_and_policy[user]['active']:
+            logging.info(f'No role found for {user} - Creating role...')
             created_role = aws_caller.create_role_and_await_consistency(user_state_and_policy[user]['role_name'],
                                                              assume_role_document)
+            logging.info(f'Role created for {user}')
             roles_after_creation.append(created_role)
     return roles_after_creation
 
@@ -216,7 +237,10 @@ def remove_existing_user_policies(role_name, all_policy_list):
     regex = re.compile(f"{role_name}-\d*of\d*")
     for policy in all_policy_list:
         if (regex.match(policy['PolicyName'])):
+            logging.info(f'Removing policy: {policy["PolicyName"]}')
             aws_caller.remove_policy_being_replaced(policy['Arn'], role_name)
+            logging.info(f'Policy: {policy["PolicyName"]} - Removed')
+
 
 
 # creates policies in IAM from JSON files and removes JSON files
