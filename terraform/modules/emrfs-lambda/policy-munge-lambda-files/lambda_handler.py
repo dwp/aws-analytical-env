@@ -8,7 +8,6 @@ import sys
 import aws_caller
 logger = logging.getLogger()
 logger.level = logging.INFO
-logger.addHandler(logging.StreamHandler(sys.stdout))
 
 # policy json template to be copied and amended as needed
 iam_template = {"Version": "2012-10-17", "Statement": []}
@@ -165,7 +164,7 @@ def check_roles_exist_and_create_if_not(existing_role_list, user_state_and_polic
                 and user_state_and_policy[user]['active']:
             logging.info(f'No role found for {user} - Creating role...')
             created_role = aws_caller.create_role_and_await_consistency(user_state_and_policy[user]['role_name'],
-                                                             assume_role_document)
+                                                                        assume_role_document)
             logging.info(f'Role created for {user}')
             roles_after_creation.append(created_role)
     return roles_after_creation
@@ -201,7 +200,7 @@ def verify_policies(names, list_of_policy_objects):
 # from existing policies.
 def chunk_policies_and_return_dict_of_policy_name_to_json(policy_object_list, user_name, role_name):
     policy_object_list = assign_chunk_number_to_objects(policy_object_list, chars_in_empty_iam_template,
-                                                         char_limit_of_json_policy)
+                                                        char_limit_of_json_policy)
     total_number_of_chunks = policy_object_list[(len(policy_object_list) - 1)]['chunk_number'] +1
     dict_of_policy_name_to_munged_policy_objects = {}
     for policy in policy_object_list:
@@ -282,8 +281,8 @@ def tag_role_with_policies(policy_list, role_name, common_tags):
             }
         )
     chunked_tag_object_list = assign_chunk_number_to_objects(tag_object_list,
-                                                              chars_in_empty_tag,
-                                                              char_limit_for_tag_value)
+                                                             chars_in_empty_tag,
+                                                             char_limit_for_tag_value)
     tag_keys_to_value_list = {}
     total_number_of_chunks = chunked_tag_object_list[(len(chunked_tag_object_list) - 1)]['chunk_number'] + 1
     for tag in chunked_tag_object_list:
@@ -403,7 +402,10 @@ def create_policy_object(policy_dict):
 
 # queries Cognito Userpool for user_groups and fills attribute in dict
 def update_user_groups_from_cognito(user_state_and_policy_dict):
+    user_state_and_policy_updated = copy.deepcopy(user_state_and_policy_dict)
     cognito_client = aws_caller.create_cognito_client(variables['mgmt_account'])
-    for user in user_state_and_policy_dict:
+    for user in user_state_and_policy_updated:
         groups = aws_caller.get_groups_for_user(user[0:-3], variables['user_pool_id'], cognito_client)
-        user_state_and_policy_dict[user]['group_names'].extend(groups)
+        user_state_and_policy_updated[user]['group_names'].extend(groups)
+
+    return user_state_and_policy_updated

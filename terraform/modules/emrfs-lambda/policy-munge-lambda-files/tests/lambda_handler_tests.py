@@ -316,7 +316,6 @@ class LambdaHandlerTests(TestCase):
     @patch('aws_caller.get_groups_for_user')
     def test_update_user_groups_from_cognito(self, mock_get_groups_for_user, mock_create_cognito_client):
         mock_get_groups_for_user.side_effect = [['group_one', 'group_two'], ['group_two']]
-        result = copy.deepcopy(mocked_user_dict_without_groups)
-        lambda_handler.update_user_groups_from_cognito(result)
+        result = lambda_handler.update_user_groups_from_cognito(mocked_user_dict_without_groups)
 
         assert result == mocked_user_dict

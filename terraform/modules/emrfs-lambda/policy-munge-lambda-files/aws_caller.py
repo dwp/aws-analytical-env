@@ -27,10 +27,21 @@ def create_cognito_client(mgmt_account_role_arn):
 
 
 def get_groups_for_user(user_name_no_sub, user_pool_id, cognito_client):
-    response = cognito_client.admin_list_groups_for_user(
-        Username=user_name_no_sub,
-        UserPoolId=user_pool_id,
-    )
+    try:
+        response = cognito_client.admin_list_groups_for_user(
+            Username=user_name_no_sub,
+            UserPoolId=user_pool_id,
+        )
+    except cognito_client.exceptions.UserNotFoundException:
+        user_name = cognito_client.list_users(
+            UserPoolId=user_pool_id,
+            Filter=f'preferred_username=\"{user_name_no_sub}\"'
+        ).get('Users')[0].get('Username')
+
+        response = cognito_client.admin_list_groups_for_user(
+            Username=user_name,
+            UserPoolId=user_pool_id,
+        )
     return [group.get('GroupName') for group in response.get('Groups')]
 
 def list_all_policies_in_account():
