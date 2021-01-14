@@ -65,7 +65,8 @@
       "hive.server2.authentication": "nosasl",
       "hive.support.concurrency": "true",
       "hive.exec.dynamic.partition.mode": "nonstrict",
-      "hive.txn.manager": "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager"
+      "hive.txn.manager": "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager",
+      "hive.metastore.warehouse.dir": "${data_bucket_path}/data/external"
     }
   },
   {
