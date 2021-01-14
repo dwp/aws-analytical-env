@@ -18,6 +18,7 @@ export https_proxy="$FULL_PROXY"
 export HTTPS_PROXY="$FULL_PROXY"
 export no_proxy="$FULL_NO_PROXY"
 export NO_PROXY="$FULL_NO_PROXY"
+export ADG_PUBLISH_BUCKET_ID="${adg_publish_bucket_id}"
 
 sudo yum update -y amazon-ssm-agent
 sudo yum install -y jq
