@@ -216,9 +216,9 @@ variable "published_bucket_cmk" {
   type        = string
 }
 
-variable "processed_bucket_s3" {
-  description = "the processed bucket - id (name) and arn "
-  type        = map(string)
+variable "processed_bucket_arn" {
+  description = "the processed bucket arn "
+  type        = string
 }
 
 variable "processed_bucket_cmk" {

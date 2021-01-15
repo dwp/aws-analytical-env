@@ -74,7 +74,7 @@ module "emr" {
   config_bucket_id     = data.terraform_remote_state.common.outputs.config_bucket.id
   dataset_s3           = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket
   published_bucket_cmk = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket_cmk.arn
-  processed_bucket_s3  = data.terraform_remote_state.common.outputs.processed_bucket
+  processed_bucket_arn = data.terraform_remote_state.common.outputs.processed_bucket.arn
   processed_bucket_cmk = data.terraform_remote_state.common.outputs.processed_bucket_cmk.arn
 }
 

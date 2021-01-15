@@ -60,8 +60,8 @@ data "aws_iam_policy_document" "readwrite_processed_published_buckets" {
     resources = [
       var.dataset_s3.arn,
       "${var.dataset_s3.arn}/*",
-      var.processed_bucket_s3.arn,
-      "${var.processed_bucket_s3.arn}/*"
+      var.processed_bucket_arn,
+      "${var.processed_bucket_arn}/*"
     ]
   }
 
