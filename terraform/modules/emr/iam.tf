@@ -483,6 +483,42 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       var.published_bucket_cmk
     ]
   }
+
+  statement {
+    sid    = "AllowAccessToS3Buckets"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket*",
+      "s3:GetObject*",
+      "s3:DeleteObject*",
+      "s3:PutObject*",
+      "s3:GetBucketLocation"
+    ]
+    resources = [
+      var.dataset_s3.arn,
+      "${var.dataset_s3.arn}/*",
+      var.processed_bucket_arn,
+      "${var.processed_bucket_arn}/*"
+    ]
+  }
+
+  statement {
+    sid    = "AllowAccessToS3SpecificKeys"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:Describe*",
+      "kms:List*",
+      "kms:Get*",
+      "kms:Encrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+    ]
+    resources = [
+      var.published_bucket_cmk,
+      var.processed_bucket_cmk
+    ]
+  }
 }
 
 resource "aws_iam_role" "cogntio_read_only_role" {
