@@ -456,25 +456,21 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
-    sid    = "AllowEmrToPublishedProcessedBucket"
+    sid    = "AllowEmrToReadPublishedBucket"
     effect = "Allow"
     actions = [
       "s3:ListBucket*",
       "s3:GetObject*",
       "s3:GetBucketLocation",
-      "s3:DeleteObject*",
-      "s3:PutObject*",
     ]
     resources = [
       var.dataset_s3.arn,
-      "${var.dataset_s3.arn}/*",
-      var.processed_bucket_s3.arn,
-      "${var.processed_bucket_s3.arn}/*"
+      "${var.dataset_s3.arn}/*"
     ]
   }
 
   statement {
-    sid    = "KmsToAccessPublishedProcessedBucket"
+    sid    = "KmsToAccessPublishedBucket"
     effect = "Allow"
     actions = [
       "kms:Decrypt",
@@ -482,13 +478,9 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "kms:List*",
       "kms:Get*",
       "kms:Encrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-
     ]
     resources = [
-      var.published_bucket_cmk,
-      var.processed_bucket_cmk
+      var.published_bucket_cmk
     ]
   }
 }
