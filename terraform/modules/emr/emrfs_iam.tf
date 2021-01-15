@@ -41,6 +41,50 @@ data "aws_iam_policy_document" "emrfs_iam" {
   }
 }
 
+resource "aws_iam_policy" "readwrite_processed_published_bucket" {
+  name   = "readwrite_processed_published_bucket"
+  policy = data.aws_iam_policy_document.readwrite_processed_published_bucket.json
+}
+
+data "aws_iam_policy_document" "readwrite_processed_published_bucket" {
+  statement {
+    sid    = "AllowAccessToS3Buckets"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket*",
+      "s3:GetObject*",
+      "s3:DeleteObject*",
+      "s3:PutObject*",
+      "s3:GetBucketLocation"
+    ]
+    resources = [
+      var.dataset_s3.arn,
+      "${var.dataset_s3.arn}/*",
+      var.processed_bucket_s3.arn,
+      "${var.processed_bucket_s3.arn}/*"
+    ]
+  }
+
+  statement {
+    sid    = "AllowAccessToS3SpecificKeys"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:Describe*",
+      "kms:List*",
+      "kms:Get*",
+      "kms:Encrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+    ]
+    resources = [
+      var.published_bucket_cmk,
+      var.processed_bucket_cmk
+    ]
+  }
+}
+
+
 locals {
   user_policies = flatten([
     for group, policy_suffixes in var.security_configuration_groups : [
@@ -61,7 +105,7 @@ locals {
 }
 
 resource "aws_iam_role_policy_attachment" "attach_policies_to_roles" {
-  depends_on = [aws_iam_policy.group_hive_data_access_policy]
+  depends_on = [aws_iam_policy.group_hive_data_access_policy,aws_iam_policy.PUBLISHED_BUCKET]
   count      = length(local.user_policies)
   role       = aws_iam_role.emrfs_iam[local.user_policies[count.index].group].name
   policy_arn = local.user_policies[count.index].policy_arn
