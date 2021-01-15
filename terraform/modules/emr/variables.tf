@@ -230,6 +230,3 @@ variable "processed_bucket_id" {
   description = "the processed bucket name "
   type        = string
 }
-
-
-
