@@ -42,7 +42,7 @@ data "aws_iam_policy_document" "emrfs_iam" {
 }
 
 resource "aws_iam_policy" "readwrite_processed_published_buckets" {
-  name   = "readwrite_processed_published_buckets"
+  name   = "ReadWriteAccessProcessedPublishedBuckets"
   policy = data.aws_iam_policy_document.readwrite_processed_published_buckets.json
 }
 
