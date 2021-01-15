@@ -225,3 +225,11 @@ variable "processed_bucket_cmk" {
   description = "(Required) KMS key arn for accessing the processed_bucket"
   type        = string
 }
+
+variable "processed_bucket_id" {
+  description = "the processed bucket name "
+  type        = string
+}
+
+
+
