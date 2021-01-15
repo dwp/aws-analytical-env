@@ -41,12 +41,12 @@ data "aws_iam_policy_document" "emrfs_iam" {
   }
 }
 
-resource "aws_iam_policy" "readwrite_processed_published_bucket" {
-  name   = "readwrite_processed_published_bucket"
-  policy = data.aws_iam_policy_document.readwrite_processed_published_bucket.json
+resource "aws_iam_policy" "readwrite_processed_published_buckets" {
+  name   = "readwrite_processed_published_buckets"
+  policy = data.aws_iam_policy_document.readwrite_processed_published_buckets.json
 }
 
-data "aws_iam_policy_document" "readwrite_processed_published_bucket" {
+data "aws_iam_policy_document" "readwrite_processed_published_buckets" {
   statement {
     sid    = "AllowAccessToS3Buckets"
     effect = "Allow"
@@ -87,25 +87,25 @@ data "aws_iam_policy_document" "readwrite_processed_published_bucket" {
 
 locals {
   user_policies = flatten([
-    for group, policy_suffixes in var.security_configuration_groups : [
-      {
-        group      = group
-        policy_arn = aws_iam_policy.emrfs_iam.arn
-      },
-      [
-        for policy_suffix in policy_suffixes :
-        {
-          group      = group
-          policy_arn = "arn:aws:iam::${var.account}:policy/${join("", regexall("[a-zA-Z0-9]", policy_suffix))}"
-        }
-      ]
+  for group, policy_suffixes in var.security_configuration_groups : [
+    {
+      group      = group
+      policy_arn = aws_iam_policy.emrfs_iam.arn
+    },
+    [
+    for policy_suffix in policy_suffixes :
+    {
+      group      = group
+      policy_arn = "arn:aws:iam::${var.account}:policy/${join("", regexall("[a-zA-Z0-9]", policy_suffix))}"
+    }
     ]
+  ]
   ])
 
 }
 
 resource "aws_iam_role_policy_attachment" "attach_policies_to_roles" {
-  depends_on = [aws_iam_policy.group_hive_data_access_policy,aws_iam_policy.PUBLISHED_BUCKET]
+  depends_on = [aws_iam_policy.group_hive_data_access_policy,aws_iam_policy.readwrite_processed_published_buckets]
   count      = length(local.user_policies)
   role       = aws_iam_role.emrfs_iam[local.user_policies[count.index].group].name
   policy_arn = local.user_policies[count.index].policy_arn
