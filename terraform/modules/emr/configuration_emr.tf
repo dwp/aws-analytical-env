@@ -43,7 +43,7 @@ data "template_file" "emr_setup_sh" {
     config_bucket                   = var.config_bucket_id
     aws_default_region              = "eu-west-2"
     cwa_metrics_collection_interval = local.cw_agent_metrics_collection_interval
-    publish_bucket_id               = var.dataset_s3["id"]
+    publish_bucket_id               = var.dataset_s3.id
   }
 }
 
