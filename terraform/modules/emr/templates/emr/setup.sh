@@ -20,7 +20,7 @@ export no_proxy="$FULL_NO_PROXY"
 export NO_PROXY="$FULL_NO_PROXY"
 
 PUB_BUCKET_ID="${publish_bucket_id}"
-echo "export PUBLISH_BUCKET_ID=$${PUB_BUCKET_ID}" > /etc/profile.d/buckets.sh
+echo "export PUBLISH_BUCKET_ID=$${PUB_BUCKET_ID}" | sudo tee /etc/profile.d/buckets.sh
 source /etc/profile.d/buckets.sh
 
 sudo yum update -y amazon-ssm-agent
