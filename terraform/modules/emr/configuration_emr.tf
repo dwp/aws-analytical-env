@@ -135,9 +135,14 @@ resource "aws_s3_bucket_object" "cloudwatch_sh" {
 }
 
 resource "aws_s3_bucket_object" "create_dbs_sh" {
-  bucket  = aws_s3_bucket.emr.id
-  key     = "scripts/emr/create_dbs.sh"
-  content = templatefile("${path.module}/templates/emr/create_dbs.sh", {})
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/create_dbs.sh"
+  content = templatefile("${path.module}/templates/emr/create_dbs.sh",
+    {
+      processed_bucket = format("s3://%s/uc_lab_staging", var.processed_bucket_id)
+      published_bucket = format("s3://%s/uc_lab", var.dataset_s3.id)
+    }
+  )
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-create-dbs-sh" })
 }

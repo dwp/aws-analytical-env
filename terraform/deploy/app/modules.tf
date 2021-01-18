@@ -44,7 +44,7 @@ module "emr" {
   mgmt_certificate_bucket = local.mgmt_certificate_bucket
   dataset_glue_db         = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.analytical_dataset_generation.job_name
   security_configuration_groups = {
-    UC_DataScience_PII     = ["HiveDataUCDataSciencePII", "AnalyticalDatasetCrownReadOnly", "ReadPDMPiiAndNonPii"],
+    UC_DataScience_PII     = ["HiveDataUCDataSciencePII", "AnalyticalDatasetCrownReadOnly", "ReadPDMPiiAndNonPii", "readwrite_processed_published_buckets"],
     UC_DataScience_Non_PII = ["HiveDataUCDataScienceNonPII", "AnalyticalDatasetCrownReadOnlyNonPii", "ReadPDMNonPiiOnly"]
   }
   monitoring_sns_topic_arn = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
@@ -74,6 +74,9 @@ module "emr" {
   config_bucket_id     = data.terraform_remote_state.common.outputs.config_bucket.id
   dataset_s3           = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket
   published_bucket_cmk = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket_cmk.arn
+  processed_bucket_arn = data.terraform_remote_state.common.outputs.processed_bucket.arn
+  processed_bucket_cmk = data.terraform_remote_state.common.outputs.processed_bucket_cmk.arn
+  processed_bucket_id  = data.terraform_remote_state.common.outputs.processed_bucket.bucket
 }
 
 module "pushgateway" {
