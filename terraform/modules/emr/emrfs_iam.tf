@@ -41,12 +41,12 @@ data "aws_iam_policy_document" "emrfs_iam" {
   }
 }
 
-resource "aws_iam_policy" "readwrite_processed_published_buckets" {
-  name   = "readwrite_processed_published_buckets"
-  policy = data.aws_iam_policy_document.readwrite_processed_published_buckets.json
+resource "aws_iam_policy" "readwriteprocessedpublishedbuckets" {
+  name   = "readwriteprocessedpublishedbuckets"
+  policy = data.aws_iam_policy_document.readwriteprocessedpublishedbuckets.json
 }
 
-data "aws_iam_policy_document" "readwrite_processed_published_buckets" {
+data "aws_iam_policy_document" "readwriteprocessedpublishedbuckets" {
   statement {
     sid    = "AllowAccessToS3Buckets"
     effect = "Allow"
@@ -105,7 +105,7 @@ locals {
 }
 
 resource "aws_iam_role_policy_attachment" "attach_policies_to_roles" {
-  depends_on = [aws_iam_policy.group_hive_data_access_policy, aws_iam_policy.readwrite_processed_published_buckets]
+  depends_on = [aws_iam_policy.group_hive_data_access_policy, aws_iam_policy.readwriteprocessedpublishedbuckets]
   count      = length(local.user_policies)
   role       = aws_iam_role.emrfs_iam[local.user_policies[count.index].group].name
   policy_arn = local.user_policies[count.index].policy_arn
