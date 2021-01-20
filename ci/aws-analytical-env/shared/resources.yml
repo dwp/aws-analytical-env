@@ -138,7 +138,7 @@ resources:
   - name: chs-uc-lab-repo
     type: git
     source:
-      branch: master
+      branch: Migrating-uc-lab-aws
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/dip/chs-uc-lab.git
