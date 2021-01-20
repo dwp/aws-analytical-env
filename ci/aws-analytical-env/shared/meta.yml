@@ -587,3 +587,50 @@ meta:
             - |
               AWS_PUBLISHED_BUCKET="$(cat terraform-output-adg/outputs.json |  jq -r '.published_bucket.value.id')"
               aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync uc_labs/ s3://${AWS_PUBLISHED_BUCKET}/uc-labs/
+
+    terraform-output-frontend-service:
+      task: terraform-output-frontend-service
+      .: (( inject meta.plan.terraform-common-config ))
+      config:
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              cp ../../../../terraform-config/terraform.tf .
+              cp ../../../../terraform-config/terraform.tfvars .
+              terraform workspace show
+              terraform init
+              terraform output --json > ../../../../terraform-output-frontend-service/outputs.json
+          dir: dataworks-analytical-frontend-service/terraform/deploy/app
+        inputs:
+          - name: dataworks-analytical-frontend-service
+        outputs:
+          - name: terraform-output-frontend-service
+
+    put_keystore_data:
+      task: put_keystore_data
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_REGION: ((dataworks.aws_region))
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - exc
+            - |
+              USERPOOL_ID="$(cat terraform-output-frontend-service/outputs.json |  jq -r '.app_client.user_pool_id')"
+              ENCODED_DATA=$(curl https://cognito-idp.((dataworks.aws_region)).amazonaws.com/$USERPOOL_ID/.well-known/jwks.json | base64)
+              UPDATED_SECRET=$(aws secretsmanager get-secret-value --secret-id /concourse/dataworks/workflow_manager --query SecretBinary --output text | base64 -d | jq --arg data "$ENCODED_DATA" '.keystore_data = $data')
+              aws put-secret-value --secret-id /concourse/dataworks/workflow_manager --secret-string $UPDATED_SECRET
+        inputs:
+          - name: terraform-output-frontend-service
+
+

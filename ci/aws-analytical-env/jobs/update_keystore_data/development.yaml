@@ -1,0 +1,14 @@
+jobs:
+  - name: update-keystore-data-development
+    max_in_flight: 1
+    plan:
+      - get: dataworks-analytical-frontend-service
+        trigger: true
+      - .: (( inject meta.plan.terraform-output-frontend-service ))
+        config:
+          params:
+            TF_WORKSPACE: development
+      - .: (( inject meta.plan.put_keystore_data ))
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
