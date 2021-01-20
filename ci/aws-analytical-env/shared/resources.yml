@@ -144,13 +144,31 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/chs-uc-lab.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
-  - name: chs-ops-mi-repo
+  - name: dip-chs-ops-mi-repo
     type: git
     source:
       branch: master
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/dip/chs-ops-mi.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: chs-payment-timelines-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/chs-payment-timelines.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: opsmi-chs-ops-mi-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/opsmi/chs-ops-mi.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
   - name: aws-common-infrastructure

@@ -44,19 +44,29 @@ groups:
   - name: mirror-git-repo-s3
     jobs:
       - mirror-git-repo-uc-lab-repo-development
-      - mirror-git-repo-ops-mi-repo-development
+      - mirror-git-repo-dip-ops-mi-repo-development
+      - mirror-git-repo-opsmi-ops-mi-repo-development
+      - mirror-git-repo-chs-payment-timelines-development
 
       - mirror-git-repo-uc-lab-repo-qa
-      - mirror-git-repo-ops-mi-repo-qa
+      - mirror-git-repo-dip-ops-mi-repo-qa
+      - mirror-git-repo-opsmi-ops-mi-repo-qa
+      - mirror-git-repo-chs-payment-timelines-qa
 
       - mirror-git-repo-uc-lab-repo-integration
-      - mirror-git-repo-ops-mi-repo-integration
+      - mirror-git-repo-dip-ops-mi-repo-integration
+      - mirror-git-repo-opsmi-ops-mi-repo-integration
+      - mirror-git-repo-chs-payment-timelines-integration
 
       - mirror-git-repo-uc-lab-repo-preprod
-      - mirror-git-repo-ops-mi-repo-preprod
+      - mirror-git-repo-dip-ops-mi-repo-preprod
+      - mirror-git-repo-opsmi-ops-mi-repo-preprod
+      - mirror-git-repo-chs-payment-timelines-preprod
 
       - mirror-git-repo-uc-lab-repo-prod
-      - mirror-git-repo-ops-mi-repo-prod
+      - mirror-git-repo-dip-ops-mi-repo-prod
+      - mirror-git-repo-opsmi-ops-mi-repo-prod
+      - mirror-git-repo-chs-payment-timelines-prod
   - name: admin-rbac
     jobs:
       - rotate-mysql-master-credentials-development
