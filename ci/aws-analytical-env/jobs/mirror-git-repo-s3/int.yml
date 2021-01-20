@@ -19,9 +19,9 @@ jobs:
             S3_ROOT: component/uc_repos/chs-uc-lab/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
 
-  - name: mirror-git-repo-ops-mi-repo-integration
+  - name: mirror-git-repo-opsmi-ops-mi-repo-integration
     plan:
-      - get: chs-ops-mi-repo
+      - get: opsmi-chs-ops-mi-repo
         trigger: true
       - get: aws-common-infrastructure
         trigger: false
@@ -32,9 +32,29 @@ jobs:
       - .: (( inject meta.plan.mirror-git-repo ))
         config:
           run:
-            dir: chs-ops-mi-repo
+            dir: opsmi-chs-ops-mi-repo
           inputs:
-            - name: chs-ops-mi-repo
+            - name: opsmi-chs-ops-mi-repo
           params:
-            S3_ROOT: component/uc_repos/chs-ops-mi/
+            S3_ROOT: component/uc_repos/opsmi-chs-ops-mi-repo/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
+
+  - name: mirror-git-repo-chs-payment-timelines-integration
+    plan:
+      - get: chs-payment-timelines-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: integration
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: chs-payment-timelines-repo
+          inputs:
+            - name: chs-payment-timelines-repo
+          params:
+            S3_ROOT: component/uc_repos/chs-payment-timelines/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
