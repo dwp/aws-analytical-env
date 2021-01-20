@@ -60,7 +60,6 @@ groups:
       - mirror-git-repo-chs-payment-timelines-preprod
 
       - mirror-git-repo-uc-lab-repo-prod
-      - mirror-git-repo-dip-ops-mi-repo-prod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
       - mirror-git-repo-chs-payment-timelines-prod
   - name: admin-rbac
