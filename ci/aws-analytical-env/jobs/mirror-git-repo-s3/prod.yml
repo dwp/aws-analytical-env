@@ -19,26 +19,6 @@ jobs:
             S3_ROOT: component/uc_repos/chs-uc-lab/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
 
-  - name: mirror-git-repo-dip-ops-mi-repo-prod
-    plan:
-      - get: dip-chs-ops-mi-repo
-        trigger: true
-      - get: aws-common-infrastructure
-        trigger: false
-      - .: (( inject meta.plan.terraform-output-common ))
-        config:
-          params:
-            TF_WORKSPACE: production
-      - .: (( inject meta.plan.mirror-git-repo ))
-        config:
-          run:
-            dir: dip-chs-ops-mi-repo
-          inputs:
-            - name: dip-chs-ops-mi-repo
-          params:
-            S3_ROOT: component/uc_repos/dip-chs-ops-mi/
-            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
-
   - name: mirror-git-repo-opsmi-ops-mi-repo-prod
     plan:
       - get: opsmi-chs-ops-mi-repo
