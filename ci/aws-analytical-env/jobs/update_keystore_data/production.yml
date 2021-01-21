@@ -1,0 +1,17 @@
+jobs:
+  - name: update-keystore-data-production
+    max_in_flight: 1
+    plan:
+      - get: dataworks-analytical-frontend-service
+        trigger: true
+        passed:
+          - update-keystore-data-preprod
+      - .: (( inject meta.plan.terraform-dataworks-analytical-frontend-service-bootstrap ))
+      - .: (( inject meta.plan.terraform-output-frontend-service ))
+        config:
+          params:
+            TF_WORKSPACE: production
+      - .: (( inject meta.plan.put_keystore_data ))
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
