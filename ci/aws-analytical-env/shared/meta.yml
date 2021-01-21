@@ -172,8 +172,8 @@ meta:
         image_resource:
           type: docker-image
           source:
-            repository: dwpdigital/jinja-yaml-aws
-            tag: 0.0.19
+            repository: ((dataworks.docker_awscli_repository))
+            tag: ((dataworks.docker_awscli_version))
         run:
           path: sh
           args:
@@ -596,8 +596,8 @@ meta:
         image_resource:
           type: docker-image
           source:
-            repository: dwpdigital/jinja-yaml-aws
-            tag: 0.0.19
+            repository: (( dataworks.docker_awscli_repository ))
+            tag: ((dataworks.docker_awscli_version))
         run:
           path: sh
           args:
