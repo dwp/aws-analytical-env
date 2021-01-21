@@ -14,8 +14,6 @@ spruce:
         regexp: ".*yml"
       - with_in: ci/aws-analytical-env/jobs/testing/
         regexp: ".*yml"
-      - with_in: ci/aws-analytical-env/jobs/update_keystore_data/
-        regexp: ".*yml"
       - with_in: ci/aws-analytical-env/jobs/github_proxy/
         regexp: ".*yml"
       - with_in: ci/aws-analytical-env/jobs/rbac_admin/
