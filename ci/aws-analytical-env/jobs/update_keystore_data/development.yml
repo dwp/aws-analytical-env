@@ -4,10 +4,11 @@ jobs:
     plan:
       - get: dataworks-analytical-frontend-service
         trigger: true
+      - .: (( inject meta.plan.terraform-dataworks-analytical-frontend-service-bootstrap ))
       - .: (( inject meta.plan.terraform-output-frontend-service ))
         config:
           params:
-            TF_WORKSPACE: development
+            TF_WORKSPACE: default
       - .: (( inject meta.plan.put_keystore_data ))
         config:
           params:

@@ -93,3 +93,10 @@ groups:
       - initialise-rbac-db-production
       - create-roles-and-munged-policies-production
       - sync-cognito-users-to-rds-production
+  - name: update-keystore-data
+    jobs:
+      - update-keystore-data-development
+      - update-keystore-data-qa
+      - update-keystore-data-integration
+      - update-keystore-data-preprod
+      - update-keystore-data-production
