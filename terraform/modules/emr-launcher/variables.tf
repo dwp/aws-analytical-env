@@ -41,6 +41,6 @@ variable "hive_metastore_arn" {
   type        = string
 }
 variable "aws_subnets_private" {
-  type        = list
+  type        = string
   description = "(Required) The subnet in which the lambda will run"
 }
