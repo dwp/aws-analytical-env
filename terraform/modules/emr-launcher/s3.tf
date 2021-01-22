@@ -21,6 +21,7 @@ resource "aws_s3_bucket_object" "analytical_env_instances" {
     master_security_group  = var.master_security_group
     slave_security_group   = var.slave_security_group
     service_security_group = var.service_security_group
+    subnet_id              = var.subnet_id
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-instances" })
 }
@@ -72,6 +73,7 @@ resource "aws_s3_bucket_object" "batch_instances" {
     master_security_group  = var.master_security_group
     slave_security_group   = var.slave_security_group
     service_security_group = var.service_security_group
+    subnet_id              = var.subnet_id
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-instances" })
 }

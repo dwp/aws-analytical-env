@@ -6,7 +6,7 @@ Instances:
   AdditionalSlaveSecurityGroups:
   - "${common_security_group}"
   Ec2SubnetIds: 
-  - "subnet-05ec8401ce6d2326e"
+  - "${subnet_id}"
   EmrManagedMasterSecurityGroup: "${master_security_group}"
   EmrManagedSlaveSecurityGroup: "${slave_security_group}"
   ServiceAccessSecurityGroup: "${service_security_group}"

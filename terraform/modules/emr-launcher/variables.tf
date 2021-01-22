@@ -40,3 +40,4 @@ variable "hive_metastore_arn" {
   description = "the Hive metastore  arn "
   type        = string
 }
+variable "subnet_id" {}
