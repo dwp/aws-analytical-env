@@ -40,3 +40,7 @@ variable "hive_metastore_arn" {
   description = "the Hive metastore  arn "
   type        = string
 }
+variable "aws_subnets_private" {
+  type        = list
+  description = "(Required) The subnet in which the lambda will run"
+}

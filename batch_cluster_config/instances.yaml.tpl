@@ -5,8 +5,7 @@ Instances:
   - "${common_security_group}"
   AdditionalSlaveSecurityGroups:
   - "${common_security_group}"
-  Ec2SubnetIds: 
-  - "subnet-05ec8401ce6d2326e"
+  Ec2SubnetIds: ${jsonencode(split(",", aws_subnets_private))}
   EmrManagedMasterSecurityGroup: "${master_security_group}"
   EmrManagedSlaveSecurityGroup: "${slave_security_group}"
   ServiceAccessSecurityGroup: "${service_security_group}"
