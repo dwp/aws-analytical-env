@@ -36,3 +36,7 @@ variable "full_no_proxy" {}
 variable "hive_metastore_endpoint" {}
 variable "hive_metastore_database_name" {}
 variable "hive_metastore_username" {}
+variable "hive_metastore_arn" {
+  description = "the Hive metastore  arn "
+  type        = string
+}
