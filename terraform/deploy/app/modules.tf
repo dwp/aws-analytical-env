@@ -166,6 +166,7 @@ module launcher {
   hive_metastore_username               = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["username"]
   batch_security_configuration          = module.emr.batch_security_configuration
   hive_metastore_arn                    = data.aws_secretsmanager_secret_version.hive_metastore_password_secret.arn
+  subnet_id                             = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[0].id
 }
 
 module "emrfs_lambda" {
