@@ -99,3 +99,28 @@ resource "aws_iam_role_policy_attachment" "aws_analytical_env_emr_launcher_polic
   role       = aws_iam_role.aws_analytical_env_emr_launcher_lambda_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
+
+resource "aws_iam_policy" "aws_analytical_env_emr_launcher_getsecrets" {
+  name        = "AWSAnalyticalEnvAGetSecrets"
+  description = "Allow AWSAnalyticalEnv Lambda function to get secrets"
+  policy      = data.aws_iam_policy_document.aws_analytical_env_emr_launcher_getsecrets.json
+}
+
+data "aws_iam_policy_document" "aws_analytical_env_emr_launcher_getsecrets" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+
+    resources = [
+      var.hive_metastore_arn,
+    ]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "aws_analytical_env_emr_launcher_getsecrets" {
+  role       = aws_iam_role.aws_analytical_env_emr_launcher_lambda_role.name
+  policy_arn = aws_iam_policy.aws_analytical_env_emr_launcher_getsecrets.arn
+}

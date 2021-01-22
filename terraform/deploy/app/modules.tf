@@ -58,6 +58,7 @@ module "emr" {
   hive_metastore_password      = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["password"]
   hive_metastore_username      = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["username"]
   hive_metastore_sg_id         = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.security_group.id
+  hive_metastore_arn           = data.aws_secretsmanager_secret_version.hive_metastore_password_secret.arn
 
   artefact_bucket = {
     id      = data.terraform_remote_state.management_artefacts.outputs.artefact_bucket.id
