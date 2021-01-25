@@ -140,7 +140,6 @@ module "codecommit" {
 }
 
 
-
 module launcher {
   source = "../../modules/emr-launcher"
 
