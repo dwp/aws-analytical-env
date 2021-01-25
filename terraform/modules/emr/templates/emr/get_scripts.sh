@@ -15,7 +15,7 @@ SOURCE_PATH=$BUCKET/$SOURCE_LOCATION
     START_MESSAGE="Start_Downloading_Files"
     log_message $START_MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "get_scripts.sh" "NOT_SET"
 
-    aws s3 cp $SOURCE_PATH $DESTINATION_LOCATION --recursive
+    aws s3 sync $SOURCE_PATH $DESTINATION_LOCATION
     
     END_MESSAGE="Finish_Downloading_Files"
     log_message $END_MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "get_scripts.sh" "NOT_SET"
