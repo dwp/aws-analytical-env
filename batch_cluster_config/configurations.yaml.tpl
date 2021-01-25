@@ -56,6 +56,7 @@ Configurations:
     "javax.jdo.option.ConnectionURL": "jdbc:mysql://${hive_metastore_endpoint}:3306/${hive_metastore_database_name}"
     "javax.jdo.option.ConnectionUserName": "${hive_metastore_username}"
     "hive.metastore.warehouse.dir": "s3://${config_bucket}/data/external"
+    "hive.metastore.client.socket.timeout": "10800"
 - Classification: "emrfs-site"
   Properties:
     "fs.s3.consistent": "true"
