@@ -31,3 +31,12 @@ variable "manage_mysql_user_lambda_zip" {
   }
 }
 
+variable "emr_core_instance_count" {
+  default = {
+    development = "1"
+    qa          = "1"
+    integration = "1"
+    preprod     = "1"
+    production  = "5"
+  }
+}
