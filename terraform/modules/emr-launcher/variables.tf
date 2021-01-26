@@ -47,3 +47,4 @@ variable "core_instance_count" {
   description = "(Optional) Number of core instances"
   default     = "1"
 }
+variable "environment" {}

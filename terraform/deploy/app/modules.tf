@@ -168,6 +168,7 @@ module launcher {
   hive_metastore_arn                    = data.aws_secretsmanager_secret_version.hive_metastore_password_secret.arn
   subnet_id                             = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[0].id
   core_instance_count                   = var.emr_core_instance_count[local.environment]
+  environment                           = local.environment
 }
 
 module "emrfs_lambda" {

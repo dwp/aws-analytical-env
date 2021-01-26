@@ -23,7 +23,7 @@ Tags:
 - Key: "CreatedBy"
   Value: "emr-launcher"
 - Key: "Environment"
-  Value: "development"
+  Value: "${environment}"
 - Key: "Name"
   Value: "aws-analytical-env"
 - Key: "Owner"
