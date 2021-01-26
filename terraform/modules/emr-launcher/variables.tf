@@ -41,3 +41,9 @@ variable "hive_metastore_arn" {
   type        = string
 }
 variable "subnet_id" {}
+
+variable "core_instance_count" {
+  type        = string
+  description = "No of core instances"
+  default     = "1"
+}
