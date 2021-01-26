@@ -22,7 +22,7 @@ Instances:
             VolumeType: "gp2"
           VolumesPerInstance: 1
   - Name: MASTER
-    InstanceCount: ${core_instance_count}
+    InstanceCount: 1
     InstanceType: "m5.2xlarge"
     InstanceRole: "MASTER"
     EbsConfiguration:
