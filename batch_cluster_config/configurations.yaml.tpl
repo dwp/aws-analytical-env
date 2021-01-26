@@ -57,6 +57,8 @@ Configurations:
     "javax.jdo.option.ConnectionUserName": "${hive_metastore_username}"
     "hive.metastore.warehouse.dir": "s3://${config_bucket}/data/external"
     "hive.metastore.client.socket.timeout": "10800"
+    "hive.strict.checks.cartesian.product": "false"
+    "hive.mapred.mode": "nonstrict"
 - Classification: "emrfs-site"
   Properties:
     "fs.s3.consistent": "true"

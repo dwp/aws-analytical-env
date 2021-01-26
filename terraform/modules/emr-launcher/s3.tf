@@ -9,6 +9,7 @@ resource "aws_s3_bucket_object" "analytical_env_cluster" {
     security_configuration = var.analytical_env_security_configuration
     costcode               = var.costcode
     release_version        = var.release_version
+    environment            = var.environment
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-cluster" })
 }
@@ -61,6 +62,7 @@ resource "aws_s3_bucket_object" "batch_cluster" {
     security_configuration = var.batch_security_configuration
     costcode               = var.costcode
     release_version        = var.release_version
+    environment            = var.environment
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-cluster" })
 }
