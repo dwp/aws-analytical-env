@@ -44,5 +44,4 @@ variable "emr_core_instance_count" {
 variable "core_instance_count" {
   type        = string
   description = "No of core instances"
-  default     = "1"
 }
