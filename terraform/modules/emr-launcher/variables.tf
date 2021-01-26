@@ -44,6 +44,6 @@ variable "subnet_id" {}
 
 variable "core_instance_count" {
   type        = string
-  description = "No of core instances"
+  description = "(Optional) Number of core instances"
   default     = "1"
 }
