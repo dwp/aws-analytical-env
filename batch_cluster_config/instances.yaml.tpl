@@ -12,7 +12,7 @@ Instances:
   ServiceAccessSecurityGroup: "${service_security_group}"
   InstanceGroups:
   - Name: CORE
-    InstanceCount: 1
+    InstanceCount: ${core_instance_count}
     InstanceType: "m5.2xlarge"
     InstanceRole: "CORE"
     EbsConfiguration:
@@ -22,7 +22,7 @@ Instances:
             VolumeType: "gp2"
           VolumesPerInstance: 1
   - Name: MASTER
-    InstanceCount: ${core_instance_count}
+    InstanceCount: 1
     InstanceType: "m5.2xlarge"
     InstanceRole: "MASTER"
     EbsConfiguration:
