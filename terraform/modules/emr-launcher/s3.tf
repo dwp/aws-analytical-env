@@ -74,7 +74,7 @@ resource "aws_s3_bucket_object" "batch_instances" {
     slave_security_group   = var.slave_security_group
     service_security_group = var.service_security_group
     subnet_id              = var.subnet_id
-    core_instance_count    = var.core_instance_count
+    core_instance_count    = var.emr_core_instance_count[local.environment]
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-instances" })
 }
