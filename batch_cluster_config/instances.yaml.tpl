@@ -5,7 +5,7 @@ Instances:
   - "${common_security_group}"
   AdditionalSlaveSecurityGroups:
   - "${common_security_group}"
-  Ec2SubnetIds: 
+  Ec2SubnetIds:
   - "${subnet_id}"
   EmrManagedMasterSecurityGroup: "${master_security_group}"
   EmrManagedSlaveSecurityGroup: "${slave_security_group}"
@@ -22,7 +22,7 @@ Instances:
             VolumeType: "gp2"
           VolumesPerInstance: 1
   - Name: MASTER
-    InstanceCount: 1
+    InstanceCount: ${core_instance_count}
     InstanceType: "m5.2xlarge"
     InstanceRole: "MASTER"
     EbsConfiguration:
