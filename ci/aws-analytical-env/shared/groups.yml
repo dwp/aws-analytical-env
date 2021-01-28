@@ -93,3 +93,6 @@ groups:
       - initialise-rbac-db-production
       - create-roles-and-munged-policies-production
       - sync-cognito-users-to-rds-production
+  - name: terminate-cluster
+    jobs:
+      - prod-stop-cluster

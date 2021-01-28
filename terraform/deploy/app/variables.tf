@@ -37,6 +37,6 @@ variable "emr_core_instance_count" {
     qa          = "1"
     integration = "1"
     preprod     = "1"
-    production  = "5"
+    production  = "20"
   }
 }
