@@ -52,6 +52,8 @@ locals {
     "dynamodb.${data.aws_region.current.name}.amazonaws.com",
     "*.dkr.ecr.${data.aws_region.current.name}.amazonaws.com",
     "api.ecr.${data.aws_region.current.name}.amazonaws.com",
+    "ec2.${data.aws_region.current.name}.amazonaws.com",
+    "ec2messages.${data.aws_region.current.name}.amazonaws.com",
   ]
   r_version = "3.6.3"
   r_dependencies = [

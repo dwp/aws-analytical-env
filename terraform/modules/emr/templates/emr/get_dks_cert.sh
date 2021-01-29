@@ -61,4 +61,4 @@ export INSTANCE_ROLE=$(jq .instanceRole /mnt/var/lib/info/extraInstanceData.json
 export HOSTNAME=${name}-$${INSTANCE_ROLE//\"}-$UUID
 
 sudo hostname $HOSTNAME
-# aws ec2 create-tags --resources $INSTANCE_ID --tags Key=Name,Value=$HOSTNAME
+aws ec2 create-tags --resources $INSTANCE_ID --tags Key=Name,Value=$HOSTNAME
