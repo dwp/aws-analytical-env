@@ -16,6 +16,7 @@ data "template_file" "get_dks_cert_sh" {
     full_proxy         = local.full_proxy
     full_no_proxy      = join(",", local.no_proxy_hosts)
     dks_endpoint       = var.dks_endpoint
+    name               = var.emr_cluster_name
   }
 }
 
