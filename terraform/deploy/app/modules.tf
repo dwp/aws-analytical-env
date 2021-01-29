@@ -215,7 +215,8 @@ module "rbac_db" {
 
   client_names = [
     "emrfs-lambda",
-    "analytical_env_support"
+    "analytical_env_support",
+    "orchestration_service"
   ]
 
   common_tags = local.common_tags
