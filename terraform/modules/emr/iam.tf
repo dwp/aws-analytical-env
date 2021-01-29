@@ -556,6 +556,32 @@ resource "aws_iam_role_policy_attachment" "ReadOnlyCognito" {
   role       = aws_iam_role.cogntio_read_only_role.name
 }
 
+data "aws_iam_policy_document" "analytical_env_metadata_change" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ec2:ModifyInstanceMetadataOptions",
+      "ec2:*Tags",
+    ]
+
+    resources = [
+      "arn:aws:ec2:${var.region}:${local.account[local.environment]}:instance/*",
+    ]
+  }
+}
+
+resource "aws_iam_policy" "analytical_env_metadata_change" {
+  name        = "AnalyticalEnvMetadataOptions"
+  description = "Allow editing of Metadata Options"
+  policy      = data.aws_iam_policy_document.analytical_env_metadata_change.json
+}
+
+resource "aws_iam_role_policy_attachment" "analytical_env_metadata_change" {
+  role       = aws_iam_role.emr_ec2_role.name
+  policy_arn = aws_iam_policy.analytical_env_metadata_change.arn
+}
+
 # EMR SSM Policy
 resource aws_iam_role_policy amazon_ec2_role_for_ssm {
   role   = aws_iam_role.emr_ec2_role.name
