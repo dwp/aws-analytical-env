@@ -42,8 +42,8 @@ data "aws_iam_policy_document" "lambda_manage_mysql_user" {
       aws_secretsmanager_secret.initialise_db_credentials.arn
       ],
       [
-        for client in var.clients :
-        aws_secretsmanager_secret.client_db_credentials[client].arn
+        for name, privilege in var.clients :
+        aws_secretsmanager_secret.client_db_credentials[name].arn
     ])
   }
 }

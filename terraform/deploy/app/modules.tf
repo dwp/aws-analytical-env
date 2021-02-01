@@ -213,11 +213,13 @@ module "rbac_db" {
     version   = var.manage_mysql_user_lambda_zip.version
   }
 
-  clients = [
-    "emrfs-lambda",
-    "analytical_env_support",
-    "orchestration_service"
-  ]
+  clients = {
+    "emrfs-lambda"           = "SELECT, INSERT, UPDATE",
+    "analytical_env_support" = "ALL",
+    "orchestration_service"  = "SELECT, INSERT"
+  }
+
+
 
   common_tags = local.common_tags
 

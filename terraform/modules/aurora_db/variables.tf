@@ -76,9 +76,9 @@ variable "config_bucket" {
 }
 
 variable "clients" {
-  description = "Map of client names to permissions to create credentials for"
-  type = map(string)
-  default = {}
+  description = "Map of client names to privileges to create credentials for"
+  type        = map(string)
+  default     = {}
 }
 
 variable "interface_vpce_sg_id" {
