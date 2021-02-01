@@ -213,7 +213,7 @@ module "rbac_db" {
     version   = var.manage_mysql_user_lambda_zip.version
   }
 
-  client_names = [
+  clients = [
     "emrfs-lambda",
     "analytical_env_support",
     "orchestration_service"
