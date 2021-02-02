@@ -8,10 +8,16 @@ output "secrets" {
     client_credentials = merge({
       "initialise_db" = aws_secretsmanager_secret.initialise_db_credentials
       }, {
-      for key in var.client_names :
+      for key, value in var.clients :
       key => aws_secretsmanager_secret.client_db_credentials[key]
     })
   }
+}
+
+output "client_privileges" {
+  value = merge({
+    "initialise_db" = "ALL"
+  }, var.clients)
 }
 
 output "manage_mysql_user_lambda" {

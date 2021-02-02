@@ -313,7 +313,9 @@ meta:
               CLIENTS=$(jq -r ".rbac_db.value.secrets.client_credentials | keys[]" < ./terraform-output/outputs.json)
               for client in $CLIENTS; do
                 param_name=$(jq -r ".rbac_db.value.secrets.client_credentials[\"$client\"].name" < ./terraform-output/outputs.json);
-                jq -n --arg Username "$client" --arg Paramname "$param_name" '{mysql_user_username: $Username, mysql_user_password_secret_name: $Paramname}' > manifest.json
+                privileges=$(jq -r ".rbac_db.value.client_privileges[\"$client\"]" < ./terraform-output/outputs.json);
+                jq -n --arg Username "$client" --arg Paramname "$param_name" --arg privileges "$privileges" \
+                  '{mysql_user_username: $Username, mysql_user_password_secret_name: $Paramname, privileges: $privileges}' > manifest.json
                 aws lambda invoke --function-name $MANAGE_USER_FUNCTION_NAME --invocation-type RequestResponse --payload file://manifest.json --cli-connect-timeout 600 --cli-read-timeout 600 output.json
                 jq -eC "if .errorMessage? then error(.errorMessage) else true end" < output.json
               done || exit 1

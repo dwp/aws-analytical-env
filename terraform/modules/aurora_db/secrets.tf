@@ -34,10 +34,10 @@ resource "aws_secretsmanager_secret" "initialise_db_credentials" {
 }
 
 resource "aws_secretsmanager_secret" "client_db_credentials" {
-  for_each = var.client_names
+  for_each = var.clients
 
-  name        = "${var.name_prefix}-database/credentials/client-${each.value}"
-  description = "${var.name_prefix} client ${each.value} database credentials"
+  name        = "${var.name_prefix}-database/credentials/client-${each.key}"
+  description = "${var.name_prefix} client ${each.key} database credentials"
 
   lifecycle {
     ignore_changes = [tags]
