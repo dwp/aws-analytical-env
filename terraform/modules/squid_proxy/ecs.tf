@@ -49,7 +49,7 @@ resource "aws_ecs_task_definition" "proxy" {
       },
       {
         "name": "CONTAINER_VERSION",
-        "value": "0.0.1"
+        "value": "0.0.2"
       },
       {
         "name": "PROXY_CFG_CHANGE_DEPENDENCY",
