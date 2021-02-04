@@ -40,7 +40,7 @@
       "Trigger": {
         "CloudWatchAlarmDefinition": {
           "ComparisonOperator": "GREATER_THAN",
-          "EvaluationPeriods": 1,
+          "EvaluationPeriods": 3,
           "MetricName": "YARNMemoryAvailablePercentage",
           "Namespace": "AWS/ElasticMapReduce",
           "Period": 120,
