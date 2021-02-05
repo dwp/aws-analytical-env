@@ -34,3 +34,11 @@ resource "aws_route" "internal_compute_to_analytical_env" {
   route_table_id            = data.terraform_remote_state.internal_compute.outputs.route_table_ids.pdm
   vpc_peering_connection_id = aws_vpc_peering_connection.internal_compute.id
 }
+
+resource "aws_route" "internal_compute_to_analytical_env_new_pdm_subnets" {
+  count                     = length(data.aws_availability_zones.available.names)
+  provider                  = aws.internal_compute
+  destination_cidr_block    = module.networking.outputs.aws_subnets_private[count.index].cidr_block
+  route_table_id            = data.terraform_remote_state.internal_compute.outputs.route_table_ids.pdm_new
+  vpc_peering_connection_id = aws_vpc_peering_connection.internal_compute.id
+}
