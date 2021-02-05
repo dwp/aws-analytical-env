@@ -58,4 +58,11 @@ resource "aws_batch_job_definition" "create_metrics_data_batch_job" {
         ]
     }
   CONTAINER_PROPERTIES
+
+  tags = merge(
+    var.common_tags,
+    {
+      Name = "${var.name_prefix}-create-metrics-data-batch-job",
+    }
+  )
 }
