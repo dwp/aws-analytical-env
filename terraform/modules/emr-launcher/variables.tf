@@ -41,7 +41,7 @@ variable "hive_metastore_arn" {
   type        = string
 }
 variable "subnet_ids" {
-  type        = map(string)
+  type        = list(string)
   description = "(Required) The ids of the subnets for the cluster"
 }
 
