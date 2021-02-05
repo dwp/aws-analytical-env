@@ -42,7 +42,8 @@ variable "hive_metastore_arn" {
 }
 variable "subnet_ids" {
   type        = map(string)
-  description = "(Required) The ids of the subnets for the cluster"}
+  description = "(Required) The ids of the subnets for the cluster"
+}
 
 variable "core_instance_count" {
   type        = string
