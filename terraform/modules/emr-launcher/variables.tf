@@ -40,7 +40,10 @@ variable "hive_metastore_arn" {
   description = "the Hive metastore  arn "
   type        = string
 }
-variable "subnet_id" {}
+variable "subnet_ids" {
+  type        = list(string)
+  description = "(Required) The ids of the subnets for the cluster"
+}
 
 variable "core_instance_count" {
   type        = string
