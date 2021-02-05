@@ -104,3 +104,44 @@ resource "aws_iam_role_policy" "lambda_initialise_db" {
   role   = aws_iam_role.lambda_initialise_db.name
   policy = data.aws_iam_policy_document.lambda_initialise_db.json
 }
+
+resource "aws_iam_role" "sync_rds" {
+  name               = "sync_rds"
+  assume_role_policy = data.aws_iam_policy_document.sync_rds.json
+  tags               = var.common_tags
+}
+
+data "aws_iam_policy_document" "sync_rds" {
+  statement {
+    sid    = "AllowGetCredentials"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:DescribeSecret",
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:ListSecretVersionIds"
+    ]
+    resources = [
+      aws_secretsmanager_secret.client_db_credentials["sync_rds"].arn,
+    ]
+  }
+
+  statement {
+    sid       = "AllowRdsDataExecute"
+    effect    = "Allow"
+    actions   = ["rds-data:ExecuteStatement"]
+    resources = [aws_rds_cluster.database_cluster.arn]
+  }
+
+  statement {
+    sid    = "CIAssumeRolePolicy"
+    effect = "Allow"
+    actions = [
+      "sts:AssumeRole",
+    ]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["${var.ci_role}"]
+    }
+  }
+}
