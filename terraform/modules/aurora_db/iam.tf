@@ -130,7 +130,7 @@ data "aws_iam_policy_document" "sync_rds" {
     sid       = "AllowRdsDataExecute"
     effect    = "Allow"
     actions   = ["rds-data:ExecuteStatement"]
-    resources = [aws_rds_cluster.database_cluster.arn]
+    resources = [*]
   }
 
   statement {
