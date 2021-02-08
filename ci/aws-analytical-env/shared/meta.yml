@@ -287,34 +287,6 @@ meta:
           - name: secrets-management
           - name: terraform-output
 
-    rotate-mysql-sync-password:
-      task: rotate-mysql-sync-password
-      config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: ((dataworks.docker_awscli_repository))
-            tag: ((dataworks.docker_awscli_version))
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
-          AWS_REGION: ((dataworks.aws_region))
-          AWS_DEFAULT_REGION: ((dataworks.aws_region))
-        run:
-          path: sh
-          args:
-            - -exc
-            - |
-              export RDS_CLUSTER_IDENTIFIER=$(jq -r .rbac_db.value.rds_cluster.cluster_identifier < ../terraform-output/outputs.json)
-              export RDS_CREDENTIALS_SECRET_NAME=$(jq -r .rbac_db.value.secrets.sync_rds_credentials.name < ../terraform-output/outputs.json)
-              source /assume-role
-              set +x
-              ./rotate_rds_master_user_password_update_secrets_manager.py $RDS_CLUSTER_IDENTIFIER $RDS_CREDENTIALS_SECRET_NAME
-          dir: secrets-management
-        inputs:
-          - name: secrets-management
-          - name: terraform-output
-
     rotate-mysql-client-password:
       task: rotate-client-mysql-password
       config:
