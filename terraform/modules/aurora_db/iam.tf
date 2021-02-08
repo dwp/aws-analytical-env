@@ -39,7 +39,8 @@ data "aws_iam_policy_document" "lambda_manage_mysql_user" {
     ]
     resources = concat([
       aws_secretsmanager_secret.master_credentials.arn,
-      aws_secretsmanager_secret.initialise_db_credentials.arn
+      aws_secretsmanager_secret.initialise_db_credentials.arn,
+      aws_secretsmanager_secret.sync_rds_credentials.arn,
       ],
       [
         for name, privilege in var.clients :
@@ -121,7 +122,7 @@ data "aws_iam_policy_document" "sync_rds" {
       "secretsmanager:ListSecretVersionIds"
     ]
     resources = [
-      aws_secretsmanager_secret.client_db_credentials["sync_rds"].arn,
+      aws_secretsmanager_secret.sync_rds_credentials.arn
     ]
   }
 

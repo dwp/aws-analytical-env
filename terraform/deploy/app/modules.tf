@@ -216,8 +216,7 @@ module "rbac_db" {
   clients = {
     "emrfs-lambda"           = "SELECT, INSERT, UPDATE",
     "analytical_env_support" = "ALL",
-    "orchestration_service"  = "SELECT, INSERT",
-    "sync_rds"               = "ALL"
+    "orchestration_service"  = "SELECT, INSERT"
   }
 
   ci_role = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/ci"
