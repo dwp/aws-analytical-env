@@ -7,7 +7,7 @@ output "secrets" {
     master_credentials = aws_secretsmanager_secret.master_credentials
     client_credentials = merge({
       "initialise_db" = aws_secretsmanager_secret.initialise_db_credentials,
-      "sync_rds" = aws_secretsmanager_secret.sync_rds_credentials
+      "sync_rds"      = aws_secretsmanager_secret.sync_rds_credentials
       }, {
       for key, value in var.clients :
       key => aws_secretsmanager_secret.client_db_credentials[key]
@@ -18,7 +18,7 @@ output "secrets" {
 output "client_privileges" {
   value = merge({
     "initialise_db" = "ALL",
-    "sync_rds" = "ALL"
+    "sync_rds"      = "ALL"
   }, var.clients)
 }
 
