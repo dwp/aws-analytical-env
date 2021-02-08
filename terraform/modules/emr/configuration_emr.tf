@@ -58,7 +58,9 @@ resource "aws_s3_bucket_object" "hdfs_setup_sh" {
 data "template_file" "hdfs_setup_sh" {
   template = file(format("%s/templates/emr/hdfs_setup.sh", path.module))
   vars = {
-    hive_data_s3 = aws_s3_bucket.hive_data.arn
+    hive_data_s3     = aws_s3_bucket.hive_data.arn
+    config_bucket    = var.config_bucket_id
+    published_bucket = var.dataset_s3.id
   }
 }
 
