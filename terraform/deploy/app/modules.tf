@@ -219,6 +219,7 @@ module "rbac_db" {
     "orchestration_service"  = "SELECT, INSERT"
   }
 
+  ci_role = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/ci"
 
 
   common_tags = local.common_tags

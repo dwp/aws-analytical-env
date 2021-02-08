@@ -40,3 +40,4 @@ variable "emr_core_instance_count" {
     production  = "20"
   }
 }
+

@@ -39,7 +39,8 @@ data "aws_iam_policy_document" "lambda_manage_mysql_user" {
     ]
     resources = concat([
       aws_secretsmanager_secret.master_credentials.arn,
-      aws_secretsmanager_secret.initialise_db_credentials.arn
+      aws_secretsmanager_secret.initialise_db_credentials.arn,
+      aws_secretsmanager_secret.sync_rds_credentials.arn,
       ],
       [
         for name, privilege in var.clients :
@@ -103,4 +104,45 @@ data "aws_iam_policy_document" "lambda_initialise_db" {
 resource "aws_iam_role_policy" "lambda_initialise_db" {
   role   = aws_iam_role.lambda_initialise_db.name
   policy = data.aws_iam_policy_document.lambda_initialise_db.json
+}
+
+resource "aws_iam_role" "sync_rds" {
+  name               = "sync_rds"
+  assume_role_policy = data.aws_iam_policy_document.sync_rds.json
+  tags               = var.common_tags
+}
+
+data "aws_iam_policy_document" "sync_rds" {
+  statement {
+    sid    = "AllowGetCredentials"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:DescribeSecret",
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:ListSecretVersionIds"
+    ]
+    resources = [
+      aws_secretsmanager_secret.sync_rds_credentials.arn
+    ]
+  }
+
+  statement {
+    sid       = "AllowRdsDataExecute"
+    effect    = "Allow"
+    actions   = ["rds-data:ExecuteStatement"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "CIAssumeRolePolicy"
+    effect = "Allow"
+    actions = [
+      "sts:AssumeRole",
+    ]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["${var.ci_role}"]
+    }
+  }
 }
