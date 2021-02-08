@@ -108,8 +108,29 @@ resource "aws_iam_role_policy" "lambda_initialise_db" {
 
 resource "aws_iam_role" "sync_rds" {
   name               = "sync_rds"
-  assume_role_policy = data.aws_iam_policy_document.sync_rds.json
+  assume_role_policy = data.aws_iam_policy_document.sync_rds_assume_role.json
   tags               = var.common_tags
+}
+
+data "aws_iam_policy_document" "sync_rds_assume_role" {
+  statement {
+    sid    = "CIAssumeRolePolicy"
+    effect = "Allow"
+    actions = [
+      "sts:AssumeRole",
+    ]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["${var.ci_role}"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "sync_rds_role" {
+  name   = "SyncRDSPolicy"
+  role   = aws_iam_role.sync_rds.name
+  policy = data.aws_iam_policy_document.sync_rds.json
 }
 
 data "aws_iam_policy_document" "sync_rds" {
@@ -133,16 +154,4 @@ data "aws_iam_policy_document" "sync_rds" {
     resources = ["*"]
   }
 
-  statement {
-    sid    = "CIAssumeRolePolicy"
-    effect = "Allow"
-    actions = [
-      "sts:AssumeRole",
-    ]
-
-    principals {
-      type        = "AWS"
-      identifiers = ["${var.ci_role}"]
-    }
-  }
 }
