@@ -38,8 +38,9 @@ sudo -H -u hdfs bash -c "hdfs dfs -mkdir /libs"
 sudo -H -u hdfs bash -c "hdfs dfs -put /usr/lib/hbase/hbase-client.jar /libs"
 
 aws s3 cp s3://${config_bucket}/rbac-teams/team_dbs.json .
-TEAM_DBS="$(cat ./team_dbs.json | jq -rc | jq '.[] | .database')"
+TEAM_DBS="$(cat ./team_dbs.json | jq  'fromjson | .[] | .database')"
 rm team_dbs.json
 for DB in $${TEAM_DBS[@]}; do
-    sudo /bin/hive -e "CREATE DATABASE IF NOT EXISTS $${DB} LOCATION '${published_bucket}/data/$${DB}'"
+    DB=$(echo "$DB" | tr -d '"')
+    sudo /bin/hive -e "CREATE DATABASE IF NOT EXISTS $${DB} LOCATION 's3://${published_bucket}/data/$${DB}'"
 done
