@@ -41,5 +41,6 @@ aws s3 cp s3://${config_bucket}/rbac-teams/team_dbs.json .
 TEAM_DBS="$(cat ./team_dbs.json | jq  'fromjson | .[] | .database')"
 rm team_dbs.json
 for DB in $${TEAM_DBS[@]}; do
-    sudo /bin/hive -e "CREATE DATABASE IF NOT EXISTS $${DB} LOCATION '${published_bucket}/data/$${DB}'"
+    DB=$(echo "$DB" | tr -d '"')
+    sudo /bin/hive -e "CREATE DATABASE IF NOT EXISTS $${DB} LOCATION 's3://${published_bucket}/data/$${DB}'"
 done
