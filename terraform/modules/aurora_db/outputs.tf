@@ -33,3 +33,7 @@ output "initialise_db_lambda" {
 output "db_name" {
   value = local.database_name
 }
+
+output "sync_role" {
+  value = aws_iam_role.sync_rds
+}
