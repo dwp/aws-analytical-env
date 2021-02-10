@@ -160,6 +160,12 @@ variable "security_configuration_groups" {
   type        = map(list(string))
 }
 
+variable "security_configuration_user_roles" {
+  description = "Cognito groups to allow access to S3 data"
+  type        = map(string)
+  default     = {}
+}
+
 variable "hive_metastore_username" {
   description = "Username to use when connecting to hive metastore"
   type        = string
@@ -229,4 +235,9 @@ variable "processed_bucket_cmk" {
 variable "processed_bucket_id" {
   description = "the processed bucket name "
   type        = string
+}
+
+variable "rbac_version" {
+  description = "the rbac version for the current environment "
+  type        = number
 }

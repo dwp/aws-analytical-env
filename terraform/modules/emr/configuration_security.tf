@@ -20,7 +20,15 @@ locals {
 
     AuthorizationConfiguration = {
       EmrFsConfiguration = {
-        RoleMappings = flatten([
+        RoleMappings = var.rbac_version == 2 ? flatten([
+          for user, role in var.security_configuration_user_roles : [
+            {
+              Role           = role
+              IdentifierType = "User"
+              Identifiers    = [user]
+            }
+          ]
+        ]) : flatten([
           for group, policy_suffixes in var.security_configuration_groups : [
             {
               Role           = aws_iam_role.emrfs_iam[group].arn

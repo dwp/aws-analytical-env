@@ -2,7 +2,7 @@ module "emr_ami" {
   source = "../../modules/amis"
 
   providers = {
-    aws = aws.management
+    aws = aws.management-ami
   }
 
   ami_filter_name   = "name"
@@ -47,9 +47,10 @@ module "emr" {
     UC_DataScience_PII     = ["HiveDataUCDataSciencePII", "AnalyticalDatasetCrownReadOnly", "ReadPDMPiiAndNonPii", "readwriteprocessedpublishedbuckets"],
     UC_DataScience_Non_PII = ["HiveDataUCDataScienceNonPII", "AnalyticalDatasetCrownReadOnlyNonPii", "ReadPDMNonPiiOnly"]
   }
-  monitoring_sns_topic_arn = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
-  logging_bucket           = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
-  name_prefix              = local.name
+  security_configuration_user_roles = module.user_roles.output.users
+  monitoring_sns_topic_arn          = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
+  logging_bucket                    = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+  name_prefix                       = local.name
 
 
   use_mysql_hive_metastore     = local.use_mysql_hive_metastore[local.environment]
@@ -77,6 +78,7 @@ module "emr" {
   processed_bucket_arn = data.terraform_remote_state.common.outputs.processed_bucket.arn
   processed_bucket_cmk = data.terraform_remote_state.common.outputs.processed_bucket_cmk.arn
   processed_bucket_id  = data.terraform_remote_state.common.outputs.processed_bucket.bucket
+  rbac_version         = local.rbac_version[local.environment]
 }
 
 module "pushgateway" {
@@ -222,5 +224,17 @@ module "rbac_db" {
   ci_role = "arn:aws:iam::${local.account[local.environment]}:role/ci"
 
   common_tags = local.common_tags
+}
 
+module "user_roles" {
+  source       = "../../modules/data_user_roles"
+  user_pool_id = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
+
+  providers = {
+    aws = aws.management
+  }
+}
+
+output "data" {
+  value = module.user_roles.output
 }
