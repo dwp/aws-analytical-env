@@ -319,3 +319,25 @@ class LambdaHandlerTests(TestCase):
         result = lambda_handler.update_user_groups_from_cognito(mocked_user_dict_without_groups)
 
         assert result == mocked_user_dict
+
+    def test_prevent_matching_sids(self):
+        duplicate_sid = copy.deepcopy(iam_template)
+        duplicate_sid["Statement"] = [
+            copy.deepcopy(mock_statement_one),
+            copy.deepcopy(mock_statement_two),
+            copy.deepcopy(mock_statement_two),
+            copy.deepcopy(mock_statement_one),
+            copy.deepcopy(mock_statement_three),
+            copy.deepcopy(mock_statement_one)
+        ]
+        lambda_handler.prevent_matching_sids(duplicate_sid["Statement"])
+        sids_in_processed_json = [ statement_object["Sid"] for statement_object in duplicate_sid["Statement"] ]
+        assert sids_in_processed_json == [
+            's3fsaccessdocument',
+            's3fskmsaccessdocument',
+            's3fskmsaccessdocument1',
+            's3fsaccessdocument1',
+            's3fslist',
+            's3fsaccessdocument2'
+        ]
+
