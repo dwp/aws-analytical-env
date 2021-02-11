@@ -27,8 +27,7 @@ locals {
               IdentifierType = "User"
               Identifiers    = [user]
             }
-          ]
-        ]) : flatten([
+          ]]) : flatten([
           for group, policy_suffixes in var.security_configuration_groups : [
             {
               Role           = aws_iam_role.emrfs_iam[group].arn
