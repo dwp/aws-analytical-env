@@ -175,11 +175,21 @@ data "terraform_remote_state" "common" {
 
 provider "aws" {
   version = "~> 2.70.0"
-  alias  = "management"
+  alias  = "management-ami"
   region = var.region
 
   assume_role {
     role_arn = "arn:aws:iam::${local.account["management"]}:role/${var.assume_role}"
+  }
+}
+
+provider "aws" {
+  version = "~> 2.70.0"
+  alias  = "management"
+  region = var.region
+
+  assume_role {
+    role_arn = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
   }
 }
 
@@ -254,6 +264,14 @@ locals {
     integration = true
     preprod     = true
     production  = true
+  }
+
+  rbac_version = {
+    development = 1
+    qa          = 1
+    integration = 1
+    preprod     = 1
+    production  = 1
   }
 
 }
