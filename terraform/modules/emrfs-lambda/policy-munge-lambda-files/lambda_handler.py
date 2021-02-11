@@ -246,7 +246,7 @@ def remove_existing_user_policies(role_name, all_policy_list):
 def create_policies_from_dict_and_return_list_of_policy_arns(dict_of_policy_name_to_munged_policy_objects):
     list_of_policy_arns = []
     for policy in dict_of_policy_name_to_munged_policy_objects:
-        prevent_matching_sids(policy.get('Statement'))
+        prevent_matching_sids(dict_of_policy_name_to_munged_policy_objects[policy].get('Statement'))
         policy_arn = aws_caller.create_policy_from_json_and_return_arn(policy, json.dumps(
             dict_of_policy_name_to_munged_policy_objects[policy]))
         list_of_policy_arns.append(policy_arn)
