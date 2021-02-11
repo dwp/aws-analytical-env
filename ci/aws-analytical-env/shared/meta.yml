@@ -615,3 +615,30 @@ meta:
               do
                 aws emr terminate-clusters --cluster-ids $CLUSTER_ID
               done
+
+
+    mirror-ucsqlhelper:
+      task: mirror-ucsqlhelper
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+          MIRROR_S3_KEY_PREFIX: component/aws-analytical-env/r-packages
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              source /assume-role
+              tar -zcf ucsqlhelper.tar.gz ucsqlhelper
+              AWS_COMMOM_BUCKET="$(cat ./terraform-output-common/outputs.json |  jq -r '.config_bucket.value.id')"
+              aws s3 cp ucsqlhelper.tar.gz s3://$AWS_COMMOM_BUCKET/$MIRROR_S3_KEY_PREFIX/ucsqlhelper.tar.gz
+        inputs:
+          - name: ucsqlhelper
+          - name: terraform-output-common

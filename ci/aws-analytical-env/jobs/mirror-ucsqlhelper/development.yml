@@ -1,0 +1,12 @@
+jobs:
+  - name: mirror-ucsqlhelper-development
+    plan:
+      - get: ucsqlhelper
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-ucsqlhelper ))
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
