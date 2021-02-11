@@ -60,7 +60,7 @@ jobs:
       params:
         path: aws-analytical-env
         status: success
-  - name: pull-request_cognito
+  - name: pull-request-cognito
     max_in_flight: 1
     plan:
       - get: aws-analytical-env

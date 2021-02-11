@@ -9,7 +9,7 @@ groups:
   - name: pull-request
     jobs:
       - pull-request
-      - pull-request_cognito
+      - pull-request-cognito
   - name: cognito
     jobs:
       - management-dev
