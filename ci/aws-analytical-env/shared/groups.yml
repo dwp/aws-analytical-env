@@ -9,7 +9,7 @@ groups:
   - name: pull-request
     jobs:
       - pull-request
-      - pull-request_cognito
+      - pull-request-cognito
   - name: cognito
     jobs:
       - management-dev
@@ -62,6 +62,13 @@ groups:
       - mirror-git-repo-uc-lab-repo-prod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
       - mirror-git-repo-chs-payment-timelines-prod
+  - name: mirror-ucsqlhelper
+    jobs:
+      - mirror-ucsqlhelper-development
+      - mirror-ucsqlhelper-qa
+      - mirror-ucsqlhelper-integration
+      - mirror-ucsqlhelper-preprod
+      - mirror-ucsqlhelper-production
   - name: admin-rbac
     jobs:
       - rotate-mysql-master-credentials-development
