@@ -6,7 +6,7 @@ data "external" "user_roles" {
   ]
   query = {
     user_pool_id = var.user_pool_id,
-    account_id   = data.aws_arn.current_session.account,
+    account_id   = var.target_account,
     region       = data.aws_region.current.name,
 
     role = format("arn:%s:%s:%s:%s:%s",

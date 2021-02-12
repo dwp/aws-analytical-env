@@ -227,8 +227,9 @@ module "rbac_db" {
 }
 
 module "user_roles" {
-  source       = "../../modules/data_user_roles"
-  user_pool_id = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
+  source         = "../../modules/data_user_roles"
+  user_pool_id   = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
+  target_account = local.account[local.environment]
 
   providers = {
     aws = aws.management
