@@ -82,7 +82,7 @@ resource "aws_emr_security_configuration" "analytical_env_emrfs_em" {
 
   provisioner "local-exec" {
     when    = "destroy"
-    command = "sleep 300"
+    command = "sleep 600"
   }
 }
 
