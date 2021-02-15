@@ -79,6 +79,7 @@ module "emr" {
   processed_bucket_cmk = data.terraform_remote_state.common.outputs.processed_bucket_cmk.arn
   processed_bucket_id  = data.terraform_remote_state.common.outputs.processed_bucket.bucket
   rbac_version         = local.rbac_version[local.environment]
+  pipeline_metadata_table = data.terraform_remote_state.internal_compute.outputs.data_pipeline_metadata_dynamo.name
 }
 
 module "pushgateway" {
