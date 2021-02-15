@@ -102,4 +102,8 @@ groups:
       - sync-cognito-users-to-rds-production
   - name: terminate-cluster
     jobs:
+      - dev-stop-cluster
+      - qa-stop-cluster
+      - int-stop-cluster
+      - preprod-stop-cluster
       - prod-stop-cluster
