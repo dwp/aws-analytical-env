@@ -1,0 +1,9 @@
+jobs:
+  - name: preprod-stop-cluster
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - .: (( inject meta.plan.stop-cluster ))
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
