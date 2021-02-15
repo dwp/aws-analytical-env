@@ -28,7 +28,7 @@ def get_cognito_users(cognitoidp_client, user_pool_id):
 
 
 def get_roles_for_users(usernames, account_id):
-    return dict(map(lambda user: (user, f'arn:aws:iam::{account_id}:role/emrfs_{user}'), usernames))
+    return dict(map(lambda user: (user, f'arn:aws:iam::{account_id}:role/emrfs/emrfs_{user}'), usernames))
 
 def get_attribute(attributes, name):
     for attribute in attributes:
