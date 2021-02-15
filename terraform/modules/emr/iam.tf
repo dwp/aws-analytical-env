@@ -789,7 +789,7 @@ data aws_iam_policy_document dynamodb_pipeline_metadata_policy {
     ]
     resources = [
       "arn:aws:dynamodb:${var.region}:${local.account[local.environment]}:table/${var.pipeline_metadata_table}"
-      ]
+    ]
   }
 }
 
