@@ -241,3 +241,8 @@ variable "rbac_version" {
   description = "the rbac version for the current environment "
   type        = number
 }
+
+variable "pipeline_metadata_table" {
+  description = "the DynamoDb pipeline metadata table name "
+  type        = string
+}
