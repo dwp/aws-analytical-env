@@ -5,15 +5,19 @@ groups:
       - qa
       - integration
       - preprod
+      - after-midnight-check
       - production
+
   - name: pull-request
     jobs:
       - pull-request
       - pull-request-cognito
+
   - name: cognito
     jobs:
       - management-dev
       - management
+
   - name: taint-emr
     jobs:
       - taint-dev
@@ -21,10 +25,12 @@ groups:
       - taint-int
       - taint-preprod
       - taint-prod
+
   - name: codecommit
     jobs:
       - copy-repos
       - copy-rnd-incoming
+
   - name: testing
     jobs:
       - testing-development
@@ -37,10 +43,12 @@ groups:
       - metrics-submit-job-preproduction
       - metrics-submit-job-integration
       - metrics-submit-job-qa
+
   - name: github-proxy
     jobs:
       - gh-proxy-mgmt-dev
       - gh-proxy-mgmt
+
   - name: mirror-git-repo-s3
     jobs:
       - mirror-git-repo-uc-lab-repo-development
@@ -62,6 +70,7 @@ groups:
       - mirror-git-repo-uc-lab-repo-prod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
       - mirror-git-repo-chs-payment-timelines-prod
+
   - name: mirror-ucsqlhelper
     jobs:
       - mirror-ucsqlhelper-development
@@ -69,6 +78,7 @@ groups:
       - mirror-ucsqlhelper-integration
       - mirror-ucsqlhelper-preprod
       - mirror-ucsqlhelper-production
+
   - name: admin-rbac
     jobs:
       - rotate-mysql-master-credentials-development
@@ -100,6 +110,7 @@ groups:
       - initialise-rbac-db-production
       - create-roles-and-munged-policies-production
       - sync-cognito-users-to-rds-production
+      
   - name: terminate-cluster
     jobs:
       - dev-stop-cluster

@@ -274,14 +274,14 @@ resources:
   - name: midnight-trigger
     type: time
     source:
-      location: GB
+      location: UTC
       start: 00:00
       stop: 01:00
 
   - name: working-day-copy-trigger
     type: time
     source:
-      location: GB
+      location: UTC
       start: 08:00
       stop: 20:00
       interval: 10m
