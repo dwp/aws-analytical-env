@@ -1,4 +1,25 @@
 jobs:
+  - name: after-midnight-check
+    plan:
+      - get: emp-release
+        passed:
+          - preprod
+        trigger: false
+      - get: emr-launcher-release
+        passed:
+          - preprod
+        trigger: false
+      - get: aws-analytical-env
+        passed:
+          - preprod
+        trigger: false
+      - get: manage-mysql-user-release
+        passed:
+          - preprod
+        trigger: false
+      - get: midnight-trigger
+        trigger: true
+
   - name: production
     max_in_flight: 1
     plan:
@@ -7,18 +28,22 @@ jobs:
       - get: emp-release
         passed:
           - preprod
+          - after-midnight-check
         trigger: true
       - get: emr-launcher-release
         passed:
           - preprod
+          - after-midnight-check
         trigger: true
       - get: aws-analytical-env
         passed:
           - preprod
+          - after-midnight-check
         trigger: true
       - get: manage-mysql-user-release
         passed:
           - preprod
+          - after-midnight-check
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:

@@ -138,7 +138,7 @@ resources:
   - name: chs-uc-lab-repo
     type: git
     source:
-      branch: Migrating-uc-lab-aws
+      branch: master
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/dip/chs-uc-lab.git
@@ -147,7 +147,7 @@ resources:
   - name: chs-payment-timelines-repo
     type: git
     source:
-      branch: DW-5492-Migrate-to-aws
+      branch: master
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/dip/chs-payment-timelines.git
@@ -274,14 +274,14 @@ resources:
   - name: midnight-trigger
     type: time
     source:
-      location: GB
+      location: UTC
       start: 00:00
       stop: 01:00
 
   - name: working-day-copy-trigger
     type: time
     source:
-      location: GB
+      location: UTC
       start: 08:00
       stop: 20:00
       interval: 10m
