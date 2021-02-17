@@ -17,7 +17,7 @@ jobs:
         passed:
           - preprod
         trigger: false
-      - get: midnight-trigger
+      - get: utc-2am-trigger
         trigger: true
 
   - name: production
