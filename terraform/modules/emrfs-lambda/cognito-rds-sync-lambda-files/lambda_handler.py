@@ -30,7 +30,7 @@ def get_env_vars():
 # queries RDS for all user data and returns a dict mapping username+sub to username, active and account_name
 def get_user_dict_from_rds(variables_dict):
     return_dict = {}
-    sql = f'SELECT User.userName, User.active FROM User'
+    sql = f'SELECT User.accountName, User.userName, User.active FROM User'
 
     response = execute_statement(
         sql,
@@ -83,7 +83,9 @@ def sync_values(cognito_user_dict, rds_user_dict, variables_dict):
     users_from_cognito = list(cognito_user_dict.keys())
     users_from_rds = list(rds_user_dict.keys())
     missing_from_rds = [key for key in users_from_cognito if key not in users_from_rds]
+    print(missing_from_rds)
     removed_from_cognito = [key for key in users_from_rds if key not in users_from_cognito]
+    print(removed_from_cognito)
 
     for user in removed_from_cognito:
         update_user_status(user, variables_dict, 0)
@@ -100,6 +102,7 @@ def sync_values(cognito_user_dict, rds_user_dict, variables_dict):
 def add_user_to_rds(user_name_sub, account_name, variables_dict, status):
     sql = f'INSERT INTO User (userName, active, accountName) ' \
           f'VALUES ("{user_name_sub}", {status}, "{account_name}");'
+    print(sql)
     execute_statement(
         sql,
         variables_dict['secret_arn'],
@@ -110,6 +113,7 @@ def add_user_to_rds(user_name_sub, account_name, variables_dict, status):
 
 def update_user_status(user_name, variables_dict, new_status):
     sql = f'UPDATE User SET active = {new_status} WHERE userName = "{user_name}";'
+    print(sql)
     execute_statement(
         sql,
         variables_dict['secret_arn'],
