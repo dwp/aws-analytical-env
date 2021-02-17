@@ -25,7 +25,7 @@ data aws_iam_policy_document policy_munge_lambda_execution_policy_document {
   statement {
     sid       = "CognitoRdsSyncMgmt"
     actions   = ["sts:AssumeRole"]
-    resources = ["arn:aws:iam::${var.mgmt_account}:role/${var.name_prefix}-mgmt-cognito-rbac-role"]
+    resources = [aws_iam_role.mgmt_rbac_lambda_role.arn]
   }
 
   statement {
@@ -130,7 +130,7 @@ data "aws_iam_policy_document" "cognito_rds_sync_lambda_execution_policy" {
   statement {
     sid       = "CognitoRdsSyncMgmt"
     actions   = ["sts:AssumeRole"]
-    resources = ["arn:aws:iam::${var.mgmt_account}:role/${var.name_prefix}-mgmt-cognito-rbac-role"]
+    resources = [aws_iam_role.mgmt_rbac_lambda_role.arn]
   }
 
   statement {
