@@ -27,7 +27,7 @@ def get_env_vars():
             raise AttributeError(f'Variable: {var} has not been provided.')
 
 
-# queries RDS for all user data and returns a dict mapping username to active and user_name_sub
+# queries RDS for all user data and returns a dict mapping username+sub to username, active and account_name
 def get_user_dict_from_rds(variables_dict):
     return_dict = {}
     sql = f'SELECT User.userName, User.active FROM User'
@@ -39,27 +39,28 @@ def get_user_dict_from_rds(variables_dict):
         variables_dict["database_cluster_arn"]
     )
     for record in response['records']:
-        user_name = ''.join(record[0].values())
-        user_name_raw = user_name[0:-3]
-        active = list(record[1].values())[0]
-        if return_dict.get(user_name_raw) == None:
-            return_dict[user_name[0:-3]] = {
+        account_name = ''.join(record[0].values())
+        user_name_sub = ''.join(record[1].values())
+        user_name_raw = user_name_sub[0:-3]
+        active = list(record[2].values())[0]
+        if return_dict.get(user_name_sub) == None:
+            return_dict[user_name_sub] = {
                 'active': active,
-                'user_name_sub': user_name
+                'username': user_name_raw,
+                'account_name': account_name
             }
     return return_dict
 
 
-# queries Cognito userpool for all user data, returns a dict mapping username to active and user_name_sub
+# queries Cognito userpool for all user data, returns a dict mapping username+sub to username, active and account_name
 def get_user_dict_from_cognito(user_pool_id):
     users = get_users_in_userpool(user_pool_id)
-
     return_dict = {}
 
     user_object = lambda user, username: {
-        username: {
+        ''.join([username, get_attribute(user.get('Attributes'), 'sub')[0:3]]): {
             'active': user.get('Enabled'),
-            'user_name_sub': ''.join([username, get_attribute(user.get('Attributes'), 'sub')[0:3]]),
+            'username': username,
             'account_name': user.get('Username')
         }
     }
@@ -85,20 +86,20 @@ def sync_values(cognito_user_dict, rds_user_dict, variables_dict):
     removed_from_cognito = [key for key in users_from_rds if key not in users_from_cognito]
 
     for user in removed_from_cognito:
-        update_user_status(rds_user_dict[user].get('user_name_sub'), variables_dict, 0)
+        update_user_status(user, variables_dict, 0)
 
     for user in missing_from_rds:
-        add_user_to_rds(cognito_user_dict[user], variables_dict, 1 if cognito_user_dict[user].get('active') else 0)
+        add_user_to_rds(user, cognito_user_dict[user].get("account_name"), variables_dict, 1 if cognito_user_dict[user].get('active') else 0)
 
     for user in set(users_from_cognito).intersection(users_from_rds):
         if rds_user_dict[user].get('active') != cognito_user_dict[user].get('active'):
-            update_user_status(cognito_user_dict[user].get('user_name_sub'), variables_dict,
+            update_user_status(user, variables_dict,
                                1 if cognito_user_dict[user].get('active') else 0)
 
 
-def add_user_to_rds(user_object, variables_dict, status):
-    sql = f'INSERT INTO User (username, active, accountname) ' \
-          f'VALUES ("{user_object.get("user_name_sub")}", {status}, "{user_object.get("account_name")}");'
+def add_user_to_rds(user_name_sub, account_name, variables_dict, status):
+    sql = f'INSERT INTO User (userName, active, accountName) ' \
+          f'VALUES ("{user_name_sub}", {status}, "{account_name}");'
     execute_statement(
         sql,
         variables_dict['secret_arn'],
@@ -108,7 +109,7 @@ def add_user_to_rds(user_object, variables_dict, status):
 
 
 def update_user_status(user_name, variables_dict, new_status):
-    sql = f'UPDATE User SET active = {new_status} WHERE username = "{user_name}";'
+    sql = f'UPDATE User SET active = {new_status} WHERE userName = "{user_name}";'
     execute_statement(
         sql,
         variables_dict['secret_arn'],
