@@ -1,8 +1,10 @@
 import boto3
+import botocore
 
 iam_client = boto3.client('iam')
 rds_data_client = boto3.client('rds-data')
 sts_connection = boto3.client('sts')
+kms_client = boto3.client('kms')
 
 """
 ============================================================================================================
@@ -203,3 +205,18 @@ def execute_statement(sql, db_credentials_secrets_store_arn, database_name, db_c
         sql=sql
     )
     return response
+
+
+# takes an alias or key id and returns key arn or None, if alias/id is not found in account
+def get_kms_arn(id_or_alias):
+    try:
+        key_details = kms_client.describe_key(
+            KeyId=id_or_alias,
+        ).get('KeyMetadata')
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == 'NotFoundException':
+            return None
+        else:
+            raise e
+
+    return key_details.get('Arn')

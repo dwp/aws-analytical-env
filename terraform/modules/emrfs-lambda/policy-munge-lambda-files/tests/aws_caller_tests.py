@@ -1,6 +1,7 @@
 import aws_caller
 from unittest import TestCase
 from mock import patch, Mock
+import botocore
 
 policies_truncated = {
     'Policies': [
@@ -57,6 +58,24 @@ roles_not_truncated = {
     'IsTruncated': False,
 }
 
+kms_found_response = {
+    'KeyMetadata': {
+        'AWSAccountId': '111122223333',
+        'Arn': 'arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab',
+        'CreationDate': "test_date",
+        'Description': '',
+        'Enabled': True,
+        'KeyId': '1234abcd-12ab-34cd-56ef-1234567890ab',
+        'KeyManager': 'CUSTOMER',
+        'KeyState': 'Enabled',
+        'KeyUsage': 'ENCRYPT_DECRYPT',
+        'Origin': 'AWS_KMS',
+    },
+    'ResponseMetadata': {
+        '...': '...',
+    },
+}
+
 class AwsCallerTests(TestCase):
 
     @patch('aws_caller.iam_client.list_policies')
@@ -79,3 +98,13 @@ class AwsCallerTests(TestCase):
         result = aws_caller.get_emrfs_roles()
 
         assert result == ['emrfs_user_one', 'emrfs_user_two', 'emrfs_user_three', 'emrfs_user_one', 'emrfs_user_two', 'emrfs_user_three', 'emrfs_user_four', 'emrfs_user_five', 'emrfs_user_six']
+
+    @patch('aws_caller.kms_client.describe_key')
+    def test_get_kms_arn_found_kms(self, mock_describe_key):
+        mock_describe_key.return_value = kms_found_response
+        assert aws_caller.get_kms_arn("/alias/test") == 'arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab'
+
+    @patch('aws_caller.kms_client.describe_key')
+    def test_get_kms_arn_not_found_kms(self, mock_describe_key):
+        mock_describe_key.side_effect = botocore.exceptions.ClientError({'Error': {'Code': 'NotFoundException'}}, 'KMS')
+        assert aws_caller.get_kms_arn("/alias/test") == None
