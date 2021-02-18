@@ -1,7 +1,7 @@
 jobs:
   - name: taint-preprod
     plan:
-      - get: midnight-trigger
+      - get: utc-midnight-trigger
         trigger: true
       - get: aws-analytical-env
         trigger: false

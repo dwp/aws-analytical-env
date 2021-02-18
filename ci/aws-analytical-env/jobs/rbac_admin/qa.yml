@@ -62,6 +62,8 @@ jobs:
     plan:
       - get: aws-analytical-env
         trigger: false
+      - get: utc-11pm-trigger
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: app
@@ -80,7 +82,9 @@ jobs:
   - name: create-roles-and-munged-policies-qa
     plan:
       - get: aws-analytical-env
-        trigger: false
+        trigger: true
+        passed:
+          - sync-cognito-users-to-rds-qa
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: app

@@ -53,7 +53,7 @@ jobs:
     plan:
       - get: aws-analytical-env
         trigger: false
-      - get: midnight-trigger
+      - get: utc-11pm-trigger
         trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
@@ -66,15 +66,13 @@ jobs:
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
         input_mapping:
           terraform-output: terraform-output-app
-    on_success:
-      put: meta-sync-development
 
   - name: create-roles-and-munged-policies-development
     plan:
       - get: aws-analytical-env
-        trigger: false
-      - get: meta-sync-development
         trigger: true
+        passed:
+          - sync-cognito-users-to-rds-development
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: app
