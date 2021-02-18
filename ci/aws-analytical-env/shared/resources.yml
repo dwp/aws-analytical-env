@@ -268,15 +268,19 @@ resources:
   - name: meta-testing-integration
     type: meta
 
-  - name: meta-sync-development
-    type: meta
-
-  - name: midnight-trigger
+  - name: utc-midnight-trigger
     type: time
     source:
       location: UTC
       start: 00:00
       stop: 01:00
+
+  - name: utc-11pm-trigger
+    type: time
+    source:
+      location: UTC
+      start: 23:00
+      stop: 23:05
 
   - name: utc-2am-trigger
     type: time
