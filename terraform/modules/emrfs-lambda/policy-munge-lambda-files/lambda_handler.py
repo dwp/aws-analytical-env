@@ -373,27 +373,36 @@ def create_policy_document_from_template(user_name, group_names, variables):
     with open('s3fs_policy_template.json', 'r') as statement_raw:
         statement = json.load(statement_raw)
 
+    home_key_arn = aws_caller.get_kms_arn(f'alias/{user_name}-home')
+
     s3fsaccessdocument = statement[0].get('Resource')
     s3fskmsaccessdocument = statement[1].get('Resource')
     s3fslist = statement[2].get('Resource')
 
-    s3fsaccessdocument.extend([
-        f'{variables["s3fs_bucket_arn"]}/*',
-        f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{user_name}-home'
-    ])
+    if home_key_arn:
+        s3fsaccessdocument.extend(
+            [f'{variables["s3fs_bucket_arn"]}/*', home_key_arn]
+        )
+    else:
+        s3fsaccessdocument.append(
+            f'{variables["s3fs_bucket_arn"]}/*'
+        )
+        logger.warning(f'No KMS found in account for alias: \"alias/{user_name}-home\"')
 
     for group_name in group_names:
-        s3fsaccessdocument.append(
-            f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{group_name}-shared'
-        )
-        s3fskmsaccessdocument.append(
-            f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{group_name}-shared'
-        )
+        group_key_arn = aws_caller.get_kms_arn(f'alias/{group_name}-shared')
+        if group_key_arn:
+            s3fsaccessdocument.append(
+                group_key_arn
+            )
+            s3fskmsaccessdocument.append(
+                group_key_arn
+            )
+        else:
+            logger.warning(f'No KMS found in account for alias: \"alias/{group_name}-shared\" for user: {user_name}')
 
     s3fskmsaccessdocument.extend([
-        f'{variables["s3fs_bucket_arn"]}/*',
-        f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{user_name}-home'
-
+        item for item in [f'{variables["s3fs_bucket_arn"]}/*', home_key_arn] if item is not None
     ])
 
     s3fslist.append(

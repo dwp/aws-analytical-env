@@ -114,7 +114,12 @@ mock_statement_one =   {
         "s3:GetObjectVersion",
         "s3:DeleteObject"
     ],
-    "Resource": ["arn:12345432::s3_test_arn/*", "arn:aws:kms:eu-west-7:1234567:alias/test_user-home", "arn:aws:kms:eu-west-7:1234567:alias/group_one-shared", "arn:aws:kms:eu-west-7:1234567:alias/group_two-shared"]
+    "Resource": [
+        "arn:12345432::s3_test_arn/*",
+        "arn:aws:kms:eu-west-7:1234567:key/testuser-12ab-34cd-56ef-1234567890ab",
+        "arn:aws:kms:eu-west-7:1234567:key/group001-12ab-34cd-56ef-1234567890ab",
+        "arn:aws:kms:eu-west-7:1234567:key/group002-12ab-34cd-56ef-1234567890ab"
+    ]
 }
 
 mock_statement_two =   {
@@ -127,7 +132,12 @@ mock_statement_two =   {
         "kms:ReEncrypt*",
         "kms:GenerateDataKey*"
     ],
-    "Resource":  ['arn:aws:kms:eu-west-7:1234567:alias/group_one-shared', 'arn:aws:kms:eu-west-7:1234567:alias/group_two-shared', 'arn:12345432::s3_test_arn/*', 'arn:aws:kms:eu-west-7:1234567:alias/test_user-home']
+    "Resource":  [
+        "arn:aws:kms:eu-west-7:1234567:key/group001-12ab-34cd-56ef-1234567890ab",
+        "arn:aws:kms:eu-west-7:1234567:key/group002-12ab-34cd-56ef-1234567890ab",
+        "arn:12345432::s3_test_arn/*",
+        "arn:aws:kms:eu-west-7:1234567:key/testuser-12ab-34cd-56ef-1234567890ab"
+    ]
 }
 
 mock_statement_three = {
@@ -306,7 +316,13 @@ class LambdaHandlerTests(TestCase):
     def test_verify_policies_does_not_raise_error_when_additional_policy_found_in_rds(self):
         self.assertIsNone(lambda_handler.verify_policies(['policy_one'], mocked_policy_object_list))
 
-    def test_create_policy_document_from_template(self):
+    @patch('aws_caller.get_kms_arn')
+    def test_create_policy_document_from_template(self, mock_get_kms_arn):
+        mock_get_kms_arn.side_effect = [
+            "arn:aws:kms:eu-west-7:1234567:key/testuser-12ab-34cd-56ef-1234567890ab",
+            "arn:aws:kms:eu-west-7:1234567:key/group001-12ab-34cd-56ef-1234567890ab",
+            "arn:aws:kms:eu-west-7:1234567:key/group002-12ab-34cd-56ef-1234567890ab"
+        ]
         result = lambda_handler.create_policy_document_from_template('test_user', ['group_one', 'group_two'], variables)
         assert result[0] == mock_statement_one
         assert result[1] == mock_statement_two
@@ -341,3 +357,48 @@ class LambdaHandlerTests(TestCase):
             's3fsaccessdocument2'
         ]
 
+    @patch('aws_caller.get_kms_arn')
+    def test_handle_group_kms_not_found_issues(self, mock_get_kms_arn):
+        mock_get_kms_arn.side_effect = [
+            "arn:aws:kms:eu-west-7:1234567:key/testuser-12ab-34cd-56ef-1234567890ab",
+            None,
+            "arn:aws:kms:eu-west-7:1234567:key/group002-12ab-34cd-56ef-1234567890ab"
+        ]
+        missing_group_key = lambda_handler.create_policy_document_from_template('test_user', ['group_one', 'group_two'], variables)
+
+        assert missing_group_key[0].get('Resource') == [
+            "arn:12345432::s3_test_arn/*",
+            "arn:aws:kms:eu-west-7:1234567:key/testuser-12ab-34cd-56ef-1234567890ab",
+            "arn:aws:kms:eu-west-7:1234567:key/group002-12ab-34cd-56ef-1234567890ab"
+        ]
+        assert missing_group_key[1].get('Resource') == [
+            "arn:aws:kms:eu-west-7:1234567:key/group002-12ab-34cd-56ef-1234567890ab",
+            "arn:12345432::s3_test_arn/*",
+            "arn:aws:kms:eu-west-7:1234567:key/testuser-12ab-34cd-56ef-1234567890ab"
+        ]
+        assert missing_group_key[2].get('Resource') == [
+            "arn:12345432::s3_test_arn/*"
+        ]
+
+    @patch('aws_caller.get_kms_arn')
+    def test_handle_group_kms_not_found_issues(self, mock_get_kms_arn):
+        mock_get_kms_arn.side_effect = [
+            None,
+            "arn:aws:kms:eu-west-7:1234567:key/group001-12ab-34cd-56ef-1234567890ab",
+            "arn:aws:kms:eu-west-7:1234567:key/group002-12ab-34cd-56ef-1234567890ab"
+        ]
+        missing_user_key = lambda_handler.create_policy_document_from_template('test_user', ['group_one', 'group_two'], variables)
+
+        assert missing_user_key[0].get('Resource') == [
+            "arn:12345432::s3_test_arn/*",
+            "arn:aws:kms:eu-west-7:1234567:key/group001-12ab-34cd-56ef-1234567890ab",
+            "arn:aws:kms:eu-west-7:1234567:key/group002-12ab-34cd-56ef-1234567890ab"
+        ]
+        assert missing_user_key[1].get('Resource') == [
+            "arn:aws:kms:eu-west-7:1234567:key/group001-12ab-34cd-56ef-1234567890ab",
+            "arn:aws:kms:eu-west-7:1234567:key/group002-12ab-34cd-56ef-1234567890ab",
+            "arn:12345432::s3_test_arn/*",
+        ]
+        assert missing_user_key[2].get('Resource') == [
+            "arn:12345432::s3_test_arn"
+        ]
