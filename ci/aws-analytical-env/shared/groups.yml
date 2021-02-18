@@ -84,32 +84,39 @@ groups:
       - rotate-mysql-master-credentials-development
       - rotate-mysql-client-credentials-development
       - initialise-rbac-db-development
-      - create-roles-and-munged-policies-development
-      - sync-cognito-users-to-rds-development
 
       - rotate-mysql-master-credentials-qa
       - rotate-mysql-client-credentials-qa
       - initialise-rbac-db-qa
-      - create-roles-and-munged-policies-qa
-      - sync-cognito-users-to-rds-qa
 
       - rotate-mysql-master-credentials-integration
       - rotate-mysql-client-credentials-integration
       - initialise-rbac-db-integration
-      - create-roles-and-munged-policies-integration
-      - sync-cognito-users-to-rds-integration
 
       - rotate-mysql-master-credentials-preprod
       - rotate-mysql-client-credentials-preprod
       - initialise-rbac-db-preprod
-      - create-roles-and-munged-policies-preprod
-      - sync-cognito-users-to-rds-preprod
 
       - rotate-mysql-master-credentials-production
       - rotate-mysql-client-credentials-production
       - initialise-rbac-db-production
-      - create-roles-and-munged-policies-production
+
+  - name: admin-sync-and-munge
+    jobs:
+      - sync-cognito-users-to-rds-development
+      - create-roles-and-munged-policies-development
+      
+      - sync-cognito-users-to-rds-qa
+      - create-roles-and-munged-policies-qa
+
+      - sync-cognito-users-to-rds-integration
+      - create-roles-and-munged-policies-integration
+
+      - sync-cognito-users-to-rds-preprod
+      - create-roles-and-munged-policies-preprod
+
       - sync-cognito-users-to-rds-production
+      - create-roles-and-munged-policies-production
       
   - name: terminate-cluster
     jobs:

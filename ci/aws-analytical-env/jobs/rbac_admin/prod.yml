@@ -62,6 +62,8 @@ jobs:
     plan:
       - get: aws-analytical-env
         trigger: false
+      #- get: utc-11pm-trigger
+      #  trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: app
@@ -81,6 +83,8 @@ jobs:
     plan:
       - get: aws-analytical-env
         trigger: false
+        passed:
+          - sync-cognito-users-to-rds-production
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: app
