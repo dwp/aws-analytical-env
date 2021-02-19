@@ -113,8 +113,8 @@ data aws_iam_policy_document policy_munge_lambda_document {
     actions   = ["kms:DescribeKey"]
     resources = ["*"]
     condition {
-      test = "StringLike"
-      values = ["alias/*-home"]
+      test     = "StringLike"
+      values   = ["alias/*-home"]
       variable = "kms:ResourceAliases"
     }
   }
