@@ -51,6 +51,7 @@ data aws_iam_policy_document policy_munge_lambda_document {
       "iam:AttachRolePolicy",
       "iam:CreatePolicy",
       "iam:DeletePolicy",
+      "iam:DeletePolicyVersion",
       "iam:DetachRolePolicy",
       "iam:GetPolicy",
       "iam:GetPolicyVersion",
@@ -60,6 +61,7 @@ data aws_iam_policy_document policy_munge_lambda_document {
       "iam:DeleteRole",
       "iam:GetRolePolicy",
       "iam:ListPolicies",
+      "iam:ListPolicyVersions",
       "iam:ListRoleTags",
       "iam:PutRolePolicy",
       "iam:TagRole",
@@ -115,7 +117,7 @@ data aws_iam_policy_document policy_munge_lambda_document {
     condition {
       test     = "StringLike"
       values   = ["alias/*-home"]
-      variable = "kms:ResourceAliases"
+      variable = "kms:RequestAlias"
     }
   }
 }

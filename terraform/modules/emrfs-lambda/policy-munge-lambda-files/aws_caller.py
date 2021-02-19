@@ -110,6 +110,20 @@ def remove_policy_being_replaced(policy_arn, role_name):
             logger.info(f'Policy: \"{os.path.basename(policy_arn)}\" not found for role: \"{role_name}\".')
         else:
             raise e
+
+    # deletes policy versions if exist
+    versions_list = iam_client.list_policy_versions(
+        PolicyArn=policy_arn
+    )['Versions']
+
+    version_ids = [version['VersionId'] for version in versions_list if version['IsDefaultVersion'] is False]
+
+    for version_id in version_ids:
+        iam_client.delete_policy_version(
+            PolicyArn=policy_arn,
+            VersionId=version_id
+        )
+
     # deletes policy
     iam_client.delete_policy(
         PolicyArn=policy_arn
