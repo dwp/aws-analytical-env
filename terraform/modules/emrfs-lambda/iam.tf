@@ -111,7 +111,12 @@ data aws_iam_policy_document policy_munge_lambda_document {
     sid       = "AllowKmsDescribeKey"
     effect    = "Allow"
     actions   = ["kms:DescribeKey"]
-    resources = [var.s3fs_kms_arn]
+    resources = ["*"]
+    condition {
+      test = "StringLike"
+      values = ["alias/*-home"]
+      variable = "kms:ResourceAliases"
+    }
   }
 }
 
