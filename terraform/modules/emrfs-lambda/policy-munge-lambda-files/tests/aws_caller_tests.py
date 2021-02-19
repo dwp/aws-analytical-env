@@ -1,6 +1,6 @@
 import aws_caller
 from unittest import TestCase
-from mock import patch, Mock
+from mock import call, patch, Mock
 import botocore
 
 policies_truncated = {
@@ -76,6 +76,35 @@ kms_found_response = {
     },
 }
 
+mock_list_policy_versions_response = {
+    'Versions':[
+        {
+            'Document': 'string',
+            'VersionId': 'non_default_1',
+            'IsDefaultVersion': False,
+            'CreateDate': ""
+        },
+        {
+            'Document': 'string',
+            'VersionId': 'non_default_2',
+            'IsDefaultVersion': False,
+            'CreateDate': ""
+        },
+        {
+            'Document': 'string',
+            'VersionId': 'default',
+            'IsDefaultVersion': True,
+            'CreateDate': ""
+        },
+        {
+            'Document': 'string',
+            'VersionId': 'non_default_3',
+            'IsDefaultVersion': False,
+            'CreateDate': ""
+        },
+    ]
+}
+
 class AwsCallerTests(TestCase):
 
     @patch('aws_caller.iam_client.list_policies')
@@ -109,9 +138,10 @@ class AwsCallerTests(TestCase):
         mock_describe_key.side_effect = botocore.exceptions.ClientError({'Error': {'Code': 'NotFoundException'}}, 'KMS')
         assert aws_caller.get_kms_arn("/alias/test") == None
 
+    @patch('aws_caller.iam_client.list_policy_versions')
     @patch('aws_caller.iam_client.delete_policy')
     @patch('aws_caller.iam_client.detach_role_policy')
-    def test_handling_of_detach_role_policy_correct_error(self, mock_detach_role_policy, mock_delete_policy):
+    def test_handling_of_detach_role_policy_correct_error(self, mock_detach_role_policy, mock_delete_policy, mock_list_policy_versions):
         mock_detach_role_policy.side_effect = botocore.exceptions.ClientError({'Error': {'Code': 'NoSuchEntity'}}, 'IAM')
 
         try:
@@ -119,12 +149,30 @@ class AwsCallerTests(TestCase):
         except botocore.exceptions.ClientError:
             self.fail('error was not handled in function')
 
+    @patch('aws_caller.iam_client.list_policy_versions')
     @patch('aws_caller.iam_client.delete_policy')
     @patch('aws_caller.iam_client.detach_role_policy')
-    def test_handling_of_detach_role_policy_other_error(self, mock_detach_role_policy, mock_delete_policy):
+    def test_handling_of_detach_role_policy_other_error(self, mock_detach_role_policy, mock_delete_policy, mock_list_policy_versions):
         mock_detach_role_policy.side_effect = botocore.exceptions.ClientError({'Error': {'Code': 'OtherError'}}, 'IAM')
 
         try:
             aws_caller.remove_policy_being_replaced('arn:aws:iam::111122223333:policy/test_policy', 'test_role')
         except botocore.exceptions.ClientError as e:
             print(f'Passed as raised error: {e}')
+
+
+    @patch('aws_caller.iam_client.delete_policy')
+    @patch('aws_caller.iam_client.delete_policy_version')
+    @patch('aws_caller.iam_client.list_policy_versions')
+    @patch('aws_caller.iam_client.detach_role_policy')
+    def test_policy_version_deletion_logic(self, mock_detach_role_policy, mock_list_policy_versions, mock_delete_policy_version, mock_delete_policy):
+        mock_list_policy_versions.return_value = mock_list_policy_versions_response
+        calls = [
+            call(PolicyArn='test_arn', VersionId='non_default_1'),
+            call(PolicyArn='test_arn', VersionId='non_default_2'),
+            call(PolicyArn='test_arn', VersionId='non_default_3')
+        ]
+
+        aws_caller.remove_policy_being_replaced('test_arn', 'test_role')
+        mock_delete_policy_version.assert_has_calls(calls, any_order=True)
+        mock_delete_policy.assert_called_once_with(PolicyArn='test_arn')
