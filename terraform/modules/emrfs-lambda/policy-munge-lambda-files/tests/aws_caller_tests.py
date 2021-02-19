@@ -108,3 +108,23 @@ class AwsCallerTests(TestCase):
     def test_get_kms_arn_not_found_kms(self, mock_describe_key):
         mock_describe_key.side_effect = botocore.exceptions.ClientError({'Error': {'Code': 'NotFoundException'}}, 'KMS')
         assert aws_caller.get_kms_arn("/alias/test") == None
+
+    @patch('aws_caller.iam_client.delete_policy')
+    @patch('aws_caller.iam_client.detach_role_policy')
+    def test_handling_of_detach_role_policy_correct_error(self, mock_detach_role_policy, mock_delete_policy):
+        mock_detach_role_policy.side_effect = botocore.exceptions.ClientError({'Error': {'Code': 'NoSuchEntity'}}, 'IAM')
+
+        try:
+            aws_caller.remove_policy_being_replaced('arn:aws:iam::111122223333:policy/test_policy', 'test_role')
+        except botocore.exceptions.ClientError:
+            self.fail('error was not handled in function')
+
+    @patch('aws_caller.iam_client.delete_policy')
+    @patch('aws_caller.iam_client.detach_role_policy')
+    def test_handling_of_detach_role_policy_other_error(self, mock_detach_role_policy, mock_delete_policy):
+        mock_detach_role_policy.side_effect = botocore.exceptions.ClientError({'Error': {'Code': 'OtherError'}}, 'IAM')
+
+        try:
+            aws_caller.remove_policy_being_replaced('arn:aws:iam::111122223333:policy/test_policy', 'test_role')
+        except botocore.exceptions.ClientError as e:
+            print(f'Passed as raised error: {e}')
