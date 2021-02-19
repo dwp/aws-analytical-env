@@ -116,7 +116,6 @@ groups:
       - create-roles-and-munged-policies-preprod
 
       - sync-cognito-users-to-rds-production
-      - sync-cognito-users-to-rds-production-at-night
       - create-roles-and-munged-policies-production
       
   - name: terminate-cluster
