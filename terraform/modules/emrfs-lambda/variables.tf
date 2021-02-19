@@ -77,3 +77,8 @@ variable "s3fs_bucket_id" {
   type        = string
   description = "(Required) The bucket ID for s3fs shared and home dir bucket"
 }
+
+variable "s3fs_kms_arn" {
+  type        = string
+  description = "(Required) The bucket KMS ARN used for encryption of s3fs shared and home dir bucket"
+}
