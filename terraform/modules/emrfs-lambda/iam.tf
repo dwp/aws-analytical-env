@@ -106,6 +106,13 @@ data aws_iam_policy_document policy_munge_lambda_document {
     actions   = ["rds-data:ExecuteStatement"]
     resources = [var.db_cluster_arn]
   }
+
+  statement {
+    sid       = "AllowKmsDescribeKey"
+    effect    = "Allow"
+    actions   = ["kms:DescribeKey"]
+    resources = [var.s3fs_kms_arn]
+  }
 }
 
 resource "aws_cloudwatch_log_group" "policy_munge_lambda_logs" {
