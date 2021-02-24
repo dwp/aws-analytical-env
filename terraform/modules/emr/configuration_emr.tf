@@ -39,6 +39,7 @@ data "template_file" "emr_setup_sh" {
     logging_shell                   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.logging_sh.key)
     cloudwatch_shell                = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.cloudwatch_sh.key)
     get_scripts_shell               = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.get_scripts_sh.key)
+    poll_status_table_shell         = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.poll_status_table_sh.key)
     cwa_namespace                   = local.cw_agent_namespace
     cwa_log_group_name              = local.cw_agent_step_log_group_name
     config_bucket                   = var.config_bucket_id
@@ -149,3 +150,12 @@ resource "aws_s3_bucket_object" "create_dbs_sh" {
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-create-dbs-sh" })
 }
+
+resource "aws_s3_bucket_object" "poll_status_table_sh" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/emr/poll_status_table.sh"
+  content = file("${path.module}/templates/emr/poll_status_table.sh")
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-poll-status-table-sh" })
+}
+
