@@ -54,6 +54,7 @@ groups:
       - mirror-git-repo-uc-lab-repo-development
       - mirror-git-repo-opsmi-ops-mi-repo-development
       - mirror-git-repo-chs-payment-timelines-development
+      - mirror-git-repo-chs-cbol-data-development
 
       - mirror-git-repo-uc-lab-repo-qa
       - mirror-git-repo-opsmi-ops-mi-repo-qa
