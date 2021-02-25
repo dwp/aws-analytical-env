@@ -36,7 +36,7 @@ aws s3 cp "${poll_status_table_shell}" /home/hadoop/poll_status_table.sh
 chmod u+x /opt/emr/cloudwatch.sh
 chmod u+x /opt/emr/logging.sh
 chmod u+x /home/hadoop/get_scripts.sh
-chmod u+x /home/hadoop/poll_status_table.sh
+chmod ug+x /home/hadoop/poll_status_table.sh
 
 aws s3 cp s3://${config_bucket}/workflow-manager/azkaban/step.sh /home/hadoop/step.sh
 chmod u+x /home/hadoop/step.sh
