@@ -20,7 +20,7 @@ Instances:
             SizeInGB: 250
             VolumeType: "gp2"
           VolumesPerInstance: 1
-      InstanceType: "m5.2xlarge"
+      InstanceType: "${instance_type_master}"
   - InstanceFleetType: "CORE"
     Name: CORE
     TargetOnDemandCapacity: ${core_instance_count}
@@ -31,18 +31,18 @@ Instances:
             SizeInGB: 250
             VolumeType: "gp2"
           VolumesPerInstance: 1
-      InstanceType: "m5.2xlarge"
+      InstanceType: "${instance_type_core_one}"
     - EbsConfiguration:
         EbsBlockDeviceConfigs:
         - VolumeSpecification:
             SizeInGB: 250
             VolumeType: "gp2"
           VolumesPerInstance: 1
-      InstanceType: "m5a.2xlarge"
+      InstanceType:  "${instance_type_core_two}"
     - EbsConfiguration:
         EbsBlockDeviceConfigs:
         - VolumeSpecification:
             SizeInGB: 250
             VolumeType: "gp2"
           VolumesPerInstance: 1
-      InstanceType: "m5d.2xlarge"
+      InstanceType: "${instance_type_core_three}"
