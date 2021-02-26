@@ -172,6 +172,11 @@ module launcher {
   subnet_ids                            = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private.*.id
   core_instance_count                   = var.emr_core_instance_count[local.environment]
   environment                           = local.environment
+  instance_type_master                  = var.emr_instance_type_master[local.environment]
+  instance_type_core_one                = var.emr_instance_type_core_one[local.environment]
+  instance_type_core_two                = var.emr_instance_type_core_two[local.environment]
+  instance_type_core_three              = var.emr_instance_type_core_three[local.environment]
+
 }
 
 module "emrfs_lambda" {

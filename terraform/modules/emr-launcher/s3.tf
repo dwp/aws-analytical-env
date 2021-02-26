@@ -72,12 +72,17 @@ resource "aws_s3_bucket_object" "batch_instances" {
   bucket = var.config_bucket.id
   key    = "emr/batch-cluster/instances.yaml"
   content = templatefile("../../../batch_cluster_config/instances.yaml.tpl", {
-    common_security_group  = var.common_security_group
-    master_security_group  = var.master_security_group
-    slave_security_group   = var.slave_security_group
-    service_security_group = var.service_security_group
-    subnet_ids             = join(",", var.subnet_ids)
-    core_instance_count    = var.core_instance_count
+    common_security_group    = var.common_security_group
+    master_security_group    = var.master_security_group
+    slave_security_group     = var.slave_security_group
+    service_security_group   = var.service_security_group
+    subnet_ids               = join(",", var.subnet_ids)
+    core_instance_count      = var.core_instance_count
+    instance_type_master     = var.instance_type_master
+    instance_type_core_one   = var.instance_type_core_one
+    instance_type_core_two   = var.instance_type_core_two
+    instance_type_core_three = var.instance_type_core_three
+
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-instances" })
 }
