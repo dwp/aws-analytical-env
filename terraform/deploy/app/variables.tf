@@ -32,48 +32,51 @@ variable "manage_mysql_user_lambda_zip" {
 }
 
 variable "emr_core_instance_count" {
-    default = {
-      development = "1"
-      qa          = "1"
-      integration = "1"
-      preprod     = "1"
-      production  = "20"
-    }
+  default = {
+    development = "1"
+    qa          = "1"
+    integration = "1"
+    preprod     = "1"
+    production  = "20"
+  }
+}
 
 variable "emr_instance_type_master" {
-    default = {
-      development = "m5.2xlarge"
-      qa          = "m5.2xlarge"
-      integration = "m5.2xlarge"
-      preprod     = "m5.2xlarge"
-      production  = "m5.24xlarge"
-    }
+  default = {
+    development = "m5.2xlarge"
+    qa          = "m5.2xlarge"
+    integration = "m5.2xlarge"
+    preprod     = "m5.2xlarge"
+    production  = "m5.24xlarge"
+  }
+}
 
 variable "emr_instance_type_core_one" {
-    default = {
-      development = "m5.2xlarge"
-      qa          = "m5.2xlarge"
-      integration = "m5.2xlarge"
-      preprod     = "m5.2xlarge"
-      production  = "m5.24xlarge"
-    }
-
+  default = {
+    development = "m5.2xlarge"
+    qa          = "m5.2xlarge"
+    integration = "m5.2xlarge"
+    preprod     = "m5.2xlarge"
+    production  = "m5.24xlarge"
+  }
+}
 variable "emr_instance_type_core_two" {
-    default = {
-      development = "m5a.2xlarge"
-      qa          = "m5a.2xlarge"
-      integration = "m5a.2xlarge"
-      preprod     = "m5a.2xlarge"
-      production  = "m5a.24xlarge"
-    }
+  default = {
+    development = "m5a.2xlarge"
+    qa          = "m5a.2xlarge"
+    integration = "m5a.2xlarge"
+    preprod     = "m5a.2xlarge"
+    production  = "m5a.24xlarge"
+  }
+}
 
 variable "emr_instance_type_core_three" {
-      default = {
-        development = "m5d.2xlarge"
-        qa          = "m5d.2xlarge"
-        integration = "m5d.2xlarge"
-        preprod     = "m5d.2xlarge"
-        production  = "r5d.24xlarge"
-      }
+  default = {
+    development = "m5d.2xlarge"
+    qa          = "m5d.2xlarge"
+    integration = "m5d.2xlarge"
+    preprod     = "m5d.2xlarge"
+    production  = "r5d.24xlarge"
+  }
 }
 
