@@ -59,6 +59,9 @@ Configurations:
     "hive.metastore.client.socket.timeout": "10800"
     "hive.strict.checks.cartesian.product": "false"
     "hive.mapred.mode": "nonstrict"
+    "hive.tez.container.size": "32768"
+    "hive.tez.java.opts": "-Xmx26214m"
+    "hive.auto.convert.join.noconditionaltask.size": "10922"
 - Classification: "emrfs-site"
   Properties:
     "fs.s3.maxRetries": "20"
