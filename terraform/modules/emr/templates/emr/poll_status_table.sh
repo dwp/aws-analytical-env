@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 # Import logging
 source /opt/emr/logging.sh
 
@@ -33,7 +35,7 @@ echo $MESSAGE
 log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table.sh" "NOT_SET"
 
 while [ $count -lt $TIMEOUT ]; do
-  status=$(hive -S -e "${query}")
+  status=$(hive -S -e "${query}") || true
   if [[ $status -eq 1 ]]; then
     MESSAGE="Polling of status table found that $DATASOURCE is now available!"
     echo $MESSAGE
@@ -41,12 +43,11 @@ while [ $count -lt $TIMEOUT ]; do
 
     exit 0
   else
-    let count++
+    let count++ || true
     sleep 60
     MESSAGE="$count attempts of $TIMEOUT so far. Retrying..."
     echo $MESSAGE
     log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table.sh" "NOT_SET"
-
   fi
 done
 
