@@ -18,9 +18,7 @@ USER_GROUPS=$(< /opt/dataworks/groups)
 S3_FILE_PATH=$(echo ${hive_data_s3} | awk -F ':' '{print $3 "://" $6}')
 
 for USER in $${USERS[@]}; do
-  if [[ ! -d "/user/$USER" ]]; then
-      sudo -H -u hdfs bash -c "hdfs dfs -mkdir /user/$USER"
-  fi
+  sudo -H -u hdfs bash -c "hdfs dfs -mkdir -p /user/$USER"
   sudo -H -u hdfs bash -c "hdfs dfs -chown -R $USER:$USER /user/$USER"
   sudo -H -u hdfs bash -c "hdfs dfs -chmod 770 /user/$USER"
 done
