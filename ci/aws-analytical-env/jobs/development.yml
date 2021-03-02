@@ -7,6 +7,7 @@ jobs:
       - get: emp-release
         trigger: true
       - get: aws-analytical-env
+        resource: aws-analytical-env-emr-6
         trigger: true
       - get: emr-launcher-release
         trigger: true
