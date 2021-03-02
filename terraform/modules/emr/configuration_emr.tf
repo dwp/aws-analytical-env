@@ -144,7 +144,7 @@ resource "aws_s3_bucket_object" "create_dbs_sh" {
   content = templatefile("${path.module}/templates/emr/create_dbs.sh",
     {
       processed_bucket = format("s3://%s", var.processed_bucket_id)
-          published_bucket = format("s3://%s", var.dataset_s3.id)
+      published_bucket = format("s3://%s", var.dataset_s3.id)
     }
   )
 
