@@ -42,7 +42,7 @@ Configurations:
     "hive.support.concurrency": "true"
     "hive.txn.manager": "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager"
     "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver"
-    "javax.jdo.option.ConnectionPassword": "metadata-store-analytical-env"
+    "javax.jdo.option.ConnectionPassword": ${hive_metastore_secret_id}
     "javax.jdo.option.ConnectionURL": "jdbc:mysql://${hive_metastore_endpoint}:3306/${hive_metastore_database_name}"
     "javax.jdo.option.ConnectionUserName": "${hive_metastore_username}"
 - Classification: "hive-site"
@@ -52,7 +52,7 @@ Configurations:
     "hive.support.concurrency": "true"
     "hive.txn.manager": "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager"
     "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver"
-    "javax.jdo.option.ConnectionPassword": "metadata-store-analytical-env"
+    "javax.jdo.option.ConnectionPassword": ${hive_metastore_secret_id}
     "javax.jdo.option.ConnectionURL": "jdbc:mysql://${hive_metastore_endpoint}:3306/${hive_metastore_database_name}"
     "javax.jdo.option.ConnectionUserName": "${hive_metastore_username}"
     "hive.metastore.warehouse.dir": "s3://${config_bucket}/data/external"
