@@ -59,18 +59,22 @@ groups:
       - mirror-git-repo-uc-lab-repo-qa
       - mirror-git-repo-opsmi-ops-mi-repo-qa
       - mirror-git-repo-chs-payment-timelines-qa
+      - mirror-git-repo-chs-cbol-data-qa
 
       - mirror-git-repo-uc-lab-repo-integration
       - mirror-git-repo-opsmi-ops-mi-repo-integration
       - mirror-git-repo-chs-payment-timelines-integration
+      - mirror-git-repo-chs-cbol-data-integration
 
       - mirror-git-repo-uc-lab-repo-preprod
       - mirror-git-repo-opsmi-ops-mi-repo-preprod
       - mirror-git-repo-chs-payment-timelines-preprod
+      - mirror-git-repo-chs-cbol-data-preprod
 
       - mirror-git-repo-uc-lab-repo-prod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
       - mirror-git-repo-chs-payment-timelines-prod
+      - mirror-git-repo-chs-cbol-data-prod
 
   - name: mirror-ucsqlhelper
     jobs:
