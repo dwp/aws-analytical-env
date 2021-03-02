@@ -170,6 +170,7 @@ module launcher {
   hive_metastore_endpoint               = data.terraform_remote_state.internal_compute.outputs.hive_metastore_v2.rds_cluster.endpoint
   hive_metastore_database_name          = data.terraform_remote_state.internal_compute.outputs.hive_metastore_v2.rds_cluster.database_name
   hive_metastore_username               = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["username"]
+  hive_metastore_secret_id              = data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_id
   batch_security_configuration          = module.emr.batch_security_configuration
   hive_metastore_arn                    = data.aws_secretsmanager_secret_version.hive_metastore_password_secret.arn
   subnet_ids                            = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private.*.id
