@@ -143,8 +143,8 @@ resource "aws_s3_bucket_object" "create_dbs_sh" {
   key    = "scripts/emr/create_dbs.sh"
   content = templatefile("${path.module}/templates/emr/create_dbs.sh",
     {
-      processed_bucket = format("s3://%s/uc_lab_staging", var.processed_bucket_id)
-      published_bucket = format("s3://%s/uc_lab", var.dataset_s3.id)
+      processed_bucket = format("s3://%s", var.processed_bucket_id)
+          published_bucket = format("s3://%s", var.dataset_s3.id)
     }
   )
 
