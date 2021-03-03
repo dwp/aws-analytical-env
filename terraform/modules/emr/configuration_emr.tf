@@ -149,8 +149,8 @@ resource "aws_s3_bucket_object" "create_dbs_sh" {
 }
 
 resource "aws_s3_bucket_object" "check_pdm_sh" {
-  bucket  = aws_s3_bucket.emr.id
-  key     = "scripts/emr/check_pdm.sh"
+  bucket  = var.config_bucket_id
+  key     = "component/uc_repos/status_check/check_pdm.sh"
   content = file("${path.module}/templates/emr/check_pdm.sh")
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-check-pdm-sh" })
