@@ -163,7 +163,10 @@ resource "aws_s3_bucket_object" "update_dynamo_sh" {
   key     = "component/uc_repos/status_check/update_dynamo.sh"
   content = file("${path.module}/templates/emr/update_dynamo.sh")
 
-  tags = merge(var.common_tags, { Name = "${var.name_prefix}-update-dynamo-sh" })
+  tags = merge(var.common_tags, {
+    Name = "${var.name_prefix}-update-dynamo-sh"
+  })
+}
 
 resource "aws_s3_bucket_object" "poll_status_table_sh" {
   bucket  = aws_s3_bucket.emr.id
@@ -173,4 +176,3 @@ resource "aws_s3_bucket_object" "poll_status_table_sh" {
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-poll-status-table-sh" })
 
 }
-
