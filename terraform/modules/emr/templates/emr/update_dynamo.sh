@@ -1,9 +1,15 @@
 #!/bin/bash
 
-CORRELATION_ID=$1   
+CORRELATION_ID=$1
 STATUS=$2
 DATA_PRODUCT=$3
 RUN_ID=$4
+
+if [  -z ${RUN_ID} ]
+then
+    response=`aws dynamodb get-item --table-name data_pipeline_metadata --key '{"Correlation_Id": {"S": "'$CORRELATION_ID'"}, "DataProduct": {"S": "'$DATA_PRODUCT'"}}'`
+    RUN_ID=`echo $response | jq -r .'Item.Run_Id.N'`
+fi
 
 CLUSTER_ID=`cat /mnt/var/lib/info/job-flow.json | jq '.jobFlowId'`
 CLUSTER_ID=$${CLUSTER_ID//\"}
@@ -19,4 +25,3 @@ aws dynamodb update-item \
     --return-values ALL_NEW
 
 
-    
