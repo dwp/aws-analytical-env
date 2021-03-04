@@ -144,14 +144,22 @@ resource "aws_s3_bucket_object" "create_dbs_sh" {
       published_bucket = format("s3://%s/uc_lab", var.dataset_s3.id)
     }
   )
-
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-create-dbs-sh" })
 }
 
-resource "aws_s3_bucket_object" "check_pdm_sh" {
+resource "aws_s3_bucket_object" "check_status_sh" {
   bucket  = var.config_bucket_id
-  key     = "component/uc_repos/status_check/check_pdm.sh"
-  content = file("${path.module}/templates/emr/check_pdm.sh")
+  key     = "component/uc_repos/status_check/check_status.sh"
+  content = file("${path.module}/templates/emr/check_status.sh")
 
-  tags = merge(var.common_tags, { Name = "${var.name_prefix}-check-pdm-sh" })
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}check-status-sh" })
 }
+
+resource "aws_s3_bucket_object" "update_dynamo_sh" {
+  bucket  = var.config_bucket_id
+  key     = "component/uc_repos/status_check/update_dynamo.sh"
+  content = file("${path.module}/templates/emr/update_dynamo.sh")
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-update-dynamo-sh" })
+}
+
