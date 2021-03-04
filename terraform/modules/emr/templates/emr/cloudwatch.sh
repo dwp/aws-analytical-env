@@ -11,7 +11,7 @@ mkdir -p /opt/aws/amazon-cloudwatch-agent/etc
 cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGENTCONFIG
 {
   "agent": {
-    "metrics_collection_interval": $${cwa_metrics_collection_interval},
+    "metrics_collection_interval": ${cwa_metrics_collection_interval},
     "logfile": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log"
   },
   "logs": {
@@ -20,20 +20,20 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
         "collect_list": [
           {
             "file_path": "/var/log/batch/get_scripts.log",
-            "log_group_name": "$${cwa_log_group_name}",  
+            "log_group_name": "${cwa_log_group_name}",  
             "log_stream_name": "get_scripts.log",
             "timezone": "UTC"
           },
           {
             "file_path": "/var/log/batch/create_dbs.log",
-            "log_group_name": "$${cwa_log_group_name}",
+            "log_group_name": "${cwa_log_group_name}",
             "log_stream_name": "create_dbs.log",
             "timezone": "UTC"
           }
         ]
       }
     },
-    "log_stream_name": "$${cwa_namespace}",
+    "log_stream_name": "${cwa_namespace}",
     "force_flush_interval": 15
   }
 }

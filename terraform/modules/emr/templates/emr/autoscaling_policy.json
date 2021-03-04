@@ -11,7 +11,7 @@
         "SimpleScalingPolicyConfiguration": {
           "AdjustmentType": "CHANGE_IN_CAPACITY",
           "ScalingAdjustment": 1,
-          "CoolDown": 300
+          "CoolDown": ${cooldown_scale_out}
         }
       },
       "Trigger": {
@@ -29,18 +29,18 @@
     },
     {
       "Name": "ScaleInMemoryPercentage",
-      "Description": "Scale in if YARNMemoryAvailablePercentage is over than 70",
+      "Description": "Scale in if YARNMemoryAvailablePercentage is over 70",
       "Action": {
         "SimpleScalingPolicyConfiguration": {
           "AdjustmentType": "CHANGE_IN_CAPACITY",
           "ScalingAdjustment": -1,
-          "CoolDown": 120
+          "CoolDown": ${cooldown_scale_in}
         }
       },
       "Trigger": {
         "CloudWatchAlarmDefinition": {
           "ComparisonOperator": "GREATER_THAN",
-          "EvaluationPeriods": 1,
+          "EvaluationPeriods": 3,
           "MetricName": "YARNMemoryAvailablePercentage",
           "Namespace": "AWS/ElasticMapReduce",
           "Period": 120,

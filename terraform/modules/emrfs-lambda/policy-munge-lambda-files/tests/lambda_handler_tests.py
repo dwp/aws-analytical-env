@@ -16,6 +16,7 @@ variables['region'] = 'eu-west-7'
 variables['account'] = '1234567'
 variables['mgmt_account'] = 'arn:12345432::mgmt_acc_test_arn'
 variables['user_pool_id'] = '12345432_ea2'
+variables['s3fs_kms_arn'] = 'arn:aws:kms:eu-west-7:1234567:key/master-12ab-34cd-56ef-1234567890ab'
 
 mocked_db_response = {
     'numberOfRecordsUpdated': 0,
@@ -26,33 +27,16 @@ mocked_db_response = {
     ]
 }
 
-mocked_user_dict_without_groups = {
-    'user_one': {
-        'active': False,
-        'policy_names': ['emrfs_iam', 'policy_one', 'policy_two'],
-        'role_name': 'emrfs_user_one',
-        'group_names': []
-    },
-    'user_two': {
-        'active': True,
-        'policy_names': ['emrfs_iam', 'policy_one'],
-        'role_name': 'emrfs_user_two',
-        'group_names': []
-    }
-}
-
 mocked_user_dict = {
     'user_one': {
         'active': False,
         'policy_names': ['emrfs_iam', 'policy_one', 'policy_two'],
         'role_name': 'emrfs_user_one',
-        'group_names': ['group_one', 'group_two']
     },
     'user_two': {
         'active': True,
         'policy_names': ['emrfs_iam', 'policy_one'],
         'role_name': 'emrfs_user_two',
-        'group_names': ['group_two']
     }
 }
 
@@ -114,7 +98,9 @@ mock_statement_one =   {
         "s3:GetObjectVersion",
         "s3:DeleteObject"
     ],
-    "Resource": ["arn:12345432::s3_test_arn/*", "arn:aws:kms:eu-west-7:1234567:alias/test_user-home", "arn:aws:kms:eu-west-7:1234567:alias/group_one-shared", "arn:aws:kms:eu-west-7:1234567:alias/group_two-shared"]
+    "Resource": [
+        "arn:12345432::s3_test_arn/home/test_user/*",
+    ]
 }
 
 mock_statement_two =   {
@@ -127,7 +113,10 @@ mock_statement_two =   {
         "kms:ReEncrypt*",
         "kms:GenerateDataKey*"
     ],
-    "Resource":  ['arn:aws:kms:eu-west-7:1234567:alias/group_one-shared', 'arn:aws:kms:eu-west-7:1234567:alias/group_two-shared', 'arn:12345432::s3_test_arn/*', 'arn:aws:kms:eu-west-7:1234567:alias/test_user-home']
+    "Resource":  [
+        "arn:aws:kms:eu-west-7:1234567:key/master-12ab-34cd-56ef-1234567890ab",
+        "arn:aws:kms:eu-west-7:1234567:key/testuser-12ab-34cd-56ef-1234567890ab"
+    ]
 }
 
 mock_statement_three = {
@@ -148,13 +137,13 @@ class LambdaHandlerTests(TestCase):
                                     variables['database_name'], variables['secret_arn'],
                                     variables['assume_role_policy_json'],
                                     variables['s3fs_bucket_arn'],
+                                    variables['s3fs_kms_arn'],
                                     variables['region'],
                                     variables['account'],
                                     variables['mgmt_account'],
-                                    variables['user_pool_id']
+                                    variables['user_pool_id'],
                                     ]
         lambda_handler.get_env_vars()
-
         assert lambda_handler.variables['common_tags']['tag1'] == 'val1'
         assert lambda_handler.variables['common_tags']['tag2'] == 'val2'
         assert lambda_handler.variables['common_tags']['tag3'] == 'val3'
@@ -171,8 +160,9 @@ class LambdaHandlerTests(TestCase):
     def test_get_user_userstatus_policy_dict(self, mock_execute_statement):
         mock_execute_statement.side_effect = [mocked_db_response, {'numberOfRecordsUpdated': 0, 'records': []}]
         result1 = lambda_handler.get_user_userstatus_policy_dict(variables)
+        print(result1)
+        assert result1 == mocked_user_dict
 
-        assert result1 == mocked_user_dict_without_groups
         self.assertRaises(
             ValueError,
             lambda_handler.get_user_userstatus_policy_dict,
@@ -306,16 +296,49 @@ class LambdaHandlerTests(TestCase):
     def test_verify_policies_does_not_raise_error_when_additional_policy_found_in_rds(self):
         self.assertIsNone(lambda_handler.verify_policies(['policy_one'], mocked_policy_object_list))
 
-    def test_create_policy_document_from_template(self):
-        result = lambda_handler.create_policy_document_from_template('test_user', ['group_one', 'group_two'], variables)
+    @patch('aws_caller.get_kms_arn')
+    def test_create_policy_document_from_template(self, mock_get_kms_arn):
+        mock_get_kms_arn.side_effect = [
+            "arn:aws:kms:eu-west-7:1234567:key/testuser-12ab-34cd-56ef-1234567890ab"
+        ]
+        result = lambda_handler.create_policy_document_from_template('test_user', variables)
         assert result[0] == mock_statement_one
         assert result[1] == mock_statement_two
         assert result[2] == mock_statement_three
 
-    @patch('aws_caller.create_cognito_client')
-    @patch('aws_caller.get_groups_for_user')
-    def test_update_user_groups_from_cognito(self, mock_get_groups_for_user, mock_create_cognito_client):
-        mock_get_groups_for_user.side_effect = [['group_one', 'group_two'], ['group_two']]
-        result = lambda_handler.update_user_groups_from_cognito(mocked_user_dict_without_groups)
+    def test_prevent_matching_sids(self):
+        duplicate_sid = copy.deepcopy(iam_template)
+        duplicate_sid["Statement"] = [
+            copy.deepcopy(mock_statement_one),
+            copy.deepcopy(mock_statement_two),
+            copy.deepcopy(mock_statement_two),
+            copy.deepcopy(mock_statement_one),
+            copy.deepcopy(mock_statement_three),
+            copy.deepcopy(mock_statement_one)
+        ]
+        lambda_handler.prevent_matching_sids(duplicate_sid["Statement"])
+        sids_in_processed_json = [ statement_object["Sid"] for statement_object in duplicate_sid["Statement"] ]
+        assert sids_in_processed_json == [
+            's3fsaccessdocument',
+            's3fskmsaccessdocument',
+            's3fskmsaccessdocument1',
+            's3fsaccessdocument1',
+            's3fslist',
+            's3fsaccessdocument2'
+        ]
 
-        assert result == mocked_user_dict
+    @patch('aws_caller.get_kms_arn')
+    def test_handle_group_kms_not_found_issues(self, mock_get_kms_arn):
+        mock_get_kms_arn.side_effect = [None]
+        missing_user_key = lambda_handler.create_policy_document_from_template('test_user', variables)
+
+        print(missing_user_key)
+        assert missing_user_key[0].get('Resource') == [
+            'arn:12345432::s3_test_arn/home/test_user/*'
+        ]
+        assert missing_user_key[1].get('Resource') == [
+            'arn:aws:kms:eu-west-7:1234567:key/master-12ab-34cd-56ef-1234567890ab'
+        ]
+        assert missing_user_key[2].get('Resource') == [
+            "arn:12345432::s3_test_arn"
+        ]

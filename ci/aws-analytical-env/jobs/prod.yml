@@ -1,4 +1,25 @@
 jobs:
+  - name: after-midnight-check
+    plan:
+      - get: emp-release
+        passed:
+          - preprod
+        trigger: false
+      - get: emr-launcher-release
+        passed:
+          - preprod
+        trigger: false
+      - get: aws-analytical-env
+        passed:
+          - preprod
+        trigger: false
+      - get: manage-mysql-user-release
+        passed:
+          - preprod
+        trigger: false
+      - get: utc-2am-trigger
+        trigger: true
+
   - name: production
     max_in_flight: 1
     plan:
@@ -7,31 +28,35 @@ jobs:
       - get: emp-release
         passed:
           - preprod
+          - after-midnight-check
         trigger: true
       - get: emr-launcher-release
         passed:
           - preprod
+          - after-midnight-check
         trigger: true
       - get: aws-analytical-env
         passed:
           - preprod
+          - after-midnight-check
         trigger: true
       - get: manage-mysql-user-release
         passed:
           - preprod
+          - after-midnight-check
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra
       - .: (( inject meta.plan.terraform-apply ))
-        task: terraform-apply infra
+        task: terraform-apply-infra
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
         params:
           TF_WORKSPACE: 'production'
       - .: (( inject meta.plan.terraform-plan ))
-        task: terraform-plan infra
+        task: terraform-plan-infra
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
@@ -41,7 +66,7 @@ jobs:
         params:
           DEPLOY_PATH: app
       - .: (( inject meta.plan.terraform-apply ))
-        task: terraform-apply app
+        task: terraform-apply-app
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/app'
@@ -53,7 +78,7 @@ jobs:
           TF_WORKSPACE: 'production'
           TF_VAR_emp_dir_path: ../../../../emp-release
       - .: (( inject meta.plan.terraform-plan ))
-        task: terraform-plan app
+        task: terraform-plan-app
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/app'

@@ -56,8 +56,7 @@ to a single IAM role than would otherwise be possible.
 def lambda_handler(event, context):
     get_env_vars()
 
-    user_state_and_policy_without_groups = get_user_userstatus_policy_dict(variables)
-    user_state_and_policy = update_user_groups_from_cognito(user_state_and_policy_without_groups)
+    user_state_and_policy = get_user_userstatus_policy_dict(variables)
 
     pre_creation_existing_role_list = aws_caller.get_emrfs_roles()
 
@@ -79,7 +78,7 @@ def lambda_handler(event, context):
                     all_policy_list
                 )
 
-                statement = create_policy_document_from_template(user_name, user_state_and_policy[user_name].get('group_names'), variables)
+                statement = create_policy_document_from_template(user_name, variables)
                 s3fs_access_policy_object = create_policy_object(statement)
 
                 list_of_policy_objects.append(s3fs_access_policy_object)
@@ -139,7 +138,8 @@ def get_env_vars():
     variables['secret_arn'] = os.getenv('SECRET_ARN')
     variables['common_tags'] ={}
     variables['assume_role_policy_json'] = os.getenv('ASSUME_ROLE_POLICY_JSON')
-    variables['s3fs_bucket_arn'] = os.getenv('FILE_SYSTEM_BUCKET_ARN')
+    variables['s3fs_bucket_arn'] = os.getenv('S3FS_BUCKET_ARN')
+    variables['s3fs_kms_arn'] = os.getenv('S3FS_KMS_ARN')
     variables['region'] = os.getenv('REGION')
     variables['account'] = os.getenv('ACCOUNT')
     variables['mgmt_account'] = os.getenv('MGMT_ACCOUNT_ROLE_ARN')
@@ -246,10 +246,22 @@ def remove_existing_user_policies(role_name, all_policy_list):
 def create_policies_from_dict_and_return_list_of_policy_arns(dict_of_policy_name_to_munged_policy_objects):
     list_of_policy_arns = []
     for policy in dict_of_policy_name_to_munged_policy_objects:
+        prevent_matching_sids(dict_of_policy_name_to_munged_policy_objects[policy].get('Statement'))
         policy_arn = aws_caller.create_policy_from_json_and_return_arn(policy, json.dumps(
             dict_of_policy_name_to_munged_policy_objects[policy]))
         list_of_policy_arns.append(policy_arn)
     return list_of_policy_arns
+
+
+def prevent_matching_sids(munged_policy_statement):
+    sids={}
+    for statement in munged_policy_statement:
+        sid = statement.get("Sid")
+        if sid and sid in sids.keys():
+            sids[sid] += 1
+            statement["Sid"] = f'{statement["Sid"]}{sids[sid]}'
+        else:
+            sids[sid] = 0
 
 
 def attach_policies_to_role(list_of_policy_arns, role_name):
@@ -322,7 +334,7 @@ def create_tag_list(tag_keys_to_value_list, common_tags):
 
 
 # queries RDS and returns a dict, indexed by user_name with child values of: active (if user is marked for deletion),
-# policy_names (list of policies to assign to the user's role), group_name (list of groups the user is assigned to)
+# policy_names (list of policies to assign to the user's role)
 # and role_name
 def get_user_userstatus_policy_dict(variables):
     return_dict = {}
@@ -347,7 +359,6 @@ def get_user_userstatus_policy_dict(variables):
                     'active': active,
                     'policy_names': ["emrfs_iam", policy_name],
                     'role_name': f'emrfs_{user_name}',
-                    'group_names': []
                 }
             else:
                 if policy_name not in return_dict[user_name]['policy_names']:
@@ -357,31 +368,24 @@ def get_user_userstatus_policy_dict(variables):
     return return_dict
 
 
-def create_policy_document_from_template(user_name, group_names, variables):
+def create_policy_document_from_template(user_name, variables):
     with open('s3fs_policy_template.json', 'r') as statement_raw:
         statement = json.load(statement_raw)
+
+    home_key_arn = aws_caller.get_kms_arn(f'alias/{user_name}-home')
+    if home_key_arn == None:
+        logger.warning(f'No KMS found in account for alias: \"alias/{user_name}-home\"')
 
     s3fsaccessdocument = statement[0].get('Resource')
     s3fskmsaccessdocument = statement[1].get('Resource')
     s3fslist = statement[2].get('Resource')
 
-    s3fsaccessdocument.extend([
-        f'{variables["s3fs_bucket_arn"]}/*',
-        f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{user_name}-home'
-    ])
-
-    for group_name in group_names:
-        s3fsaccessdocument.append(
-            f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{group_name}-shared'
-        )
-        s3fskmsaccessdocument.append(
-            f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{group_name}-shared'
-        )
+    s3fsaccessdocument.append(
+        f'{variables["s3fs_bucket_arn"]}/home/{user_name}/*'
+    )
 
     s3fskmsaccessdocument.extend([
-        f'{variables["s3fs_bucket_arn"]}/*',
-        f'arn:aws:kms:{variables["region"]}:{variables["account"]}:alias/{user_name}-home'
-
+        item for item in [variables["s3fs_kms_arn"], home_key_arn] if item is not None
     ])
 
     s3fslist.append(
@@ -398,14 +402,3 @@ def create_policy_object(policy_dict):
         'chars': len(json.dumps(policy_dict)),
         'chunk_number': None
     }
-
-
-# queries Cognito Userpool for user_groups and fills attribute in dict
-def update_user_groups_from_cognito(user_state_and_policy_dict):
-    user_state_and_policy_updated = copy.deepcopy(user_state_and_policy_dict)
-    cognito_client = aws_caller.create_cognito_client(variables['mgmt_account'])
-    for user in user_state_and_policy_updated:
-        groups = aws_caller.get_groups_for_user(user[0:-3], variables['user_pool_id'], cognito_client)
-        user_state_and_policy_updated[user]['group_names'].extend(groups)
-
-    return user_state_and_policy_updated

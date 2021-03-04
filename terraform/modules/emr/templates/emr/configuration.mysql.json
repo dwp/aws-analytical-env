@@ -14,7 +14,8 @@
       "livy.repl.enable-hive-context": "true",
       "livy.impersonation.enabled": "true",
       "livy.spark.yarn.security.credentials.hiveserver2.enabled": "true",
-      "livy.server.port": "8998"
+      "livy.server.port": "8998",
+      "livy.server.session.timeout-check.skip-busy": "true"
     }
   },
   {
@@ -74,10 +75,7 @@
   {
     "Classification": "emrfs-site",
     "Properties": {
-      "fs.s3.consistent.retryPeriodSeconds": "3",
-      "fs.s3.consistent.retryCount": "5",
-      "fs.s3.consistent": "true",
-      "fs.s3.consistent.metadata.tableName": "EmrFSMetadata"
+      "fs.s3.maxRetries": "20"
     }
   },
   {

@@ -14,9 +14,9 @@ module "testing" {
   test_proxy_user               = var.test_proxy_user
   account                       = local.account[local.environment]
   interface_vpce_sg_id          = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
-  dataset_s3                    = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket
+  dataset_s3                    = data.terraform_remote_state.common.outputs.published_bucket
   metrics_data_s3_folder        = var.metrics_data_s3_folder
-  published_bucket_cmk          = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket_cmk.arn
+  published_bucket_cmk          = data.terraform_remote_state.common.outputs.published_bucket_cmk.arn
   s3_prefixlist_id              = data.terraform_remote_state.aws_analytical_environment_infra.outputs.s3_prefix_list_id
   subnets                       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
   mgmt_account                  = local.account["management"]

@@ -25,7 +25,7 @@ data aws_iam_policy_document policy_munge_lambda_execution_policy_document {
   statement {
     sid       = "CognitoRdsSyncMgmt"
     actions   = ["sts:AssumeRole"]
-    resources = ["arn:aws:iam::${var.mgmt_account}:role/${var.name_prefix}-mgmt-cognito-rbac-role"]
+    resources = [aws_iam_role.mgmt_rbac_lambda_role.arn]
   }
 
   statement {
@@ -51,6 +51,7 @@ data aws_iam_policy_document policy_munge_lambda_document {
       "iam:AttachRolePolicy",
       "iam:CreatePolicy",
       "iam:DeletePolicy",
+      "iam:DeletePolicyVersion",
       "iam:DetachRolePolicy",
       "iam:GetPolicy",
       "iam:GetPolicyVersion",
@@ -60,6 +61,7 @@ data aws_iam_policy_document policy_munge_lambda_document {
       "iam:DeleteRole",
       "iam:GetRolePolicy",
       "iam:ListPolicies",
+      "iam:ListPolicyVersions",
       "iam:ListRoleTags",
       "iam:PutRolePolicy",
       "iam:TagRole",
@@ -106,6 +108,18 @@ data aws_iam_policy_document policy_munge_lambda_document {
     actions   = ["rds-data:ExecuteStatement"]
     resources = [var.db_cluster_arn]
   }
+
+  statement {
+    sid       = "AllowKmsDescribeKey"
+    effect    = "Allow"
+    actions   = ["kms:DescribeKey"]
+    resources = ["*"]
+    condition {
+      test     = "StringLike"
+      values   = ["alias/*-home"]
+      variable = "kms:RequestAlias"
+    }
+  }
 }
 
 resource "aws_cloudwatch_log_group" "policy_munge_lambda_logs" {
@@ -130,7 +144,7 @@ data "aws_iam_policy_document" "cognito_rds_sync_lambda_execution_policy" {
   statement {
     sid       = "CognitoRdsSyncMgmt"
     actions   = ["sts:AssumeRole"]
-    resources = ["arn:aws:iam::${var.mgmt_account}:role/${var.name_prefix}-mgmt-cognito-rbac-role"]
+    resources = [aws_iam_role.mgmt_rbac_lambda_role.arn]
   }
 
   statement {
@@ -195,14 +209,13 @@ resource "aws_cloudwatch_log_group" "cognito_rds_sync_lambda_logs" {
 }
 
 resource "aws_iam_role" "mgmt_rbac_lambda_role" {
-  count              = var.environment == "development" || var.environment == "preprod" ? 1 : 0
-  name               = "${var.name_prefix}-mgmt-cognito-rbac-role"
-  assume_role_policy = data.aws_iam_policy_document.mgmt_trust_policy.json
+  name               = "${var.name_prefix}-mgmt-cognito-rbac-role-${var.environment}"
+  assume_role_policy = data.aws_iam_policy_document.rbac_lambdas_trust_policy.json
   tags               = var.common_tags
   provider           = aws.management
 }
 
-data "aws_iam_policy_document" "mgmt_trust_policy" {
+data "aws_iam_policy_document" "rbac_lambdas_trust_policy" {
 
   statement {
     sid     = "MgmtLambdaAssumeRole"
@@ -216,10 +229,9 @@ data "aws_iam_policy_document" "mgmt_trust_policy" {
 }
 
 resource "aws_iam_role_policy" "mgmt_cognito_rds_sync_lambda_policy" {
-  count      = var.environment == "development" || var.environment == "preprod" ? 1 : 0
-  depends_on = [aws_iam_role.mgmt_rbac_lambda_role[0]]
+  depends_on = [aws_iam_role.mgmt_rbac_lambda_role]
   policy     = data.aws_iam_policy_document.mgmt_rbac_lambda_document.json
-  role       = aws_iam_role.mgmt_rbac_lambda_role[0].id
+  role       = aws_iam_role.mgmt_rbac_lambda_role.id
   provider   = aws.management
 }
 

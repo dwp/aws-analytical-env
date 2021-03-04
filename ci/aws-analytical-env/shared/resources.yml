@@ -153,6 +153,15 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/chs-payment-timelines.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+  - name: chs-cbol-data-repo
+    type: git
+    source:
+      branch: DW-5713_Migrate_to_aws_CBOL
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/chs-cbol-data.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
   - name: opsmi-chs-ops-mi-repo
     type: git
     source:
@@ -167,6 +176,15 @@ resources:
     source:
       branch: master
       uri: https://((dataworks.enterprise_github_url))/dip/aws-common-infrastructure.git
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: ucsqlhelper
+    type: git
+    source:
+      branch: master
+      uri: https://((dataworks.enterprise_github_url))/dip/ucsqlhelper.git
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
     webhook_token: ((dataworks.concourse_github_webhook_token))
@@ -259,20 +277,31 @@ resources:
   - name: meta-testing-integration
     type: meta
 
-  - name: meta-sync-development
-    type: meta
-
-  - name: midnight-trigger
+  - name: utc-midnight-trigger
     type: time
     source:
-      location: GB
+      location: UTC
       start: 00:00
       stop: 01:00
+
+  - name: utc-11pm-trigger
+    type: time
+    source:
+      location: UTC
+      start: 23:00
+      stop: 23:05
+
+  - name: utc-2am-trigger
+    type: time
+    source:
+      location: UTC
+      start: 02:00
+      stop: 03:00
 
   - name: working-day-copy-trigger
     type: time
     source:
-      location: GB
+      location: UTC
       start: 08:00
       stop: 20:00
       interval: 10m

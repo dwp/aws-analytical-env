@@ -1,0 +1,15 @@
+jobs:
+  - name: mirror-ucsqlhelper-preprod
+    plan:
+      - get: ucsqlhelper
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: preprod
+      - .: (( inject meta.plan.mirror-ucsqlhelper ))
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci

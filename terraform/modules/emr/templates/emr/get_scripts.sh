@@ -22,7 +22,7 @@ SOURCE_PATH=$BUCKET/$SOURCE_LOCATION
 
 )  >> /var/log/batch/get_scripts.log 2>&1
 
-
+sudo find "$DESTINATION_LOCATION" -name "*.sh" -exec chmod g+x {} \;
 
 
 

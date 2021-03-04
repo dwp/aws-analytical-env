@@ -16,14 +16,14 @@ jobs:
         params:
           DEPLOY_PATH: infra
       - .: (( inject meta.plan.terraform-apply ))
-        task: terraform-apply infra
+        task: terraform-apply-infra
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
         params:
           TF_WORKSPACE: 'qa'
       - .: (( inject meta.plan.terraform-plan ))
-        task: terraform-plan infra
+        task: terraform-plan-infra
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
@@ -33,7 +33,7 @@ jobs:
         params:
           DEPLOY_PATH: app
       - .: (( inject meta.plan.terraform-apply ))
-        task: terraform-apply app
+        task: terraform-apply-app
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/app'
@@ -45,7 +45,7 @@ jobs:
           TF_WORKSPACE: 'qa'
           TF_VAR_emp_dir_path: ../../../../emp-release  
       - .: (( inject meta.plan.terraform-plan ))
-        task: terraform-plan app
+        task: terraform-plan-app
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/app'

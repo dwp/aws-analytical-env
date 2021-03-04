@@ -1,6 +1,7 @@
 import aws_caller
 from unittest import TestCase
-from mock import patch, Mock
+from mock import call, patch, Mock
+import botocore
 
 policies_truncated = {
     'Policies': [
@@ -57,6 +58,53 @@ roles_not_truncated = {
     'IsTruncated': False,
 }
 
+kms_found_response = {
+    'KeyMetadata': {
+        'AWSAccountId': '111122223333',
+        'Arn': 'arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab',
+        'CreationDate': "test_date",
+        'Description': '',
+        'Enabled': True,
+        'KeyId': '1234abcd-12ab-34cd-56ef-1234567890ab',
+        'KeyManager': 'CUSTOMER',
+        'KeyState': 'Enabled',
+        'KeyUsage': 'ENCRYPT_DECRYPT',
+        'Origin': 'AWS_KMS',
+    },
+    'ResponseMetadata': {
+        '...': '...',
+    },
+}
+
+mock_list_policy_versions_response = {
+    'Versions':[
+        {
+            'Document': 'string',
+            'VersionId': 'non_default_1',
+            'IsDefaultVersion': False,
+            'CreateDate': ""
+        },
+        {
+            'Document': 'string',
+            'VersionId': 'non_default_2',
+            'IsDefaultVersion': False,
+            'CreateDate': ""
+        },
+        {
+            'Document': 'string',
+            'VersionId': 'default',
+            'IsDefaultVersion': True,
+            'CreateDate': ""
+        },
+        {
+            'Document': 'string',
+            'VersionId': 'non_default_3',
+            'IsDefaultVersion': False,
+            'CreateDate': ""
+        },
+    ]
+}
+
 class AwsCallerTests(TestCase):
 
     @patch('aws_caller.iam_client.list_policies')
@@ -79,3 +127,52 @@ class AwsCallerTests(TestCase):
         result = aws_caller.get_emrfs_roles()
 
         assert result == ['emrfs_user_one', 'emrfs_user_two', 'emrfs_user_three', 'emrfs_user_one', 'emrfs_user_two', 'emrfs_user_three', 'emrfs_user_four', 'emrfs_user_five', 'emrfs_user_six']
+
+    @patch('aws_caller.kms_client.describe_key')
+    def test_get_kms_arn_found_kms(self, mock_describe_key):
+        mock_describe_key.return_value = kms_found_response
+        assert aws_caller.get_kms_arn("/alias/test") == 'arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab'
+
+    @patch('aws_caller.kms_client.describe_key')
+    def test_get_kms_arn_not_found_kms(self, mock_describe_key):
+        mock_describe_key.side_effect = botocore.exceptions.ClientError({'Error': {'Code': 'NotFoundException'}}, 'KMS')
+        assert aws_caller.get_kms_arn("/alias/test") == None
+
+    @patch('aws_caller.iam_client.list_policy_versions')
+    @patch('aws_caller.iam_client.delete_policy')
+    @patch('aws_caller.iam_client.detach_role_policy')
+    def test_handling_of_detach_role_policy_correct_error(self, mock_detach_role_policy, mock_delete_policy, mock_list_policy_versions):
+        mock_detach_role_policy.side_effect = botocore.exceptions.ClientError({'Error': {'Code': 'NoSuchEntity'}}, 'IAM')
+
+        try:
+            aws_caller.remove_policy_being_replaced('arn:aws:iam::111122223333:policy/test_policy', 'test_role')
+        except botocore.exceptions.ClientError:
+            self.fail('error was not handled in function')
+
+    @patch('aws_caller.iam_client.list_policy_versions')
+    @patch('aws_caller.iam_client.delete_policy')
+    @patch('aws_caller.iam_client.detach_role_policy')
+    def test_handling_of_detach_role_policy_other_error(self, mock_detach_role_policy, mock_delete_policy, mock_list_policy_versions):
+        mock_detach_role_policy.side_effect = botocore.exceptions.ClientError({'Error': {'Code': 'OtherError'}}, 'IAM')
+
+        try:
+            aws_caller.remove_policy_being_replaced('arn:aws:iam::111122223333:policy/test_policy', 'test_role')
+        except botocore.exceptions.ClientError as e:
+            print(f'Passed as raised error: {e}')
+
+
+    @patch('aws_caller.iam_client.delete_policy')
+    @patch('aws_caller.iam_client.delete_policy_version')
+    @patch('aws_caller.iam_client.list_policy_versions')
+    @patch('aws_caller.iam_client.detach_role_policy')
+    def test_policy_version_deletion_logic(self, mock_detach_role_policy, mock_list_policy_versions, mock_delete_policy_version, mock_delete_policy):
+        mock_list_policy_versions.return_value = mock_list_policy_versions_response
+        calls = [
+            call(PolicyArn='test_arn', VersionId='non_default_1'),
+            call(PolicyArn='test_arn', VersionId='non_default_2'),
+            call(PolicyArn='test_arn', VersionId='non_default_3')
+        ]
+
+        aws_caller.remove_policy_being_replaced('test_arn', 'test_role')
+        mock_delete_policy_version.assert_has_calls(calls, any_order=True)
+        mock_delete_policy.assert_called_once_with(PolicyArn='test_arn')

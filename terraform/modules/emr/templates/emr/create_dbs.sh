@@ -15,9 +15,9 @@
     log_message $START_MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "create_dbs.sh" "NOT_SET"
 
     #create UC_Lab databasess
-    hive -e "CREATE DATABASE IF NOT EXISTS uc_lab_staging LOCATION '$PROCESSED_BUCKET';"
-    hive -e "CREATE DATABASE IF NOT EXISTS uc_lab LOCATION '$PUBLISHED_BUCKET';"
-    hive -e "CREATE DATABASE IF NOT EXISTS uc_payment_timelines LOCATION  '$PUBLISHED_BUCKET';"
+    hive -e "CREATE DATABASE IF NOT EXISTS uc_lab_staging LOCATION '$PROCESSED_BUCKET/uc_lab_staging';"
+    hive -e "CREATE DATABASE IF NOT EXISTS uc_lab LOCATION '$PUBLISHED_BUCKET/uc_lab';"
+    hive -e "CREATE DATABASE IF NOT EXISTS uc_payment_timelines LOCATION  '$PUBLISHED_BUCKET/uc_payment_timelines';"
 
     END_MESSAGE="Finish_creating_databases"
     echo $END_MESSAGE

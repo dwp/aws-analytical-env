@@ -45,3 +45,15 @@ resource "aws_secretsmanager_secret" "client_db_credentials" {
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-client-db" })
 }
+
+resource "aws_secretsmanager_secret" "sync_rds_credentials" {
+  name        = "${var.name_prefix}-database/credentials/sync-rds"
+  description = "${var.name_prefix} sync-rds database credentials"
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-sync-rds" })
+}
+

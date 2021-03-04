@@ -15,11 +15,12 @@ resource "aws_lambda_function" "policy_munge_lambda" {
       SECRET_ARN              = var.db_client_secret_arn
       COMMON_TAGS             = join(",", [for key, val in var.common_tags : "${key}:${val}"])
       ASSUME_ROLE_POLICY_JSON = "${var.emrfs_iam_assume_role_json}"
-      FILE_SYSTEM_BUCKET_ARN  = "arn:aws:s3:::${var.s3fs_bucket_id}"
+      S3FS_BUCKET_ARN         = "arn:aws:s3:::${var.s3fs_bucket_id}"
       REGION                  = var.region
       ACCOUNT                 = var.account
-      MGMT_ACCOUNT_ROLE_ARN   = "arn:aws:iam::${var.mgmt_account}:role/${var.name_prefix}-mgmt-cognito-rbac-role"
+      MGMT_ACCOUNT_ROLE_ARN   = aws_iam_role.mgmt_rbac_lambda_role.arn
       COGNITO_USERPOOL_ID     = var.cognito_user_pool_id
+      S3FS_KMS_ARN            = var.s3fs_kms_arn
     }
   }
 

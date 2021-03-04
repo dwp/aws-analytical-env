@@ -773,3 +773,36 @@ resource "aws_iam_policy" "group_hive_data_access_policy" {
   name   = each.value.policy_id
   policy = each.value.json
 }
+
+# DynamoDb meta data table policy
+
+data aws_iam_policy_document dynamodb_pipeline_metadata_policy {
+  statement {
+    sid    = "AllowRWUserDynamoDBPipelineMetaTable"
+    effect = "Allow"
+    actions = [
+      "dynamodb:BatchGetItem",
+      "dynamodb:DescribeTable",
+      "dynamodb:GetItem",
+      "dynamodb:Scan",
+      "dynamodb:Query",
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
+      "dynamodb:BatchWriteItem"
+    ]
+    resources = [
+      var.pipeline_metadata_table
+    ]
+  }
+}
+
+resource "aws_iam_policy" "dynamodb_pipeline_metadata_policy" {
+  name        = "AnalyticalEnvDynamoDbMetaData"
+  description = "Allow editing of DynamoDb Metadata Table"
+  policy      = data.aws_iam_policy_document.dynamodb_pipeline_metadata_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "dynamodb_pipeline_metadata" {
+  role       = aws_iam_role.emr_ec2_role.name
+  policy_arn = aws_iam_policy.dynamodb_pipeline_metadata_policy.arn
+}

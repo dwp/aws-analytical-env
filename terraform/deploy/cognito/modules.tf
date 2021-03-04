@@ -44,3 +44,4 @@ module "check-user-expiry-lambda" {
   from_email_address       = "DataWorks Access Management <access-management@${data.terraform_remote_state.aws_common_infrastructure.outputs.domain_identity}>"
   template_bucket          = data.terraform_remote_state.management.outputs.ses_mailer_bucket.id
 }
+

@@ -39,6 +39,7 @@ data "template_file" "emr_setup_sh" {
     logging_shell                   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.logging_sh.key)
     cloudwatch_shell                = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.cloudwatch_sh.key)
     get_scripts_shell               = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.get_scripts_sh.key)
+    poll_status_table_shell         = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.poll_status_table_sh.key)
     cwa_namespace                   = local.cw_agent_namespace
     cwa_log_group_name              = local.cw_agent_step_log_group_name
     config_bucket                   = var.config_bucket_id
@@ -58,7 +59,9 @@ resource "aws_s3_bucket_object" "hdfs_setup_sh" {
 data "template_file" "hdfs_setup_sh" {
   template = file(format("%s/templates/emr/hdfs_setup.sh", path.module))
   vars = {
-    hive_data_s3 = aws_s3_bucket.hive_data.arn
+    hive_data_s3     = aws_s3_bucket.hive_data.arn
+    config_bucket    = var.config_bucket_id
+    published_bucket = var.dataset_s3.id
   }
 }
 
@@ -130,7 +133,7 @@ resource "aws_s3_bucket_object" "get_scripts_sh" {
 resource "aws_s3_bucket_object" "cloudwatch_sh" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/emr/cloudwatch.sh"
-  content = templatefile("${path.module}/templates/emr/cloudwatch.sh", {})
+  content = file("${path.module}/templates/emr/cloudwatch.sh")
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-cw-sh" })
 }
@@ -140,8 +143,8 @@ resource "aws_s3_bucket_object" "create_dbs_sh" {
   key    = "scripts/emr/create_dbs.sh"
   content = templatefile("${path.module}/templates/emr/create_dbs.sh",
     {
-      processed_bucket = format("s3://%s/uc_lab_staging", var.processed_bucket_id)
-      published_bucket = format("s3://%s/uc_lab", var.dataset_s3.id)
+      processed_bucket = format("s3://%s", var.processed_bucket_id)
+      published_bucket = format("s3://%s", var.dataset_s3.id)
     }
   )
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-create-dbs-sh" })
@@ -161,5 +164,13 @@ resource "aws_s3_bucket_object" "update_dynamo_sh" {
   content = file("${path.module}/templates/emr/update_dynamo.sh")
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-update-dynamo-sh" })
+
+resource "aws_s3_bucket_object" "poll_status_table_sh" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/emr/poll_status_table.sh"
+  content = file("${path.module}/templates/emr/poll_status_table.sh")
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-poll-status-table-sh" })
+
 }
 

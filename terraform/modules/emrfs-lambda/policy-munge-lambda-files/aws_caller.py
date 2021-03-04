@@ -1,8 +1,15 @@
 import boto3
+import botocore
+import logging
+import os
+
+logger = logging.getLogger()
+logger.level = logging.INFO
 
 iam_client = boto3.client('iam')
 rds_data_client = boto3.client('rds-data')
 sts_connection = boto3.client('sts')
+kms_client = boto3.client('kms')
 
 """
 ============================================================================================================
@@ -93,10 +100,30 @@ def create_policy_from_json_and_return_arn(policy_name, json_document):
 # detaches and deletes policies from a role in order for them to be replaced
 def remove_policy_being_replaced(policy_arn, role_name):
     # removes from role
-    iam_client.detach_role_policy(
-        RoleName=role_name,
+    try:
+        iam_client.detach_role_policy(
+            RoleName=role_name,
+            PolicyArn=policy_arn
+        )
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == 'NoSuchEntity':
+            logger.info(f'Policy: \"{os.path.basename(policy_arn)}\" not found for role: \"{role_name}\".')
+        else:
+            raise e
+
+    # deletes policy versions if exist
+    versions_list = iam_client.list_policy_versions(
         PolicyArn=policy_arn
-    )
+    )['Versions']
+
+    version_ids = [version['VersionId'] for version in versions_list if version['IsDefaultVersion'] is False]
+
+    for version_id in version_ids:
+        iam_client.delete_policy_version(
+            PolicyArn=policy_arn,
+            VersionId=version_id
+        )
+
     # deletes policy
     iam_client.delete_policy(
         PolicyArn=policy_arn
@@ -203,3 +230,18 @@ def execute_statement(sql, db_credentials_secrets_store_arn, database_name, db_c
         sql=sql
     )
     return response
+
+
+# takes an alias or key id and returns key arn or None, if alias/id is not found in account
+def get_kms_arn(id_or_alias):
+    try:
+        key_details = kms_client.describe_key(
+            KeyId=id_or_alias,
+        ).get('KeyMetadata')
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == 'NotFoundException':
+            return None
+        else:
+            raise e
+
+    return key_details.get('Arn')

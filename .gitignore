@@ -22,3 +22,5 @@ aviator_pipeline.yml
 *.zip
 
 *.pyc
+
+.DS_Store

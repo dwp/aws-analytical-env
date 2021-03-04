@@ -10,7 +10,7 @@ jobs:
         params:
           DEPLOY_PATH: testing
       - .: (( inject meta.plan.terraform-apply ))
-        task: terraform-apply testing
+        task: terraform-apply-testing
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/testing'
@@ -18,7 +18,7 @@ jobs:
           TF_WORKSPACE: 'integration'
           TF_VAR_test_proxy_user: 'xxxxx'
       - .: (( inject meta.plan.terraform-plan ))
-        task: terraform-plan testing
+        task: terraform-plan-testing
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/testing'

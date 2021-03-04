@@ -50,6 +50,8 @@ resource "aws_emr_cluster" "cluster" {
     autoscaling_policy = templatefile(format("%s/templates/emr/autoscaling_policy.json", path.module), {
       autoscaling_min_capacity = local.autoscaling_min_capacity,
       autoscaling_max_capacity = local.autoscaling_max_capacity,
+      cooldown_scale_out       = 120,
+      cooldown_scale_in        = 60 * 30 // Half an hour
     })
   }
 

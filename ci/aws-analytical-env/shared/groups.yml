@@ -5,15 +5,19 @@ groups:
       - qa
       - integration
       - preprod
+      - after-midnight-check
       - production
+
   - name: pull-request
     jobs:
       - pull-request
-      - pull-request_cognito
+      - pull-request-cognito
+
   - name: cognito
     jobs:
       - management-dev
       - management
+
   - name: taint-emr
     jobs:
       - taint-dev
@@ -21,10 +25,12 @@ groups:
       - taint-int
       - taint-preprod
       - taint-prod
+
   - name: codecommit
     jobs:
       - copy-repos
       - copy-rnd-incoming
+
   - name: testing
     jobs:
       - testing-development
@@ -37,62 +43,90 @@ groups:
       - metrics-submit-job-preproduction
       - metrics-submit-job-integration
       - metrics-submit-job-qa
+
   - name: github-proxy
     jobs:
       - gh-proxy-mgmt-dev
       - gh-proxy-mgmt
+
   - name: mirror-git-repo-s3
     jobs:
       - mirror-git-repo-uc-lab-repo-development
       - mirror-git-repo-opsmi-ops-mi-repo-development
       - mirror-git-repo-chs-payment-timelines-development
+      - mirror-git-repo-chs-cbol-data-development
 
       - mirror-git-repo-uc-lab-repo-qa
       - mirror-git-repo-opsmi-ops-mi-repo-qa
       - mirror-git-repo-chs-payment-timelines-qa
+      - mirror-git-repo-chs-cbol-data-qa
 
       - mirror-git-repo-uc-lab-repo-integration
       - mirror-git-repo-opsmi-ops-mi-repo-integration
       - mirror-git-repo-chs-payment-timelines-integration
+      - mirror-git-repo-chs-cbol-data-integration
 
       - mirror-git-repo-uc-lab-repo-preprod
       - mirror-git-repo-opsmi-ops-mi-repo-preprod
       - mirror-git-repo-chs-payment-timelines-preprod
+      - mirror-git-repo-chs-cbol-data-preprod
 
       - mirror-git-repo-uc-lab-repo-prod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
       - mirror-git-repo-chs-payment-timelines-prod
+      - mirror-git-repo-chs-cbol-data-prod
+
+  - name: mirror-ucsqlhelper
+    jobs:
+      - mirror-ucsqlhelper-development
+      - mirror-ucsqlhelper-qa
+      - mirror-ucsqlhelper-integration
+      - mirror-ucsqlhelper-preprod
+      - mirror-ucsqlhelper-production
+
   - name: admin-rbac
     jobs:
       - rotate-mysql-master-credentials-development
       - rotate-mysql-client-credentials-development
       - initialise-rbac-db-development
-      - create-roles-and-munged-policies-development
-      - sync-cognito-users-to-rds-development
 
       - rotate-mysql-master-credentials-qa
       - rotate-mysql-client-credentials-qa
       - initialise-rbac-db-qa
-      - create-roles-and-munged-policies-qa
-      - sync-cognito-users-to-rds-qa
 
       - rotate-mysql-master-credentials-integration
       - rotate-mysql-client-credentials-integration
       - initialise-rbac-db-integration
-      - create-roles-and-munged-policies-integration
-      - sync-cognito-users-to-rds-integration
 
       - rotate-mysql-master-credentials-preprod
       - rotate-mysql-client-credentials-preprod
       - initialise-rbac-db-preprod
-      - create-roles-and-munged-policies-preprod
-      - sync-cognito-users-to-rds-preprod
 
       - rotate-mysql-master-credentials-production
       - rotate-mysql-client-credentials-production
       - initialise-rbac-db-production
-      - create-roles-and-munged-policies-production
+
+  - name: admin-sync-and-munge
+    jobs:
+      - sync-cognito-users-to-rds-development
+      - create-roles-and-munged-policies-development
+      
+      - sync-cognito-users-to-rds-qa
+      - create-roles-and-munged-policies-qa
+
+      - sync-cognito-users-to-rds-integration
+      - create-roles-and-munged-policies-integration
+
+      - sync-cognito-users-to-rds-preprod
+      - create-roles-and-munged-policies-preprod
+
       - sync-cognito-users-to-rds-production
+      - create-roles-and-munged-policies-production
+      
   - name: terminate-cluster
     jobs:
+      - dev-stop-cluster
+      - qa-stop-cluster
+      - int-stop-cluster
+      - preprod-stop-cluster
       - prod-stop-cluster

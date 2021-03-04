@@ -2,7 +2,7 @@ module "emr_ami" {
   source = "../../modules/amis"
 
   providers = {
-    aws = aws.management
+    aws = aws.management-ami
   }
 
   ami_filter_name   = "name"
@@ -47,9 +47,10 @@ module "emr" {
     UC_DataScience_PII     = ["HiveDataUCDataSciencePII", "AnalyticalDatasetCrownReadOnly", "ReadPDMPiiAndNonPii", "readwriteprocessedpublishedbuckets"],
     UC_DataScience_Non_PII = ["HiveDataUCDataScienceNonPII", "AnalyticalDatasetCrownReadOnlyNonPii", "ReadPDMNonPiiOnly"]
   }
-  monitoring_sns_topic_arn = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
-  logging_bucket           = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
-  name_prefix              = local.name
+  security_configuration_user_roles = module.user_roles.output.users
+  monitoring_sns_topic_arn          = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
+  logging_bucket                    = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+  name_prefix                       = local.name
 
 
   use_mysql_hive_metastore     = local.use_mysql_hive_metastore[local.environment]
@@ -67,16 +68,18 @@ module "emr" {
   account     = local.account[local.environment]
   environment = local.environment
 
-  truststore_certs     = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
-  truststore_aliases   = "dataworks_root_ca,dataworks_mgt_root_ca"
-  config_bucket_arn    = data.terraform_remote_state.common.outputs.config_bucket.arn
-  config_bucket_cmk    = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
-  config_bucket_id     = data.terraform_remote_state.common.outputs.config_bucket.id
-  dataset_s3           = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket
-  published_bucket_cmk = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.published_bucket_cmk.arn
-  processed_bucket_arn = data.terraform_remote_state.common.outputs.processed_bucket.arn
-  processed_bucket_cmk = data.terraform_remote_state.common.outputs.processed_bucket_cmk.arn
-  processed_bucket_id  = data.terraform_remote_state.common.outputs.processed_bucket.bucket
+  truststore_certs        = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
+  truststore_aliases      = "dataworks_root_ca,dataworks_mgt_root_ca"
+  config_bucket_arn       = data.terraform_remote_state.common.outputs.config_bucket.arn
+  config_bucket_cmk       = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  config_bucket_id        = data.terraform_remote_state.common.outputs.config_bucket.id
+  dataset_s3              = data.terraform_remote_state.common.outputs.published_bucket
+  published_bucket_cmk    = data.terraform_remote_state.common.outputs.published_bucket_cmk.arn
+  processed_bucket_arn    = data.terraform_remote_state.common.outputs.processed_bucket.arn
+  processed_bucket_cmk    = data.terraform_remote_state.common.outputs.processed_bucket_cmk.arn
+  processed_bucket_id     = data.terraform_remote_state.common.outputs.processed_bucket.bucket
+  rbac_version            = local.rbac_version[local.environment]
+  pipeline_metadata_table = "arn:aws:dynamodb:${var.region}:${local.account[local.environment]}:table/${data.terraform_remote_state.internal_compute.outputs.data_pipeline_metadata_dynamo.name}"
 }
 
 module "pushgateway" {
@@ -166,9 +169,14 @@ module launcher {
   hive_metastore_username               = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["username"]
   batch_security_configuration          = module.emr.batch_security_configuration
   hive_metastore_arn                    = data.aws_secretsmanager_secret_version.hive_metastore_password_secret.arn
-  subnet_id                             = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[0].id
+  subnet_ids                            = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private.*.id
   core_instance_count                   = var.emr_core_instance_count[local.environment]
   environment                           = local.environment
+  instance_type_master                  = var.emr_instance_type_master[local.environment]
+  instance_type_core_one                = var.emr_instance_type_core_one[local.environment]
+  instance_type_core_two                = var.emr_instance_type_core_two[local.environment]
+  instance_type_core_three              = var.emr_instance_type_core_three[local.environment]
+
 }
 
 module "emrfs_lambda" {
@@ -190,6 +198,7 @@ module "emrfs_lambda" {
   management_role_arn        = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
   environment                = local.environment
   s3fs_bucket_id             = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_id
+  s3fs_kms_arn               = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_kms_arn
 }
 
 module "rbac_db" {
@@ -219,8 +228,21 @@ module "rbac_db" {
     "orchestration_service"  = "SELECT, INSERT"
   }
 
-
+  ci_role = "arn:aws:iam::${local.account[local.environment]}:role/ci"
 
   common_tags = local.common_tags
+}
 
+module "user_roles" {
+  source         = "../../modules/data_user_roles"
+  user_pool_id   = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
+  target_account = local.account[local.environment]
+
+  providers = {
+    aws = aws.management
+  }
+}
+
+output "data" {
+  value = module.user_roles.output
 }

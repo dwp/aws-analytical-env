@@ -84,3 +84,8 @@ variable "clients" {
 variable "interface_vpce_sg_id" {
   type = string
 }
+
+variable "ci_role" {
+  type = string
+}
+
