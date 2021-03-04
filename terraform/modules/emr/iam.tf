@@ -785,11 +785,10 @@ data aws_iam_policy_document dynamodb_pipeline_metadata_policy {
       "dynamodb:DescribeTable",
       "dynamodb:GetItem",
       "dynamodb:Scan",
-      "dynamodb:Query,
+      "dynamodb:Query",
       "dynamodb:PutItem",
       "dynamodb:UpdateItem",
       "dynamodb:BatchWriteItem"
-      "
     ]
     resources = [
       var.pipeline_metadata_table
