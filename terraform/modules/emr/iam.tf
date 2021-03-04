@@ -774,7 +774,7 @@ resource "aws_iam_policy" "group_hive_data_access_policy" {
   policy = each.value.json
 }
 
-# DynamoDb meta data table policy 
+# DynamoDb meta data table policy
 
 data aws_iam_policy_document dynamodb_pipeline_metadata_policy {
   statement {
@@ -785,7 +785,11 @@ data aws_iam_policy_document dynamodb_pipeline_metadata_policy {
       "dynamodb:DescribeTable",
       "dynamodb:GetItem",
       "dynamodb:Scan",
-      "dynamodb:Query"
+      "dynamodb:Query,
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
+      "dynamodb:BatchWriteItem"
+      "
     ]
     resources = [
       var.pipeline_metadata_table
