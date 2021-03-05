@@ -76,7 +76,7 @@ done
     echo "Assigning the new Run Id to 1 "
     RUN_ID=1
     echo "Calling update_dynamo.sh"
-    ./update_dynamo.sh $LATEST_COR_ID "In-Progress" $DATA_PRODUCT $RUN_ID #Logging
+    /opt/emr/repos/status_check/update_dynamo.sh $LATEST_COR_ID "In-Progress" $DATA_PRODUCT $RUN_ID #Logging
   elif [ ${RUN_STATUS^^} == "FAILED" ]
   then
     echo "${DEPENDANT_DATA_PRODUCT} is not running ............... "
@@ -86,7 +86,7 @@ done
     RUN_ID=$(($RUN_ID+1)) #Increment run id for logging
     echo "New Run Id is: "$RUN_ID
     echo "Calling update_dynamo.sh"
-    ./update_dynamo.sh $LATEST_COR_ID "In-Progress" $DATA_PRODUCT $RUN_ID #Logging
+    /opt/emr/repos/status_check/update_dynamo.sh $LATEST_COR_ID "In-Progress" $DATA_PRODUCT $RUN_ID #Logging
   elif [ ${RUN_STATUS^^} == "IN-PROGRESS" ]
   then
   echo "$DATA_PRODUCT is running .... Exiting the process"
