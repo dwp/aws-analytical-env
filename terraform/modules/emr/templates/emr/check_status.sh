@@ -66,7 +66,7 @@ done
 
   echo "Fetching the RUN_STATUS  for ${DATA_PRODUCT} and ${LATEST_COR_ID}"
   #Check for FAILED run
-  RUN_STATUS=$(hive -e "USE audit; SELECT status FROM data_pipeline_metadata_hive WHERE dataproduct = '${DATA_PRODUCT}' AND upper(status) = 'FAILED' AND correlation_id = '${LATEST_COR_ID}';")
+  RUN_STATUS=$(hive -e "USE audit; SELECT status FROM data_pipeline_metadata_hive WHERE dataproduct = '${DATA_PRODUCT}' AND correlation_id = '${LATEST_COR_ID}';")
   echo "RUN_STATUS is ${RUN_STATUS} "
 
   if [  -z ${RUN_ID} ]
@@ -90,5 +90,9 @@ done
   elif [ ${RUN_STATUS^^} == "IN-PROGRESS" ]
   then
   echo "$DATA_PRODUCT is running .... Exiting the process"
-  exit 0
+  exit 1
+  elif [ ${RUN_STATUS^^} == "COMPLETED" ]
+  then
+  echo "$DATA_PRODUCT is already completed .... Exiting the process"
+  exit 1
 fi
