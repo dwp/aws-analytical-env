@@ -6,7 +6,7 @@ DATA_SOURCE=$2
   LATEST_COR_ID=`cat ~/${DATA_SOURCE}_CORRELATION_ID.txt`
 
   #RUN_ID will not be set if the data product did not run
-  RUN_ID=$(hive -e "USE audit; SELECT run_id from data_pipeline_metadata_hive WHERE dataproduct = '${DATA_PRODUCT}' AND upper(status) = 'COMPLETED' AND correlation_id = '${LATEST_COR_ID}';")
+  RUN_ID=$(hive -e "USE audit; SELECT run_id from data_pipeline_metadata_hive WHERE dataproduct = '${DATA_PRODUCT}' AND correlation_id = '${LATEST_COR_ID}';")
   echo "RUN_ID is ${RUN_ID} "
 
   #Get run status
@@ -31,10 +31,10 @@ DATA_SOURCE=$2
     /opt/emr/repos/status_check/update_dynamo.sh $LATEST_COR_ID "In-Progress" $DATA_PRODUCT $RUN_ID #Logging
   elif [ ${RUN_STATUS^^} == "IN-PROGRESS" ]
   then
-  echo "$DATA_PRODUCT is running .... Exiting the process"
-  exit 1
+    echo "$DATA_PRODUCT is running .... Exiting the process"
+    exit 1
   elif [ ${RUN_STATUS^^} == "COMPLETED" ]
   then
-  echo "$DATA_PRODUCT is already completed .... Exiting the process"
-  exit 1
+    echo "$DATA_PRODUCT is already completed .... Exiting the process"
+    exit 1
 fi
