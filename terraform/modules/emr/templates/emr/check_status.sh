@@ -5,7 +5,7 @@ DATA_SOURCE=$2
   #Read correlation id
   LATEST_COR_ID=`cat ~/${DATA_SOURCE}_CORRELATION_ID.txt`
 
-  #RUN_ID will not be set if the data product did not run after PDM has completed
+  #RUN_ID will not be set if the data product did not run
   RUN_ID=$(hive -e "USE audit; SELECT run_id from data_pipeline_metadata_hive WHERE dataproduct = '${DATA_PRODUCT}' AND upper(status) = 'COMPLETED' AND correlation_id = '${LATEST_COR_ID}';")
   echo "RUN_ID is ${RUN_ID} "
 
