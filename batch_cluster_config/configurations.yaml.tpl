@@ -67,3 +67,6 @@ Configurations:
 - Classification: "emrfs-site"
   Properties:
     "fs.s3.maxRetries": "20"
+- Classification: "tez-site"
+  Properties:
+    "tez.aux.uris": "/libs/hbase-client.jar"
