@@ -2,7 +2,6 @@ import sys
 import boto3
 import json
 import math
-from functools import reduce
 
 
 def get_session(role_arn, region):
@@ -20,21 +19,37 @@ def get_session(role_arn, region):
 
 
 def get_cognito_users(cognitoidp_client, user_pool_id):
-    res = cognitoidp_client.list_users(
-        UserPoolId=user_pool_id,
-        Filter="status=\"Enabled\""
-    )
-    return res['Users']
+    def list_users(pagination_token=None):
+        args = dict(UserPoolId=user_pool_id, Filter="status=\"Enabled\"")
+        if pagination_token is not None:
+            args["PaginationToken"]=pagination_token
+        res = cognitoidp_client.list_users(**args)
+
+        res_pagination_token = res["PaginationToken"] if "PaginationToken" in res else None
+        return res["Users"], res_pagination_token
+
+    users = []
+
+    user_page, pag_token = list_users()
+    users.extend(user_page)
+
+    while pag_token is not None:
+        user_page, pag_token = list_users(pag_token)
+        users.extend(user_page)
+
+    return users
 
 
 def get_roles_for_users(usernames, account_id):
     return dict(map(lambda user: (user, f'arn:aws:iam::{account_id}:role/emrfs/emrfs_{user}'), usernames))
+
 
 def get_attribute(attributes, name):
     for attribute in attributes:
         if attribute.get('Name') == name:
             return attribute.get('Value')
     return None
+
 
 def main():
     tf_input = json.loads(sys.stdin.read())
@@ -53,7 +68,8 @@ def main():
         sub = get_attribute(user.get('Attributes'), 'sub')[0:3]
         user['username_sub'] = f'{username}{sub}'
 
-    users_with_roles = get_roles_for_users(map(lambda user_obj: user_obj['username_sub'], users), tf_input['account_id'])
+    users_with_roles = get_roles_for_users(map(lambda user_obj: user_obj['username_sub'], users),
+                                           tf_input['account_id'])
 
     result = {
         'users': json.dumps(users_with_roles),
