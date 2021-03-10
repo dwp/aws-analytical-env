@@ -252,7 +252,7 @@ variable "pdm_tagger_job_definition" {
   type        = string
 }
 
-variable "pdm_tagger_job_queue" {
+variable "s3_tagger_job_queue" {
   description = "The Batch Job Queue ARN for the PDM/S3 Data Tagger"
   type        = string
 }
