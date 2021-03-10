@@ -522,8 +522,8 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
 
   # This is only required for the batch cluster, but at the moment all clusters share the role
   statement {
-    sid    = "AllowPDMTaggerBatchSubmission"
-    effect = "Allow"
+    sid     = "AllowPDMTaggerBatchSubmission"
+    effect  = "Allow"
     actions = ["batch:SubmitJob"]
     resources = [
       # The replace is necessary to ensure that the policy applies to future job revisions.
