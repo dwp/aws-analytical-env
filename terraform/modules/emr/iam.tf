@@ -528,7 +528,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     resources = [
       # The replace is necessary to ensure that the policy applies to future job revisions.
       replace(var.pdm_tagger_job_definition, "/:[0-9]+$/", ":*"),
-      var.pdm_tagger_job_queue
+      var.s3_tagger_job_queue
     ]
   }
 }
