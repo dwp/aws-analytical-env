@@ -247,7 +247,7 @@ variable "pipeline_metadata_table" {
   type        = string
 }
 
-variable "pdm_tagger_job_definition" {
+variable "s3_tagger_job_definition" {
   description = "The Batch Job Definition ARN for the PDM/S3 Data Tagger"
   type        = string
 }
