@@ -246,3 +246,13 @@ variable "pipeline_metadata_table" {
   description = "the DynamoDb pipeline metadata table name "
   type        = string
 }
+
+variable "pdm_tagger_job_definition" {
+  description = "The Batch Job Definition ARN for the PDM/S3 Data Tagger"
+  type        = string
+}
+
+variable "pdm_tagger_job_queue" {
+  description = "The Batch Job Queue ARN for the PDM/S3 Data Tagger"
+  type        = string
+}
