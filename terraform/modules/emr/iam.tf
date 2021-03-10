@@ -519,6 +519,18 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       var.processed_bucket_cmk
     ]
   }
+
+  # This is only required for the batch cluster, but at the moment all clusters share the role
+  statement {
+    sid     = "AllowS3TaggerBatchSubmission"
+    effect  = "Allow"
+    actions = ["batch:SubmitJob"]
+    resources = [
+      # The replace is necessary to ensure that the policy applies to future job revisions.
+      replace(var.s3_tagger_job_definition, "/:[0-9]+$/", ":*"),
+      var.s3_tagger_job_queue
+    ]
+  }
 }
 
 resource "aws_iam_role" "cogntio_read_only_role" {
