@@ -51,17 +51,17 @@ data "template_file" "emr_setup_sh" {
 }
 
 resource "aws_s3_bucket_object" "trigger_s3_tagger_batch_job_sh" {
-  bucket     = aws_s3_bucket.emr.id
-  key        = "scripts/emr/trigger_s3_tagger_batch_job.sh"
-  content    = data.template_file.trigger_s3_tagger_batch_job_sh.rendered
-  tags       = merge(var.common_tags, { Name : "${var.name_prefix}-trigger-tagger" })
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/emr/trigger_s3_tagger_batch_job.sh"
+  content = data.template_file.trigger_s3_tagger_batch_job_sh.rendered
+  tags    = merge(var.common_tags, { Name : "${var.name_prefix}-trigger-tagger" })
 }
 
 data "template_file" "trigger_s3_tagger_batch_job_sh" {
   template = file(format("%s/templates/emr/trigger_s3_tagger_batch_job.sh", path.module))
   vars = {
-    full_proxy                      = local.full_proxy
-    config_bucket                   = var.config_bucket_id
+    full_proxy    = local.full_proxy
+    config_bucket = var.config_bucket_id
   }
 }
 
