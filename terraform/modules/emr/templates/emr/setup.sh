@@ -33,10 +33,12 @@ aws s3 cp "${logging_shell}"     /opt/emr/logging.sh
 aws s3 cp "${cloudwatch_shell}"  /opt/emr/cloudwatch.sh
 aws s3 cp "${get_scripts_shell}" /home/hadoop/get_scripts.sh
 aws s3 cp "${poll_status_table_shell}" /home/hadoop/poll_status_table.sh
+aws s3 cp "${trigger_tagger_shell}" /opt/emr/trigger_s3_tagger_batch_job.sh
 chmod u+x /opt/emr/cloudwatch.sh
 chmod u+x /opt/emr/logging.sh
 chmod u+x /home/hadoop/get_scripts.sh
 chmod 775 /home/hadoop/poll_status_table.sh
+chmod 775 /opt/emr/trigger_s3_tagger_batch_job.sh
 
 aws s3 cp s3://${config_bucket}/workflow-manager/azkaban/step.sh /home/hadoop/step.sh
 chmod u+x /home/hadoop/step.sh
