@@ -19,6 +19,6 @@ aws batch submit-job \
 --job-definition pdm_object_tagger_job \
 --job-name "$JOB_NAME" \
 --parameters \
-'{"data-s3-prefix": "$S3_PREFIX", "csv-location": "s3://${config_bucket}/component/rbac/data_classification.csv"}'
+"{\"data-s3-prefix\": \"$S3_PREFIX\", \"csv-location\": \"s3://${config_bucket}/component/rbac/data_classification.csv\"}"
 
 exit 0
