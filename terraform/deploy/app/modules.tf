@@ -11,7 +11,7 @@ module "emr_ami" {
 
 data "aws_secretsmanager_secret_version" "hive_metastore_password_secret" {
   provider  = aws
-  secret_id = "metadata-store-analytical-env"
+  secret_id = "metadata-store-v2-analytical-env"
 }
 
 module "emr" {
@@ -26,7 +26,7 @@ module "emr" {
   log_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
 
   ami_id                  = module.emr_ami.ami_id
-  emr_release_label       = "emr-5.31.0"
+  emr_release_label       = "emr-6.2.0"
   cognito_user_pool_id    = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
   dks_sg_id               = data.terraform_remote_state.crypto.outputs.dks_sg_id[local.environment]
   dks_subnet              = data.terraform_remote_state.crypto.outputs.dks_subnet
@@ -54,11 +54,11 @@ module "emr" {
 
 
   use_mysql_hive_metastore     = local.use_mysql_hive_metastore[local.environment]
-  hive_metastore_endpoint      = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.endpoint
-  hive_metastore_database_name = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.database_name
+  hive_metastore_endpoint      = data.terraform_remote_state.internal_compute.outputs.hive_metastore_v2.rds_cluster.endpoint
+  hive_metastore_database_name = data.terraform_remote_state.internal_compute.outputs.hive_metastore_v2.rds_cluster.database_name
   hive_metastore_password      = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["password"]
   hive_metastore_username      = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["username"]
-  hive_metastore_sg_id         = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.security_group.id
+  hive_metastore_sg_id         = data.terraform_remote_state.internal_compute.outputs.hive_metastore_v2.security_group.id
 
   s3_tagger_job_definition = data.terraform_remote_state.aws_s3_object_tagger.outputs.pdm_object_tagger_batch.job_definition.arn
   s3_tagger_job_queue      = data.terraform_remote_state.aws_s3_object_tagger.outputs.pdm_object_tagger_batch.job_queue.arn
@@ -158,7 +158,7 @@ module launcher {
   account                               = local.account[local.environment]
   analytical_env_security_configuration = module.emr.analytical_env_security_configuration
   costcode                              = var.costcode
-  release_version                       = "5.31.0"
+  release_version                       = "6.2.0"
   common_security_group                 = module.emr.common_security_group
   master_security_group                 = module.emr.master_security_group
   slave_security_group                  = module.emr.slave_security_group
@@ -167,9 +167,10 @@ module launcher {
   full_no_proxy                         = module.emr.full_no_proxy
   common_tags                           = local.common_tags
   name_prefix                           = local.name
-  hive_metastore_endpoint               = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.endpoint
-  hive_metastore_database_name          = data.terraform_remote_state.aws-analytical-dataset-generation.outputs.hive_metastore.rds_cluster.database_name
+  hive_metastore_endpoint               = data.terraform_remote_state.internal_compute.outputs.hive_metastore_v2.rds_cluster.endpoint
+  hive_metastore_database_name          = data.terraform_remote_state.internal_compute.outputs.hive_metastore_v2.rds_cluster.database_name
   hive_metastore_username               = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["username"]
+  hive_metastore_secret_id              = data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_id
   batch_security_configuration          = module.emr.batch_security_configuration
   hive_metastore_arn                    = data.aws_secretsmanager_secret_version.hive_metastore_password_secret.arn
   subnet_ids                            = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private.*.id

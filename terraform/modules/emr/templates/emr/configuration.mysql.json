@@ -69,7 +69,11 @@
       "hive.txn.manager": "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager",
       "hive.metastore.warehouse.dir": "${data_bucket_path}/data/external",
       "hive.strict.checks.cartesian.product": "false",
-      "hive.mapred.mode": "nonstrict"
+      "hive.mapred.mode": "nonstrict",
+      "hive.exec.failure.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook",
+      "hive.exec.post.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook",
+      "hive.exec.pre.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook",
+      "hive_timeline_logging_enabled": "true"
     }
   },
   {
@@ -81,7 +85,8 @@
   {
     "Classification": "tez-site",
     "Properties": {
-      "tez.aux.uris": "/libs/hbase-client.jar"
+      "tez.aux.uris": "/libs/",
+      "tez.am.resource.memory.mb": "1024"
     }
   }
 ]

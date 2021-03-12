@@ -34,8 +34,8 @@ sleep 5
 sudo systemctl start hive-server2
 
 #### Fix up Tez
-sudo -H -u hdfs bash -c "hdfs dfs -mkdir /libs"
-sudo -H -u hdfs bash -c "hdfs dfs -put /usr/lib/hbase/hbase-client.jar /libs"
+sudo -H -u hdfs bash -c "hdfs dfs -mkdir -p /libs"
+sudo -H -u hdfs bash -c "hdfs dfs -put /usr/lib/hbase/hbase-client*.jar /libs"
 
 aws s3 cp s3://${config_bucket}/rbac-teams/team_dbs.json .
 TEAM_DBS="$(cat ./team_dbs.json | jq  'fromjson | .[] | .database')"
