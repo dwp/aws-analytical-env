@@ -42,7 +42,7 @@ Configurations:
     "hive.support.concurrency": "true"
     "hive.txn.manager": "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager"
     "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver"
-    "javax.jdo.option.ConnectionPassword": "metadata-store-analytical-env"
+    "javax.jdo.option.ConnectionPassword": ${hive_metastore_secret_id}
     "javax.jdo.option.ConnectionURL": "jdbc:mysql://${hive_metastore_endpoint}:3306/${hive_metastore_database_name}"
     "javax.jdo.option.ConnectionUserName": "${hive_metastore_username}"
 - Classification: "hive-site"
@@ -52,7 +52,7 @@ Configurations:
     "hive.support.concurrency": "true"
     "hive.txn.manager": "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager"
     "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver"
-    "javax.jdo.option.ConnectionPassword": "metadata-store-analytical-env"
+    "javax.jdo.option.ConnectionPassword": ${hive_metastore_secret_id}
     "javax.jdo.option.ConnectionURL": "jdbc:mysql://${hive_metastore_endpoint}:3306/${hive_metastore_database_name}"
     "javax.jdo.option.ConnectionUserName": "${hive_metastore_username}"
     "hive.metastore.warehouse.dir": "s3://${config_bucket}/data/external"
@@ -63,10 +63,15 @@ Configurations:
     "hive.tez.container.size": "32768"
     "hive.tez.java.opts": "-Xmx26214m"
     "hive.auto.convert.join.noconditionaltask.size": "10922"
+    "hive.exec.failure.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
+    "hive.exec.post.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
+    "hive.exec.pre.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
+    "hive_timeline_logging_enabled": "true"
     %{~ endif ~}
 - Classification: "emrfs-site"
   Properties:
     "fs.s3.maxRetries": "20"
 - Classification: "tez-site"
   Properties:
-    "tez.aux.uris": "/libs/hbase-client.jar"
+    "tez.aux.uris": "/libs/"
+    "tez.am.resource.memory.mb": "1024"

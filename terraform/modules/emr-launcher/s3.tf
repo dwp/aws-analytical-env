@@ -47,6 +47,7 @@ resource "aws_s3_bucket_object" "analytical_env_configurations" {
     hive_metastore_endpoint      = var.hive_metastore_endpoint
     hive_metastore_database_name = var.hive_metastore_database_name
     hive_metastore_username      = var.hive_metastore_username
+    hive_metastore_secret_id     = var.hive_metastore_secret_id
     environment                  = var.environment
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-config" })
@@ -107,6 +108,7 @@ resource "aws_s3_bucket_object" "batch_configurations" {
     hive_metastore_endpoint      = var.hive_metastore_endpoint
     hive_metastore_database_name = var.hive_metastore_database_name
     hive_metastore_username      = var.hive_metastore_username
+    hive_metastore_secret_id     = var.hive_metastore_secret_id
     environment                  = var.environment
   })
   tags = merge(var.common_tags, { Name : "batch-emr-launch-config" })
