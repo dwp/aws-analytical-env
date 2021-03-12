@@ -110,47 +110,6 @@ meta:
         outputs:
           - name: terraform-output-app
 
-    analytical-env-e2e-tests:
-      task: analytical-env-e2e-tests
-      config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: ((dataworks.docker_python_boto_behave_repository))
-            version: ((dataworks.docker_python_boto_behave_version))
-            tag: ((dataworks.docker_python_boto_behave_version))
-        params:
-          E2E_TEST_TIMEOUT: 300
-          E2E_FEATURE_TAG_FILTER: '@analytical'
-          AWS_S3_INPUT_BUCKET: 'na'
-          AWS_ACC: ((dataworks.aws_dev_acc))
-          AWS_DEFAULT_PROFILE: 'default'
-          AWS_SNS_TOPIC_NAME: 'na'
-          DYNAMODB_TABLE_NAME: 'na'
-          MONGO_SNAPSHOT_BUCKET: 'na'
-          MONGO_SNAPSHOT_PATH: 'na'
-          DLQ_S3_PATH_PREFIX: 'na'
-        run:
-          dir: aws-dataworks-e2e-framework
-          path: sh
-          args:
-            - -exc
-            - |
-              mkdir ~/.aws
-              cat << EOF > ~/.aws/config
-              [profile default]
-              role_arn = arn:aws:iam::((dataworks.aws_dev_acc)):role/ci
-              credential_source = Ec2InstanceMetadata
-              region = ((dataworks.aws_region))
-              EOF
-              cd src/runners
-              export no_proxy="$no_proxy,s3.*.amazonaws.com,s3.amazonaws.com"
-              ./run-ci.sh "../../../meta"
-        inputs:
-          - name: aws-dataworks-e2e-framework
-          - name: meta
-
     terraform-taint:
       task: terraform-taint
       .: (( inject meta.plan.terraform-common-config ))
@@ -167,31 +126,6 @@ meta:
               terraform taint "module.emr.aws_emr_cluster.cluster"
         inputs:
           - name: aws-analytical-env
-          - name: terraform-config
-
-    terraform-analytical-dataset-generation-bootstrap:
-      task: terraform-analytical-dataset-generation-bootstrap
-      .: (( inject meta.plan.terraform-common-config ))
-      config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: ((dataworks.docker_awscli_repository))
-            tag: ((dataworks.docker_awscli_version))
-        run:
-          path: sh
-          args:
-            - -exc
-            - |
-              export AWS_REGION=((dataworks.aws_region))
-              python bootstrap_terraform.py
-              cp terraform.tf ../terraform-config
-              cp terraform.tfvars ../terraform-config
-          dir: aws-analytical-dataset-generation
-        inputs:
-          - name: aws-analytical-dataset-generation
-        outputs:
           - name: terraform-config
 
     mirror-git-repo:
