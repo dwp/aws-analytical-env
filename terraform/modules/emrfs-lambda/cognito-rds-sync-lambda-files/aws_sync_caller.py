@@ -21,10 +21,20 @@ def create_cognito_client(mgmt_account_role_arn):
 
 # returns list of all users and their 'sub' attribute from userpool - includes enabled status
 def get_users_in_userpool(user_pool_id):
-    return cognito_client.list_users(
+    
+    response = cognito_client.list_users(
         UserPoolId=user_pool_id,
-    ).get('Users')
+    )
+    users = response.get('Users')
 
+    while response.get('PaginationToken') is not None:
+        response = cognito_client.list_users(
+            UserPoolId      = user_pool_id,
+            PaginationToken = response.get('PaginationToken')
+        )
+        users.extend(response.get('Users'))
+
+    return users
 
 # connects to RDS instance and executes the SQL statement passed in
 def execute_statement(sql, db_credentials_secrets_store_arn, database_name, db_cluster_arn):
