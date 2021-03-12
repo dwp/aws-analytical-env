@@ -8,16 +8,6 @@ resources:
     check_every: 720h
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
-  - name: aws-analytical-env-emr-6
-    type: git
-    source:
-      branch: emr-6
-      access_token: ((dataworks-secrets.concourse_github_pat))
-      uri: https://github.com/dwp/aws-analytical-env.git
-    check_every: 720h
-    webhook_token: ((dataworks.concourse_github_webhook_token))
-
-
   - name: aws-analytical-env-pr
     type: pull-request
     source:

@@ -63,6 +63,10 @@ Configurations:
     "hive.tez.container.size": "32768"
     "hive.tez.java.opts": "-Xmx26214m"
     "hive.auto.convert.join.noconditionaltask.size": "10922"
+    "hive.exec.failure.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
+    "hive.exec.post.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
+    "hive.exec.pre.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
+    "hive_timeline_logging_enabled": "true"
     %{~ endif ~}
 - Classification: "emrfs-site"
   Properties:
@@ -70,3 +74,4 @@ Configurations:
 - Classification: "tez-site"
   Properties:
     "tez.aux.uris": "/libs/"
+    "tez.am.resource.memory.mb": "1024"
