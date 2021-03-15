@@ -41,7 +41,7 @@ jobs:
 
   - name: mirror-git-repo-chs-payment-timelines-preprod
     plan:
-      - get: chs-payment-timelines-repo
+      - get: aws-payment-timelines-repo
         trigger: true
       - get: aws-common-infrastructure
         trigger: false
@@ -52,11 +52,11 @@ jobs:
       - .: (( inject meta.plan.mirror-git-repo ))
         config:
           run:
-            dir: chs-payment-timelines-repo
+            dir: aws-payment-timelines-repo
           inputs:
-            - name: chs-payment-timelines-repo
+            - name: aws-payment-timelines-repo
           params:
-            S3_ROOT: component/uc_repos/chs-payment-timelines/
+            S3_ROOT: component/uc_repos/aws-payment-timelines/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
 
   - name: mirror-git-repo-chs-cbol-data-preprod
