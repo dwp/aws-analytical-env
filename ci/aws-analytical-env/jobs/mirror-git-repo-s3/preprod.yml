@@ -1,7 +1,7 @@
 jobs:
   - name: mirror-git-repo-uc-lab-repo-preprod
     plan:
-      - get: chs-uc-lab-repo
+      - get: aws-uc-lab-repo
         trigger: true
       - get: aws-common-infrastructure
         trigger: false
@@ -12,11 +12,11 @@ jobs:
       - .: (( inject meta.plan.mirror-git-repo ))
         config:
           run:
-            dir: chs-uc-lab-repo
+            dir: aws-uc-lab-repo
           inputs:
-            - name: chs-uc-lab-repo
+            - name: aws-uc-lab-repo
           params:
-            S3_ROOT: component/uc_repos/chs-uc-lab/
+            S3_ROOT: component/uc_repos/aws-uc-lab/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
 
   - name: mirror-git-repo-opsmi-ops-mi-repo-preprod
