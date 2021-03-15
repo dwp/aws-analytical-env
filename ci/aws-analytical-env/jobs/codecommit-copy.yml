@@ -9,7 +9,7 @@ jobs:
         trigger: true
       - get: chs-auditlog-repo
         trigger: true
-      - get: chs-uc-lab-repo
+      - get: aws-uc-lab-repo
         trigger: true
 #      - get: datateam_dotfiles-repo
 #        trigger: true
@@ -62,7 +62,7 @@ jobs:
             - name: impact-measures-repo
             - name: chs-how-many-repo
             - name: chs-auditlog-repo
-            - name: chs-uc-lab-repo
+            - name: aws-uc-lab-repo
 #            - name: datateam_dotfiles-repo
 
   - name: copy-rnd-incoming
