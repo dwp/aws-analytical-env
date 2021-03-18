@@ -27,8 +27,17 @@ MESSAGE="TIMEOUT set to: \"$TIMEOUT\""
 echo $MESSAGE
 log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table.sh" "NOT_SET"
 
+if [[ -n "$3" ]]; then
+  EXPORT_DATE="$3"
+else EXPORT_DATE="current_date()"
+fi
+
+MESSAGE="EXPORT_DATE set to: \"$EXPORT_DATE\""
+echo $MESSAGE
+log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table.sh" "NOT_SET"
+
 count=0
-query="SELECT correlation_id FROM audit.data_pipeline_metadata_hive WHERE dataproduct = '${DATASOURCE}' AND upper(status) = 'COMPLETED' AND dateproductrun = current_date();"
+query="SELECT correlation_id FROM audit.data_pipeline_metadata_hive WHERE dataproduct = '${DATASOURCE}' AND upper(status) = 'COMPLETED' AND dateproductrun = '${EXPORT_DATE}';"
 
 MESSAGE="Beginning polling of status table..."
 echo $MESSAGE
