@@ -29,7 +29,7 @@ log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table
 
 if [[ -n "$3" ]]; then
   EXPORT_DATE="$3"
-else EXPORT_DATE="current_date()"
+else EXPORT_DATE=$(date +"%Y-%m-%d")
 fi
 
 MESSAGE="EXPORT_DATE set to: \"$EXPORT_DATE\""
