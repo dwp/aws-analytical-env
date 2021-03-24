@@ -64,10 +64,6 @@ Configurations:
     "hive.exec.orc.encoding.strategy": "SPEED"
     "hive.exec.orc.split.strategy": "HYBRID"
     "hive.exec.orc.zerocopy": "TRUE"
-    "hive.stats.gather.num.threads": "10"
-    "hive.exec.orc.memory.pool": "0.5"
-    "hive.exec.orc.default.block.size": "268435456"
-    "hive.orc.compute.splits.num.threads": "50"
     %{~ if environment == "production" ~}
     "hive.tez.container.size": "32768"
     "hive.tez.java.opts": "-Xmx26214m"
