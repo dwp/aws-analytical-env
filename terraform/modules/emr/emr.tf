@@ -25,7 +25,7 @@ resource "aws_emr_cluster" "cluster" {
   master_instance_group {
     name           = "MASTER"
     instance_count = 1
-    instance_type  = local.master_instance_type[var.environment]
+    instance_type  = local.master_instance_type
 
     ebs_config {
       size                 = local.ebs_config_size
@@ -37,8 +37,8 @@ resource "aws_emr_cluster" "cluster" {
 
   core_instance_group {
     name           = "CORE"
-    instance_count = local.core_instance_count[var.environment]
-    instance_type  = local.core_instance_type[var.environment]
+    instance_count = local.core_instance_count
+    instance_type  = local.core_instance_type
 
     ebs_config {
       size                 = local.ebs_config_size
@@ -48,8 +48,8 @@ resource "aws_emr_cluster" "cluster" {
     }
 
     autoscaling_policy = templatefile(format("%s/templates/emr/autoscaling_policy.json", path.module), {
-      autoscaling_min_capacity = local.autoscaling_min_capacity[var.environment],
-      autoscaling_max_capacity = local.autoscaling_max_capacity[var.environment],
+      autoscaling_min_capacity = local.autoscaling_min_capacity,
+      autoscaling_max_capacity = local.autoscaling_max_capacity,
       cooldown_scale_out       = 120,
       cooldown_scale_in        = 60 * 30 // Half an hour
     })

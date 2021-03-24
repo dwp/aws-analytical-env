@@ -1,46 +1,17 @@
 locals {
-  fqdn = format("%s.%s.%s.", "emr", var.emr_cluster_name, var.root_dns_name)
-  master_instance_type = {
-    development = "m5.2xlarge"
-    qa          = "m5.2xlarge"
-    integration = "m5.2xlarge"
-    preprod     = "m5.2xlarge"
-    production  = "m5.8xlarge"
-  }
-  core_instance_type = {
-    development = "m5.2xlarge"
-    qa          = "m5.2xlarge"
-    integration = "m5.2xlarge"
-    preprod     = "m5.2xlarge"
-    production  = "m5.8xlarge"
-  }
-  core_instance_count = {
-    development = 1
-    qa          = 1
-    integration = 1
-    preprod     = 1
-    production  = 2
-  }
+  fqdn                            = format("%s.%s.%s.", "emr", var.emr_cluster_name, var.root_dns_name)
+  master_instance_type            = "m5.2xlarge"
+  core_instance_type              = "m5.2xlarge"
+  core_instance_count             = 1
+  task_instance_type              = "m5.2xlarge"
   ebs_root_volume_size            = 100
   ebs_config_size                 = 250
   ebs_config_type                 = "gp2"
   ebs_config_volumes_per_instance = 1
-  autoscaling_min_capacity = {
-    development = 1
-    qa          = 1
-    integration = 1
-    preprod     = 1
-    production  = 2
-  }
-  autoscaling_max_capacity = {
-    development = 4
-    qa          = 4
-    integration = 4
-    preprod     = 4
-    production  = 15
-  }
-  dks_port   = 8443
-  full_proxy = "http://${var.internet_proxy_dns_name}:3128"
+  autoscaling_min_capacity        = 1
+  autoscaling_max_capacity        = 15
+  dks_port                        = 8443
+  full_proxy                      = "http://${var.internet_proxy_dns_name}:3128"
 
   configurations_mysql_json = templatefile(format("%s/templates/emr/configuration.mysql.json", path.module), {
     logs_bucket_path             = format("s3://%s/logs", var.log_bucket)
