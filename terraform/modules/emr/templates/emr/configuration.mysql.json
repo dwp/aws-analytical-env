@@ -73,12 +73,7 @@
       "hive.exec.failure.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook",
       "hive.exec.post.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook",
       "hive.exec.pre.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook",
-      "hive_timeline_logging_enabled": "true",
-      "hive.default.fileformat": "ORC",
-      "hive.exec.orc.default.compress": "ZLIB",
-      "hive.exec.orc.encoding.strategy": "SPEED",
-      "hive.exec.orc.split.strategy": "HYBRID",
-      "hive.exec.orc.zerocopy": "TRUE"
+      "hive_timeline_logging_enabled": "true"
     }
   },
   {
