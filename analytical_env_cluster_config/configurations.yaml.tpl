@@ -59,6 +59,7 @@ Configurations:
     "hive.metastore.client.socket.timeout": "10800"
     "hive.strict.checks.cartesian.product": "false"
     "hive.mapred.mode": "nonstrict"
+    "hive.default.fileformat": "ORC"
     %{~ if environment == "production" ~}
     "hive.tez.container.size": "32768"
     "hive.tez.java.opts": "-Xmx26214m"
