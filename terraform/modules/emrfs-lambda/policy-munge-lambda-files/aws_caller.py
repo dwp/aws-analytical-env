@@ -2,11 +2,19 @@ import boto3
 import botocore
 import logging
 import os
+from botocore.config import Config
 
 logger = logging.getLogger()
 logger.level = logging.INFO
 
-iam_client = boto3.client('iam')
+config = Config(
+   retries = {
+      'max_attempts': 5,
+      'mode': 'standard'
+   }
+)
+
+iam_client = boto3.client('iam', config=config)
 rds_data_client = boto3.client('rds-data')
 sts_connection = boto3.client('sts')
 kms_client = boto3.client('kms')
