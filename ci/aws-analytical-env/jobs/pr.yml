@@ -8,6 +8,7 @@ jobs:
         version: every
       - get: emr-launcher-release
       - get: manage-mysql-user-release
+      - get: emr-al2-ami
       - put: aws-analytical-env
         resource: aws-analytical-env-pr
         params:
@@ -73,7 +74,9 @@ jobs:
           path: aws-analytical-env
           status: pending
       - get: custom-auth-lambda-release
-        trigger: true
+        trigger: false
+      - get: emr-al2-ami
+        trigger: false
       - get: onboarding-email-template
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))

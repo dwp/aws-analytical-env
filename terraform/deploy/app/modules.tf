@@ -1,14 +1,3 @@
-module "emr_ami" {
-  source = "../../modules/amis"
-
-  providers = {
-    aws = aws.management-ami
-  }
-
-  ami_filter_name   = "name"
-  ami_filter_values = ["dw-al2-emr-ami-*"]
-}
-
 data "aws_secretsmanager_secret_version" "hive_metastore_password_secret" {
   provider  = aws
   secret_id = "metadata-store-v2-analytical-env"
@@ -25,7 +14,7 @@ module "emr" {
 
   log_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
 
-  ami_id                  = module.emr_ami.ami_id
+  ami_id                  = var.emr_al2_ami_id
   emr_release_label       = "emr-6.2.0"
   cognito_user_pool_id    = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
   dks_sg_id               = data.terraform_remote_state.crypto.outputs.dks_sg_id[local.environment]
@@ -153,7 +142,7 @@ module launcher {
   config_bucket                         = data.terraform_remote_state.common.outputs.config_bucket
   config_bucket_cmk                     = data.terraform_remote_state.common.outputs.config_bucket_cmk
   aws_analytical_env_emr_launcher_zip   = var.aws_analytical_env_emr_launcher_zip
-  ami                                   = module.emr_ami.ami_id
+  ami                                   = var.emr_al2_ami_id
   log_bucket                            = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
   account                               = local.account[local.environment]
   analytical_env_security_configuration = module.emr.analytical_env_security_configuration

@@ -16,7 +16,11 @@ jobs:
       - get: manage-mysql-user-release
         passed:
           - preprod
-        trigger: false
+        trigger: true
+      - get: emr-al2-ami
+        passed:
+          - preprod
+        trigger: true
       - get: utc-2am-trigger
         trigger: true
 

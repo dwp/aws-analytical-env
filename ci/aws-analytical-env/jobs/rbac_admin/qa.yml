@@ -5,6 +5,8 @@ jobs:
         trigger: false
       - get: secrets-management
         trigger: false
+      - get: emr-al2-ami
+        trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: app
@@ -23,6 +25,8 @@ jobs:
   - name: rotate-mysql-client-credentials-qa
     plan:
       - get: aws-analytical-env
+        trigger: false
+      - get: emr-al2-ami
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
@@ -43,6 +47,8 @@ jobs:
     plan:
       - get: aws-analytical-env
         trigger: false
+      - get: emr-al2-ami
+        trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: app
@@ -61,6 +67,8 @@ jobs:
   - name: sync-cognito-users-to-rds-qa
     plan:
       - get: aws-analytical-env
+        trigger: false
+      - get: emr-al2-ami
         trigger: false
       - get: utc-11pm-trigger
         trigger: true
@@ -85,6 +93,8 @@ jobs:
         trigger: true
         passed:
           - sync-cognito-users-to-rds-qa
+      - get: emr-al2-ami
+        trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: app
