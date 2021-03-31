@@ -74,7 +74,9 @@ jobs:
           path: aws-analytical-env
           status: pending
       - get: custom-auth-lambda-release
-        trigger: true
+        trigger: false
+      - get: emr-al2-ami
+        trigger: false
       - get: onboarding-email-template
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
