@@ -142,7 +142,7 @@ module launcher {
   config_bucket                         = data.terraform_remote_state.common.outputs.config_bucket
   config_bucket_cmk                     = data.terraform_remote_state.common.outputs.config_bucket_cmk
   aws_analytical_env_emr_launcher_zip   = var.aws_analytical_env_emr_launcher_zip
-  ami                                   = module.emr_ami.ami_id
+  ami_id                                = var.emr_al2_ami_id
   log_bucket                            = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
   account                               = local.account[local.environment]
   analytical_env_security_configuration = module.emr.analytical_env_security_configuration
