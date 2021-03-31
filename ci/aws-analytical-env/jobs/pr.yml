@@ -8,6 +8,7 @@ jobs:
         version: every
       - get: emr-launcher-release
       - get: manage-mysql-user-release
+      - get: emr-al2-ami
       - put: aws-analytical-env
         resource: aws-analytical-env-pr
         params:

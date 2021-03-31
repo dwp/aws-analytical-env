@@ -10,6 +10,8 @@ jobs:
         trigger: true
       - get: onboarding-email-template
         trigger: true
+      - get: emr-al2-ami
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: cognito

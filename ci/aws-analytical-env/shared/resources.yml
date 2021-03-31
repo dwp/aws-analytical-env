@@ -71,15 +71,6 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/impact-measures.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
-#  - name: impact-measures-incoming-repo
-#    type: git
-#    source:
-#      branch: master
-#      username: ((dataworks.enterprise_github_username))
-#      password: ((dataworks-secrets.enterprise_github_pat))
-#      uri: https://((dataworks.enterprise_github_url))/dip/impact-measures-incoming.git
-#    webhook_token: ((dataworks.concourse_github_webhook_token))
-
   - name: chs-how-many-repo
     type: git
     source:
@@ -89,15 +80,6 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/chs-how-many.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
-#  - name: chs-how-many-incoming-repo
-#    type: git
-#    source:
-#      branch: master
-#      username: ((dataworks.enterprise_github_username))
-#      password: ((dataworks-secrets.enterprise_github_pat))
-#      uri: https://((dataworks.enterprise_github_url))/dip/chs-how-many-incoming.git
-#    webhook_token: ((dataworks.concourse_github_webhook_token))
-
   - name: chs-auditlog-repo
     type: git
     source:
@@ -106,15 +88,6 @@ resources:
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/dip/chs-auditlog.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
-
-#  - name: chs-auditlog-incoming-repo
-#    type: git
-#    source:
-#      branch: master
-#      username: ((dataworks.enterprise_github_username))
-#      password: ((dataworks-secrets.enterprise_github_pat))
-#      uri: https://((dataworks.enterprise_github_url))/dip/chs-auditlog-incoming.git
-#    webhook_token: ((dataworks.concourse_github_webhook_token))
 
   - name: aws-uc-lab-repo
     type: git
@@ -278,3 +251,14 @@ resources:
       stop: 20:00
       interval: 10m
       days: [Monday, Tuesday, Wednesday, Thursday, Friday]
+
+  - name: emr-al2-ami
+    type: ami
+    check_every: 1h
+    source:
+      aws_role_arn: "arn:aws:iam::((dataworks.aws_management_acc)):role/ci"
+      region: ((dataworks.aws_region))
+      filters:
+        owner-id: "((dataworks.aws_management_acc))"
+        is-public: false
+        state: available

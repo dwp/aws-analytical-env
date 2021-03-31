@@ -9,6 +9,8 @@ jobs:
         trigger: false
       - get: manage-mysql-user-release
         trigger: false
+      - get: emr-al2-ami
+        trigger: false
 
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:

@@ -19,7 +19,11 @@ jobs:
       - get: manage-mysql-user-release
         passed:
           - qa
-        trigger: false
+        trigger: true
+      - get: emr-al2-ami
+        passed:
+          - qa
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra

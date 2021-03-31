@@ -20,6 +20,10 @@ jobs:
         passed:
           - qa
         trigger: false
+      - get: emr-al2-ami
+        trigger: true
+        passed:
+          - qa
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra
