@@ -7,3 +7,13 @@ jobs:
         config:
           params:
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: dev-stop-waiting
+    plan:
+      - get: every-2h
+        trigger: true
+      - .: (( inject meta.plan.stop-waiting-cluster ))
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+        
