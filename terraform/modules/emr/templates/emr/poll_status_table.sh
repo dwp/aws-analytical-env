@@ -23,6 +23,8 @@ else
   TIMEOUT=60
 fi
 
+let ENDTIME="$(date +%s) + 60 * $TIMEOUT"
+
 MESSAGE="TIMEOUT set to: \"$TIMEOUT\""
 echo $MESSAGE
 log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table.sh" "NOT_SET"
@@ -43,7 +45,7 @@ MESSAGE="Beginning polling of status table..."
 echo $MESSAGE
 log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table.sh" "NOT_SET"
 
-while [ $count -lt $TIMEOUT ]; do
+while [ $count -lt $TIMEOUT -a $(date +%s) -lt $ENDTIME ]; do
   CORRELATION_ID=$(hive -S -e "${query}")
   if [ -z $CORRELATION_ID ]; then
     let count++ || true
