@@ -126,7 +126,12 @@ groups:
   - name: terminate-cluster
     jobs:
       - dev-stop-cluster
+      - dev-stop-waiting
       - qa-stop-cluster
+      - qa-stop-waiting
       - int-stop-cluster
+      - int-stop-waiting
       - preprod-stop-cluster
+      - preprod-stop-waiting
       - prod-stop-cluster
+      - prod-stop-waiting

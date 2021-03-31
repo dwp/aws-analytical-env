@@ -532,6 +532,57 @@ meta:
                 aws emr terminate-clusters --cluster-ids $CLUSTER_ID
               done
 
+    stop-waiting-cluster:
+      task: stop-waiting-cluster
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              export AWS_DEFAULT_REGION
+              source /assume-role
+              set +x
+
+              for CLUSTER_ID in `aws emr list-clusters --cluster-state WAITING | jq -r '.Clusters[].Id'`
+              do
+                  echo "Checking cluster $CLUSTER_ID"
+               
+                  # Is it an analytical cluster (should probably tag type of analytical-env ).
+
+                  APPNAME=`aws emr describe-cluster --cluster-id $CLUSTER_ID | jq -r ".Cluster.Tags[] | if .Key == \"Application\" then .Value else empty end"`
+                  CLEVEL=`aws emr describe-cluster --cluster-id $CLUSTER_ID | jq -r ".Cluster.StepConcurrencyLevel"`
+                 
+                  if [[ ${APPNAME:-""} == "aws-analytical-env" ]]
+                  then
+                      echo $CLUSTER_ID is an analytical env cluster
+
+                      # Currently the only way to know if its a batch cluster is to check if its concurrency is 256
+
+                      if [[ $CLEVEL -eq 256 ]]
+                      then
+                          echo $CLUSTER_ID is a batch cluster
+                          END_DATE=`aws emr list-steps --cluster-id $CLUSTER_ID | jq '.Steps[0].Status.Timeline.EndDateTime | floor'`
+                          let DELTA="`date +%s` - $END_DATE"
+
+                          if [[ $DELTA -gt 3600 ]]
+                          then
+                              echo Stopping cluster $CLUSTER_ID with a delta of $DELTA
+                              aws emr terminate-clusters --cluster-ids $CLUSTER_ID
+                          fi
+                      fi
+                  fi
+              done
 
     mirror-ucsqlhelper:
       task: mirror-ucsqlhelper

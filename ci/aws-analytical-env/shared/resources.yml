@@ -252,6 +252,12 @@ resources:
       interval: 10m
       days: [Monday, Tuesday, Wednesday, Thursday, Friday]
 
+  - name: every-2h
+    type: time
+    icon: clock-outline
+    source:
+      interval: 2h
+
   - name: emr-al2-ami
     type: ami
     check_every: 1h
