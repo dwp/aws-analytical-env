@@ -49,6 +49,11 @@ jobs:
           - preprod
           - after-midnight-check
         trigger: false
+      - get: emr-al2-ami
+        passed:
+          - preprod
+          - after-midnight-check
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra
