@@ -72,6 +72,11 @@ module "emr" {
   processed_bucket_id     = data.terraform_remote_state.common.outputs.processed_bucket.bucket
   rbac_version            = local.rbac_version[local.environment]
   pipeline_metadata_table = "arn:aws:dynamodb:${var.region}:${local.account[local.environment]}:table/${data.terraform_remote_state.internal_compute.outputs.data_pipeline_metadata_dynamo.name}"
+
+  jupyterhub_bucket = {
+    id      = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_id
+    cmk_arn = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_kms_arn
+  }
 }
 
 module "pushgateway" {

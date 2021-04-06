@@ -256,3 +256,11 @@ variable "s3_tagger_job_queue" {
   description = "The Batch Job Queue ARN for the PDM/S3 Data Tagger"
   type        = string
 }
+
+variable "jupyterhub_bucket" {
+  description = "JupyterHub S3 bucket"
+  type = object({
+    id      = string
+    cmk_arn = string
+  })
+}
