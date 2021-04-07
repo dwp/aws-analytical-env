@@ -14,6 +14,16 @@ output alb_fqdn {
   value = module.alb.fqdn
 }
 
+output "root_dns_name" {
+  description = "The Root DNS Zone Name record we created"
+  value       = local.root_dns_name[local.environment]
+}
+
+output "parent_domain_name" {
+  description = "The Parent Domain Name record we created"
+  value       = local.parent_domain_name[local.environment]
+}
+
 output alb_listner {
   value = module.alb.alb_listener
 }
