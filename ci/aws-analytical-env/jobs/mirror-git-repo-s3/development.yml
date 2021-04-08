@@ -33,7 +33,7 @@ jobs:
             S3_ROOT: component/uc_repos/opsmi-chs-ops-mi-repo/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
 
-  - name: mirror-git-repo-chs-payment-timelines-development
+  - name: mirror-git-repo-aws-payment-timelines-development
     plan:
       - get: aws-payment-timelines-repo
         trigger: true
@@ -50,9 +50,9 @@ jobs:
             S3_ROOT: component/uc_repos/aws-payment-timelines/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
 
-  - name: mirror-git-repo-chs-cbol-data-development
+  - name: mirror-git-repo-aws-cbol-cbol-data-development
     plan:
-      - get: chs-cbol-data-repo
+      - get: aws-cbol-data-repo
         trigger: true
       - get: aws-common-infrastructure
         trigger: false
@@ -60,9 +60,9 @@ jobs:
       - .: (( inject meta.plan.mirror-git-repo ))
         config:
           run:
-            dir: chs-cbol-data-repo
+            dir: aws-cbol-data-repo
           inputs:
-            - name: chs-cbol-data-repo
+            - name: aws-cbol-data-repo
           params:
-            S3_ROOT: component/uc_repos/chs-cbol-data/
+            S3_ROOT: component/uc_repos/aws-cbol-data/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
