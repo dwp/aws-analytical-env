@@ -68,6 +68,7 @@ Configurations:
     "hive.exec.pre.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
     "hive_timeline_logging_enabled": "true"
     %{~ endif ~}
+    "hive.convert.join.bucket.mapjoin.tez": "false"
 - Classification: "emrfs-site"
   Properties:
     "fs.s3.maxRetries": "20"
