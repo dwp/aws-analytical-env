@@ -24,3 +24,4 @@ aviator_pipeline.yml
 *.pyc
 
 .DS_Store
+venv/
