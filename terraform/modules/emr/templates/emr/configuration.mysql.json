@@ -73,7 +73,8 @@
       "hive.exec.failure.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook",
       "hive.exec.post.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook",
       "hive.exec.pre.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook",
-      "hive_timeline_logging_enabled": "true"
+      "hive_timeline_logging_enabled": "true",
+      "hive.convert.join.bucket.mapjoin.tez": "false",
     }
   },
   {
