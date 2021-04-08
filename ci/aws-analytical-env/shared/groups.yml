@@ -135,3 +135,7 @@ groups:
       - preprod-stop-waiting
       - prod-stop-cluster
       - prod-stop-waiting
+
+  - name: update-pipeline
+    jobs:
+      - update-pipeline
