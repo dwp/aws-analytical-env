@@ -7,7 +7,7 @@
 notifications::notify_started() {
     local -r job=$${1:?Usage: $${FUNCNAME[0]} job step}
     local -r step=$${2:?Usage: $${FUNCNAME[0]} job step}
-    notifications::send_message "$(starting_payload "$job" "$step")"
+    notifications::send_message "$(notifications::starting_payload "$job" "$step")"
 }
 
 notifications::notify_completed() {
@@ -25,13 +25,13 @@ notifications::notify_completed() {
 notifications::notify_success() {
     local -r job=$${1:?Usage: $${FUNCNAME[0]} job step}
     local -r step=$${2:?Usage: $${FUNCNAME[0]} job step}
-    notifications::send_message "$(success_payload "$job" "$step")"
+    notifications::send_message "$(notifications::success_payload "$job" "$step")"
 }
 
 notifications::notify_failure() {
     local -r job=$${1:?Usage: $${FUNCNAME[0]} job step}
     local -r step=$${2:?Usage: $${FUNCNAME[0]} job step}
-    notifications::send_message "$(failure_payload "$job" "$step")"
+    notifications::send_message "$(notifications::failure_payload "$job" "$step")"
 }
 
 notifications::send_message() {
