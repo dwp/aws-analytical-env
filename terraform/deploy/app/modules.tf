@@ -60,18 +60,19 @@ module "emr" {
   account     = local.account[local.environment]
   environment = local.environment
 
-  truststore_certs        = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
-  truststore_aliases      = "dataworks_root_ca,dataworks_mgt_root_ca"
-  config_bucket_arn       = data.terraform_remote_state.common.outputs.config_bucket.arn
-  config_bucket_cmk       = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
-  config_bucket_id        = data.terraform_remote_state.common.outputs.config_bucket.id
-  dataset_s3              = data.terraform_remote_state.common.outputs.published_bucket
-  published_bucket_cmk    = data.terraform_remote_state.common.outputs.published_bucket_cmk.arn
-  processed_bucket_arn    = data.terraform_remote_state.common.outputs.processed_bucket.arn
-  processed_bucket_cmk    = data.terraform_remote_state.common.outputs.processed_bucket_cmk.arn
-  processed_bucket_id     = data.terraform_remote_state.common.outputs.processed_bucket.bucket
-  rbac_version            = local.rbac_version[local.environment]
-  pipeline_metadata_table = "arn:aws:dynamodb:${var.region}:${local.account[local.environment]}:table/${data.terraform_remote_state.internal_compute.outputs.data_pipeline_metadata_dynamo.name}"
+  truststore_certs         = "s3://${data.terraform_remote_state.certificate_authority.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
+  truststore_aliases       = "dataworks_root_ca,dataworks_mgt_root_ca"
+  config_bucket_arn        = data.terraform_remote_state.common.outputs.config_bucket.arn
+  config_bucket_cmk        = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  config_bucket_id         = data.terraform_remote_state.common.outputs.config_bucket.id
+  dataset_s3               = data.terraform_remote_state.common.outputs.published_bucket
+  published_bucket_cmk     = data.terraform_remote_state.common.outputs.published_bucket_cmk.arn
+  processed_bucket_arn     = data.terraform_remote_state.common.outputs.processed_bucket.arn
+  processed_bucket_cmk     = data.terraform_remote_state.common.outputs.processed_bucket_cmk.arn
+  processed_bucket_id      = data.terraform_remote_state.common.outputs.processed_bucket.bucket
+  rbac_version             = local.rbac_version[local.environment]
+  pipeline_metadata_table  = "arn:aws:dynamodb:${var.region}:${local.account[local.environment]}:table/${data.terraform_remote_state.internal_compute.outputs.data_pipeline_metadata_dynamo.name}"
+  sns_monitoring_queue_arn = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
 
   jupyterhub_bucket = {
     id      = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_id

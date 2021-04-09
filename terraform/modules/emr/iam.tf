@@ -829,7 +829,7 @@ data "aws_iam_policy_document" "emr_sns_monitoring_policy" {
       "sns:Publish",
     ]
     resources = [
-      data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn,
+      var.sns_monitoring_queue_arn
     ]
   }
 }
