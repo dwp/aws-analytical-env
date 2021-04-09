@@ -818,3 +818,29 @@ resource "aws_iam_role_policy_attachment" "dynamodb_pipeline_metadata" {
   role       = aws_iam_role.emr_ec2_role.name
   policy_arn = aws_iam_policy.dynamodb_pipeline_metadata_policy.arn
 }
+
+# SNS policy
+
+data "aws_iam_policy_document" "emr_sns_monitoring_policy" {
+  statement {
+    sid    = "AllowEMRUserSNSMonitoringPolicy"
+    effect = "Allow"
+    actions = [
+      "sns:Publish",
+    ]
+    resources = [
+      data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn,
+    ]
+  }
+}
+
+resource "aws_iam_policy" "emr_sns_monitoring_policy" {
+  name        = "AnalyticalEnvSNSMonitoring"
+  description = "Allow editing of DynamoDb Metadata Table"
+  policy      = data.aws_iam_policy_document.emr_sns_monitoring_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "emr_sns_monitoring_policy" {
+  role       = aws_iam_role.emr_ec2_role.name
+  policy_arn = aws_iam_policy.emr_sns_monitoring_policy.arn
+}
