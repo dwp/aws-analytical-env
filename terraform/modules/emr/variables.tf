@@ -264,3 +264,8 @@ variable "jupyterhub_bucket" {
     cmk_arn = string
   })
 }
+
+variable "sns_monitoring_queue_arn" {
+  description = "The ARN for the monitoring SNS queue"
+  type        = string
+}
