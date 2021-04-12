@@ -269,3 +269,22 @@ variable "sns_monitoring_queue_arn" {
   description = "The ARN for the monitoring SNS queue"
   type        = string
 }
+
+variable "hive_compaction_threads" {
+  type        = string
+  description = "Number of compaction threads"
+  default     = "1"
+}
+
+variable "hive_tez_sessions_per_queue" {
+  type        = string
+  description = "The number of sessions for each queue "
+  default     = "10"
+}
+
+variable "hive_max_reducers" {
+  type        = string
+  description = "Max number of reducers "
+  default     = "1099"
+}
+

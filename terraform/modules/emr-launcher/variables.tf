@@ -76,3 +76,21 @@ variable "instance_type_core_three" {
   description = "(Optional) instance type3 of core node"
   default     = "m5d.2xlarge"
 }
+
+variable "hive_compaction_threads" {
+  type        = string
+  description = "Number of compaction threads"
+  default     = "1"
+}
+
+variable "hive_tez_sessions_per_queue" {
+  type        = string
+  description = "The number of sessions for each queue "
+  default     = "10"
+}
+
+variable "hive_max_reducers" {
+  type        = string
+  description = "Max number of reducers "
+  default     = "1099"
+}
