@@ -39,6 +39,31 @@ locals {
     preprod     = 4
     production  = 15
   }
+
+  hive_compaction_threads = {
+    development = "1"
+    qa          = "1"
+    integration = "1"
+    preprod     = "1"
+    production  = "1"
+  }
+
+  hive_tez_sessions_per_queue = {
+    development = "10"
+    qa          = "35"
+    integration = "10"
+    preprod     = "35"
+    production  = "35"
+  }
+
+  hive_max_reducers = {
+    development = "1099"
+    qa          = "1099"
+    integration = "1099"
+    preprod     = "1099"
+    production  = "1099"
+  }
+
   dks_port   = 8443
   full_proxy = "http://${var.internet_proxy_dns_name}:3128"
 
@@ -53,6 +78,9 @@ locals {
     hive_metastore_database_name = var.hive_metastore_database_name
     hive_metastore_username      = var.hive_metastore_username
     hive_metastore_pwd           = var.hive_metastore_password
+    hive_compaction_threads      = local.hive_compaction_threads[var.environment]
+    hive_tez_sessions_per_queue  = local.hive_tez_sessions_per_queue[var.environment]
+    hive_max_reducers            = local.hive_max_reducers[var.environment]
   })
 
   configurations_glue_json = templatefile(format("%s/templates/emr/configuration.glue.json", path.module), {
