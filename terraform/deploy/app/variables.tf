@@ -84,7 +84,7 @@ variable "emr_al2_ami_id" {
   description = "ID of AMI to be used for EMR clusters"
 }
 
-variable "emr_hive_compaction_threads"  {
+variable "emr_hive_compaction_threads" {
   default = {
     development = "1"
     qa          = "1"
