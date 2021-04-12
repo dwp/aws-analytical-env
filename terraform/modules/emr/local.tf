@@ -50,10 +50,10 @@ locals {
 
   hive_tez_sessions_per_queue = {
     development = "10"
-    qa          = "35"
+    qa          = "10"
     integration = "10"
-    preprod     = "35"
-    production  = "35"
+    preprod     = "20"
+    production  = "20"
   }
 
   hive_max_reducers = {
