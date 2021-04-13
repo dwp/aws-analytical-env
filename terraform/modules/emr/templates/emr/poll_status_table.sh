@@ -4,7 +4,7 @@ set -e
 
 # Import logging
 source /opt/emr/logging.sh
-source /opt/emr/azkaban_notifications.sh
+source /opt/emr/azkaban_notifications.sh || true
 
 PROCESS_ID=$PPID
 
