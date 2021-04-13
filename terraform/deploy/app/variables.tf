@@ -83,3 +83,33 @@ variable "emr_instance_type_core_three" {
 variable "emr_al2_ami_id" {
   description = "ID of AMI to be used for EMR clusters"
 }
+
+variable "emr_hive_compaction_threads" {
+  default = {
+    development = "1"
+    qa          = "1"
+    integration = "1"
+    preprod     = "1"
+    production  = "1"
+  }
+}
+
+variable "emr_hive_tez_sessions_per_queue" {
+  default = {
+    development = "10"
+    qa          = "10"
+    integration = "10"
+    preprod     = "20"
+    production  = "20"
+  }
+}
+
+variable "emr_hive_max_reducers" {
+  default = {
+    development = "1099"
+    qa          = "1099"
+    integration = "1099"
+    preprod     = "1099"
+    production  = "1099"
+  }
+}
