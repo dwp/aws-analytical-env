@@ -43,7 +43,7 @@ notifications::send_message() {
         # shellcheck disable=SC2154
         aws sns publish \
             --topic-arn "${monitoring_topic_arn}" \
-            --message "$payload"
+            --message "$payload" || true
     fi
 }
 
