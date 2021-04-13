@@ -4,6 +4,7 @@ set -e
 
 # Import logging
 source /opt/emr/logging.sh
+source /opt/emr/azkaban_notifications.sh
 
 PROCESS_ID=$PPID
 
@@ -38,12 +39,19 @@ MESSAGE="EXPORT_DATE set to: \"$EXPORT_DATE\""
 echo $MESSAGE
 log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table.sh" "NOT_SET"
 
+CALLING_JOB=${4:-UNKNOWN}
+MESSAGE="CALLING_JOB set to: \"$CALLING_JOB\""
+echo $MESSAGE
+log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table.sh" "NOT_SET"
+
 count=0
 query="SELECT correlation_id FROM audit.data_pipeline_metadata_hive WHERE dataproduct = '${DATASOURCE}' AND upper(status) = 'COMPLETED' AND dateproductrun = '${EXPORT_DATE}';"
 
 MESSAGE="Beginning polling of status table..."
 echo $MESSAGE
 log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table.sh" "NOT_SET"
+
+notifications::notify_started "$CALLING_JOB" "Polling" || true
 
 while [ $count -lt $TIMEOUT -a $(date +%s) -lt $ENDTIME ]; do
   CORRELATION_ID=$(hive -S -e "${query}")
@@ -53,16 +61,18 @@ while [ $count -lt $TIMEOUT -a $(date +%s) -lt $ENDTIME ]; do
     MESSAGE="$count attempts of $TIMEOUT so far. Retrying..."
     echo $MESSAGE
     log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table.sh" "NOT_SET"
-    
+
   else
     MESSAGE="Polling of status table found that $DATASOURCE is now available!"
     echo $CORRELATION_ID > ~/${DATASOURCE}_CORRELATION_ID.txt
     echo $MESSAGE
     log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table.sh" "NOT_SET"
-
+    notifications::notify_success "$CALLING_JOB" "Polling" || true
     exit 0
   fi
 done
+
+notifications::notify_failure "$CALLING_JOB" "Polling" || true
 
 MESSAGE="Polling of status table did not find $DATASOURCE within the provided time period. Exiting process"
 echo $MESSAGE
