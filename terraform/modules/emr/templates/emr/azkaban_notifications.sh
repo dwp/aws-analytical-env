@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# The following problems are because this is a template file and not the finished product.
+# The following exemptions are because this is a template file and not the final shell script.
 # shellcheck disable=SC2125
 # shellcheck disable=SC1083
 
@@ -35,12 +35,16 @@ notifications::notify_failure() {
 }
 
 notifications::send_message() {
-    local -r payload=$${1:?Usage: $${FUNCNAME[0]} payload}
 
-    # shellcheck disable=SC2154
-    aws sns publish \
-        --topic-arn "${monitoring_topic_arn}" \
-        --message "$payload"
+    # shellcheck disable=SC2193
+    if notifications::enabled; then
+        local -r payload=$${1:?Usage: $${FUNCNAME[0]} payload}
+
+        # shellcheck disable=SC2154
+        aws sns publish \
+            --topic-arn "${monitoring_topic_arn}" \
+            --message "$payload"
+    fi
 }
 
 notifications::starting_payload() {
@@ -84,4 +88,8 @@ EOF
 
 notifications::payload_required_arguments() {
     echo severity notification_type job step title
+}
+
+notifications::enabled() {
+    [[ $${AZKABAN_NOTIFICATIONS_ENABLED:-true} == "true" ]]
 }
