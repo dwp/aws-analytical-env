@@ -36,6 +36,7 @@ data "template_file" "emr_setup_sh" {
     full_no_proxy                   = join(",", local.no_proxy_hosts)
     cognito_role_arn                = aws_iam_role.cogntio_read_only_role.arn
     user_pool_id                    = var.cognito_user_pool_id
+    azkaban_notifications_shell     = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_notifications_sh.key)
     logging_shell                   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.logging_sh.key)
     cloudwatch_shell                = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.cloudwatch_sh.key)
     get_scripts_shell               = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.get_scripts_sh.key)
@@ -190,5 +191,16 @@ resource "aws_s3_bucket_object" "poll_status_table_sh" {
   content = file("${path.module}/templates/emr/poll_status_table.sh")
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-poll-status-table-sh" })
+}
 
+resource "aws_s3_bucket_object" "azkaban_notifications_sh" {
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/azkaban_notifications.sh"
+  content = templatefile("${path.module}/templates/emr/azkaban_notifications.sh",
+    {
+      monitoring_topic_arn = var.monitoring_sns_topic_arn
+    }
+  )
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-azkaban-notifications-sh" })
 }

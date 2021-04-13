@@ -24,6 +24,7 @@ module analytical_env_vpc {
     "logs",
     "monitoring",
     "s3",
+    "sns",
     "ssm",
     "ssmmessages",
     "git-codecommit",
