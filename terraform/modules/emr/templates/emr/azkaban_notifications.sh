@@ -41,7 +41,7 @@ notifications::send_message() {
         local -r payload=$${1:?Usage: $${FUNCNAME[0]} payload}
 
         # shellcheck disable=SC2154
-        aws sns publish \
+        aws --region "${aws_region}" sns publish \
             --topic-arn "${monitoring_topic_arn}" \
             --message "$payload" || true
     fi
