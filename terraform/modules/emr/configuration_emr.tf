@@ -198,7 +198,8 @@ resource "aws_s3_bucket_object" "azkaban_notifications_sh" {
   key    = "scripts/emr/azkaban_notifications.sh"
   content = templatefile("${path.module}/templates/emr/azkaban_notifications.sh",
     {
-      monitoring_topic_arn = var.monitoring_sns_topic_arn
+      monitoring_topic_arn = var.monitoring_sns_topic_arn,
+      aws_region           = var.region
     }
   )
 
