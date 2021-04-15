@@ -51,8 +51,6 @@ MESSAGE="Beginning polling of status table..."
 echo $MESSAGE
 log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table.sh" "NOT_SET"
 
-notifications::notify_started "$CALLING_JOB" "Polling" || true
-
 while [ $count -lt $TIMEOUT -a $(date +%s) -lt $ENDTIME ]; do
   CORRELATION_ID=$(hive -S -e "${query}")
   if [ -z $CORRELATION_ID ]; then
@@ -67,7 +65,6 @@ while [ $count -lt $TIMEOUT -a $(date +%s) -lt $ENDTIME ]; do
     echo $CORRELATION_ID > ~/${DATASOURCE}_CORRELATION_ID.txt
     echo $MESSAGE
     log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table.sh" "NOT_SET"
-    notifications::notify_success "$CALLING_JOB" "Polling" || true
     exit 0
   fi
 done
