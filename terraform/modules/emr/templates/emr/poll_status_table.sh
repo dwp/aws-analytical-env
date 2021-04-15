@@ -69,7 +69,7 @@ while [ $count -lt $TIMEOUT -a $(date +%s) -lt $ENDTIME ]; do
   fi
 done
 
-if [[ $CALLING_JOB != "UNKNOWN" ]]; then
+if [[ "$CALLING_JOB" != "UNKNOWN" ]]; then
   notifications::notify_failure "$CALLING_JOB" "Polling" || true
 fi
 
