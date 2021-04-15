@@ -50,19 +50,19 @@ notifications::send_message() {
 notifications::starting_payload() {
     local -r job=$${1:?Usage: $${FUNCNAME[0]} step}
     local -r step=$${2:?Usage: $${FUNCNAME[0]} step}
-    notifications::payload Medium Information "$job" "$step" "Azkaban step started."
+    notifications::payload Medium Information "$job" "$step" "started"
 }
 
 notifications::success_payload() {
     local -r job=$${1:?Usage: $${FUNCNAME[0]} step}
     local -r step=$${2:?Usage: $${FUNCNAME[0]} step}
-    notifications::payload Medium Information "$job" "$step" "Azkaban step succeeded."
+    notifications::payload Medium Information "$job" "$step" "succeeded"
 }
 
 notifications::failure_payload() {
     local -r job=$${1:?Usage: $${FUNCNAME[0]} step}
     local -r step=$${2:?Usage: $${FUNCNAME[0]} step}
-    notifications::payload High Error "$job" "$step" "Azkaban step failed."
+    notifications::payload High Error "$job" "$step" "failed"
 }
 
 notifications::payload() {
@@ -70,14 +70,14 @@ notifications::payload() {
     local -r notification_type=$${2:?Usage: $${FUNCNAME[0]} $(payload_required_arguments)}
     local -r job=$${3:?Usage: $${FUNCNAME[0]} $(payload_required_arguments)}
     local -r step=$${4:?Usage: $${FUNCNAME[0]} $(payload_required_arguments)}
-    local -r title=$${5:?Usage: $${FUNCNAME[0]} $(payload_required_arguments)}
+    local -r status=$${5:?Usage: $${FUNCNAME[0]} $(payload_required_arguments)}
 
     cat <<EOF | jq .
 {
     "severity": "$severity",
     "notification_type": "$notification_type",
     "slack_username": "AWS Azkaban Job Notification",
-    "title_text": "$title",
+    "title_text": "$job/$step $status.",
     "custom_elements": [
         { "key": "Job", "value": "$job"},
         { "key": "Step", "value": "$step"}
