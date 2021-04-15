@@ -69,7 +69,9 @@ while [ $count -lt $TIMEOUT -a $(date +%s) -lt $ENDTIME ]; do
   fi
 done
 
-notifications::notify_failure "$CALLING_JOB" "Polling" || true
+if [[ $CALLING_JOB != "UNKNOWN" ]]; then
+  notifications::notify_failure "$CALLING_JOB" "Polling" || true
+fi
 
 MESSAGE="Polling of status table did not find $DATASOURCE within the provided time period. Exiting process"
 echo $MESSAGE
