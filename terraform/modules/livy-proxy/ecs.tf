@@ -2,8 +2,8 @@ resource "aws_ecs_task_definition" "livy-proxy" {
   family                   = var.name
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
-  cpu                      = "256"
-  memory                   = "2048"
+  cpu                      = "1024"
+  memory                   = "1024"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
 
   container_definitions = <<DEFINITION
@@ -51,7 +51,7 @@ resource "aws_ecs_service" "livy-proxy" {
   name            = var.name
   cluster         = data.aws_ecs_cluster.ecs_main_cluster.arn
   task_definition = aws_ecs_task_definition.livy-proxy.arn
-  desired_count   = 1
+  desired_count   = var.desired_count
   launch_type     = "EC2"
 
   network_configuration {
@@ -65,5 +65,8 @@ resource "aws_ecs_service" "livy-proxy" {
     container_port   = var.container_port
   }
   tags = merge(var.common_tags, { Name : "${var.name}-proxy-ecs" })
-}
 
+  lifecycle {
+    ignore_changes = [desired_count]
+  }
+}
