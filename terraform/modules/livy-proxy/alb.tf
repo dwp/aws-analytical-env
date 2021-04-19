@@ -6,6 +6,7 @@ resource "aws_lb" "lb" {
   security_groups                  = [aws_security_group.lb_sg.id]
   enable_deletion_protection       = false
   enable_cross_zone_load_balancing = true
+  idle_timeout                     = 600
   tags                             = merge(var.common_tags, { Name = "${var.name}-alb" })
 
   access_logs {
