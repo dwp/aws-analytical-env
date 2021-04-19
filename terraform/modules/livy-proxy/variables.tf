@@ -8,6 +8,12 @@ variable "ecs_cluster_name" {
   description = "Name of ECS cluster to deploy the service to"
 }
 
+variable "desired_count" {
+  type        = number
+  description = "Number of ECS tasks to deploy"
+  default     = 1
+}
+
 variable "container_port" {
   default = 8080
 }
