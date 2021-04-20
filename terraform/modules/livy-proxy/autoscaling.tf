@@ -34,10 +34,10 @@ resource "aws_cloudwatch_metric_alarm" "cpu_low" {
 
 resource "aws_appautoscaling_policy" "scale_up_policy" {
   name               = "${var.name}-scale-up-policy"
-  depends_on         = [aws_appautoscaling_target.scale_target]
-  service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_service.livy-proxy.cluster}/${aws_ecs_service.livy-proxy.name}"
-  scalable_dimension = "ecs:service:DesiredCount"
+  depends_on         = [aws_appautoscaling_target.ecs_target]
+  service_namespace  = aws_appautoscaling_target.ecs_target.service_namespace
+  resource_id        = aws_appautoscaling_target.ecs_target.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
   step_scaling_policy_configuration {
     adjustment_type         = "ChangeInCapacity"
     cooldown                = 60
@@ -51,10 +51,10 @@ resource "aws_appautoscaling_policy" "scale_up_policy" {
 
 resource "aws_appautoscaling_policy" "scale_down_policy" {
   name               = "${var.name}-scale-down-policy"
-  depends_on         = [aws_appautoscaling_target.scale_target]
-  service_namespace  = "ecs"
-  resource_id        = "service/${aws_ecs_service.livy-proxy.cluster}/${aws_ecs_service.livy-proxy.name}"
-  scalable_dimension = "ecs:service:DesiredCount"
+  depends_on         = [aws_appautoscaling_target.ecs_target]
+  service_namespace  = aws_appautoscaling_target.ecs_target.service_namespace
+  resource_id        = aws_appautoscaling_target.ecs_target.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
   step_scaling_policy_configuration {
     adjustment_type         = "ChangeInCapacity"
     cooldown                = 60
@@ -66,7 +66,7 @@ resource "aws_appautoscaling_policy" "scale_down_policy" {
   }
 }
 
-resource "aws_appautoscaling_target" "scale_target" {
+resource "aws_appautoscaling_target" "ecs_target" {
   service_namespace  = "ecs"
   resource_id        = "service/${var.ecs_cluster_name}/${aws_ecs_service.livy-proxy.name}"
   scalable_dimension = "ecs:service:DesiredCount"
