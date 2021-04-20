@@ -62,8 +62,8 @@ Configurations:
     "hive.strict.checks.cartesian.product": "false"
     "hive.mapred.mode": "nonstrict"
     %{~ if environment == "production" ~}
-    "hive.tez.container.size": "32768"
-    "hive.tez.java.opts": "-Xmx26214m"
+    "hive.tez.container.size": "98304"
+    "hive.tez.java.opts": "-Xmx78643m"
     "hive.auto.convert.join.noconditionaltask.size": "10922"
     "hive.exec.failure.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
     "hive.exec.post.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
@@ -119,3 +119,8 @@ Configurations:
   Properties:
     "tez.aux.uris": "/libs/"
     "tez.am.resource.memory.mb": "1024"
+- Classification: "hive-env"
+  Configurations:
+  - Classification: "export"
+    Properties:
+      "HADOOP_HEAPSIZE": "2000"
