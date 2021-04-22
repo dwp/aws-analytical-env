@@ -68,14 +68,7 @@ locals {
 
     AuthorizationConfiguration = {
       EmrFsConfiguration = {
-        RoleMappings = var.rbac_version == 2 ? flatten([
-          for user, role in var.security_configuration_user_roles : [
-            {
-              Role           = role
-              IdentifierType = "User"
-              Identifiers    = [user]
-            }
-          ] if length(regexall("^svc-.+$", user)) > 0]) : flatten([
+        RoleMappings = concat(flatten([
           for group, policy_suffixes in var.security_configuration_groups : [
             {
               Role           = aws_iam_role.emrfs_iam[group].arn
@@ -83,7 +76,15 @@ locals {
               Identifiers    = [group]
             }
           ]
-        ])
+        ]),
+        flatten([
+          for user, role in var.security_configuration_user_roles : [
+            {
+              Role           = role
+              IdentifierType = "User"
+              Identifiers    = [user]
+            }
+          ] if length(regexall("^svc-.+$", user)) > 0]))
       }
     }
   }
