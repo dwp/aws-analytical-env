@@ -91,6 +91,18 @@ resource "aws_emr_cluster" "cluster" {
   }
 
   step {
+    name              = "Install Python Packages"
+    action_on_failure = "CONTINUE"
+
+    hadoop_jar_step {
+      jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
+      args = [
+        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.py_pckgs_install.key)
+      ]
+    }
+  }
+
+  step {
     name              = "livy-client-conf"
     action_on_failure = "CONTINUE"
     hadoop_jar_step {

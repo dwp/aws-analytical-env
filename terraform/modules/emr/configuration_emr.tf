@@ -113,6 +113,16 @@ resource "aws_s3_bucket_object" "sparkR_install" {
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-sparkR-install" })
 }
 
+resource "aws_s3_bucket_object" "py_pckgs_install" {
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/py_pckgs_install.sh"
+  content = templatefile("${path.module}/templates/emr/py_pckgs_install.sh", {
+    full_proxy    = local.full_proxy,
+    full_no_proxy = join(",", local.no_proxy_hosts),
+  })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-py-pckgs-install" })
+}
+
 data "template_file" "livy_client_conf_sh" {
   template = file(format("%s/templates/emr/livy_client_conf.sh", path.module))
   vars = {
