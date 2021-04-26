@@ -1,17 +1,18 @@
-import boto3
-import botocore
 import logging
 import os
+
+import boto3
+import botocore
 from botocore.config import Config
 
 logger = logging.getLogger()
 logger.level = logging.INFO
 
 config = Config(
-   retries = {
-      'max_attempts': 5,
-      'mode': 'standard'
-   }
+    retries={
+        'max_attempts': 5,
+        'mode': 'standard'
+    }
 )
 
 iam_client = boto3.client('iam', config=config)
@@ -24,6 +25,7 @@ kms_client = boto3.client('kms')
 =================================== Helper methods that interact with AWS ==================================
 ============================================================================================================
 """
+
 
 # assumes mgmt role to set up cognito client associated with mgmt account
 def create_cognito_client(mgmt_account_role_arn):
@@ -58,6 +60,7 @@ def get_groups_for_user(user_name_no_sub, user_pool_id, cognito_client):
             UserPoolId=user_pool_id,
         )
     return [group.get('GroupName') for group in response.get('Groups')]
+
 
 def list_all_policies_in_account():
     policy_list = []

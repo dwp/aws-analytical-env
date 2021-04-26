@@ -1,4 +1,5 @@
 import sys
+
 from policy_munge.lambda_handler import lambda_handler
 
 try:
