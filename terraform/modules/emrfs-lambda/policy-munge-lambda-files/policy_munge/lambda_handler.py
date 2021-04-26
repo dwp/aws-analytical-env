@@ -3,7 +3,7 @@ import json
 import logging
 import re
 
-import aws_caller
+import policy_munge.aws_caller as aws_caller
 from config import get_config, ConfigKeys
 
 logger = logging.getLogger()
