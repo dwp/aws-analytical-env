@@ -1,21 +1,20 @@
 import copy
 import json
 import logging
-import os
 import re
-from enum import Enum
 
 import aws_caller
+from config import get_config, ConfigKeys
 
 logger = logging.getLogger()
 logger.level = logging.INFO
 
 # policy json template to be copied and amended as needed
-iam_template = {"Version": "2012-10-17", "Statement": []}
-chars_in_empty_iam_template = 42
-char_limit_of_json_policy = 6144
-chars_in_empty_tag = 0
-char_limit_for_tag_value = 200
+IAM_TEMPLATE = {"Version": "2012-10-17", "Statement": []}
+CHARS_IN_EMPTY_IAM_TEMPLATE = 42
+CHAR_LIMIT_JSON_POLICY = 6144
+CHARS_EMPTY_TAG = 0
+CHAR_LIMIT_TAG_VALUE = 200
 
 """
 ============================================================================================================
@@ -54,7 +53,7 @@ to a single IAM role than would otherwise be possible.
 
 
 def lambda_handler(event, context):
-    config = get_env_vars()
+    config = get_config()
 
     user_state_and_policy = get_user_userstatus_policy_dict(config)
 
@@ -83,7 +82,8 @@ def lambda_handler(event, context):
 
                 list_of_policy_objects.append(s3fs_access_policy_object)
 
-                logging.info(f'Munging policy statements for {[policy.get("policy_name") for policy in list_of_policy_objects]}')
+                logging.info(
+                    f'Munging policy statements for {[policy.get("policy_name") for policy in list_of_policy_objects]}')
                 dict_of_policy_name_to_munged_policy_objects = chunk_policies_and_return_dict_of_policy_name_to_json(
                     list_of_policy_objects, user_name,
                     user_state_and_policy[user_name]['role_name']
@@ -124,38 +124,6 @@ def lambda_handler(event, context):
 ======================================== Helper methods for handler ========================================
 ============================================================================================================
 """
-
-
-class ConfigKeys(Enum):
-    database_cluster_arn = 'DATABASE_CLUSTER_ARN'
-    database_name = 'DATABASE_NAME'
-    secret_arn = 'SECRET_ARN'
-    common_tags = 'COMMON_TAGS'
-    assume_role_policy_json = 'ASSUME_ROLE_POLICY_JSON'
-    s3fs_bucket_arn = 'S3FS_BUCKET_ARN'
-    s3fs_kms_arn = 'S3FS_KMS_ARN'
-    region = 'REGION'
-    mgmt_account = 'MGMT_ACCOUNT_ROLE_ARN'
-    user_pool_id = 'COGNITO_USERPOOL_ID'
-
-
-# Gets env vars passed in from terraform as strings and builds the variables dict.
-def get_env_vars():
-    common_tags_string = os.getenv('COMMON_TAGS')
-    tag_separator = ","
-    key_val_separator = ":"
-    config = dict(map(lambda item: (item, os.getenv(item.value)), ConfigKeys.__members__.values()))
-    config[ConfigKeys.common_tags] = dict()
-
-    common_tags = common_tags_string.split(tag_separator)
-    for tag in common_tags:
-        key, value = tag.split(key_val_separator)
-        config[ConfigKeys.common_tags][key] = value
-
-    for k, v in config.items():
-        if v is None or v == {}:
-            raise NameError(f'Variable: {k.value} has not been provided.')
-    return config
 
 
 # loops through the desired state (from RDS) and what exists in AWS and creates any missing roles
@@ -201,16 +169,16 @@ def verify_policies(names, list_of_policy_objects):
 # creates json of policy documents mapped to their policy name using iam_policy_template and statements
 # from existing policies.
 def chunk_policies_and_return_dict_of_policy_name_to_json(policy_object_list, user_name, role_name):
-    policy_object_list = assign_chunk_number_to_objects(policy_object_list, chars_in_empty_iam_template,
-                                                        char_limit_of_json_policy)
-    total_number_of_chunks = policy_object_list[(len(policy_object_list) - 1)]['chunk_number'] +1
+    policy_object_list = assign_chunk_number_to_objects(policy_object_list, CHARS_IN_EMPTY_IAM_TEMPLATE,
+                                                        CHAR_LIMIT_JSON_POLICY)
+    total_number_of_chunks = policy_object_list[(len(policy_object_list) - 1)]['chunk_number'] + 1
     dict_of_policy_name_to_munged_policy_objects = {}
     for policy in policy_object_list:
         munged_policy_name = f'emrfs_{user_name}-{policy["chunk_number"] + 1}of{total_number_of_chunks}'
         if munged_policy_name in dict_of_policy_name_to_munged_policy_objects:
             dict_of_policy_name_to_munged_policy_objects[munged_policy_name]['Statement'].extend(policy['statement'])
         else:
-            iam_policy = copy.deepcopy(iam_template)
+            iam_policy = copy.deepcopy(IAM_TEMPLATE)
             iam_policy['Statement'] = policy['statement']
             dict_of_policy_name_to_munged_policy_objects[munged_policy_name] = iam_policy
 
@@ -243,7 +211,6 @@ def remove_existing_user_policies(role_name, all_policy_list):
             logging.info(f'Policy: {policy["PolicyName"]} - Removed')
 
 
-
 # creates policies in IAM from JSON files and removes JSON files
 def create_policies_from_dict_and_return_list_of_policy_arns(dict_of_policy_name_to_munged_policy_objects):
     list_of_policy_arns = []
@@ -256,7 +223,7 @@ def create_policies_from_dict_and_return_list_of_policy_arns(dict_of_policy_name
 
 
 def prevent_matching_sids(munged_policy_statement):
-    sids={}
+    sids = {}
     for statement in munged_policy_statement:
         sid = statement.get("Sid")
         if sid and sid in sids.keys():
@@ -295,8 +262,8 @@ def tag_role_with_policies(policy_list, role_name, common_tags):
             }
         )
     chunked_tag_object_list = assign_chunk_number_to_objects(tag_object_list,
-                                                             chars_in_empty_tag,
-                                                             char_limit_for_tag_value)
+                                                             CHARS_EMPTY_TAG,
+                                                             CHAR_LIMIT_TAG_VALUE)
     tag_keys_to_value_list = {}
     total_number_of_chunks = chunked_tag_object_list[(len(chunked_tag_object_list) - 1)]['chunk_number'] + 1
     for tag in chunked_tag_object_list:
@@ -306,7 +273,7 @@ def tag_role_with_policies(policy_list, role_name, common_tags):
         else:
             tag_keys_to_value_list[tag_key] = [tag['policy_name']]
 
-    if len(tag_keys_to_value_list) > (50-len(common_tags)):
+    if len(tag_keys_to_value_list) > (50 - len(common_tags)):
         raise IndexError("Tag limit for role exceeded")
 
     tag_list = create_tag_list(tag_keys_to_value_list, common_tags)
@@ -347,9 +314,9 @@ def get_user_userstatus_policy_dict(variables):
         JOIN Policy ON GroupPolicy.policyId = Policy.id;'
     response = aws_caller.execute_statement(
         sql,
-        variables['secret_arn'],
-        variables["database_name"],
-        variables["database_cluster_arn"]
+        variables[ConfigKeys.database_secret_arn],
+        variables[ConfigKeys.database_name],
+        variables[ConfigKeys.database_cluster_arn]
     )
     if len(response['records']) > 0:
         for record in response['records']:
@@ -383,15 +350,15 @@ def create_policy_document_from_template(user_name, variables):
     s3fslist = statement[2].get('Resource')
 
     s3fsaccessdocument.append(
-        f'{variables["s3fs_bucket_arn"]}/home/{user_name}/*'
+        f'{variables[ConfigKeys.s3fs_bucket_arn]}/home/{user_name}/*'
     )
 
     s3fskmsaccessdocument.extend([
-        item for item in [variables["s3fs_kms_arn"], home_key_arn] if item is not None
+        item for item in [variables[ConfigKeys.s3fs_kms_arn], home_key_arn] if item is not None
     ])
 
     s3fslist.append(
-        variables["s3fs_bucket_arn"]
+        variables[ConfigKeys.s3fs_bucket_arn]
     )
 
     return statement
