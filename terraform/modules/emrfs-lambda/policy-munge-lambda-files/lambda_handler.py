@@ -1,11 +1,12 @@
+import copy
 import json
 import logging
-import copy
-import re
 import os
-import sys
+import re
+from enum import Enum
 
 import aws_caller
+
 logger = logging.getLogger()
 logger.level = logging.INFO
 
@@ -15,7 +16,6 @@ chars_in_empty_iam_template = 42
 char_limit_of_json_policy = 6144
 chars_in_empty_tag = 0
 char_limit_for_tag_value = 200
-variables = {}
 
 """
 ============================================================================================================
@@ -54,16 +54,16 @@ to a single IAM role than would otherwise be possible.
 
 
 def lambda_handler(event, context):
-    get_env_vars()
+    config = get_env_vars()
 
-    user_state_and_policy = get_user_userstatus_policy_dict(variables)
+    user_state_and_policy = get_user_userstatus_policy_dict(config)
 
     pre_creation_existing_role_list = aws_caller.get_emrfs_roles()
 
     existing_role_list = check_roles_exist_and_create_if_not(
         pre_creation_existing_role_list,
         user_state_and_policy,
-        variables['assume_role_policy_json']
+        config[ConfigKeys.assume_role_policy_json]
     )
 
     all_policy_list = aws_caller.list_all_policies_in_account()
@@ -78,7 +78,7 @@ def lambda_handler(event, context):
                     all_policy_list
                 )
 
-                statement = create_policy_document_from_template(user_name, variables)
+                statement = create_policy_document_from_template(user_name, config)
                 s3fs_access_policy_object = create_policy_object(statement)
 
                 list_of_policy_objects.append(s3fs_access_policy_object)
@@ -104,7 +104,7 @@ def lambda_handler(event, context):
                 tag_role_with_policies(
                     user_state_and_policy[user_name]['policy_names'],
                     user_state_and_policy[user_name]['role_name'],
-                    variables['common_tags']
+                    config['common_tags']
                 )
                 logging.info(f'Munged policy/policies attached')
 
@@ -116,7 +116,6 @@ def lambda_handler(event, context):
                 logging.info(f'Role: {user_state_and_policy[user_name]["role_name"]} - Removed')
                 logging.info(f'Removed User: {user_name} - IAM resources')
 
-
         logging.info(f'Finished processing policies for user: {user_name}')
 
 
@@ -127,33 +126,36 @@ def lambda_handler(event, context):
 """
 
 
-# Gets env vars passed in from terraform as strings and builds the variables global dict.
+class ConfigKeys(Enum):
+    database_cluster_arn = 'DATABASE_CLUSTER_ARN'
+    database_name = 'DATABASE_NAME'
+    secret_arn = 'SECRET_ARN'
+    common_tags = 'COMMON_TAGS'
+    assume_role_policy_json = 'ASSUME_ROLE_POLICY_JSON'
+    s3fs_bucket_arn = 'S3FS_BUCKET_ARN'
+    s3fs_kms_arn = 'S3FS_KMS_ARN'
+    region = 'REGION'
+    mgmt_account = 'MGMT_ACCOUNT_ROLE_ARN'
+    user_pool_id = 'COGNITO_USERPOOL_ID'
+
+
+# Gets env vars passed in from terraform as strings and builds the variables dict.
 def get_env_vars():
     common_tags_string = os.getenv('COMMON_TAGS')
     tag_separator = ","
     key_val_separator = ":"
-
-    variables['database_cluster_arn'] = os.getenv('DATABASE_CLUSTER_ARN')
-    variables['database_name'] = os.getenv('DATABASE_NAME')
-    variables['secret_arn'] = os.getenv('SECRET_ARN')
-    variables['common_tags'] ={}
-    variables['assume_role_policy_json'] = os.getenv('ASSUME_ROLE_POLICY_JSON')
-    variables['s3fs_bucket_arn'] = os.getenv('S3FS_BUCKET_ARN')
-    variables['s3fs_kms_arn'] = os.getenv('S3FS_KMS_ARN')
-    variables['region'] = os.getenv('REGION')
-    variables['account'] = os.getenv('ACCOUNT')
-    variables['mgmt_account'] = os.getenv('MGMT_ACCOUNT_ROLE_ARN')
-    variables['user_pool_id'] = os.getenv('COGNITO_USERPOOL_ID')
+    config = dict(map(lambda item: (item, os.getenv(item.value)), ConfigKeys.__members__.values()))
+    config[ConfigKeys.common_tags] = dict()
 
     common_tags = common_tags_string.split(tag_separator)
     for tag in common_tags:
-        tag_key_val_list = tag.split(key_val_separator)
-        variables['common_tags'][tag_key_val_list[0]] = tag_key_val_list[1]
+        key, value = tag.split(key_val_separator)
+        config[ConfigKeys.common_tags][key] = value
 
-    for var in variables:
-        if var is None or var == {}:
-            raise NameError(f'Variable: {var} has not been provided.')
-    return variables
+    for k, v in config.items():
+        if v is None or v == {}:
+            raise NameError(f'Variable: {k.value} has not been provided.')
+    return config
 
 
 # loops through the desired state (from RDS) and what exists in AWS and creates any missing roles
