@@ -8,6 +8,7 @@ from typing import TypedDict, List, Dict
 import policy_munge.aws_caller as aws_caller
 from config import get_config, ConfigKeys
 from policy_munge import resources
+from util import str_md5_digest
 
 logger = logging.getLogger()
 logger.level = logging.INFO
@@ -81,7 +82,8 @@ def lambda_handler(event, context):
                     all_policy_list
                 )
 
-                statement = create_policy_document_from_template(user_name, config)
+                statement = create_policy_document_from_template(user_name, get_config(ConfigKeys.s3fs_bucket_arn),
+                                                                 get_config(ConfigKeys.s3fs_kms_arn))
                 s3fs_access_policy_object = create_policy_object(statement)
 
                 list_of_policy_objects.append(s3fs_access_policy_object)
@@ -94,6 +96,11 @@ def lambda_handler(event, context):
                 )
                 logging.info(f'Policy statements successfully munged')
 
+                policies_json = json.dumps(dict_of_policy_name_to_munged_policy_objects.values())
+                if not role_needs_update(user_info[user_name]['role_name'], policies_json):
+                    logger.info(f"Role {user_info[user_name]['role_name']} does not need to be updated")
+                    continue
+
                 remove_existing_user_policies(user_info[user_name]['role_name'], all_policy_list)
 
                 logging.info(f'Creating munged policy/policies for {user_name}...')
@@ -105,11 +112,18 @@ def lambda_handler(event, context):
                 logging.info(f'Attaching munged policy/policies to role for {user_name}...')
                 attach_policies_to_role(list_of_policy_arns, user_info[user_name]['role_name'])
                 delete_tags(user_info[user_name]['role_name'])
+
+                additional_tags = {
+                    **config[ConfigKeys.common_tags],
+                    "AttachedPoliciesHash": str_md5_digest(policies_json)
+                }
+
                 tag_role_with_policies(
                     user_info[user_name]['policy_names'],
                     user_info[user_name]['role_name'],
-                    config['common_tags']
+                    additional_tags
                 )
+
                 logging.info(f'Munged policy/policies attached')
 
             else:
@@ -147,6 +161,7 @@ def ensure_roles(existing_role_list, db_user_info, assume_role_document):
     :param assume_role_document: assume role policy to be attached to the role
     :return: list of all user roles
     """
+
     roles_after_creation = existing_role_list.copy()
     for user in db_user_info:
         if db_user_info[user]['role_name'] not in existing_role_list \
@@ -157,6 +172,25 @@ def ensure_roles(existing_role_list, db_user_info, assume_role_document):
             logging.info(f'Role created for {user}')
             roles_after_creation.append(created_role)
     return roles_after_creation
+
+
+def role_needs_update(role_name: str, desired_policy_json: str) -> bool:
+    """
+    Checks whether role needs to be updated based on existing hash
+
+    :param role_name: name of role to be checked
+    :type role_name: str
+    :param desired_policy_json: JSON string of the desired policy state for the role
+    :type desired_policy_json: str
+    :return: True if policy needs to be updated, False otherwise
+    :rtype: bool
+    """
+
+    policy_hash = str_md5_digest(desired_policy_json)
+
+    role_tags = aws_caller.get_all_role_tags(role_name)["Tags"]
+    hash_role_tag = next((tag for tag in role_tags if tag["Key"] == "AttachedPoliciesHash"), None)
+    return hash_role_tag is None or hash_role_tag["Value"] != policy_hash
 
 
 # gets list of all policies available then creates a map of policy name to statement json based on requested policies
@@ -263,12 +297,12 @@ def delete_tags(role_name):
     for tag in tags:
         if (regex.match(tag['Key'])):
             tag_name_list.append(tag['Key'])
-    if (len(tag_name_list) > 0):
+    if len(tag_name_list) > 0:
         aws_caller.delete_role_tags(tag_name_list, role_name)
 
 
 # creates tag values mapped to their tag name to avoid hitting the maximum tag per role
-def tag_role_with_policies(policy_list, role_name, common_tags):
+def tag_role_with_policies(policy_list: List[str], role_name: str, additional_tags: Dict[str, str]):
     tag_object_list = []
     for name in policy_list:
         tag_object_list.append(
@@ -290,38 +324,15 @@ def tag_role_with_policies(policy_list, role_name, common_tags):
         else:
             tag_keys_to_value_list[tag_key] = [tag['policy_name']]
 
-    if len(tag_keys_to_value_list) > (50 - len(common_tags)):
+    if len(tag_keys_to_value_list) > (50 - len(additional_tags)):
         raise IndexError("Tag limit for role exceeded")
 
-    tag_list = create_tag_list(tag_keys_to_value_list, common_tags)
+    tags = [
+        *map(lambda key: {'Key': key, 'Value': '/'.join(tag_keys_to_value_list[key])}, tag_keys_to_value_list),
+        *map(lambda key: {'Key': key, 'Value': additional_tags[key]}, additional_tags)
+    ]
 
-    aws_caller.tag_role(role_name, tag_list)
-
-
-def create_tag_list(tag_keys_to_value_list, common_tags):
-    """
-    creates a list of tag objects to be added to a role
-    :param tag_keys_to_value_list: TODO
-    :param common_tags: TODO
-    :return: TODO
-    """
-    separator = '/'
-    tag_list = []
-    for tag in common_tags:
-        tag_list.append(
-            {
-                'Key': tag,
-                'Value': common_tags[tag]
-            }
-        )
-    for tag in tag_keys_to_value_list:
-        tag_list.append(
-            {
-                'Key': tag,
-                'Value': separator.join(tag_keys_to_value_list[tag])
-            }
-        )
-    return tag_list
+    aws_caller.tag_role(role_name, tags)
 
 
 def get_db_user_info() -> Dict[str, UserInfo]:

@@ -234,8 +234,10 @@ class LambdaHandlerTests(TestCase):
     @patch('lambda_handler.aws_caller.tag_role')
     def test_tag_role_with_policies_NOT_CHUNKED(self, mock_tag_role: MagicMock):
         lambda_handler.tag_role_with_policies(['policy_one', 'policy_two'], 'emrfs_user_one', variables['common_tags'])
-
-        mock_tag_role.assert_called_with('emrfs_user_one', [
+        mock_tag_role.assert_called()
+        args = mock_tag_role.call_args.args
+        assert args[0] == 'emrfs_user_one'
+        self.assertCountEqual(args[1], [
             {
                 'Key': 'tag1key',
                 'Value': 'tag1val'
@@ -252,17 +254,17 @@ class LambdaHandlerTests(TestCase):
 
     @patch('lambda_handler.CHAR_LIMIT_TAG_VALUE', 20)
     @patch('lambda_handler.aws_caller.tag_role')
-    def test_tag_role_with_policies_CHUNKED(self, mock_tag_role):
+    def test_tag_role_with_policies_CHUNKED(self, mock_tag_role: MagicMock):
         lambda_handler.tag_role_with_policies(['policy_one', 'policy_two'], 'emrfs_user_one', variables['common_tags'])
-
-        mock_tag_role.assert_called_with(
-            'emrfs_user_one', [
-                {'Key': 'tag1key', 'Value': 'tag1val'},
-                {'Key': 'tag2key', 'Value': 'tag2val'},
-                {'Key': 'InputPolicies-1of2', 'Value': 'policy_one'},
-                {'Key': 'InputPolicies-2of2', 'Value': 'policy_two'},
-            ]
-        )
+        mock_tag_role.assert_called()
+        args = mock_tag_role.call_args.args
+        assert args[0] == 'emrfs_user_one'
+        self.assertCountEqual(args[1], [
+            {'Key': 'tag1key', 'Value': 'tag1val'},
+            {'Key': 'tag2key', 'Value': 'tag2val'},
+            {'Key': 'InputPolicies-1of2', 'Value': 'policy_one'},
+            {'Key': 'InputPolicies-2of2', 'Value': 'policy_two'},
+        ])
 
     @patch('lambda_handler.aws_caller.get_kms_arn')
     def test_create_policy_document_from_template(self, mock_get_kms_arn):
