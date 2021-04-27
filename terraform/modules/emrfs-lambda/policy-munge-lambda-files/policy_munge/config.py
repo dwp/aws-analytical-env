@@ -1,6 +1,6 @@
 import os
 from enum import Enum
-from typing import Union
+from typing import Union, Dict
 
 
 class ConfigKeys(Enum):
@@ -16,23 +16,36 @@ class ConfigKeys(Enum):
     user_pool_id = 'COGNITO_USERPOOL_ID'
 
 
-Config = dict[ConfigKeys, Union[str, dict]]
+ConfigValue = Union[str, dict]
+Config = Dict[ConfigKeys, ConfigValue]
+
+_cfg: Union[Config, None] = None
+
+def _init_config():
+    global _cfg
+    if _cfg is None:
+        common_tags_string = os.getenv('COMMON_TAGS')
+        tag_separator = ","
+        key_val_separator = ":"
+        _cfg = dict(map(lambda item: (item, os.getenv(item.value)), ConfigKeys.__members__.values()))
+        _cfg[ConfigKeys.common_tags] = dict()
+
+        common_tags = common_tags_string.split(tag_separator)
+        for tag in common_tags:
+            key, value = tag.split(key_val_separator)
+            _cfg[ConfigKeys.common_tags][key] = value
+
+        for k, v in _cfg.items():
+            if v is None or v == {}:
+                raise NameError(f'Variable: {k.value} has not been provided.')
 
 
-# Gets env vars passed in from terraform as strings and builds the variables dict.
-def get_config() -> Config:
-    common_tags_string = os.getenv('COMMON_TAGS')
-    tag_separator = ","
-    key_val_separator = ":"
-    config: Config = dict(map(lambda item: (item, os.getenv(item.value)), ConfigKeys.__members__.values()))
-    config[ConfigKeys.common_tags] = dict()
-
-    common_tags = common_tags_string.split(tag_separator)
-    for tag in common_tags:
-        key, value = tag.split(key_val_separator)
-        config[ConfigKeys.common_tags][key] = value
-
-    for k, v in config.items():
-        if v is None or v == {}:
-            raise NameError(f'Variable: {k.value} has not been provided.')
-    return config
+def get_config(key: ConfigKeys = None) -> Union[Config, ConfigValue]:
+    """
+    Gets env vars and builds the variables dict.
+    :return: config dict if key not specified, config value if key
+    specified
+    """
+    global _cfg
+    _init_config()
+    return _cfg if key is None else _cfg[key]

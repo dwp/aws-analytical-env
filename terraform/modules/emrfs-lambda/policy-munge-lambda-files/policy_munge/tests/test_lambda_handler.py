@@ -1,7 +1,9 @@
-import lambda_handler
-from unittest import TestCase
 import copy
-from mock import call, patch
+from unittest import TestCase
+
+from mock import call, patch, MagicMock
+
+import lambda_handler
 
 iam_template = {"Version": "2012-10-17", "Statement": []}
 
@@ -21,9 +23,12 @@ variables['s3fs_kms_arn'] = 'arn:aws:kms:eu-west-7:1234567:key/master-12ab-34cd-
 mocked_db_response = {
     'numberOfRecordsUpdated': 0,
     'records': [
-        [{'stringValue': 'user_one'}, {'booleanValue': False}, {'stringValue': 'policy_one'}, {'stringValue': 'group_one'}],
-        [{'stringValue': 'user_two'}, {'booleanValue': True}, {'stringValue': 'policy_one'}, {'stringValue': 'group_two'}],
-        [{'stringValue': 'user_one'}, {'booleanValue': False}, {'stringValue': 'policy_two'}, {'stringValue': 'group_two'}],
+        [{'stringValue': 'user_one'}, {'booleanValue': False}, {'stringValue': 'policy_one'},
+         {'stringValue': 'group_one'}],
+        [{'stringValue': 'user_two'}, {'booleanValue': True}, {'stringValue': 'policy_one'},
+         {'stringValue': 'group_two'}],
+        [{'stringValue': 'user_one'}, {'booleanValue': False}, {'stringValue': 'policy_two'},
+         {'stringValue': 'group_two'}],
     ]
 }
 
@@ -88,7 +93,7 @@ mocked_role_tags_response = [
     }
 ]
 
-mock_statement_one =   {
+mock_statement_one = {
     "Sid": "s3fsaccessdocument",
     "Effect": "Allow",
     "Action": [
@@ -103,7 +108,7 @@ mock_statement_one =   {
     ]
 }
 
-mock_statement_two =   {
+mock_statement_two = {
     "Sid": "s3fskmsaccessdocument",
     "Effect": "Allow",
     "Action": [
@@ -113,7 +118,7 @@ mock_statement_two =   {
         "kms:ReEncrypt*",
         "kms:GenerateDataKey*"
     ],
-    "Resource":  [
+    "Resource": [
         "arn:aws:kms:eu-west-7:1234567:key/master-12ab-34cd-56ef-1234567890ab",
         "arn:aws:kms:eu-west-7:1234567:key/testuser-12ab-34cd-56ef-1234567890ab"
     ]
@@ -131,51 +136,24 @@ mock_statement_three = {
 
 class LambdaHandlerTests(TestCase):
 
-    @patch('lambda_handler.os.getenv')
-    def test_get_env_vars(self, mock_get_env):
-        mock_get_env.side_effect = ["tag1:val1,tag2:val2,tag3:val3", variables['database_cluster_arn'],
-                                    variables['database_name'], variables['secret_arn'],
-                                    variables['assume_role_policy_json'],
-                                    variables['s3fs_bucket_arn'],
-                                    variables['s3fs_kms_arn'],
-                                    variables['region'],
-                                    variables['account'],
-                                    variables['mgmt_account'],
-                                    variables['user_pool_id'],
-                                    ]
-        lambda_handler.get_env_vars()
-        assert lambda_handler.variables['common_tags']['tag1'] == 'val1'
-        assert lambda_handler.variables['common_tags']['tag2'] == 'val2'
-        assert lambda_handler.variables['common_tags']['tag3'] == 'val3'
-        assert lambda_handler.variables['database_cluster_arn'] == variables['database_cluster_arn']
-        assert lambda_handler.variables['database_name'] == variables['database_name']
-        assert lambda_handler.variables['secret_arn'] == variables['secret_arn']
-        assert lambda_handler.variables['assume_role_policy_json'] == variables['assume_role_policy_json']
-        assert lambda_handler.variables['s3fs_bucket_arn'] == variables['s3fs_bucket_arn']
-        assert lambda_handler.variables['mgmt_account'] == variables['mgmt_account']
-        assert lambda_handler.variables['user_pool_id'] == variables['user_pool_id']
-
-
-    @patch('aws_caller.execute_statement')
+    @patch('lambda_handler.aws_caller.execute_statement')
     def test_get_user_userstatus_policy_dict(self, mock_execute_statement):
         mock_execute_statement.side_effect = [mocked_db_response, {'numberOfRecordsUpdated': 0, 'records': []}]
-        result1 = lambda_handler.get_user_userstatus_policy_dict(variables)
-        print(result1)
+        result1 = lambda_handler.get_db_user_info()
         assert result1 == mocked_user_dict
 
         self.assertRaises(
             ValueError,
-            lambda_handler.get_user_userstatus_policy_dict,
-            variables
+            lambda_handler.get_db_user_info
         )
 
-    @patch('aws_caller.create_role_and_await_consistency')
+    @patch('lambda_handler.aws_caller.create_role_and_await_consistency')
     def test_check_roles_exist_and_create_if_not(self, mock_create_role_and_await_consistency):
         one_role_does_not_exist = ['emrfs_user_one']
         both_roles_exist = ['emrfs_user_one', 'emrfs_user_two']
         mock_create_role_and_await_consistency.return_value = 'created_user'
 
-        result1 = lambda_handler.check_roles_exist_and_create_if_not(
+        result1 = lambda_handler.ensure_roles(
             both_roles_exist,
             mocked_user_dict,
             variables['assume_role_policy_json']
@@ -183,7 +161,7 @@ class LambdaHandlerTests(TestCase):
         mock_create_role_and_await_consistency.assert_not_called()
         assert result1 == ['emrfs_user_one', 'emrfs_user_two']
 
-        result2 = lambda_handler.check_roles_exist_and_create_if_not(
+        result2 = lambda_handler.ensure_roles(
             one_role_does_not_exist,
             mocked_user_dict,
             variables['assume_role_policy_json']
@@ -192,11 +170,11 @@ class LambdaHandlerTests(TestCase):
         mock_create_role_and_await_consistency.assert_called_once_with('emrfs_user_two', '{"json": "policy string"}')
         assert result2 == ['emrfs_user_one', 'created_user']
 
-    @patch('aws_caller.get_policy_statement_as_list')
-    def test_create_policy_object_list_from_policy_name_list(self, mock_get_policy_statement_as_list):
-        mock_get_policy_statement_as_list.return_value = [{'test': 'statement'}]
+    @patch('lambda_handler.aws_caller.get_policy_statements')
+    def test_create_policy_object_list_from_policy_name_list(self, mock_get_policy_statements):
+        mock_get_policy_statements.return_value = [{'test': 'statement'}]
 
-        result = lambda_handler.create_policy_object_list_from_policy_name_list(
+        result = lambda_handler.get_policy_info(
             ['policy_one', 'policy_three'],
             mocked_all_policy_list
         )
@@ -205,7 +183,7 @@ class LambdaHandlerTests(TestCase):
         assert result[1].get('policy_name') == 'policy_three'
         assert result[0].get('statement') == [{'test': 'statement'}]
 
-    @patch('lambda_handler.char_limit_of_json_policy', 70)
+    @patch('lambda_handler.CHAR_LIMIT_JSON_POLICY', 70)
     def test_chunk_policies_and_return_dict_of_policy_name_to_json_CHUNKED(self):
         result = lambda_handler.chunk_policies_and_return_dict_of_policy_name_to_json(
             mocked_policy_object_list,
@@ -216,7 +194,7 @@ class LambdaHandlerTests(TestCase):
         assert result.get('emrfs_user_one-1of2') == {"Version": "2012-10-17", "Statement": [{'test': 'statement1'}]}
         assert result.get('emrfs_user_one-2of2') == {"Version": "2012-10-17", "Statement": [{'test': 'statement2'}]}
 
-    @patch('lambda_handler.char_limit_of_json_policy', 100)
+    @patch('lambda_handler.CHAR_LIMIT_JSON_POLICY', 100)
     def test_chunk_policies_and_return_dict_of_policy_name_to_json_NO_CHUNKS(self):
         result = lambda_handler.chunk_policies_and_return_dict_of_policy_name_to_json(
             mocked_policy_object_list,
@@ -229,7 +207,7 @@ class LambdaHandlerTests(TestCase):
             "Statement": [{'test': 'statement1'}, {'test': 'statement2'}]
         }
 
-    @patch('aws_caller.remove_policy_being_replaced')
+    @patch('lambda_handler.aws_caller.remove_policy_being_replaced')
     def test_remove_existing_user_policies(self, mock_remove_policy_being_replaced):
         calls = [
             call('arn:iam:123432/Policy/emrfs_test1', 'emrfs_user_one'),
@@ -243,8 +221,8 @@ class LambdaHandlerTests(TestCase):
 
         mock_remove_policy_being_replaced.assert_has_calls(calls, any_order=True)
 
-    @patch('aws_caller.get_all_role_tags')
-    @patch('aws_caller.delete_role_tags')
+    @patch('lambda_handler.aws_caller.get_all_role_tags')
+    @patch('lambda_handler.aws_caller.delete_role_tags')
     def test_delete_tags(self, mock_delete_role_tags, mock_get_all_role_tags):
         mock_get_all_role_tags.return_value = mocked_role_tags_response
 
@@ -253,8 +231,8 @@ class LambdaHandlerTests(TestCase):
         mock_get_all_role_tags.assert_called_once()
         mock_delete_role_tags.assert_called_with(['InputPolicies-1of20', 'InputPolicies-18of20'], 'emrfs_user_one')
 
-    @patch('aws_caller.tag_role')
-    def test_tag_role_with_policies_NOT_CHUNKED(self, mock_tag_role):
+    @patch('lambda_handler.aws_caller.tag_role')
+    def test_tag_role_with_policies_NOT_CHUNKED(self, mock_tag_role: MagicMock):
         lambda_handler.tag_role_with_policies(['policy_one', 'policy_two'], 'emrfs_user_one', variables['common_tags'])
 
         mock_tag_role.assert_called_with('emrfs_user_one', [
@@ -272,8 +250,8 @@ class LambdaHandlerTests(TestCase):
             },
         ])
 
-    @patch('lambda_handler.char_limit_for_tag_value', 20)
-    @patch('aws_caller.tag_role')
+    @patch('lambda_handler.CHAR_LIMIT_TAG_VALUE', 20)
+    @patch('lambda_handler.aws_caller.tag_role')
     def test_tag_role_with_policies_CHUNKED(self, mock_tag_role):
         lambda_handler.tag_role_with_policies(['policy_one', 'policy_two'], 'emrfs_user_one', variables['common_tags'])
 
@@ -286,22 +264,13 @@ class LambdaHandlerTests(TestCase):
             ]
         )
 
-    def test_verify_policies_raises_error_on_missing_existing_policy(self):
-        with self.assertRaises(NameError):
-            lambda_handler.verify_policies(['policy_two'], mocked_policy_object_list)
-
-    def test_verify_policies_does_not_raise_error_when_all_policies_found(self):
-        self.assertIsNone(lambda_handler.verify_policies(['policy_one', 'policy_three'], mocked_policy_object_list))
-
-    def test_verify_policies_does_not_raise_error_when_additional_policy_found_in_rds(self):
-        self.assertIsNone(lambda_handler.verify_policies(['policy_one'], mocked_policy_object_list))
-
-    @patch('aws_caller.get_kms_arn')
+    @patch('lambda_handler.aws_caller.get_kms_arn')
     def test_create_policy_document_from_template(self, mock_get_kms_arn):
         mock_get_kms_arn.side_effect = [
             "arn:aws:kms:eu-west-7:1234567:key/testuser-12ab-34cd-56ef-1234567890ab"
         ]
-        result = lambda_handler.create_policy_document_from_template('test_user', variables)
+        result = lambda_handler.create_policy_document_from_template('test_user', variables['s3fs_bucket_arn'],
+                                                                     variables['s3fs_kms_arn'])
         assert result[0] == mock_statement_one
         assert result[1] == mock_statement_two
         assert result[2] == mock_statement_three
@@ -317,7 +286,7 @@ class LambdaHandlerTests(TestCase):
             copy.deepcopy(mock_statement_one)
         ]
         lambda_handler.prevent_matching_sids(duplicate_sid["Statement"])
-        sids_in_processed_json = [ statement_object["Sid"] for statement_object in duplicate_sid["Statement"] ]
+        sids_in_processed_json = [statement_object["Sid"] for statement_object in duplicate_sid["Statement"]]
         assert sids_in_processed_json == [
             's3fsaccessdocument',
             's3fskmsaccessdocument',
@@ -327,12 +296,13 @@ class LambdaHandlerTests(TestCase):
             's3fsaccessdocument2'
         ]
 
-    @patch('aws_caller.get_kms_arn')
+    @patch('lambda_handler.aws_caller.get_kms_arn')
     def test_handle_group_kms_not_found_issues(self, mock_get_kms_arn):
         mock_get_kms_arn.side_effect = [None]
-        missing_user_key = lambda_handler.create_policy_document_from_template('test_user', variables)
+        missing_user_key = lambda_handler.create_policy_document_from_template('test_user',
+                                                                               variables['s3fs_bucket_arn'],
+                                                                               variables['s3fs_kms_arn'])
 
-        print(missing_user_key)
         assert missing_user_key[0].get('Resource') == [
             'arn:12345432::s3_test_arn/home/test_user/*'
         ]
