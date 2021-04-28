@@ -1,9 +1,11 @@
 import copy
+import json
 from unittest import TestCase
 
 from mock import call, patch, MagicMock
 
 import lambda_handler
+from util import str_md5_digest
 
 iam_template = {"Version": "2012-10-17", "Statement": []}
 
@@ -314,3 +316,30 @@ class LambdaHandlerTests(TestCase):
         assert missing_user_key[2].get('Resource') == [
             "arn:12345432::s3_test_arn"
         ]
+
+    @patch('lambda_handler.aws_caller.get_all_role_tags')
+    def test_role_needs_update_no_hash(self, mock_get_role_tags: MagicMock):
+        mock_get_role_tags.return_value = {'Tags': [
+            {'Key': 'UnusedKey', 'Value': 'UnusedValue'}
+        ]}
+
+        assert lambda_handler.role_needs_update("RoleName", '[{"Sid":"test_sid"}]') is True
+
+    @patch('lambda_handler.aws_caller.get_all_role_tags')
+    def test_role_needs_update_changed(self, mock_get_role_tags: MagicMock):
+        old_policy = json.dumps([{"Sid": "test_sid"}])
+        mock_get_role_tags.return_value = {'Tags': [
+            {'Key': 'AttachedPoliciesHash', 'Value': str_md5_digest(old_policy)}
+        ]}
+
+        new_policy = json.dumps([{"Sid": "test_sid", "Effect": "Allow"}])
+        assert lambda_handler.role_needs_update("RoleName", new_policy) is True
+
+    @patch('lambda_handler.aws_caller.get_all_role_tags')
+    def test_role_needs_update_not_changed(self, mock_get_role_tags: MagicMock):
+        policy = json.dumps([{"Sid": "test_sid"}])
+        mock_get_role_tags.return_value = {'Tags': [
+            {'Key': 'AttachedPoliciesHash', 'Value': str_md5_digest(policy)}
+        ]}
+
+        assert lambda_handler.role_needs_update("RoleName", policy) is False

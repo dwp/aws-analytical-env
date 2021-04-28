@@ -6,9 +6,10 @@ import re
 from typing import TypedDict, List, Dict
 
 import policy_munge.aws_caller as aws_caller
-from config import get_config, ConfigKeys
+from policy_munge.config import get_config, ConfigKeys
+from policy_munge.util import str_md5_digest
 from policy_munge import resources
-from util import str_md5_digest
+
 
 logger = logging.getLogger()
 logger.level = logging.INFO
@@ -96,7 +97,7 @@ def lambda_handler(event, context):
                 )
                 logging.info(f'Policy statements successfully munged')
 
-                policies_json = json.dumps(dict_of_policy_name_to_munged_policy_objects.values())
+                policies_json = json.dumps(list(dict_of_policy_name_to_munged_policy_objects.values()))
                 if not role_needs_update(user_info[user_name]['role_name'], policies_json):
                     logger.info(f"Role {user_info[user_name]['role_name']} does not need to be updated")
                     continue
@@ -188,7 +189,7 @@ def role_needs_update(role_name: str, desired_policy_json: str) -> bool:
 
     policy_hash = str_md5_digest(desired_policy_json)
 
-    role_tags = aws_caller.get_all_role_tags(role_name)["Tags"]
+    role_tags = aws_caller.get_all_role_tags(role_name)
     hash_role_tag = next((tag for tag in role_tags if tag["Key"] == "AttachedPoliciesHash"), None)
     return hash_role_tag is None or hash_role_tag["Value"] != policy_hash
 

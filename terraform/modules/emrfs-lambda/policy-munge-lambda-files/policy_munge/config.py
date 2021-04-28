@@ -6,7 +6,7 @@ from typing import Union, Dict
 class ConfigKeys(Enum):
     database_cluster_arn = 'DATABASE_CLUSTER_ARN'
     database_name = 'DATABASE_NAME'
-    database_secret_arn = 'SECRET_ARN'
+    database_secret_arn = 'DATABASE_SECRET_ARN'
     common_tags = 'COMMON_TAGS'
     assume_role_policy_json = 'ASSUME_ROLE_POLICY_JSON'
     s3fs_bucket_arn = 'S3FS_BUCKET_ARN'
@@ -24,12 +24,12 @@ _cfg: Union[Config, None] = None
 def _init_config():
     global _cfg
     if _cfg is None:
-        common_tags_string = os.getenv('COMMON_TAGS')
+        common_tags_string = os.environ['COMMON_TAGS']
         tag_separator = ","
         key_val_separator = ":"
-        _cfg = dict(map(lambda item: (item, os.getenv(item.value)), ConfigKeys.__members__.values()))
-        _cfg[ConfigKeys.common_tags] = dict()
+        _cfg = dict(map(lambda item: (item, os.environ[item.value]), ConfigKeys.__members__.values()))
 
+        _cfg[ConfigKeys.common_tags] = dict()
         common_tags = common_tags_string.split(tag_separator)
         for tag in common_tags:
             key, value = tag.split(key_val_separator)

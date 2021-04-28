@@ -6,7 +6,7 @@ import boto3
 import botocore
 from botocore.config import Config
 
-from config import get_config, ConfigKeys
+from policy_munge.config import get_config, ConfigKeys
 
 logger = logging.getLogger()
 logger.level = logging.INFO
@@ -20,8 +20,9 @@ boto_config = Config(
 
 iam_client = boto3.client('iam', config=boto_config)
 rds_data_client = boto3.client('rds-data')
-sts_connection = boto3.client('sts')
+sts_client = boto3.client('sts')
 kms_client = boto3.client('kms')
+
 
 """
 ============================================================================================================
@@ -32,7 +33,7 @@ kms_client = boto3.client('kms')
 
 # assumes mgmt role to set up cognito client associated with mgmt account
 def create_cognito_client(mgmt_account_role_arn):
-    mgmt_account = sts_connection.assume_role(
+    mgmt_account = sts_client.assume_role(
         RoleArn=mgmt_account_role_arn,
         RoleSessionName="mgmt_cognito_rds_sync_lambda"
     )
