@@ -167,8 +167,7 @@ def wait_for_policy_to_exist(arn):
 def get_emrfs_roles():
     """
     Gets list of all roles previously created by this lambda
-    :return: list of role name and md5 hash of the policies
-    attached to the role
+    :return: list of role names
     """
     role_list = []
     path_prefix = '/emrfs/'
