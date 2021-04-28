@@ -1,23 +1,28 @@
-import boto3
-import botocore
 import logging
 import os
+from typing import List
+
+import boto3
+import botocore
 from botocore.config import Config
+
+from policy_munge.config import get_config, ConfigKeys
 
 logger = logging.getLogger()
 logger.level = logging.INFO
 
-config = Config(
-   retries = {
-      'max_attempts': 5,
-      'mode': 'standard'
-   }
+boto_config = Config(
+    retries={
+        'max_attempts': 5,
+        'mode': 'standard'
+    }
 )
 
-iam_client = boto3.client('iam', config=config)
+iam_client = boto3.client('iam', config=boto_config)
 rds_data_client = boto3.client('rds-data')
-sts_connection = boto3.client('sts')
+sts_client = boto3.client('sts')
 kms_client = boto3.client('kms')
+
 
 """
 ============================================================================================================
@@ -25,9 +30,10 @@ kms_client = boto3.client('kms')
 ============================================================================================================
 """
 
+
 # assumes mgmt role to set up cognito client associated with mgmt account
 def create_cognito_client(mgmt_account_role_arn):
-    mgmt_account = sts_connection.assume_role(
+    mgmt_account = sts_client.assume_role(
         RoleArn=mgmt_account_role_arn,
         RoleSessionName="mgmt_cognito_rds_sync_lambda"
     )
@@ -59,6 +65,7 @@ def get_groups_for_user(user_name_no_sub, user_pool_id, cognito_client):
         )
     return [group.get('GroupName') for group in response.get('Groups')]
 
+
 def list_all_policies_in_account():
     policy_list = []
     get_paginated_results_using_marker(
@@ -85,7 +92,7 @@ def get_paginated_results_using_marker(aws_api_reponse, list, iam_client_call, f
 
 
 # returns a list of JSON policy statements from an existing policy
-def get_policy_statement_as_list(arn, default_version_id):
+def get_policy_statements(arn, default_version_id) -> List[str]:
     policy_version = iam_client.get_policy_version(
         PolicyArn=arn,
         VersionId=default_version_id
@@ -156,8 +163,12 @@ def wait_for_policy_to_exist(arn):
     )
 
 
-# returns list of names of all roles previously created by this lambda
+#
 def get_emrfs_roles():
+    """
+    Gets list of all roles previously created by this lambda
+    :return: list of role names
+    """
     role_list = []
     path_prefix = '/emrfs/'
     aws_api_reponse = iam_client.list_roles(
@@ -230,11 +241,11 @@ def remove_user_role(role_name):
 
 
 # connects to RDS instance and executes the SQL statement passed in
-def execute_statement(sql, db_credentials_secrets_store_arn, database_name, db_cluster_arn):
+def execute_statement(sql: str):
     response = rds_data_client.execute_statement(
-        secretArn=db_credentials_secrets_store_arn,
-        database=database_name,
-        resourceArn=db_cluster_arn,
+        secretArn=get_config(ConfigKeys.database_secret_arn),
+        database=get_config(ConfigKeys.database_name),
+        resourceArn=get_config(ConfigKeys.database_cluster_arn),
         sql=sql
     )
     return response

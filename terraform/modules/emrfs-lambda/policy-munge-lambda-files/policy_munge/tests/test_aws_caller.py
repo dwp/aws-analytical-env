@@ -1,7 +1,9 @@
-import aws_caller
 from unittest import TestCase
-from mock import call, patch, Mock
+
 import botocore
+from mock import call, patch
+
+import aws_caller
 
 policies_truncated = {
     'Policies': [
@@ -24,7 +26,7 @@ tags_truncated = {
     'Tags': [
         {'Key': 'tag1key', 'Value': 'tag1val'},
         {'Key': 'tag2key', 'Value': 'tag2val'},
-        {'Key': 'InputPolicies-1of2','Value': 'policy_one'}
+        {'Key': 'InputPolicies-1of2', 'Value': 'policy_one'}
     ],
     'IsTruncated': True,
     'Marker': 'string'
@@ -34,7 +36,7 @@ tags_not_truncated = {
     'Tags': [
         {'Key': 'tag3key', 'Value': 'tag3val'},
         {'Key': 'tag4key', 'Value': 'tag4val'},
-        {'Key': 'InputPolicies-2of2','Value': 'policy_two'}
+        {'Key': 'InputPolicies-2of2', 'Value': 'policy_two'}
     ],
     'IsTruncated': False,
 }
@@ -77,7 +79,7 @@ kms_found_response = {
 }
 
 mock_list_policy_versions_response = {
-    'Versions':[
+    'Versions': [
         {
             'Document': 'string',
             'VersionId': 'non_default_1',
@@ -105,6 +107,7 @@ mock_list_policy_versions_response = {
     ]
 }
 
+
 class AwsCallerTests(TestCase):
 
     @patch('aws_caller.iam_client.list_policies')
@@ -112,7 +115,8 @@ class AwsCallerTests(TestCase):
         mock_list_policies.side_effect = [policies_truncated, policies_truncated, policies_not_truncated]
         result = aws_caller.list_all_policies_in_account()
 
-        assert result == policies_truncated['Policies'] + policies_truncated['Policies'] + policies_not_truncated['Policies']
+        assert result == policies_truncated['Policies'] + policies_truncated['Policies'] + policies_not_truncated[
+            'Policies']
 
     @patch('aws_caller.iam_client.list_role_tags')
     def test_get_all_role_tags(self, mock_list_role_tags):
@@ -126,12 +130,14 @@ class AwsCallerTests(TestCase):
         mock_list_role_tags.side_effect = [roles_truncated, roles_truncated, roles_not_truncated]
         result = aws_caller.get_emrfs_roles()
 
-        assert result == ['emrfs_user_one', 'emrfs_user_two', 'emrfs_user_three', 'emrfs_user_one', 'emrfs_user_two', 'emrfs_user_three', 'emrfs_user_four', 'emrfs_user_five', 'emrfs_user_six']
+        assert result == ['emrfs_user_one', 'emrfs_user_two', 'emrfs_user_three', 'emrfs_user_one', 'emrfs_user_two',
+                          'emrfs_user_three', 'emrfs_user_four', 'emrfs_user_five', 'emrfs_user_six']
 
     @patch('aws_caller.kms_client.describe_key')
     def test_get_kms_arn_found_kms(self, mock_describe_key):
         mock_describe_key.return_value = kms_found_response
-        assert aws_caller.get_kms_arn("/alias/test") == 'arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab'
+        assert aws_caller.get_kms_arn(
+            "/alias/test") == 'arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab'
 
     @patch('aws_caller.kms_client.describe_key')
     def test_get_kms_arn_not_found_kms(self, mock_describe_key):
@@ -141,8 +147,10 @@ class AwsCallerTests(TestCase):
     @patch('aws_caller.iam_client.list_policy_versions')
     @patch('aws_caller.iam_client.delete_policy')
     @patch('aws_caller.iam_client.detach_role_policy')
-    def test_handling_of_detach_role_policy_correct_error(self, mock_detach_role_policy, mock_delete_policy, mock_list_policy_versions):
-        mock_detach_role_policy.side_effect = botocore.exceptions.ClientError({'Error': {'Code': 'NoSuchEntity'}}, 'IAM')
+    def test_handling_of_detach_role_policy_correct_error(self, mock_detach_role_policy, mock_delete_policy,
+                                                          mock_list_policy_versions):
+        mock_detach_role_policy.side_effect = botocore.exceptions.ClientError({'Error': {'Code': 'NoSuchEntity'}},
+                                                                              'IAM')
 
         try:
             aws_caller.remove_policy_being_replaced('arn:aws:iam::111122223333:policy/test_policy', 'test_role')
@@ -152,7 +160,8 @@ class AwsCallerTests(TestCase):
     @patch('aws_caller.iam_client.list_policy_versions')
     @patch('aws_caller.iam_client.delete_policy')
     @patch('aws_caller.iam_client.detach_role_policy')
-    def test_handling_of_detach_role_policy_other_error(self, mock_detach_role_policy, mock_delete_policy, mock_list_policy_versions):
+    def test_handling_of_detach_role_policy_other_error(self, mock_detach_role_policy, mock_delete_policy,
+                                                        mock_list_policy_versions):
         mock_detach_role_policy.side_effect = botocore.exceptions.ClientError({'Error': {'Code': 'OtherError'}}, 'IAM')
 
         try:
@@ -160,12 +169,12 @@ class AwsCallerTests(TestCase):
         except botocore.exceptions.ClientError as e:
             print(f'Passed as raised error: {e}')
 
-
     @patch('aws_caller.iam_client.delete_policy')
     @patch('aws_caller.iam_client.delete_policy_version')
     @patch('aws_caller.iam_client.list_policy_versions')
     @patch('aws_caller.iam_client.detach_role_policy')
-    def test_policy_version_deletion_logic(self, mock_detach_role_policy, mock_list_policy_versions, mock_delete_policy_version, mock_delete_policy):
+    def test_policy_version_deletion_logic(self, mock_detach_role_policy, mock_list_policy_versions,
+                                           mock_delete_policy_version, mock_delete_policy):
         mock_list_policy_versions.return_value = mock_list_policy_versions_response
         calls = [
             call(PolicyArn='test_arn', VersionId='non_default_1'),
