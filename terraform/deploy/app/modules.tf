@@ -78,6 +78,9 @@ module "emr" {
     id      = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_id
     cmk_arn = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_kms_arn
   }
+
+  hive_custom_auth_provider_path = var.hive_custom_auth_jar_path
+  hive_use_auth                  = var.emr_hive_use_auth[local.environment]
 }
 
 module "pushgateway" {

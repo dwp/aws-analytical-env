@@ -81,6 +81,7 @@ locals {
     hive_compaction_threads      = local.hive_compaction_threads[var.environment]
     hive_tez_sessions_per_queue  = local.hive_tez_sessions_per_queue[var.environment]
     hive_max_reducers            = local.hive_max_reducers[var.environment]
+    use_auth                     = var.hive_use_auth
   })
 
   configurations_glue_json = templatefile(format("%s/templates/emr/configuration.glue.json", path.module), {
@@ -185,4 +186,3 @@ locals {
 
 }
 
-#S3 Required in no proxy list as it is a gateway endpoint

@@ -89,6 +89,7 @@ resource "aws_s3_bucket_object" "livy_client_conf_sh" {
   tags    = merge(var.common_tags, { Name : "${var.name_prefix}-livy-config" })
 }
 
+
 # A shell script to update R and install required R packages
 resource "aws_s3_bucket_object" "r_packages_install" {
   bucket = aws_s3_bucket.emr.id
@@ -214,4 +215,24 @@ resource "aws_s3_bucket_object" "azkaban_notifications_sh" {
   )
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-azkaban-notifications-sh" })
+}
+
+
+data "template_file" "hive_auth_conf_sh" {
+  template = file(format("%s/templates/emr/hive_auth_conf.sh", path.module))
+  vars = {
+    aws_region                = var.region
+    user_pool_id              = var.cognito_user_pool_id
+    full_proxy                = local.full_proxy
+    full_no_proxy             = join(",", local.no_proxy_hosts)
+    hive_auth_provider_s3_uri = "s3://${aws_s3_bucket_object.hive_auth_provider_jar.bucket}/${aws_s3_bucket_object.hive_auth_provider_jar.key}"
+  }
+}
+
+resource "aws_s3_bucket_object" "hive_auth_conf_sh" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/emr/hive_auth_conf.sh"
+  content = data.template_file.hive_auth_conf_sh.rendered
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-hive-auth-conf-sh" })
 }
