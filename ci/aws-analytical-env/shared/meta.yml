@@ -60,12 +60,15 @@ meta:
               export TF_VAR_emr_al2_ami_id=$(cat ../../../../emr-al2-ami/id)
               export TF_VAR_aws_analytical_env_emr_launcher_zip="{base_path = \"../../../../emr-launcher-release\", version = \"$(cat ../../../../emr-launcher-release/version)\"}"
               export TF_VAR_manage_mysql_user_lambda_zip="{base_path = \"../../../../manage-mysql-user-release\", version = \"$(cat ../../../../manage-mysql-user-release/version)\"}"
+              custom_auth_jar_version=$(cat ../../../../hive-custom-auth-release/version)
+              export TF_VAR_hive_custom_auth_jar_path="../../../../hive-custom-auth-release/hive-custom-auth-${custom_auth_jar_version}.jar"
               terraform plan -out terraform.plan
               terraform apply -auto-approve terraform.plan
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
           - name: emr-al2-ami
+          - name: hive-custom-auth-release
 
     terraform-plan:
       task: terraform-plan
@@ -86,11 +89,14 @@ meta:
               export TF_VAR_emr_al2_ami_id=$(cat ../../../../emr-al2-ami/id)
               export TF_VAR_aws_analytical_env_emr_launcher_zip="{base_path = \"../../../../emr-launcher-release\", version = \"$(cat ../../../../emr-launcher-release/version)\"}"
               export TF_VAR_manage_mysql_user_lambda_zip="{base_path = \"../../../../manage-mysql-user-release\", version = \"$(cat ../../../../manage-mysql-user-release/version)\"}"
+              custom_auth_jar_version=$(cat ../../../../hive-custom-auth-release/version)
+              export TF_VAR_hive_custom_auth_jar_path="../../../../hive-custom-auth-release/hive-custom-auth-${custom_auth_jar_version}.jar"
               terraform plan
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
           - name: emr-al2-ami
+          - name: hive-custom-auth-release
 
     terraform-output-app:
       task: terraform-output-app

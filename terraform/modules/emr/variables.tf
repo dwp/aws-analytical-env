@@ -288,3 +288,13 @@ variable "hive_max_reducers" {
   default     = "1099"
 }
 
+variable "hive_use_auth" {
+  type        = bool
+  description = "Whether to use custom authentication for Hive Server"
+  default     = true
+}
+
+variable "hive_custom_auth_provider_path" {
+  type        = string
+  description = "Local file path of the hive custom auth provider jar"
+}

@@ -20,6 +20,10 @@ jobs:
         passed:
           - qa
         trigger: true
+      - get: hive-custom-auth-release
+        trigger: true
+        passed:
+          - qa
       - get: emr-al2-ami
         passed:
           - qa

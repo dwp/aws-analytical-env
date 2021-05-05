@@ -114,6 +114,17 @@ resource "aws_emr_cluster" "cluster" {
   }
 
   step {
+    name              = "hive-auth-conf"
+    action_on_failure = "CONTINUE"
+    hadoop_jar_step {
+      jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
+      args = [
+        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.hive_auth_conf_sh.key)
+      ]
+    }
+  }
+
+  step {
     name              = "get-scripts"
     action_on_failure = "CONTINUE"
     hadoop_jar_step {

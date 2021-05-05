@@ -113,3 +113,17 @@ variable "emr_hive_max_reducers" {
     production  = "1099"
   }
 }
+
+variable "emr_hive_use_auth" {
+  default = {
+    development = true
+    qa          = true
+    integration = false
+    preprod     = false
+    production  = false
+  }
+}
+
+variable "hive_custom_auth_jar_path" {
+  type = string
+}
