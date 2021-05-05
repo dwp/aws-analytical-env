@@ -12,6 +12,8 @@ jobs:
         trigger: true
       - get: manage-mysql-user-release
         trigger: true
+      - get: hive-custom-auth-release
+        trigger: true
       - get: emr-al2-ami
         trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))

@@ -165,9 +165,9 @@ resource "aws_s3_bucket_object" "hive_data_bucket_group_folders" {
 }
 
 resource "aws_s3_bucket_object" "hive_auth_provider_jar" {
-  bucket  = aws_s3_bucket.emr.id
-  key     = "jars/hive-custom-auth.jar"
-  source  = var.hive_custom_auth_provider_path
+  bucket = aws_s3_bucket.emr.id
+  key    = "jars/hive-custom-auth.jar"
+  source = var.hive_custom_auth_provider_path
 
   tags = merge({ "Name" = "${var.name_prefix}-hive-auth-provider-jar" }, var.common_tags)
 

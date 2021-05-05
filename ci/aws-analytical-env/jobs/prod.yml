@@ -17,6 +17,10 @@ jobs:
         passed:
           - preprod
         trigger: true
+      - get: hive-custom-auth-release
+        trigger: true
+        passed:
+          - preprod
       - get: emr-al2-ami
         passed:
           - preprod

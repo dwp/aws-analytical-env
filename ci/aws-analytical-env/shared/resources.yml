@@ -198,6 +198,14 @@ resources:
     check_every: 1h
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+  - name: hive-custom-auth-release
+    type: github-release
+    source:
+      owner: dwp
+      repository: analytical-env-hive-custom-auth
+    check_every: 1h
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
   - name: meta-development
     type: meta
 
