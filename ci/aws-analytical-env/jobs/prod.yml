@@ -53,6 +53,11 @@ jobs:
           - preprod
           - after-midnight-check
         trigger: false
+      - get: hive-custom-auth-release
+        trigger: true
+        passed:
+          - preprod
+          - after-midnight-check
       - get: emr-al2-ami
         passed:
           - preprod
@@ -87,6 +92,7 @@ jobs:
             - name: emp-release
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           TF_WORKSPACE: 'production'
           TF_VAR_emp_dir_path: ../../../../emp-release
@@ -99,6 +105,7 @@ jobs:
             - name: emp-release
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           TF_WORKSPACE: 'production'
           TF_VAR_emp_dir_path: ../../../../emp-release
