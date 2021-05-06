@@ -4,9 +4,7 @@ module analytical_env_vpc {
 
   common_tags                  = local.common_tags
   gateway_vpce_route_table_ids = module.networking.outputs.aws_route_table_private_ids
-  interface_vpce_source_security_group_ids = [
-    data.terraform_remote_state.dataworks_metrics_infrastructure.outputs.azkaban_pushgateway_security_group
-  ]
+  interface_vpce_source_security_group_ids = []
   interface_vpce_subnet_ids = module.networking.outputs.aws_subnets_private[*].id
   region                    = data.aws_region.current.id
   vpc_cidr_block            = local.cidr_block[local.environment]["aws-analytical-env-vpc"]
@@ -47,7 +45,6 @@ module analytical_env_vpc {
       port         = 3128
     }
   ]
-
 }
 
 module networking {
