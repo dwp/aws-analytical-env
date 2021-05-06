@@ -92,6 +92,7 @@ jobs:
             - name: emp-release
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           TF_WORKSPACE: 'production'
           TF_VAR_emp_dir_path: ../../../../emp-release
@@ -104,6 +105,7 @@ jobs:
             - name: emp-release
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           TF_WORKSPACE: 'production'
           TF_VAR_emp_dir_path: ../../../../emp-release
