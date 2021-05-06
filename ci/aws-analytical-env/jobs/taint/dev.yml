@@ -27,6 +27,7 @@ jobs:
           inputs:
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           DEPLOY_PATH: app
         
@@ -38,6 +39,7 @@ jobs:
           inputs:
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           DEPLOY_PATH: app
         
