@@ -43,6 +43,7 @@ jobs:
             - name: emp-release
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           TF_VAR_emp_dir_path: ../../../../emp-release
       - .: (( inject meta.plan.terraform-plan ))
@@ -54,5 +55,6 @@ jobs:
             - name: emp-release
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           TF_VAR_emp_dir_path: ../../../../emp-release
