@@ -118,9 +118,9 @@ variable "emr_hive_use_auth" {
   default = {
     development = true
     qa          = true
-    integration = false
-    preprod     = false
-    production  = false
+    integration = true
+    preprod     = true
+    production  = true
   }
 }
 
