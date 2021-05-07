@@ -219,10 +219,14 @@ resource "aws_s3_bucket_object" "azkaban_notifications_sh" {
 }
 
 resource "aws_s3_bucket_object" "azkaban_metrics_sh" {
-  bucket  = aws_s3_bucket.emr.id
-  key     = "scripts/emr/azkaban_metrics.sh"
-  content = file("${path.module}/templates/emr/azkaban_metrics.sh")
-  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-azkaban-notifications-sh" })
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/azkaban_metrics.sh"
+  content = templatefile("${path.module}/templates/emr/azkaban_metrics.sh",
+    {
+      azkaban_pushgateway_hostname = var.azkaban_pushgateway_hostname
+    }
+  )
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-azkaban-notifications-sh" })
 }
 
 data "template_file" "hive_auth_conf_sh" {

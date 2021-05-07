@@ -38,6 +38,7 @@ module "emr" {
   }
   security_configuration_user_roles = module.user_roles.output.users
   monitoring_sns_topic_arn          = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
+  azkaban_pushgateway_hostname      = data.terraform_remote_state.dataworks_metrics_infrastructure.outputs.azkaban_pushgateway_hostname
   logging_bucket                    = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
   name_prefix                       = local.name
 
