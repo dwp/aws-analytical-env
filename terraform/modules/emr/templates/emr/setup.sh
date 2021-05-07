@@ -35,6 +35,7 @@ aws s3 cp "${logging_shell}"     /opt/emr/logging.sh
 aws s3 cp "${cloudwatch_shell}"  /opt/emr/cloudwatch.sh
 aws s3 cp "${get_scripts_shell}" /home/hadoop/get_scripts.sh
 aws s3 cp "${azkaban_notifications_shell}" /opt/emr/azkaban_notifications.sh
+aws s3 cp "${azkaban_metrics_shell}" /opt/emr/azkaban_metrics.sh
 aws s3 cp "${poll_status_table_shell}" /home/hadoop/poll_status_table.sh
 aws s3 cp "${trigger_tagger_shell}" /opt/emr/trigger_s3_tagger_batch_job.sh
 chmod u+x /opt/emr/cloudwatch.sh
