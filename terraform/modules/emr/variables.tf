@@ -24,6 +24,11 @@ variable "monitoring_sns_topic_arn" {
   type        = string
 }
 
+variable "azkaban_pushgateway_hostname" {
+  description = "Azkaban pushgateway host"
+  type        = string
+}
+
 variable "logging_bucket" {
   type        = string
   description = "(Required) The bucket ID for access logging"
