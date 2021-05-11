@@ -25,7 +25,7 @@ metrics::push() {
     curl -sS --data-binary @- $(metrics::pushgateway_url $job $step) <<EOF
 # TYPE azkaban_job_status gauge
 # HELP azkaban_job_status 1 = job started, 2 = job succeeded, 3 = job failed.
-azkaban_job_status{run_date="$(metrics::run_date)", cluster_id="$(metrics::cluster_id)"} $value
+azkaban_job_status{run_date="$(metrics::run_date)", cluster_id="$(metrics::cluster_id)", flow="$job/$${step%.*}"} $value
 EOF
 }
 
