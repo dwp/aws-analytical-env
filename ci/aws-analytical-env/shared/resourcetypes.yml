@@ -14,5 +14,5 @@ resource_types:
   - name: ami
     type: docker-image
     source:
-      repository: chrisscottthomas/ami-resource
+      repository: dwpdigital/ami-resource
       tag: latest
