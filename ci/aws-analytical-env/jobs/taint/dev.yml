@@ -11,7 +11,8 @@ jobs:
         trigger: false
       - get: emr-al2-ami
         trigger: false
-
+      - get: hive-custom-auth-release
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: app
