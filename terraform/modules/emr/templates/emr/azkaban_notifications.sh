@@ -32,7 +32,7 @@ notifications::notify_success() {
     local -r step=$${2:?Usage: $${FUNCNAME[0]} job step}
     notifications::send_message "$(notifications::success_payload "$job" "$step")"
     metrics::succeeded "$job" "$step"
-    sleep 120
+    sleep 900
     metrics::delete "$job" "$step"
 }
 
@@ -41,7 +41,7 @@ notifications::notify_failure() {
     local -r step=$${2:?Usage: $${FUNCNAME[0]} job step}
     notifications::send_message "$(notifications::failure_payload "$job" "$step")"
     metrics::failed "$job" "$step"
-    sleep 120
+    sleep 900
     metrics::delete "$job" "$step"
 }
 
