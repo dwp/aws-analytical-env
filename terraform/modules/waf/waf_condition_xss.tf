@@ -9,22 +9,6 @@ resource "aws_wafregional_xss_match_set" "xss_match_set" {
     text_transformation = "HTML_ENTITY_DECODE"
 
     field_to_match {
-      type = "BODY"
-    }
-  }
-
-  xss_match_tuple {
-    text_transformation = "URL_DECODE"
-
-    field_to_match {
-      type = "BODY"
-    }
-  }
-
-  xss_match_tuple {
-    text_transformation = "HTML_ENTITY_DECODE"
-
-    field_to_match {
       type = "URI"
     }
   }
