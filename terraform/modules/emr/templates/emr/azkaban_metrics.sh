@@ -22,17 +22,26 @@ metrics::push() {
     local -r job=$${1:?Usage: $${FUNCNAME[0]} job step value}
     local -r step=$${2:?Usage: $${FUNCNAME[0]} job step value}
     local -ir value=$${3:?Usage $${FUNCNAME[0]} job step value}
+    echo $(date '+%Y-%m-%d %H:%M:%S') Pushing metrics, job: "$job", step: "$step", value: "$value".
     curl -sS --data-binary @- $(metrics::pushgateway_url $job $step) <<EOF
 # TYPE azkaban_job_status gauge
 # HELP azkaban_job_status 1 = job started, 2 = job succeeded, 3 = job failed.
 azkaban_job_status{run_date="$(metrics::run_date)", cluster_id="$(metrics::cluster_id)", flow="$job/$${step%.*}"} $value
 EOF
+    local -r result=$?
+    echo $(date '+%Y-%m-%d %H:%M:%S') Pushed metrics, job: "$job", step: "$step", value: "$value", result "$result".
+
 }
 
 metrics::delete() {
     local -r job=$${1:?Usage: $${FUNCNAME[0]} job step}
     local -r step=$${2:?Usage: $${FUNCNAME[0]} job step}
+
+    echo $(date '+%Y-%m-%d %H:%M:%S') deleting metrics, job: "$job", step: "$step".
+
     curl -X DELETE $(metrics::pushgateway_url $job $step)
+    local -r result=$?
+    echo $(date '+%Y-%m-%d %H:%M:%S') deleted metrics, job: "$job", step: "$step", result "$result".
 }
 
 metrics::pushgateway_url() {
@@ -58,5 +67,7 @@ metrics::instance_name() {
 }
 
 metrics::run_date() {
-    date +%F
+    echo "$run_date"
 }
+
+export run_date=$(date +%F)
