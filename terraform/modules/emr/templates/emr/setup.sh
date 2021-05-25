@@ -26,7 +26,12 @@ echo "export CONFIG_BUCKET_ID=$${CONFIG_BUCKET_ID}" | sudo tee -a /etc/profile.d
 source /etc/profile.d/buckets.sh
 
 sudo yum update -y amazon-ssm-agent
-sudo yum install -y jq
+
+# Install jq 1.6
+
+wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+chmod a+x jq
+mv jq /usr/bin/jq
 
 sudo mkdir -p /var/log/batch
 sudo chown hadoop:hadoop /var/log/batch
