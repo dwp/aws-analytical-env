@@ -36,6 +36,7 @@ aws s3 cp "${cloudwatch_shell}"  /opt/emr/cloudwatch.sh
 aws s3 cp "${get_scripts_shell}" /home/hadoop/get_scripts.sh
 aws s3 cp "${azkaban_notifications_shell}" /opt/emr/azkaban_notifications.sh
 aws s3 cp "${azkaban_metrics_shell}" /opt/emr/azkaban_metrics.sh
+aws s3 cp "${delete_azkaban_metrics_shell}" /opt/emr/delete_azkaban_metrics.sh
 aws s3 cp "${poll_status_table_shell}" /home/hadoop/poll_status_table.sh
 aws s3 cp "${trigger_tagger_shell}" /opt/emr/trigger_s3_tagger_batch_job.sh
 chmod u+x /opt/emr/cloudwatch.sh
@@ -43,7 +44,7 @@ chmod u+x /opt/emr/logging.sh
 chmod u+x /home/hadoop/get_scripts.sh
 chmod 775 /home/hadoop/poll_status_table.sh
 chmod 775 /opt/emr/trigger_s3_tagger_batch_job.sh
-
+chmod +x /opt/emr/delete_azkaban_metrics.sh
 aws s3 cp s3://${config_bucket}/workflow-manager/azkaban/step.sh /home/hadoop/step.sh
 chmod u+x /home/hadoop/step.sh
 

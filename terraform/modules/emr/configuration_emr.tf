@@ -38,6 +38,7 @@ data "template_file" "emr_setup_sh" {
     user_pool_id                    = var.cognito_user_pool_id
     azkaban_notifications_shell     = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_notifications_sh.key)
     azkaban_metrics_shell           = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metrics_sh.key)
+    delete_azkaban_metrics_shell    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.delete_azkaban_metrics_sh.key)
     logging_shell                   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.logging_sh.key)
     cloudwatch_shell                = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.cloudwatch_sh.key)
     get_scripts_shell               = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.get_scripts_sh.key)
@@ -226,6 +227,13 @@ resource "aws_s3_bucket_object" "azkaban_metrics_sh" {
       azkaban_pushgateway_hostname = var.azkaban_pushgateway_hostname
     }
   )
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-azkaban-notifications-sh" })
+}
+
+resource "aws_s3_bucket_object" "delete_azkaban_metrics_sh" {
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/delete_azkaban_metrics.sh"
+  content = file("${path.module}/templates/emr/delete_azkaban_metrics.sh")
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-azkaban-notifications-sh" })
 }
 
