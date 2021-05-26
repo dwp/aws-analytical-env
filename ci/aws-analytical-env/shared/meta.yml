@@ -90,13 +90,7 @@ meta:
               export TF_VAR_manage_mysql_user_lambda_zip="{base_path = \"../../../../manage-mysql-user-release\", version = \"$(cat ../../../../manage-mysql-user-release/version)\"}"
               custom_auth_jar_version=$(cat ../../../../hive-custom-auth-release/version) || true
               export TF_VAR_hive_custom_auth_jar_path="../../../../hive-custom-auth-release/hive-custom-auth-${custom_auth_jar_version}.jar"
-              if [[ "${SKIP_EXIT_CODE}" == "true" ]]; then
-                  echo "Performing plan with no exit code check due to SKIP_EXIT_CODE of '${SKIP_EXIT_CODE}'"
-                  terraform plan
-              else
-                echo "Performing plan with exit code check due to SKIP_EXIT_CODE of '${SKIP_EXIT_CODE}'"
-                terraform plan -detailed-exitcode
-              fi
+              terraform plan
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
