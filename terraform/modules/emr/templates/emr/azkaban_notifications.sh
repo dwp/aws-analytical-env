@@ -32,7 +32,7 @@ notifications::notify_success() {
     local -r step=$${2:?Usage: $${FUNCNAME[0]} job step}
     notifications::send_message "$(notifications::success_payload "$job" "$step")"
     metrics::succeeded "$job" "$step"
-    nohup /opt/emr/delete_azkaban_metrics.sh "$job" "$step" &
+    at now + 15 minute <<< "/opt/emr/delete_azkaban_metrics.sh $job $step" || true
 }
 
 notifications::notify_failure() {
@@ -40,7 +40,7 @@ notifications::notify_failure() {
     local -r step=$${2:?Usage: $${FUNCNAME[0]} job step}
     notifications::send_message "$(notifications::failure_payload "$job" "$step")"
     metrics::failed "$job" "$step"
-    nohup /opt/emr/delete_azkaban_metrics.sh "$job" "$step" &
+    at now + 15 minute <<< "/opt/emr/delete_azkaban_metrics.sh $job $step" || true
 }
 
 notifications::send_message() {

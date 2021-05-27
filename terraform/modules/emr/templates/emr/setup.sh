@@ -116,5 +116,10 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
     sudo usermod -aG hadoop "$USERNAME"
     sudo usermod -aG "$GROUP" "$USERNAME"
 
+    echo "Adding user '$USERNAME' to at.allow"
+    sudo tee -a /etc/at.allow <<< "$USERNAME"
   done
 done
+
+echo Adding hadoop user to at.allow
+sudo tee -a /etc/at.allow <<< hadoop
