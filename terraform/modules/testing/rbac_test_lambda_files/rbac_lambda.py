@@ -2,7 +2,6 @@ import urllib3
 import json
 import os
 import time
-import sys
 
 http = urllib3.PoolManager()
 
@@ -12,19 +11,31 @@ host = (os.environ["HOST_URL"] + ":8998") if "HOST_URL" in os.environ else "http
 access_denied_message = "Input path does not exist"
 
 
-def lambda_handler(context, event):
-    # kill_all_sessions()
+def lambda_handler(event, context):
 
-    print("CONTEXT: ", context)
-    proxy_user = context["proxy_user"]
-    table = context["table"]
-    database_name = context["db_name"]
+    print("EVENT: ", event)
 
-    session_url = start_session(proxy_user)
-    use_database(session_url, database_name)
-    response = make_api_call(session_url, table)
-    kill_session(session_url)
-    return response
+    is_simple_test = not all([var in event for var in ("proxy_user", "table", "db_name")])
+
+    if is_simple_test:
+        session_url = start_session(context)
+        try:
+            response = make_api_call(session_url, context)
+            return response
+        finally:
+            kill_session(session_url)
+    else:
+        proxy_user = event["proxy_user"]
+        table = event["table"]
+        database_name = event["db_name"]
+
+        session_url = start_session(context, proxy_user)
+        try:
+            use_database(session_url, database_name, context)
+            response = make_api_call(session_url, context, table)
+            return response
+        finally:
+            kill_session(session_url)
 
 
 def initial_request(url, code):
@@ -39,7 +50,7 @@ def initial_request(url, code):
     return status_url
 
 
-def poll_for_result(session_url, status_url):
+def poll_for_result(session_url, status_url, context):
     while True:
         print("Polling url: ", status_url)
         poll = http.request('GET', status_url)
@@ -49,7 +60,11 @@ def poll_for_result(session_url, status_url):
         if state == "available" or state == "idle":
             return response
         else:
-            time.sleep(5)
+            remaining_time = context.get_remaining_time_in_millis()
+            if remaining_time < 10 * 1000:
+                raise TimeoutError("Result not received within allocated lambda execution time")
+            else:
+                time.sleep(5)
 
 
 ###################
@@ -57,15 +72,17 @@ def poll_for_result(session_url, status_url):
 ###################
 
 # Create a session and poll until the session is ready
-def start_session(proxy_user):
+def start_session(context, proxy_user=None):
     print("Attempting to start a session with Spark")
     code = {
-        'kind': 'sparkr',
-        'proxyUser': proxy_user
+        'kind': 'pyspark',
     }
+    if proxy_user is not None:
+        code['proxyUser'] = proxy_user
+
     url = host + '/sessions'
     session_url = initial_request(url, code)
-    poll_for_result(session_url, session_url)
+    poll_for_result(session_url, session_url, context)
     print("SESSION ESTABLISHED")
     return session_url
 
@@ -88,20 +105,21 @@ def kill_all_sessions():
         )
 
 
-def use_database(session_url, database_name):
+def use_database(session_url, context, database_name):
     print("Selecting Database to use")
     statements_url = session_url + '/statements'
     code = {'code': f'sql("USE {database_name}")'}
     status_url = initial_request(statements_url, code)
-    response = poll_for_result(session_url, status_url)
+    response = poll_for_result(session_url, status_url, context)
     print(response)
     print("Using Database", database_name)
 
 
-def make_api_call(session_url, table):
+def make_api_call(session_url, context, table=None):
     statements_url = session_url + '/statements'
-    code = {'code': f'head(sql("select * from {table}"))'}
+    stmt = "SELECT current_date()" if table is None else f"select * from {table}"
+    code = {'code': f'spark.sql("{stmt}").collect()'}
     status_url = initial_request(statements_url, code)
-    response = poll_for_result(session_url, status_url)
+    response = poll_for_result(session_url, status_url, context)
     print(response)
     return response
