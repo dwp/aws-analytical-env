@@ -61,5 +61,16 @@ jobs:
             - name: hive-custom-auth-release
         params:
           TF_WORKSPACE: 'qa'
-          TF_VAR_emp_dir_path: ../../../../emp-release  
+          TF_VAR_emp_dir_path: ../../../../emp-release
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: testing
+      - .: (( inject meta.plan.terraform-output-testing ))
+        params:
+          TF_WORKSPACE: 'qa'
+      - .: (( inject meta.plan.test-emr-cluster ))
+        attempts: 3
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
 
