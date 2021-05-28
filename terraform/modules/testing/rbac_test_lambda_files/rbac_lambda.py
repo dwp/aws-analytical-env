@@ -108,7 +108,7 @@ def kill_all_sessions():
 def use_database(session_url, context, database_name):
     print("Selecting Database to use")
     statements_url = session_url + '/statements'
-    code = {'code': f'sql("USE {database_name}")'}
+    code = {'code': f'spark.sql("USE {database_name}")'}
     status_url = initial_request(statements_url, code)
     response = poll_for_result(session_url, status_url, context)
     print(response)
