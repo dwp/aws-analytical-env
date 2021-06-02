@@ -42,23 +42,24 @@ data.key.service.url=${dks_endpoint}
 EOF
 
 acm-cert-retriever \
-    --acm-cert-arn "${acm_cert_arn}" \
-    --acm-key-passphrase "$ACM_KEY_PASSWORD" \
-    --keystore-path "/opt/emr/keystore.jks" \
-    --keystore-password "$KEYSTORE_PASSWORD" \
-    --private-key-alias "${private_key_alias}" \
-    --private-key-password "$PRIVATE_KEY_PASSWORD" \
-    --truststore-path "/opt/emr/truststore.jks" \
-    --truststore-password "$TRUSTSTORE_PASSWORD" \
-    --truststore-aliases "${truststore_aliases}" \
-    --truststore-certs "${truststore_certs}" \
-    --jks-only true
+--acm-cert-arn "${acm_cert_arn}" \
+--acm-key-passphrase "$ACM_KEY_PASSWORD" \
+--keystore-path "/opt/emr/keystore.jks" \
+--keystore-password "$KEYSTORE_PASSWORD" \
+--private-key-alias "${private_key_alias}" \
+--private-key-password "$PRIVATE_KEY_PASSWORD" \
+--truststore-path "/opt/emr/truststore.jks" \
+--truststore-password "$TRUSTSTORE_PASSWORD" \
+--truststore-aliases "${truststore_aliases}" \
+--truststore-certs "${truststore_certs}" \
+--jks-only true
 
 UUID=$(dbus-uuidgen | cut -c 1-8)
 TOKEN=$(curl -X PUT -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" "http://169.254.169.254/latest/api/token")
 export INSTANCE_ID=$(curl -H "X-aws-ec2-metadata-token:$TOKEN" -s http://169.254.169.254/latest/meta-data/instance-id)
 export INSTANCE_ROLE=$(jq .instanceRole /mnt/var/lib/info/extraInstanceData.json)
-export HOSTNAME=${name}-$${INSTANCE_ROLE//\"}-$UUID
+export CLUSTER_NAME=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$INSTANCE_ID" "Name=key,Values=Name" | jq -r '.Tags[].Value')
+export HOSTNAME=$CLUSTER_NAME-$${INSTANCE_ROLE//\"}-$UUID
 
 sudo hostnamectl set-hostname $HOSTNAME
 aws ec2 create-tags --resources $INSTANCE_ID --tags Key=Name,Value=$HOSTNAME
