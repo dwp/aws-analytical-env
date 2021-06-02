@@ -13,7 +13,7 @@ resource "aws_service_discovery_service" "azkaban_services" {
   name = "azkaban_services"
 
   dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.azkaban_services[0].id
+    namespace_id = aws_service_discovery_private_dns_namespace.azkaban_services.id
 
     dns_records {
       ttl  = 10
