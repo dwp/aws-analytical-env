@@ -86,6 +86,9 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
   echo "Adding user '$GROUP' to group '$GROUP'"
   sudo usermod -aG hadoop "$GROUP"
 
+  echo "Adding user '$GROUP' to group at.allow"
+  sudo tee -a /etc/at.allow <<< "$GROUP"
+
   echo "Adding users for group $GROUP"
   USERS=$(aws cognito-idp list-users-in-group --user-pool-id "${user_pool_id}" --group-name "$GROUP" | jq '.Users[]' | jq -r '(.Attributes[] | if .Name =="preferred_username" then .Value else empty end) // .Username')
 
