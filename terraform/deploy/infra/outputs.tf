@@ -59,3 +59,16 @@ output internet_proxy_sg {
 output no_proxy_list {
   value = module.analytical_env_vpc.no_proxy_list
 }
+
+output "private_dns" {
+  value = {
+    azkaban_service_discovery_dns = aws_service_discovery_private_dns_namespace.azkaban_services
+    azkaban_service_discovery     = aws_service_discovery_service.azkaban_services
+  }
+}
+
+output "vpce_security_groups" {
+  value = {
+    azkaban_pushgateway_vpce_security_group = aws_security_group.azkaban_pushgateway_vpce_security_group
+  }
+}
