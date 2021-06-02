@@ -578,7 +578,7 @@ data "aws_iam_policy_document" "analytical_env_metadata_change" {
     ]
 
     resources = [
-      "arn:aws:ec2:${var.region}:${var.account}:instance/*",
+      "*",
     ]
   }
 }

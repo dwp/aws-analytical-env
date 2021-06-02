@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
 # Import logging
 source /opt/emr/logging.sh
 source /opt/emr/azkaban_notifications.sh || true
