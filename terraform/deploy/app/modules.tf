@@ -251,3 +251,13 @@ module "user_roles" {
 output "data" {
   value = module.user_roles.output
 }
+
+module "jupyter_s3_storage" {
+  source      = "../../modules/jupyter-s3-storage"
+  name_prefix = "orchestration-service-jupyter-s3-storage"
+
+  common_tags    = local.common_tags
+  logging_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+  vpc_id         = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
+  account        = lookup(local.account, local.environment)
+}
