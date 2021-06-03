@@ -76,8 +76,8 @@ module "emr" {
   sns_monitoring_queue_arn = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
 
   jupyterhub_bucket = {
-    id      = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_id
-    cmk_arn = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_kms_arn
+    id      = module.jupyter_s3_storage.jupyterhub_bucket.id
+    cmk_arn = module.jupyter_s3_storage.jupyterhub_bucket.arn
   }
 
   hive_custom_auth_provider_path = var.hive_custom_auth_jar_path
@@ -202,8 +202,8 @@ module "emrfs_lambda" {
   mgmt_account               = local.account[local.management_account[local.environment]]
   management_role_arn        = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
   environment                = local.environment
-  s3fs_bucket_id             = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_id
-  s3fs_kms_arn               = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_kms_arn
+  s3fs_bucket_id             = module.jupyter_s3_storage.jupyterhub_bucket.id
+  s3fs_kms_arn               = module.jupyter_s3_storage.s3fs_bucket_kms_arn
 }
 
 module "rbac_db" {
