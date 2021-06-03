@@ -77,7 +77,7 @@ module "emr" {
 
   jupyterhub_bucket = {
     id      = module.jupyter_s3_storage.jupyterhub_bucket.id
-    cmk_arn = module.jupyter_s3_storage.jupyterhub_bucket.arn
+    cmk_arn = module.jupyter_s3_storage.s3fs_bucket_kms_arn
   }
 
   hive_custom_auth_provider_path = var.hive_custom_auth_jar_path
