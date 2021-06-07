@@ -68,7 +68,14 @@ locals {
 
     AuthorizationConfiguration = {
       EmrFsConfiguration = {
-        RoleMappings = concat(flatten([
+        RoleMappings = var.rbac_version == 2 ? flatten([
+          for user, role in var.security_configuration_user_roles : [
+            {
+              Role           = role
+              IdentifierType = "User"
+              Identifiers    = [user]
+            }
+          ]]) : flatten([
           for group, policy_suffixes in var.security_configuration_groups : [
             {
               Role           = aws_iam_role.emrfs_iam[group].arn
@@ -76,15 +83,7 @@ locals {
               Identifiers    = [group]
             }
           ]
-          ]),
-          flatten([
-            for user, role in var.security_configuration_user_roles : [
-              {
-                Role           = role
-                IdentifierType = "User"
-                Identifiers    = [user]
-              }
-        ] if length(regexall("^svc-.+$", user)) > 0]))
+        ])
       }
     }
   }
@@ -105,4 +104,9 @@ resource "aws_emr_security_configuration" "batch_emrfs_em" {
   depends_on    = [aws_iam_policy.group_hive_data_access_policy]
   name          = "batch_${md5(jsonencode(local.batch_emrfs_em))}"
   configuration = jsonencode(local.batch_emrfs_em)
+
+  provisioner "local-exec" {
+    when    = "destroy"
+    command = "sleep 600"
+  }
 }
