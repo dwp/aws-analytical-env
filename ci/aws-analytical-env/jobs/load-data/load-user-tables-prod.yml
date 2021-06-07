@@ -4,7 +4,7 @@ jobs:
     plan:
       - get: aws-common-infrastructure
       - get: aws-analytical-env
-      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.terraform-output-common-crown ))
         config:
           params:
             TF_WORKSPACE: production

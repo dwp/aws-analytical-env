@@ -480,6 +480,36 @@ meta:
           AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
           AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
 
+    terraform-output-common-crown:
+      task: terraform-output-common-crown
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((terraform.repository))
+            version: 0.12.31
+            tag: 0.12.31
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              pwd
+              terraform workspace show
+              terraform init
+              terraform output --json > ../terraform-output-common-crown/outputs.json
+          dir: aws-common-infrastructure
+        inputs:
+          - name: aws-common-infrastructure
+        outputs:
+          - name: terraform-output-common-crown
+        params:
+          TF_CLI_ARGS_plan: -lock-timeout=300s
+          TF_INPUT: "false"
+          AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
+          AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
+
     get-files:
       task: get-files
       attempts: 50
@@ -521,7 +551,7 @@ meta:
         inputs:
           - name: files
           - name: .aws
-          - name: terraform-output-common
+          - name: terraform-output-common-crown
         params:
           AWS_PROFILE: ci
           AWS_SHARED_CREDENTIALS_FILE: .aws/credentials
@@ -530,7 +560,7 @@ meta:
           args:
             - -exc
             - |
-              AWS_PUBLISHED_BUCKET="$(cat terraform-output-common/outputs.json |  jq -r '.published_bucket.value.id')"
+              AWS_PUBLISHED_BUCKET="$(cat terraform-output-common-crown/outputs.json |  jq -r '.published_bucket.value.id')"
               aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync files/ s3://${AWS_PUBLISHED_BUCKET}/${S3_FOLDER}
 
     stop-cluster:
