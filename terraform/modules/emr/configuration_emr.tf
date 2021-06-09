@@ -255,3 +255,24 @@ resource "aws_s3_bucket_object" "hive_auth_conf_sh" {
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-hive-auth-conf-sh" })
 }
+
+resource "aws_s3_bucket_object" "migrate_user_data_sh" {
+  bucket  = var.config_bucket_id
+  key     = "component/uc_repos/migrate_user_data/migrate_user_data.sh"
+  content = file("${path.module}/templates/emr/migrate_user_data.sh")
+
+  tags = merge(var.common_tags, {
+    Name = "${var.name_prefix}-migrate-user-data-sh"
+  })
+}
+
+
+resource "aws_s3_bucket_object" "migrate_user_data_sql" {
+  bucket  = var.config_bucket_id
+  key     = "component/uc_repos/migrate_user_data/migrate_user_data.sql"
+  content = file("${path.module}/templates/emr/migrate_user_data.sql")
+
+  tags = merge(var.common_tags, {
+    Name = "${var.name_prefix}-migrate-user-data-sql"
+  })
+}
