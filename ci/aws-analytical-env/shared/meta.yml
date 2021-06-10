@@ -14,6 +14,20 @@ meta:
           TF_CLI_ARGS_plan: -lock-timeout=300s
           TF_VAR_costcode: ((dataworks.costcode))
 
+    terraform-13-common-config:
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.terraform_repository))
+            tag: ((dataworks.terraform_13_version))
+        params:
+          TF_INPUT: false
+          TF_CLI_ARGS_apply: -lock-timeout=300s
+          TF_CLI_ARGS_plan: -lock-timeout=300s
+          TF_VAR_costcode: ((dataworks.costcode))
+
     terraform-bootstrap:
       task: terraform-bootstrap
       config:
@@ -186,7 +200,7 @@ meta:
 
     terraform-output-common:
       task: terraform-output-common
-      .: (( inject meta.plan.terraform-common-config ))
+      .: (( inject meta.plan.terraform-13-common-config ))
       config:
         run:
           path: sh
