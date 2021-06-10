@@ -55,26 +55,31 @@ groups:
       - mirror-git-repo-opsmi-ops-mi-repo-development
       - mirror-git-repo-aws-payment-timelines-development
       - mirror-git-repo-aws-cbol-data-development
+      - mirror-git-repo-aws-user-data-migration-development
 
       - mirror-git-repo-uc-lab-repo-qa
       - mirror-git-repo-opsmi-ops-mi-repo-qa
       - mirror-git-repo-aws-payment-timelines-qa
       - mirror-git-repo-aws-cbol-data-qa
+      - mirror-git-repo-aws-user-data-migration-qa
 
       - mirror-git-repo-uc-lab-repo-integration
       - mirror-git-repo-opsmi-ops-mi-repo-integration
       - mirror-git-repo-aws-payment-timelines-integration
       - mirror-git-repo-aws-cbol-data-integration
+      - mirror-git-repo-aws-user-data-migration-integration
 
       - mirror-git-repo-uc-lab-repo-preprod
       - mirror-git-repo-opsmi-ops-mi-repo-preprod
       - mirror-git-repo-aws-payment-timelines-preprod
       - mirror-git-repo-aws-cbol-data-preprod
+      - mirror-git-repo-aws-user-data-migration-preprod
 
       - mirror-git-repo-uc-lab-repo-prod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
       - mirror-git-repo-aws-payment-timelines-prod
       - mirror-git-repo-aws-cbol-data-prod
+      - mirror-git-aws-user-data-migration-prod
 
   - name: mirror-ucsqlhelper
     jobs:
@@ -110,7 +115,7 @@ groups:
     jobs:
       - sync-cognito-users-to-rds-development
       - create-roles-and-munged-policies-development
-      
+
       - sync-cognito-users-to-rds-qa
       - create-roles-and-munged-policies-qa
 
@@ -122,7 +127,7 @@ groups:
 
       - sync-cognito-users-to-rds-production
       - create-roles-and-munged-policies-production
-      
+
   - name: terminate-cluster
     jobs:
       - dev-stop-cluster

@@ -2,3 +2,4 @@ groups:
   - name: load-data
     jobs:
       - load-uc-labs-prod
+      - load-user-tables-prod
