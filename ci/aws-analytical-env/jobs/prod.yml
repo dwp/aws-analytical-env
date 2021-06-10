@@ -109,4 +109,15 @@ jobs:
         params:
           TF_WORKSPACE: 'production'
           TF_VAR_emp_dir_path: ../../../../emp-release
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: testing
+      - .: (( inject meta.plan.terraform-output-testing ))
+        params:
+          TF_WORKSPACE: 'production'
+      - .: (( inject meta.plan.test-emr-cluster ))
+        attempts: 3
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
 
