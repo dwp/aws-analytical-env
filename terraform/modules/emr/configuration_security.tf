@@ -95,7 +95,7 @@ resource "aws_emr_security_configuration" "analytical_env_emrfs_em" {
   configuration = jsonencode(local.emrfs_em)
 
   provisioner "local-exec" {
-    when    = "destroy"
+    when    = destroy
     command = "sleep 600"
   }
 }
@@ -106,7 +106,7 @@ resource "aws_emr_security_configuration" "batch_emrfs_em" {
   configuration = jsonencode(local.batch_emrfs_em)
 
   provisioner "local-exec" {
-    when    = "destroy"
+    when    = destroy
     command = "sleep 600"
   }
 }
