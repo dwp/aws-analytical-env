@@ -28,7 +28,7 @@ data "aws_iam_policy_document" "jupyter_bucket_restrict_to_vpc" {
     effect  = "Deny"
     actions = ["*"]
     resources = [
-      "${aws_s3_bucket.jupyter_storage.arn}",
+      aws_s3_bucket.jupyter_storage.arn,
       "${aws_s3_bucket.jupyter_storage.arn}/*",
     ]
     principals {
