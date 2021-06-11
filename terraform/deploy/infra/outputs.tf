@@ -3,11 +3,15 @@ output vpc {
 }
 
 output alb {
-  value = module.alb.lb
+  value = {
+      name = module.alb.lb.name
+  }
 }
 
 output alb_sg {
-  value = module.alb.lb_sg
+  value = {
+      id = module.alb.lb_sg.id
+  }
 }
 
 output alb_fqdn {
@@ -25,7 +29,9 @@ output "parent_domain_name" {
 }
 
 output alb_listner {
-  value = module.alb.alb_listener
+  value = {
+      arn = module.alb.alb_listener.arn
+  }
 }
 
 output vpc_main {
@@ -69,6 +75,8 @@ output "private_dns" {
 
 output "vpce_security_groups" {
   value = {
-    azkaban_pushgateway_vpce_security_group = aws_security_group.azkaban_pushgateway_vpce_security_group
+    azkaban_pushgateway_vpce_security_group = {
+        id = aws_security_group.azkaban_pushgateway_vpce_security_group.id
+    }
   }
 }
