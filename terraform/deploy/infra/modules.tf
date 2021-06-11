@@ -1,6 +1,6 @@
 module analytical_env_vpc {
   source  = "dwp/vpc/aws"
-  version = "3.0.8"
+  version = "3.0.10"
 
   common_tags                              = local.common_tags
   gateway_vpce_route_table_ids             = module.networking.outputs.aws_route_table_private_ids
@@ -94,7 +94,7 @@ module alb {
   internal_lb        = false
   parent_domain_name = local.parent_domain_name[local.environment]
   root_dns_name      = local.root_dns_name[local.environment]
-  alb_subnets        = module.networking.outputs.aws_subnets_public.*.id
+  alb_subnets        = module.networking.outputs.aws_subnets_public.ids
   common_tags        = local.common_tags
   logging_bucket     = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
 

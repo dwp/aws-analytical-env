@@ -1,5 +1,5 @@
 locals {
-  fqdn = format("%s.%s.%s.", "emr", var.emr_cluster_name, var.root_dns_name)
+  fqdn = format("%s.%s.%s", "emr", var.emr_cluster_name, var.root_dns_name)
   master_instance_type = {
     development = "m5.2xlarge"
     qa          = "m5.2xlarge"

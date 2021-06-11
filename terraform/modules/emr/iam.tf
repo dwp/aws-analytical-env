@@ -770,7 +770,7 @@ data "aws_iam_policy_document" "group_hive_data_access_documents" {
     ]
 
     resources = [
-      "${aws_s3_bucket.hive_data.arn}",
+      aws_s3_bucket.hive_data.arn,
       "${aws_s3_bucket.hive_data.arn}/*",
       "arn:aws:kms:${var.region}:${var.account}:alias/${each.key}-shared",
       aws_kms_key.hive_data_s3.arn
