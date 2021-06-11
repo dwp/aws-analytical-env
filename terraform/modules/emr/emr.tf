@@ -143,7 +143,7 @@ resource "aws_emr_cluster" "cluster" {
     aws_s3_bucket_object.get_dks_cert_sh,
     aws_s3_bucket_object.livy_client_conf_sh,
     aws_s3_bucket_object.hdfs_setup_sh,
-    aws_emr_security_configuration.analytical_env_emrfs_em.id,
+    aws_emr_security_configuration.analytical_env_emrfs_em,
   ]
 
   lifecycle {
