@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.12"
+  required_version = "{{terraform_13_version}}"
 
   backend "s3" {
     bucket         = "{{state_file_bucket}}"
@@ -13,7 +13,7 @@ terraform {
 
 provider "aws" {
   region = var.region
-  version = "~> 2.70.0"
+  version = "~> 3.42.0"
   assume_role {
     role_arn = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
   }
@@ -188,7 +188,7 @@ data "terraform_remote_state" "aws_s3_object_tagger" {
 }
 
 provider "aws" {
-  version = "~> 2.70.0"
+  version = "~> 3.42.0"
   alias  = "management-ami"
   region = var.region
 
@@ -198,7 +198,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  version = "~> 2.70.0"
+  version = "~> 3.42.0"
   alias  = "management"
   region = var.region
 
