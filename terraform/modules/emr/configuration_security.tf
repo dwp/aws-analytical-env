@@ -57,6 +57,13 @@ locals {
           EncryptionMode             = "CSE-Custom"
           S3Object                   = "s3://${var.artefact_bucket.id}/emr-encryption-materials-provider/encryption-materials-provider-all.jar"
           EncryptionKeyProviderClass = "uk.gov.dwp.dataworks.dks.encryptionmaterialsprovider.DKSEncryptionMaterialsProvider"
+          Overrides = [
+            {
+              EncryptionMode = "SSE-KMS",
+              BucketName     = var.jupyterhub_bucket.id,
+              AwsKmsKey      = var.jupyterhub_bucket.cmk_arn
+            }
+          ]
         }
         LocalDiskEncryptionConfiguration = {
           EncryptionKeyProviderType = "AwsKms"
