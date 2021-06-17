@@ -33,6 +33,7 @@ notifications::notify_success() {
     notifications::send_message "$(notifications::success_payload "$job" "$step")"
     metrics::succeeded "$job" "$step"
     at now + 15 minute <<< "/opt/emr/delete_azkaban_metrics.sh $job $step" || true
+    metrics::wipe
 }
 
 notifications::notify_failure() {
@@ -41,6 +42,7 @@ notifications::notify_failure() {
     notifications::send_message "$(notifications::failure_payload "$job" "$step")"
     metrics::failed "$job" "$step"
     at now + 15 minute <<< "/opt/emr/delete_azkaban_metrics.sh $job $step" || true
+    metrics::wipe
 }
 
 notifications::send_message() {
