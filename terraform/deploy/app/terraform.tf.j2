@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.12"
+  required_version = "{{terraform_13_version}}"
 
   backend "s3" {
     bucket         = "{{state_file_bucket}}"
@@ -13,7 +13,7 @@ terraform {
 
 provider "aws" {
   region = var.region
-  version = "~> 2.70.0"
+  version = "~> 3.42.0"
   assume_role {
     role_arn = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
   }
@@ -26,20 +26,6 @@ data "terraform_remote_state" "aws_analytical_environment_infra" {
   config = {
     bucket         = "{{state_file_bucket}}"
     key            = "terraform/dataworks/aws-analytical-environment_infra.tfstate"
-    region         = "{{state_file_region}}"
-    encrypt        = true
-    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
-    dynamodb_table = "remote_state_locks"
-  }
-}
-
-data "terraform_remote_state" "orchestration-service" {
-  backend = "s3"
-  workspace = terraform.workspace
-
-  config = {
-    bucket         = "{{state_file_bucket}}"
-    key            = "terraform/dataworks/orchestration-service.tfstate"
     region         = "{{state_file_region}}"
     encrypt        = true
     kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
@@ -187,20 +173,6 @@ data "terraform_remote_state" "internal_compute" {
   }
 }
 
-data "terraform_remote_state" "dataworks_metrics_infrastructure" {
-  backend   = "s3"
-  workspace = terraform.workspace
-
-  config = {
-    bucket         = "{{state_file_bucket}}"
-    key            = "terraform/dataworks/dataworks-metrics-infrastructure.tfstate"
-    region         = "{{state_file_region}}"
-    encrypt        = true
-    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
-    dynamodb_table = "remote_state_locks"
-  }
-}
-
 data "terraform_remote_state" "aws_s3_object_tagger" {
   backend = "s3"
   workspace = terraform.workspace
@@ -216,7 +188,7 @@ data "terraform_remote_state" "aws_s3_object_tagger" {
 }
 
 provider "aws" {
-  version = "~> 2.70.0"
+  version = "~> 3.42.0"
   alias  = "management-ami"
   region = var.region
 
@@ -226,7 +198,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  version = "~> 2.70.0"
+  version = "~> 3.42.0"
   alias  = "management"
   region = var.region
 

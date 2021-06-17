@@ -67,6 +67,11 @@ resource "aws_emr_cluster" "cluster" {
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.emr_setup_sh.key)
   }
 
+  bootstrap_action {
+    name = "python-packages-install"
+    path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.py_pckgs_install.key)
+  }
+
   step {
     name              = "hdfs-setup"
     action_on_failure = "CONTINUE"
@@ -86,18 +91,6 @@ resource "aws_emr_cluster" "cluster" {
       jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
       args = [
         format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.sparkR_install.key)
-      ]
-    }
-  }
-
-  step {
-    name              = "Install Python Packages"
-    action_on_failure = "CONTINUE"
-
-    hadoop_jar_step {
-      jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
-      args = [
-        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.py_pckgs_install.key)
       ]
     }
   }
@@ -150,11 +143,11 @@ resource "aws_emr_cluster" "cluster" {
     aws_s3_bucket_object.get_dks_cert_sh,
     aws_s3_bucket_object.livy_client_conf_sh,
     aws_s3_bucket_object.hdfs_setup_sh,
+    aws_emr_security_configuration.analytical_env_emrfs_em,
   ]
 
   lifecycle {
     ignore_changes = [
-      instance_group,
       ec2_attributes
     ]
   }

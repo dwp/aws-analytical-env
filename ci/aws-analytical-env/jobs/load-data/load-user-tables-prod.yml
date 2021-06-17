@@ -1,0 +1,25 @@
+jobs:
+  - name: load-user-tables-prod
+    serial: true
+    plan:
+      - get: aws-common-infrastructure
+      - get: aws-analytical-env
+      - .: (( inject meta.plan.terraform-output-common-crown ))
+        config:
+          params:
+            TF_WORKSPACE: production
+            AWS_ACC: ((aws_account.production))
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
+      - .: (( inject meta.plan.create-aws-profiles ))
+        config:
+          params:
+            AWS_ROLE: arn:aws:iam::((aws_account.production)):role/ci
+      - .: (( inject meta.plan.create-crown-credentials ))
+      - .: (( inject meta.plan.get-files ))
+        config:
+          params:
+            SOURCE_PATH: "/home/user_tables_migration"
+      - .: (( inject meta.plan.load-s3 ))
+        config:
+          params:
+            S3_FOLDER: "common-model-inputs/user_tables_migration"

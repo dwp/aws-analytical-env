@@ -38,7 +38,7 @@ module "emr" {
   }
   security_configuration_user_roles = module.user_roles.output.users
   monitoring_sns_topic_arn          = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
-  azkaban_pushgateway_hostname      = data.terraform_remote_state.dataworks_metrics_infrastructure.outputs.azkaban_pushgateway_hostname
+  azkaban_pushgateway_hostname      = local.azkaban_pushgateway_hostname
   logging_bucket                    = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
   name_prefix                       = local.name
 
@@ -76,8 +76,8 @@ module "emr" {
   sns_monitoring_queue_arn = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
 
   jupyterhub_bucket = {
-    id      = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_id
-    cmk_arn = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_kms_arn
+    id      = module.jupyter_s3_storage.jupyterhub_bucket.id
+    cmk_arn = module.jupyter_s3_storage.s3fs_bucket_kms_arn
   }
 
   hive_custom_auth_provider_path = var.hive_custom_auth_jar_path
@@ -202,8 +202,8 @@ module "emrfs_lambda" {
   mgmt_account               = local.account[local.management_account[local.environment]]
   management_role_arn        = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
   environment                = local.environment
-  s3fs_bucket_id             = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_id
-  s3fs_kms_arn               = data.terraform_remote_state.orchestration-service.outputs.s3fs_bucket_kms_arn
+  s3fs_bucket_id             = module.jupyter_s3_storage.jupyterhub_bucket.id
+  s3fs_kms_arn               = module.jupyter_s3_storage.s3fs_bucket_kms_arn
 }
 
 module "rbac_db" {
@@ -250,4 +250,14 @@ module "user_roles" {
 
 output "data" {
   value = module.user_roles.output
+}
+
+module "jupyter_s3_storage" {
+  source      = "../../modules/jupyter-s3-storage"
+  name_prefix = "orchestration-service-jupyter-s3-storage"
+
+  common_tags    = local.common_tags
+  logging_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+  vpc_id         = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
+  account        = lookup(local.account, local.environment)
 }

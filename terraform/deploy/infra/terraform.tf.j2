@@ -1,5 +1,5 @@
 terraform {
-  required_version = "{{terraform_12_version}}"
+  required_version = "{{terraform_13_version}}"
 
   backend "s3" {
     bucket         = "{{state_file_bucket}}"
@@ -12,7 +12,7 @@ terraform {
 }
 
 provider "aws" {
-  version = "~> 2.70.0"
+  version = "~> 3.42.0"
   region  = "{{provider_region}}"
   alias   = "internal_compute"
 
@@ -22,7 +22,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  version = "~> 2.70.0"
+  version = "~> 3.42.0"
   region = "{{provider_region}}"
 
   assume_role {
@@ -31,7 +31,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  version = "~> 2.70.0"
+  version = "~> 3.42.0"
   region  = "{{provider_region}}"
   alias   = "ssh_bastion"
 
@@ -41,7 +41,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  version = "~> 2.70.0"
+  version = "~> 3.42.0"
   region  = "{{provider_region}}"
   alias   = "management_dns"
 
@@ -169,20 +169,6 @@ data "terraform_remote_state" "analytical_env_github_proxy" {
   config = {
     bucket         = "{{state_file_bucket}}"
     key            = "terraform/dataworks/aws-analytical-environment_github-proxy.tfstate"
-    region         = "{{state_file_region}}"
-    encrypt        = true
-    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
-    dynamodb_table = "remote_state_locks"
-  }
-}
-
-data "terraform_remote_state" "dataworks_metrics_infrastructure" {
-  backend   = "s3"
-  workspace = terraform.workspace
-
-  config = {
-    bucket         = "{{state_file_bucket}}"
-    key            = "terraform/dataworks/dataworks-metrics-infrastructure.tfstate"
     region         = "{{state_file_region}}"
     encrypt        = true
     kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"

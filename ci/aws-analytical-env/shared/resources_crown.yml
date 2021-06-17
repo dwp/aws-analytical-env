@@ -17,5 +17,11 @@ resources:
       uri: https://github.com/dwp/aws-analytical-dataset-generation.git
     check_every: 15m
 
-
-
+  - name: aws-common-infrastructure
+    type: git
+    source:
+      branch: master
+      private_key: ((svc-dip.private_key))
+      uri: git@github.ucds.io:dip/aws-common-infrastructure.git
+    check_every: 15m
+    webhook_token: ((ucfs-github.webhook-token))

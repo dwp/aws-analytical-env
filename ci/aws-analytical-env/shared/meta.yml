@@ -7,7 +7,21 @@ meta:
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_version))
+            tag: ((dataworks.terraform_13_version))
+        params:
+          TF_INPUT: false
+          TF_CLI_ARGS_apply: -lock-timeout=300s
+          TF_CLI_ARGS_plan: -lock-timeout=300s
+          TF_VAR_costcode: ((dataworks.costcode))
+
+    terraform-13-common-config:
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.terraform_repository))
+            tag: ((dataworks.terraform_13_version))
         params:
           TF_INPUT: false
           TF_CLI_ARGS_apply: -lock-timeout=300s
@@ -186,7 +200,7 @@ meta:
 
     terraform-output-common:
       task: terraform-output-common
-      .: (( inject meta.plan.terraform-common-config ))
+      .: (( inject meta.plan.terraform-13-common-config ))
       config:
         run:
           path: sh
@@ -480,8 +494,38 @@ meta:
           AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
           AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
 
-    get-uc-labs-files:
-      task: get-uc-labs-files
+    terraform-output-common-crown:
+      task: terraform-output-common-crown
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((terraform.repository))
+            version: 0.12.31
+            tag: 0.12.31
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              pwd
+              terraform workspace show
+              terraform init
+              terraform output --json > ../terraform-output-common-crown/outputs.json
+          dir: aws-common-infrastructure
+        inputs:
+          - name: aws-common-infrastructure
+        outputs:
+          - name: terraform-output-common-crown
+        params:
+          TF_CLI_ARGS_plan: -lock-timeout=300s
+          TF_INPUT: "false"
+          AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
+          AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
+
+    get-files:
+      task: get-files
       attempts: 50
       config:
         platform: linux
@@ -494,7 +538,7 @@ meta:
         inputs:
           - name: ssh-credentials
         outputs:
-          - name: uc_labs
+          - name: files
         params:
           RETRY_SLEEP_TIME: 600
           TARGET_SERVER: "hdp-edge01.node.prd.dw"
@@ -505,7 +549,7 @@ meta:
             - |
               whoami
               cp -R ssh-credentials ~/.ssh
-              scp -r -o StrictHostKeyChecking=no hdp-edge01.node.prd.dw:${SOURCE_PATH}/* uc_labs/
+              scp -r -o StrictHostKeyChecking=no hdp-edge01.node.prd.dw:${SOURCE_PATH}/* files/
 
     load-s3:
       task: load-s3
@@ -519,9 +563,9 @@ meta:
             version: ((docker-awscli-ubuntu.version))
             tag: ((docker-awscli-ubuntu.version))
         inputs:
-          - name: uc_labs
+          - name: files
           - name: .aws
-          - name: terraform-output-adg
+          - name: terraform-output-common-crown
         params:
           AWS_PROFILE: ci
           AWS_SHARED_CREDENTIALS_FILE: .aws/credentials
@@ -530,8 +574,8 @@ meta:
           args:
             - -exc
             - |
-              AWS_PUBLISHED_BUCKET="$(cat terraform-output-adg/outputs.json |  jq -r '.published_bucket.value.id')"
-              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync uc_labs/ s3://${AWS_PUBLISHED_BUCKET}/uc-labs/
+              AWS_PUBLISHED_BUCKET="$(cat terraform-output-common-crown/outputs.json |  jq -r '.published_bucket.value.id')"
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync files/ s3://${AWS_PUBLISHED_BUCKET}/${S3_FOLDER}
 
     stop-cluster:
       task: stop-cluster
@@ -584,12 +628,12 @@ meta:
               for CLUSTER_ID in `aws emr list-clusters --cluster-state WAITING | jq -r '.Clusters[].Id'`
               do
                   echo "Checking cluster $CLUSTER_ID"
-               
+
                   # Is it an analytical cluster (should probably tag type of analytical-env ).
 
                   APPNAME=`aws emr describe-cluster --cluster-id $CLUSTER_ID | jq -r ".Cluster.Tags[] | if .Key == \"Application\" then .Value else empty end"`
                   CLEVEL=`aws emr describe-cluster --cluster-id $CLUSTER_ID | jq -r ".Cluster.StepConcurrencyLevel"`
-                 
+
                   if [[ ${APPNAME:-""} == "aws-analytical-env" ]]
                   then
                       echo $CLUSTER_ID is an analytical env cluster

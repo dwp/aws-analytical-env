@@ -1,5 +1,5 @@
 terraform {
-  required_version = "{{terraform_12_version}}"
+  required_version = "{{terraform_13_version}}"
 
   backend "s3" {
     bucket         = "{{state_file_bucket}}"
@@ -55,7 +55,7 @@ data "terraform_remote_state" "concourse" {
 
 provider "aws" {
   region = "{{provider_region}}"
-  version = "~> 2.70.0"
+  version = "~> 3.42.0"
 
   assume_role {
     role_arn = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
