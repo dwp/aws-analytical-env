@@ -98,3 +98,23 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-user-data-migration/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+
+  - name: mirror-git-repo-rnd-qa
+    plan:
+      - get: rnd-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: qa
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: rnd-repo
+          inputs:
+            - name: rnd-repo
+          params:
+            S3_ROOT: component/uc_repos/rnd/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
