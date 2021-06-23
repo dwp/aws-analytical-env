@@ -30,4 +30,4 @@ scipy==1.6.2
 seaborn==0.11.1
 EOF
 
-sudo -E pip3 install -r /tmp/py_requirements.txt
+#sudo -E pip3 install -r /tmp/py_requirements.txt
