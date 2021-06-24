@@ -83,3 +83,20 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-user-data-migration/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-repo-aws-claimant-history-development
+    plan:
+      - get: aws-claimant-history-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-claimant-history-repo
+          inputs:
+            - name: aws-claimant-history-repo
+          params:
+            S3_ROOT: component/uc_repos/aws-claimant-history/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
