@@ -303,8 +303,3 @@ variable "hive_custom_auth_provider_path" {
   type        = string
   description = "Local file path of the hive custom auth provider jar"
 }
-
-variable "hive_tez_container_size" {
-  type        = string
-  description = "This property specifies tez container size "
-}
