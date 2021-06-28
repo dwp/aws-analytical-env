@@ -107,7 +107,8 @@
       "hive.exec.reducers.max": "${hive_max_reducers}",
       "hive.resultset.use.unique.column.names": "false",
       "hive.auto.convert.join.noconditionaltask.size": "100000",
-      "hive.mapjoin.smalltable.filesize": "2500000"
+      "hive.mapjoin.smalltable.filesize": "2500000",
+      "hive.tez.container.size": "${hive_tez_container_size}"
     }
   },
   {
