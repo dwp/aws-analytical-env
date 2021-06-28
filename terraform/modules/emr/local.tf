@@ -90,7 +90,7 @@ locals {
     hive_tez_sessions_per_queue  = local.hive_tez_sessions_per_queue[var.environment]
     hive_max_reducers            = local.hive_max_reducers[var.environment]
     use_auth                     = var.hive_use_auth
-    hive_tez_container_size      = var.hive_tez_container_size
+    hive_tez_container_size      = local.hive_tez_container_size[var.environment]
   })
 
   configurations_glue_json = templatefile(format("%s/templates/emr/configuration.glue.json", path.module), {
