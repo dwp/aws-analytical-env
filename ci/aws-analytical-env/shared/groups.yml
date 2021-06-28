@@ -56,7 +56,8 @@ groups:
       - mirror-git-repo-aws-payment-timelines-development
       - mirror-git-repo-aws-cbol-data-development
       - mirror-git-repo-aws-user-data-migration-development
-      - mirror-git-repo-rnd-development
+      - mirror-git-repo-rnd-developmen
+      - mirror-git-repo-aws-claimant-history-development
 
       - mirror-git-repo-uc-lab-repo-qa
       - mirror-git-repo-opsmi-ops-mi-repo-qa
@@ -64,6 +65,7 @@ groups:
       - mirror-git-repo-aws-cbol-data-qa
       - mirror-git-repo-aws-user-data-migration-qa
       - mirror-git-repo-rnd-qa
+      - mirror-git-repo-aws-claimant-history-qa
 
       - mirror-git-repo-uc-lab-repo-integration
       - mirror-git-repo-opsmi-ops-mi-repo-integration
@@ -71,6 +73,7 @@ groups:
       - mirror-git-repo-aws-cbol-data-integration
       - mirror-git-repo-aws-user-data-migration-integration
       - mirror-git-repo-rnd-integration
+      - mirror-git-repo-aws-claimant-history-integration
 
       - mirror-git-repo-uc-lab-repo-preprod
       - mirror-git-repo-opsmi-ops-mi-repo-preprod
@@ -78,6 +81,7 @@ groups:
       - mirror-git-repo-aws-cbol-data-preprod
       - mirror-git-repo-aws-user-data-migration-preprod
       - mirror-git-repo-rnd-preprod
+      - mirror-git-repo-aws-claimant-history-preprod
 
       - mirror-git-repo-uc-lab-repo-prod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
@@ -85,6 +89,7 @@ groups:
       - mirror-git-repo-aws-cbol-data-prod
       - mirror-git-aws-user-data-migration-prod
       - mirror-git-repo-rnd-prod
+      - mirror-git-repo-aws-claimant-history-prod
 
   - name: mirror-ucsqlhelper
     jobs:

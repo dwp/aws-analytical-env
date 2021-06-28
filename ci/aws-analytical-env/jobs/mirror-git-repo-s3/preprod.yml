@@ -112,10 +112,29 @@ jobs:
             TF_WORKSPACE: preprod
       - .: (( inject meta.plan.mirror-git-repo ))
         config:
-          run:
+          run:      
             dir: rnd-repo
           inputs:
             - name: rnd-repo
           params:
-            S3_ROOT: component/uc_repos/rnd/
+            S3_ROOT: component/uc_repos/rnd/      
+      
+  - name: mirror-git-repo-aws-claimant-history-preprod
+    plan:
+      - get: aws-claimant-history-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: preprod
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-claimant-history-repo
+          inputs:
+            - name: aws-claimant-history-repo
+          params:
+            S3_ROOT: component/uc_repos/aws-claimant-history/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
