@@ -30,7 +30,7 @@ locals {
     qa          = 1
     integration = 1
     preprod     = 1
-    production  = 2
+    production  = 8
   }
   autoscaling_max_capacity = {
     development = 4
@@ -64,6 +64,14 @@ locals {
     production  = "1099"
   }
 
+  hive_tez_container_size = {
+    development = "4096"
+    qa          = "4096"
+    integration = "4096"
+    preprod     = "32768"
+    production  = "32768"
+  }
+
   dks_port   = 8443
   full_proxy = "http://${var.internet_proxy_dns_name}:3128"
 
@@ -82,6 +90,7 @@ locals {
     hive_tez_sessions_per_queue  = local.hive_tez_sessions_per_queue[var.environment]
     hive_max_reducers            = local.hive_max_reducers[var.environment]
     use_auth                     = var.hive_use_auth
+    hive_tez_container_size      = local.hive_tez_container_size[var.environment]
   })
 
   configurations_glue_json = templatefile(format("%s/templates/emr/configuration.glue.json", path.module), {
