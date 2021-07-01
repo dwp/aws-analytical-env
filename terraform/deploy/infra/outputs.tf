@@ -80,3 +80,29 @@ output "vpce_security_groups" {
     }
   }
 }
+
+output "aws_machine_learning_infrastructure_subnet" {
+  value = {
+    cidr_blocks = aws_subnet.machine_learning.*.cidr_block
+    ids         = aws_subnet.machine_learning.*.id
+  }
+}
+
+output "route_table_ids" {
+  value = {
+    aws_machine_learning_infrastructure = aws_route_table.machine_learning.id
+  }
+}
+
+output "internet_proxy" {
+  value = {
+    url  = format("http://%s:3128", module.analytical_env_vpc.custom_vpce_dns_names["proxy_vpc_endpoint"][0])
+    sg   = module.analytical_env_vpc.custom_vpce_sg_id
+    host = module.analytical_env_vpc.custom_vpce_dns_names["proxy_vpc_endpoint"][0]
+    port = 3128
+  }
+}
+
+output "dwp_vpc" {
+  value = module.analytical_env_vpc
+}
