@@ -30,7 +30,8 @@ module analytical_env_vpc {
     "git-codecommit",
     "sts",
     "secretsmanager",
-    "sns"
+    "sns",
+    "autoscaling"
   ]
 
   custom_vpce_services = [
