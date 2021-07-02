@@ -73,3 +73,29 @@ resource "aws_appautoscaling_target" "ecs_target" {
   min_capacity       = var.desired_count
   max_capacity       = 3
 }
+
+resource "aws_appautoscaling_scheduled_action" "ecs_action_down" {
+  name               = "ecs_action_down"
+  service_namespace  = aws_appautoscaling_target.ecs_target.service_namespace
+  resource_id        = aws_appautoscaling_target.ecs_target.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
+  schedule           = "cron(0 0 * * ? *)"
+
+  scalable_target_action {
+    min_capacity = 0
+    max_capacity = 0
+  }
+}
+
+resource "aws_appautoscaling_scheduled_action" "ecs_action_up" {
+  name               = "ecs_action_up"
+  service_namespace  = aws_appautoscaling_target.ecs_target.service_namespace
+  resource_id        = aws_appautoscaling_target.ecs_target.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
+  schedule           = "cron(0 6 * * ? *)"
+
+  scalable_target_action {
+    min_capacity = var.desired_count
+    max_capacity = 3
+  }
+}
