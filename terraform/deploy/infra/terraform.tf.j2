@@ -43,16 +43,6 @@ provider "aws" {
 provider "aws" {
   version = "~> 3.42.0"
   region  = "{{terraform.provider_region}}"
-  alias   = "management-crypto"
-
-  assume_role {
-    role_arn = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
-  }
-}
-
-provider "aws" {
-  version = "~> 3.42.0"
-  region  = "{{terraform.provider_region}}"
   alias   = "management_dns"
 
   assume_role {
