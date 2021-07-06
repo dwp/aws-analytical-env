@@ -1,39 +1,56 @@
 jobs:
-  - name: qa
+  - name: apply-and-test-with-ami
     max_in_flight: 1
     serial_groups: [qa-applies]
     plan:
-      - put: meta
-        resource: meta-qa
-      - get: aws-analytical-env
-        trigger: true
-      - get: emp-release
-        trigger: true
-      - get: emr-launcher-release
-        trigger: true
-      - get: manage-mysql-user-release
-        trigger: true
-      - get: hive-custom-auth-release
-        trigger: true
-      - get: emr-al2-ami
-        trigger: true
+      - in_parallel:
+          - get: meta
+            resource: meta-qa
+            trigger: false
+          - get: aws-analytical-env
+            trigger: false
+            passed:
+              - qa
+          - get: emp-release
+            trigger: false
+            passed:
+              - qa
+          - get: emr-launcher-release
+            trigger: false
+            passed:
+              - qa
+          - get: manage-mysql-user-release
+            trigger: false
+            passed:
+              - qa
+          - get: hive-custom-auth-release
+            trigger: false
+            passed:
+              - qa
+          - get: emr-al2-ami
+            resource: untested-al2-emr-ami
+            trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
-        params:
-          DEPLOY_PATH: infra
+        config:
+          params:
+            AWS_ACC: ((aws_account.qa))
+            DEPLOY_PATH: infra
       - .: (( inject meta.plan.terraform-apply ))
         task: terraform-apply-infra
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
         params:
-          TF_WORKSPACE: 'qa'
+          TF_WORKSPACE: qa
+          TEST_AMI_RUN: true
       - .: (( inject meta.plan.terraform-plan ))
         task: terraform-plan-infra
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
-        params:
-          TF_WORKSPACE: 'qa'
+          params:
+            TF_WORKSPACE: qa
+            TEST_AMI_RUN: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: app
@@ -49,7 +66,7 @@ jobs:
             - name: hive-custom-auth-release
         params:
           TF_WORKSPACE: 'qa'
-          TF_VAR_emp_dir_path: ../../../../emp-release  
+          TF_VAR_emp_dir_path: ../../../../emp-release
       - .: (( inject meta.plan.terraform-plan ))
         task: terraform-plan-app
         config:
@@ -74,4 +91,27 @@ jobs:
         config:
           params:
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+      - in_parallel:
+        - .: (( inject meta.plan.test-emr-cluster))
+          config:
+            params:
+              TF_WORKSPACE: qa
+              AWS_ACC: ((aws_account.qa))
+              AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+
+
+    on_failure:
+      do:
+        - .: (( inject meta.plan.ami-test-results ))
+          task: ami-test-result-fail
+          config:
+            params:
+              RESULT: FAILED
+    on_success:
+      do:
+        - .: (( inject meta.plan.ami-test-results ))
+          task: ami-test-result-success
+          config:
+              params:
+                RESULT: SUCCESS
 

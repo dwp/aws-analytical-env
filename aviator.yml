@@ -24,11 +24,14 @@ spruce:
         regexp: ".*yml"
       - with_in: ci/aws-analytical-env/jobs/terminate-cluster/
         regexp: ".*yml"
+      - with_in: ci/aws-analytical-env/jobs/ami-test/
+        regexp: ".*yml"
       - with_in: ci/aws-analytical-env/shared/
         regexp: ".*yml"
         except:
           - groups_crown.yml
           - resources_crown.yml
+
 
     to: aviator_pipeline.yml
 fly:
