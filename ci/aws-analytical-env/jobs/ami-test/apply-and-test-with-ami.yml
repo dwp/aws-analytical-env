@@ -4,9 +4,8 @@ jobs:
     serial_groups: [qa-applies]
     plan:
       - in_parallel:
-          - get: meta
+          - put: meta
             resource: meta-qa
-            trigger: false
           - get: aws-analytical-env
             trigger: false
             passed:
