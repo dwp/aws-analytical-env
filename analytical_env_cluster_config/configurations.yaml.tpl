@@ -101,6 +101,9 @@ Configurations:
     "hive.blobstore.use.blobstore.as.scratchdir": "false"
     "hive.server2.tez.session.lifetime": "0"
     "hive.exec.reducers.max": "${hive_max_reducers}"
+    "hive.server2.session.check.interval": "2m"
+    "hive.server2.idle.operation.timeout": "60m"
+    "hive.server2.idle.session.timeout": "10m"
 - Classification: "emrfs-site"
   Properties:
     "fs.s3.maxRetries": "20"
