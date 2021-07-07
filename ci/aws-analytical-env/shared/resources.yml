@@ -119,6 +119,15 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/aws-payment-timelines.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+  - name: aws-payment-timelines-repo-branch
+    type: git
+    source:
+      branch: parallel
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-payment-timelines.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
   - name: aws-cbol-data-repo
     type: git
     source:
@@ -316,3 +325,16 @@ resources:
         is-public: false
         state: available
         name: dw-al2-emr-ami-1613152072
+
+  - name: untested-al2-emr-ami
+    type: ami
+    check_every: 5m
+    source:
+      aws_role_arn: arn:aws:iam::((dataworks.aws_management_acc)):role/ci
+      region: ((dataworks.aws_region))
+      filters:
+        owner-id: ((dataworks.aws_management_acc))
+        is-public: false
+        state: available
+        name: untested-dw-al2-emr-ami-*
+        architecture: x86_64

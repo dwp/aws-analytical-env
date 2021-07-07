@@ -706,3 +706,43 @@ meta:
               jq -eC "if .errorMessage? then error(.errorMessage) else true end" < output.json
         inputs:
           - name: terraform-output-testing
+
+    ami-test-results:
+      task: ami-test-result
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.terraform_repository))
+            tag: ((dataworks.terraform_13_version))
+        params:
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+          GIT_USERNAME: ((dataworks.concourse_github_username))
+          GIT_EMAIL: ((dataworks.concourse_github_email))
+          GITHUB_TOKEN: ((dataworks-secrets.concourse_github_pat))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              set +x
+
+              AMI_ID=$(cat emr-al2-ami/id)
+              DATE=$(date -u)
+              PIPELINE="$(cat meta/build_pipeline_name)"
+
+              git config --global user.name "${GIT_USERNAME}"
+              git config --global user.email "${GIT_EMAIL}"
+
+              git clone https://${GITHUB_TOKEN}:x-oauth-basic@github.com/dwp/ami-builder-configs
+              cd ami-builder-configs/results
+
+              echo "$AMI_ID $RESULT" > "$PIPELINE.test"
+
+              git add "$PIPELINE.test"
+              git commit -m "Updating $PIPELINE AMI test on ${DATE}"
+              git push https://${GITHUB_TOKEN}:x-oauth-basic@github.com/dwp/ami-builder-configs
+        inputs:
+          - name: meta
+          - name: emr-al2-ami
