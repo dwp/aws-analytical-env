@@ -117,3 +117,20 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-data-exploration/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-repo-azkaban-dev-development
+    plan:
+      - get: azkaban-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: azkaban-dev-repo
+          inputs:
+            - name: azkaban-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/azkaban-dev/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
