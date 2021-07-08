@@ -182,6 +182,15 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/aws-data-exploration.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+  - name: azkaban-dev-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/azkaban-dev.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
 #  - name: datateam_dotfiles-repo
 #    type: git
 #    source:
