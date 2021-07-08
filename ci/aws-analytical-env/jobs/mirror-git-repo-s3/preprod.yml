@@ -42,7 +42,6 @@ jobs:
   - name: mirror-git-repo-aws-payment-timelines-preprod
     plan:
       - get: aws-payment-timelines-repo
-        resource: aws-payment-timelines-repo-branch
         trigger: true
       - get: aws-common-infrastructure
         trigger: false
