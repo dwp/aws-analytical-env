@@ -27,7 +27,7 @@ jobs:
             passed:
               - qa
           - get: emr-al2-ami
-            resource: untested-al2-emr-ami
+            resource: untested-al2-analytical-env-emr-ami
             trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         config:

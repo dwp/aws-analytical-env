@@ -74,10 +74,6 @@ resource "aws_emr_cluster" "cluster" {
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.emr_setup_sh.key)
   }
 
-  bootstrap_action {
-    name = "python-packages-install"
-    path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.py_pckgs_install.key)
-  }
 
   step {
     name              = "hdfs-setup"
