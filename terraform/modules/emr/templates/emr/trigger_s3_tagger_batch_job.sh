@@ -21,7 +21,7 @@ export https_proxy
 echo "Triggering tagger with JobName $JOB_NAME and s3 prefix $S3_PREFIX"
 aws batch submit-job \
 --job-queue "$JOB_QUEUE" \
---job-definition s3_object_tagger_job \
+--job-definition ${job_definition_name} \
 --job-name "$JOB_NAME" \
 --parameters \
 "{\"data-s3-prefix\": \"$S3_PREFIX\", \"csv-location\": \"s3://${config_bucket}/component/rbac/data_classification.csv\"}"
