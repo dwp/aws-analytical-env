@@ -50,7 +50,7 @@ module "emr" {
   hive_metastore_username      = jsondecode(data.aws_secretsmanager_secret_version.hive_metastore_password_secret.secret_string)["username"]
   hive_metastore_sg_id         = data.terraform_remote_state.internal_compute.outputs.hive_metastore_v2.security_group.id
 
-  s3_tagger_job_definition      = data.terraform_remote_state.aws_s3_object_tagger.outputs.s3_object_tagger_batch.job_definition.arn
+  s3_tagger_job_definition      = data.terraform_remote_state.aws_s3_object_tagger.outputs.s3_object_tagger_batch.job_definition.id
   s3_tagger_job_definition_name = data.terraform_remote_state.aws_s3_object_tagger.outputs.s3_object_tagger_batch.job_definition.name
   s3_tagger_job_queue           = data.terraform_remote_state.aws_s3_object_tagger.outputs.s3_object_tagger_batch.pt_job_queue.arn
 
