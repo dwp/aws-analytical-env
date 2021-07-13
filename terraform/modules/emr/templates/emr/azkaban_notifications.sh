@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+getent group service | grep -q "$(whoami)" || exit 0
+
 source /opt/emr/azkaban_metrics.sh || true
 
 # The following exemptions are because this is a template file and not the final shell script.
