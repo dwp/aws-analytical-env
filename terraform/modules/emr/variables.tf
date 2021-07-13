@@ -257,6 +257,11 @@ variable "s3_tagger_job_definition" {
   type        = string
 }
 
+variable "s3_tagger_job_definition_name" {
+  description = "The Batch Job Definition name for the PDM/S3 Data Tagger"
+  type        = string
+}
+
 variable "s3_tagger_job_queue" {
   description = "The Batch Job Queue ARN for the PDM/S3 Data Tagger"
   type        = string
