@@ -50,7 +50,6 @@ data "template_file" "emr_setup_sh" {
     aws_default_region              = "eu-west-2"
     cwa_metrics_collection_interval = local.cw_agent_metrics_collection_interval
     publish_bucket_id               = var.dataset_s3.id
-    job_definition_name             = var.s3_tagger_job_definition_name
   }
 }
 
@@ -64,8 +63,9 @@ resource "aws_s3_bucket_object" "trigger_s3_tagger_batch_job_sh" {
 data "template_file" "trigger_s3_tagger_batch_job_sh" {
   template = file(format("%s/templates/emr/trigger_s3_tagger_batch_job.sh", path.module))
   vars = {
-    full_proxy    = local.full_proxy
-    config_bucket = var.config_bucket_id
+    full_proxy          = local.full_proxy
+    config_bucket       = var.config_bucket_id
+    job_definition_name = var.s3_tagger_job_definition_name
   }
 }
 
