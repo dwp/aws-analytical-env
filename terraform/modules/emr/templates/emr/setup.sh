@@ -31,6 +31,9 @@ set -o pipefail
   sudo mkdir -p /var/log/batch
   sudo chown hadoop:hadoop /var/log/batch
 
+  sudo mkdir -p /var/log/analytical_env
+  sudo chown hadoop:hadoop /var/log/analytical_env
+
   aws s3 cp "${logging_shell}"     /opt/emr/logging.sh
   aws s3 cp "${cloudwatch_shell}"  /opt/emr/cloudwatch.sh
   aws s3 cp "${get_scripts_shell}" /home/hadoop/get_scripts.sh
