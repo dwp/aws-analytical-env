@@ -29,6 +29,36 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
             "log_group_name": "${cwa_log_group_name}",
             "log_stream_name": "create_dbs.log",
             "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/analytical_env/emr_setup.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "emr_setup.log",
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/analytical_env/get_dks_cert.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "get_dks_cert.log",
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/analytical_env/hdfs_setup.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "hdfs_setup.log",
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/analytical_env/sparkR_install.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "sparkR_install.logg",
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/analytical_env/livy_client_conf.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "livy_client_conf.logg",
+            "timezone": "UTC"
           }
         ]
       }
@@ -41,6 +71,4 @@ CWAGENTCONFIG
 
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 sudo systemctl start amazon-cloudwatch-agent
-
-
 
