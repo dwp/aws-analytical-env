@@ -22,4 +22,4 @@ set -o pipefail
 
     sudo -E wget https://github.com/sparklyr/sparklyr/blob/15cf7cbb32eb5247f47db5c4febe21b9bba43105/inst/java/sparklyr-3.0-2.12.jar?raw=true -O /usr/lib/spark/jars/sparklyr-3.0-2.12.jar
 
-) /var/log/analytical_env/sparkR_install.log 2>&1
+) /var/log/batch/sparkR_install.log 2>&1

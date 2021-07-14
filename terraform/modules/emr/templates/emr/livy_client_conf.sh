@@ -31,4 +31,4 @@ EOF
     sleep 5
     sudo systemctl start livy-server
 
-) /var/log/analytical_env/livy_client_conf.log 2>&1
+) /var/log/batch/livy_client_conf.log 2>&1

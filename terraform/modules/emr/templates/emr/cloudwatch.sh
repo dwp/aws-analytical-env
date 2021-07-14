@@ -31,31 +31,31 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
             "timezone": "UTC"
           },
           {
-            "file_path": "/var/log/analytical_env/emr_setup.log",
+            "file_path": "/var/log/batch/emr_setup.log",
             "log_group_name": "${cwa_log_group_name}",
             "log_stream_name": "emr_setup.log",
             "timezone": "UTC"
           },
           {
-            "file_path": "/var/log/analytical_env/get_dks_cert.log",
+            "file_path": "/var/log/batch/get_dks_cert.log",
             "log_group_name": "${cwa_log_group_name}",
             "log_stream_name": "get_dks_cert.log",
             "timezone": "UTC"
           },
           {
-            "file_path": "/var/log/analytical_env/hdfs_setup.log",
+            "file_path": "/var/log/batch/hdfs_setup.log",
             "log_group_name": "${cwa_log_group_name}",
             "log_stream_name": "hdfs_setup.log",
             "timezone": "UTC"
           },
           {
-            "file_path": "/var/log/analytical_env/sparkR_install.log",
+            "file_path": "/var/log/batch/sparkR_install.log",
             "log_group_name": "${cwa_log_group_name}",
             "log_stream_name": "sparkR_install.logg",
             "timezone": "UTC"
           },
           {
-            "file_path": "/var/log/analytical_env/livy_client_conf.log",
+            "file_path": "/var/log/batch/livy_client_conf.log",
             "log_group_name": "${cwa_log_group_name}",
             "log_stream_name": "livy_client_conf.logg",
             "timezone": "UTC"

@@ -65,4 +65,4 @@ export HOSTNAME=$CLUSTER_NAME-$${INSTANCE_ROLE//\"}-$UUID
 sudo hostnamectl set-hostname $HOSTNAME
 aws ec2 create-tags --resources $INSTANCE_ID --tags Key=Name,Value=$HOSTNAME
 
-)  >> /var/log/analytical_env/get_dks_cert.log 2>&1
+)  >> /var/log/batch/get_dks_cert.log 2>&1
