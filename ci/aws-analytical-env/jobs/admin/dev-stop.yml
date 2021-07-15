@@ -8,4 +8,3 @@ jobs:
         config:
           params:
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
-            SNAPSHOT_TYPE: "full"
