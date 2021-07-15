@@ -186,7 +186,7 @@ module launcher {
   batch_cw_agent_namespace = var.batch_cw_agent_namespace
   batch_cw_agent_step_log_group_name = var.batch_cw_agent_step_log_group_name
   analytical_env_cw_agent_namespace = var.analytical_env_cw_agent_namespace
-  batch_cw_agent_step_log_group_name = var.batch_cw_agent_step_log_group_name
+  analytical_env_cw_agent_step_log_group_name = var.analytical_env_cw_agent_step_log_group_name
 }
 
 module "emrfs_lambda" {

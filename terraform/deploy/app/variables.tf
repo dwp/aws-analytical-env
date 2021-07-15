@@ -144,6 +144,6 @@ variable "analytical_env_cw_agent_namespace" {
   default = "/app/analytical_environment"
 }
 
-variable "batch_cw_agent_step_log_group_name" {
+variable "analytical_env_cw_agent_step_log_group_name" {
   default = "/app/analytical_environment/step_logs"
 }
