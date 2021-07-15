@@ -1,5 +1,5 @@
 jobs:
-  - name: production-stop-cluster
+  - name: prod-stop-cluster
     plan:
       - get: aws-analytical-env
         trigger: false
