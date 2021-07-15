@@ -6,12 +6,7 @@ source /opt/emr/azkaban_metrics.sh || true
 # shellcheck disable=SC2125
 # shellcheck disable=SC1083
 
-allow_notifications_for_service_user() {
-  getent group service | grep -q "$(whoami)"
-}
-
 notifications::notify_started() {
-    allow_notifications_for_service_user || return
     local -r job=$${1:?Usage: $${FUNCNAME[0]} job step}
     local -r step=$${2:?Usage: $${FUNCNAME[0]} job step}
     notifications::send_message "$(notifications::starting_payload "$job" "$step")"
@@ -19,7 +14,6 @@ notifications::notify_started() {
 }
 
 notifications::notify_completed() {
-    allow_notifications_for_service_user || return
     local -ir exit_code=$${1:?Usage: $${FUNCNAME[0]} exit-code job step}
     local -r job=$${2:?Usage: $${FUNCNAME[0]} exit-code job step}
     local -r step=$${3:?Usage: $${FUNCNAME[0]} exit-code job step}
@@ -34,7 +28,6 @@ notifications::notify_completed() {
 }
 
 notifications::notify_success() {
-    allow_notifications_for_service_user || return
     local -r job=$${1:?Usage: $${FUNCNAME[0]} job step}
     local -r step=$${2:?Usage: $${FUNCNAME[0]} job step}
     notifications::send_message "$(notifications::success_payload "$job" "$step")"
@@ -44,7 +37,6 @@ notifications::notify_success() {
 }
 
 notifications::notify_failure() {
-    allow_notifications_for_service_user || return
     local -r job=$${1:?Usage: $${FUNCNAME[0]} job step}
     local -r step=$${2:?Usage: $${FUNCNAME[0]} job step}
     notifications::send_message "$(notifications::failure_payload "$job" "$step")"
@@ -54,7 +46,7 @@ notifications::notify_failure() {
 }
 
 notifications::send_message() {
-    allow_notifications_for_service_user || return
+
     # shellcheck disable=SC2193
     if notifications::enabled; then
         local -r payload=$${1:?Usage: $${FUNCNAME[0]} payload}
