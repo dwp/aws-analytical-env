@@ -4,6 +4,8 @@ set -u
 set -x
 set -o pipefail
 
+(
+
 echo -n "Running as: "
 whoami
 
@@ -24,3 +26,6 @@ sudo sed -i '/^\[Service\]/a Environment=COGNITO_KEYSTORE_URL=file:///opt/datawo
 
 sudo systemctl daemon-reload
 sudo systemctl restart hive-server2
+
+) >> /var/log/batch/hive_auth_conf.log 2>&1
+

@@ -31,15 +31,9 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
             "timezone": "UTC"
           },
           {
-            "file_path": "/var/log/batch/emr_setup.log",
+            "file_path": "/var/log/batch/hive_auth_conf.log",
             "log_group_name": "${cwa_log_group_name}",
-            "log_stream_name": "emr_setup.log",
-            "timezone": "UTC"
-          },
-          {
-            "file_path": "/var/log/batch/get_dks_cert.log",
-            "log_group_name": "${cwa_log_group_name}",
-            "log_stream_name": "get_dks_cert.log",
+            "log_stream_name": "hive_auth_conf.log",
             "timezone": "UTC"
           },
           {
@@ -60,7 +54,7 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
             "log_stream_name": "livy_client_conf.logg",
             "timezone": "UTC"
           }
-        ]
+        ] 
       }
     },
     "log_stream_name": "${cwa_namespace}",
