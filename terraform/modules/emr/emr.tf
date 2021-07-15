@@ -72,6 +72,7 @@ resource "aws_emr_cluster" "cluster" {
   bootstrap_action {
     name = "emr-setup"
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.emr_setup_sh.key)
+    args = ["/app/analytical_environment/step_logs", "/app/analytical_environment"]
   }
 
   bootstrap_action {
