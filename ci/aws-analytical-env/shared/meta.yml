@@ -577,8 +577,8 @@ meta:
               AWS_PUBLISHED_BUCKET="$(cat terraform-output-common-crown/outputs.json |  jq -r '.published_bucket.value.id')"
               aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync files/ s3://${AWS_PUBLISHED_BUCKET}/${S3_FOLDER}
 
-    stop-cluster:
-      task: stop-cluster
+    stop-batch-cluster:
+      task: stop-batch-cluster
       config:
         platform: linux
         image_resource:
@@ -746,3 +746,33 @@ meta:
         inputs:
           - name: meta
           - name: emr-al2-ami
+
+
+    stop-cluster:
+      task: stop-cluster
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              export AWS_DEFAULT_REGION
+              source /assume-role
+              set +x
+
+              echo "Stopping clusters for ${SNAPSHOT_TYPE}"
+              for CLUSTER_ID in $(aws emr list-clusters --active | jq -r '.Clusters[] | select(.Name | test("aws-analytical-env")) | .Id');
+              do
+                echo "Stopping cluster with id of ${CLUSTER_ID}"
+                aws emr terminate-clusters --cluster-ids $CLUSTER_ID
+              done
