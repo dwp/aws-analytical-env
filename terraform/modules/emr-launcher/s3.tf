@@ -33,7 +33,7 @@ resource "aws_s3_bucket_object" "analytical_env_steps" {
   content = templatefile("../../../analytical_env_cluster_config/steps.yaml.tpl", {
     config_bucket = var.emr_bucket.id
     cwa_log_group_name = var.analytical_env_cw_agent_step_log_group_name
-    cwa_namespace = var.analytical_env_cwa_namespace
+    cwa_namespace = var.analytical_env_cw_agent_namespace
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
@@ -98,7 +98,7 @@ resource "aws_s3_bucket_object" "batch_steps" {
   content = templatefile("../../../batch_cluster_config/steps.yaml.tpl", {
     config_bucket = var.emr_bucket.id
     cwa_log_group_name = var.batch_cw_agent_step_log_group_name
-    cwa_namespace = var.batch_cwa_namespace
+    cwa_namespace = var.batch_cw_agent_namespace
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
