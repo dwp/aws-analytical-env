@@ -1,5 +1,5 @@
 jobs:
-  - name: qa-stop-clusters
+  - name: qa-stop-cluster
     plan:
       - get: aws-analytical-env
         trigger: false

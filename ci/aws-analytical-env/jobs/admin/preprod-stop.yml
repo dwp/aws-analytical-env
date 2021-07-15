@@ -1,5 +1,5 @@
 jobs:
-  - name: preprod-stop-clusters
+  - name: preprod-stop-cluster
     plan:
       - get: aws-analytical-env
         trigger: false
