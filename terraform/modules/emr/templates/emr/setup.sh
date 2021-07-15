@@ -10,6 +10,9 @@ whoami
 
 export AWS_DEFAULT_REGION=${aws_default_region}
 
+echo "arguments"
+echo $@
+
 cwa_log_group_name=$1
 cwa_namespace=$2
 
@@ -52,7 +55,7 @@ aws s3 cp s3://${config_bucket}/workflow-manager/azkaban/step.sh /home/hadoop/st
 chmod u+x /home/hadoop/step.sh
 
 sudo /opt/emr/cloudwatch.sh \
-    "${cwa_metrics_collection_interval}" $$cwa_log_group_name "${aws_default_region}" \
+    "${cwa_metrics_collection_interval}" $${cwa_log_group_name} "${aws_default_region}" \
     $${cwa_namespace}
 
 echo "Assuming Cognito Role. Output hidden"

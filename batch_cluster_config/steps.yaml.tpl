@@ -7,8 +7,8 @@ BootstrapActions:
   ScriptBootstrapAction:
     Path: "s3://${config_bucket}/scripts/emr/setup.sh"
     Args: 
-    - "$cwa_log_group_name"
-    - "$cwa_namespace"
+    - "${cwa_log_group_name}"
+    - "${cwa_namespace}"
 Steps:
 - Name: "hdfs-setup"
   HadoopJarStep:
