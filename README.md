@@ -11,6 +11,15 @@ The long-running EMR cluster is currently deployed directly by terraform. The cl
 
 The user batch cluster is deployed by the `emr-launcher`([GitHub](https://github.com/dwp/emr-launcher)) lambda with the configurations in the `batch_cluster_config` directory. The cluster is launched on-demand by Azkaban using the custom DataWorks EMR Jobtype or DataWorks EMR Azkaban plugin. The clusters automatically shut down after a period of inactivity by scheduled Concourse jobs (`<env>-stop-waiting`).
 
+### Logging
+Both clusters output their logs to the Cloudwatch log group
+```
+/app/analytical_batch/step_logs
+```
+The logs from user submitted steps via Azkaban output to  the Cloudwatch log group
+```
+/aws/emr/azkaban
+```
 
 ## Authentication
 
