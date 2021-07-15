@@ -770,7 +770,6 @@ meta:
               source /assume-role
               set +x
 
-              echo "Stopping clusters for ${SNAPSHOT_TYPE}"
               for CLUSTER_ID in $(aws emr list-clusters --active | jq -r '.Clusters[] | select(.Name | test("aws-analytical-env")) | .Id');
               do
                 echo "Stopping cluster with id of ${CLUSTER_ID}"
