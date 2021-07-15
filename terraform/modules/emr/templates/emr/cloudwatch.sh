@@ -29,8 +29,32 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
             "log_group_name": "${cwa_log_group_name}",
             "log_stream_name": "create_dbs.log",
             "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/batch/hive_auth_conf.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "hive_auth_conf.log",
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/batch/hdfs_setup.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "hdfs_setup.log",
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/batch/sparkR_install.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "sparkR_install.logg",
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/batch/livy_client_conf.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "livy_client_conf.logg",
+            "timezone": "UTC"
           }
-        ]
+        ] 
       }
     },
     "log_stream_name": "${cwa_namespace}",
@@ -41,6 +65,4 @@ CWAGENTCONFIG
 
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 sudo systemctl start amazon-cloudwatch-agent
-
-
 
