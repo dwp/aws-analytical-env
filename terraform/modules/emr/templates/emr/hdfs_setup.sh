@@ -47,4 +47,4 @@ set -o pipefail
       sudo /bin/hive -e "CREATE DATABASE IF NOT EXISTS $${DB} LOCATION 's3://${published_bucket}/data/$${DB}'"
   done
 
-) /var/log/batch/hdfs_setup.log 2>&1
+) >> /var/log/batch/hdfs_setup.log 2>&1

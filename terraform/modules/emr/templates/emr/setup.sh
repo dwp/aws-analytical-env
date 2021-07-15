@@ -127,4 +127,4 @@ set -o pipefail
   echo Adding hadoop user to at.allow
   sudo tee -a /etc/at.allow <<< hadoop
 
-) /var/log/batch/emr_setup.log 2>&1
+) >> /var/log/batch/emr_setup.log 2>&1
