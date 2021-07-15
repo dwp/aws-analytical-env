@@ -183,6 +183,10 @@ module launcher {
   hive_compaction_threads               = var.emr_hive_compaction_threads[local.environment]
   hive_tez_sessions_per_queue           = var.emr_hive_tez_sessions_per_queue[local.environment]
   hive_max_reducers                     = var.emr_hive_max_reducers[local.environment]
+  batch_cw_agent_namespace = var.batch_cw_agent_namespace
+  batch_cw_agent_step_log_group_name = var.batch_cw_agent_step_log_group_name
+  analytical_env_cw_agent_namespace = var.analytical_env_cw_agent_namespace
+  batch_cw_agent_step_log_group_name = var.batch_cw_agent_step_log_group_name
 }
 
 module "emrfs_lambda" {

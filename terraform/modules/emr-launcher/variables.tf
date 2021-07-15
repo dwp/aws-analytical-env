@@ -94,3 +94,19 @@ variable "hive_max_reducers" {
   description = "Max number of reducers "
   default     = "1099"
 }
+
+variable "batch_cw_agent_namespace" {
+  type = string
+}
+
+variable "batch_cw_agent_step_log_group_name" {
+  type = string
+}
+
+variable "analytical_env_cw_agent_namespace" {
+  type = string
+}
+
+variable "batch_cw_agent_step_log_group_name" {
+  type = string
+}

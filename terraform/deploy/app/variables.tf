@@ -127,3 +127,23 @@ variable "emr_hive_use_auth" {
 variable "hive_custom_auth_jar_path" {
   type = string
 }
+
+# variable "batch_cw_agent_log_group_name" {
+#   default = "/app/analytical_batch/get_scripts"
+# }
+
+variable "batch_cw_agent_namespace" {
+  default = "/app/analytical_batch"
+}
+
+variable "batch_cw_agent_step_log_group_name" {
+  default = "/app/analytical_batch/step_logs"
+}
+
+variable "analytical_env_cw_agent_namespace" {
+  default = "/app/analytical_environment"
+}
+
+variable "batch_cw_agent_step_log_group_name" {
+  default = "/app/analytical_environment/step_logs"
+}

@@ -192,10 +192,6 @@ locals {
   cw_agent_metrics_collection_interval                = 60
   aws_defaut_region                                   = "eu-west-2"
   cw_agent_step_log_group_name                        = "/app/analytical_batch/step_logs"
-  batch_cw_agent_log_group_name                       = "/app/analytical_batch/get_scripts"
-  batch_cw_agent_namespace                            = "/app/analytical_batch"
-  batch_cw_agent_step_log_group_name                  = "/app/analytical_batch/step_logs"
-  analytical_env_cw_agent_namespace                   = "/app/analytical_environment"
-  analytical_env_cw_agent_step_log_group_name         = "/app/analytical_environment/step_logs"
+  
 
 }
