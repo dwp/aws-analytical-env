@@ -63,8 +63,9 @@ resource "aws_s3_bucket_object" "trigger_s3_tagger_batch_job_sh" {
 data "template_file" "trigger_s3_tagger_batch_job_sh" {
   template = file(format("%s/templates/emr/trigger_s3_tagger_batch_job.sh", path.module))
   vars = {
-    full_proxy    = local.full_proxy
-    config_bucket = var.config_bucket_id
+    full_proxy          = local.full_proxy
+    config_bucket       = var.config_bucket_id
+    job_definition_name = var.s3_tagger_job_definition_name
   }
 }
 
