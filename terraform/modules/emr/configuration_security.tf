@@ -98,7 +98,7 @@ locals {
 
 resource "aws_emr_security_configuration" "analytical_env_emrfs_em" {
   depends_on    = [aws_iam_policy.group_hive_data_access_policy]
-  name          = "analytical_env_${md5(jsonencode(local.emrfs_em))}"
+  name          = "analytical_env_ebs_emrfs"
   configuration = jsonencode(local.emrfs_em)
 
   provisioner "local-exec" {
@@ -109,7 +109,7 @@ resource "aws_emr_security_configuration" "analytical_env_emrfs_em" {
 
 resource "aws_emr_security_configuration" "batch_emrfs_em" {
   depends_on    = [aws_iam_policy.group_hive_data_access_policy]
-  name          = "batch_${md5(jsonencode(local.batch_emrfs_em))}"
+  name          = "batch_ebs_emrfs"
   configuration = jsonencode(local.batch_emrfs_em)
 
   provisioner "local-exec" {
