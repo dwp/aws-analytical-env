@@ -16,15 +16,15 @@ jobs:
       - get: manage-mysql-user-release
         passed:
           - preprod
-        trigger: true
+        trigger: false
       - get: hive-custom-auth-release
-        trigger: true
+        trigger: false
         passed:
           - preprod
       - get: emr-al2-ami
         passed:
           - preprod
-        trigger: true
+        trigger: false
       - get: utc-2am-trigger
         trigger: true
 
