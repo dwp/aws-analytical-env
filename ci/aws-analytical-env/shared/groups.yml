@@ -59,6 +59,15 @@ groups:
       - mirror-git-repo-aws-claimant-history-development
       - mirror-git-repo-aws-data-exploration-development
       - mirror-git-repo-azkaban-dev-development
+      - mirror-git-repo-aws-auditlog-development
+      - mirror-git-repo-aws-auditlog-dev-development
+      - mirror-git-repo-aws-claimant-history-dev-development
+      - mirror-git-repo-aws-uc-channel-development
+      - mirror-git-repo-aws-uc-channel-dev-development
+      - mirror-git-repo-impact-measures-development
+      - mirror-git-repo-impact-measures-dev-development
+      - mirror-git-repo-aws-how-many-development
+      - mirror-git-repo-aws-how-many-dev-development
 
       - mirror-git-repo-uc-lab-repo-qa
       - mirror-git-repo-opsmi-ops-mi-repo-qa
@@ -68,6 +77,15 @@ groups:
       - mirror-git-repo-aws-claimant-history-qa
       - mirror-git-repo-aws-data-exploration-qa
       - mirror-git-repo-azkaban-dev-qa
+      - mirror-git-repo-aws-auditlog-qa
+      - mirror-git-repo-aws-auditlog-dev-qa
+      - mirror-git-repo-aws-claimant-history-dev-qa
+      - mirror-git-repo-aws-uc-channel-qa
+      - mirror-git-repo-aws-uc-channel-dev-qa
+      - mirror-git-repo-impact-measures-qa
+      - mirror-git-repo-impact-measures-dev-qa
+      - mirror-git-repo-aws-how-many-qa
+      - mirror-git-repo-aws-how-many-dev-qa
 
       - mirror-git-repo-uc-lab-repo-integration
       - mirror-git-repo-opsmi-ops-mi-repo-integration
@@ -77,6 +95,15 @@ groups:
       - mirror-git-repo-aws-claimant-history-integration
       - mirror-git-repo-aws-data-exploration-integration
       - mirror-git-repo-azkaban-dev-integration
+      - mirror-git-repo-aws-auditlog-integration
+      - mirror-git-repo-aws-auditlog-dev-integration
+      - mirror-git-repo-aws-claimant-history-dev-integration
+      - mirror-git-repo-aws-uc-channel-integration
+      - mirror-git-repo-aws-uc-channel-dev-integration
+      - mirror-git-repo-impact-measures-integration
+      - mirror-git-repo-impact-measures-dev-integration
+      - mirror-git-repo-aws-how-many-integration
+      - mirror-git-repo-aws-how-many-dev-integration
 
       - mirror-git-repo-uc-lab-repo-preprod
       - mirror-git-repo-opsmi-ops-mi-repo-preprod
@@ -86,6 +113,15 @@ groups:
       - mirror-git-repo-aws-claimant-history-preprod
       - mirror-git-repo-aws-data-exploration-preprod
       - mirror-git-repo-azkaban-dev-preprod
+      - mirror-git-repo-aws-auditlog-preprod
+      - mirror-git-repo-aws-auditlog-dev-preprod
+      - mirror-git-repo-aws-claimant-history-dev-preprod
+      - mirror-git-repo-aws-uc-channel-preprod
+      - mirror-git-repo-aws-uc-channel-dev-preprod
+      - mirror-git-repo-impact-measures-preprod
+      - mirror-git-repo-impact-measures-dev-preprod
+      - mirror-git-repo-aws-how-many-preprod
+      - mirror-git-repo-aws-how-many-dev-preprod
 
       - mirror-git-repo-uc-lab-repo-prod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
@@ -95,6 +131,15 @@ groups:
       - mirror-git-repo-aws-claimant-history-prod
       - mirror-git-repo-aws-data-exploration-prod
       - mirror-git-repo-azkaban-dev-prod
+      - mirror-git-repo-aws-auditlog-prod
+      - mirror-git-repo-aws-auditlog-dev-prod
+      - mirror-git-repo-aws-claimant-history-dev-prod
+      - mirror-git-repo-aws-uc-channel-prod
+      - mirror-git-repo-aws-uc-channel-dev-prod
+      - mirror-git-repo-impact-measures-prod
+      - mirror-git-repo-impact-measures-dev-prod
+      - mirror-git-repo-aws-how-many-prod
+      - mirror-git-repo-aws-how-many-dev-prod
 
   - name: mirror-ucsqlhelper
     jobs:

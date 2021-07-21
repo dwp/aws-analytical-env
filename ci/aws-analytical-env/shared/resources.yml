@@ -191,6 +191,78 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/azkaban-dev.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+  - name: aws-auditlog-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-auditlog.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-auditlog-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-auditlog.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-claimant-history-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-claimant-history.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-uc-channel-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-uc-channel.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-uc-channel-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-uc-channel.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: impact-measures-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/impact-measures.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-how-many-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-how-many.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-how-many-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-how-many.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
 #  - name: datateam_dotfiles-repo
 #    type: git
 #    source:

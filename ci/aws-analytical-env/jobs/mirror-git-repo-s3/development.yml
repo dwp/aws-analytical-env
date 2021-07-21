@@ -137,3 +137,183 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/azkaban-dev/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-repo-aws-auditlog-development
+    plan:
+      - get: aws-auditlog-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-auditlog-repo
+          inputs:
+            - name: aws-auditlog-repo
+          params:
+            S3_ROOT: component/uc_repos/aws-auditlog/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-repo-aws-auditlog-dev-development
+    plan:
+      - get: aws-auditlog-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-auditlog-dev-repo
+          inputs:
+            - name: aws-auditlog-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/aws-auditlog/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-repo-aws-claimant-history-dev-development
+    plan:
+      - get: aws-claimant-history-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-claimant-history-dev-repo
+          inputs:
+            - name: aws-claimant-history-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/aws-claimant-history/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-repo-aws-uc-channel-development
+    plan:
+      - get: aws-uc-channel-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-uc-channel-repo
+          inputs:
+            - name: aws-uc-channel-repo
+          params:
+            S3_ROOT: component/uc_repos/aws-uc-channel/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-repo-aws-uc-channel-dev-development
+    plan:
+      - get: aws-uc-channel-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-uc-channel-dev-repo
+          inputs:
+            - name: aws-uc-channel-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/aws-uc-channel/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-repo-impact-measures-development
+    plan:
+      - get: impact-measures-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: impact-measures-repo
+          inputs:
+            - name: impact-measures-repo
+          params:
+            S3_ROOT: component/uc_repos/impact-measures/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-repo-impact-measures-dev-development
+    plan:
+      - get: impact-measures-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: impact-measures-dev-repo
+          inputs:
+            - name: impact-measures-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/impact-measures/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-repo-aws-how-many-development
+    plan:
+      - get: aws-how-many-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-how-many-repo
+          inputs:
+            - name: aws-how-many-repo
+          params:
+            S3_ROOT: component/uc_repos/aws-how-many/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-repo-aws-how-many-dev-development
+    plan:
+      - get: aws-how-many-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-how-many-dev-repo
+          inputs:
+            - name: aws-how-many-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/aws-how-many/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
