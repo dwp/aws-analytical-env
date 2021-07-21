@@ -7,36 +7,43 @@ jobs:
           - put: meta
             resource: meta-qa
           - get: aws-analytical-env
-            trigger: false
+            trigger: true
             passed:
               - qa
           - get: emp-release
-            trigger: false
+            trigger: true
             passed:
               - qa
           - get: emr-launcher-release
-            trigger: false
+            trigger: true
             passed:
               - qa
           - get: manage-mysql-user-release
-            trigger: false
+            trigger: true
             passed:
               - qa
           - get: hive-custom-auth-release
-            trigger: false
+            trigger: true
             passed:
               - qa
           - get: emr-al2-ami
             resource: untested-al2-analytical-env-emr-ami
             trigger: true
+      - .: (( inject meta.plan.check-ami-test-results ))
+        input_mapping:
+          untested_ami: emr-al2-ami
       - .: (( inject meta.plan.terraform-bootstrap ))
         config:
+          inputs:
+            - name: previous_success
           params:
             AWS_ACC: ((aws_account.qa))
             DEPLOY_PATH: infra
       - .: (( inject meta.plan.terraform-apply ))
         task: terraform-apply-infra
         config:
+          inputs:
+            - name: previous_success
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
         params:
@@ -45,12 +52,17 @@ jobs:
       - .: (( inject meta.plan.terraform-plan ))
         task: terraform-plan-infra
         config:
+          inputs:
+            - name: previous_success
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
           params:
             TF_WORKSPACE: qa
             TEST_AMI_RUN: true
       - .: (( inject meta.plan.terraform-bootstrap ))
+        config:
+          inputs:
+            - name: previous_success
         params:
           DEPLOY_PATH: app
       - .: (( inject meta.plan.terraform-apply ))
@@ -63,6 +75,7 @@ jobs:
             - name: emr-launcher-release
             - name: manage-mysql-user-release
             - name: hive-custom-auth-release
+            - name: previous_success
         params:
           TF_WORKSPACE: 'qa'
           TF_VAR_emp_dir_path: ../../../../emp-release
@@ -76,28 +89,29 @@ jobs:
             - name: emr-launcher-release
             - name: manage-mysql-user-release
             - name: hive-custom-auth-release
+            - name: previous_success
         params:
           TF_WORKSPACE: 'qa'
           TF_VAR_emp_dir_path: ../../../../emp-release
       - .: (( inject meta.plan.terraform-bootstrap ))
+        config:
+          inputs:
+            - name: previous_success
         params:
           DEPLOY_PATH: testing
       - .: (( inject meta.plan.terraform-output-testing ))
+        config:
+          inputs:
+            - name: previous_success
         params:
           TF_WORKSPACE: 'qa'
       - .: (( inject meta.plan.test-emr-cluster ))
         attempts: 3
         config:
+          inputs:
+            - name: previous_success
           params:
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
-      - in_parallel:
-        - .: (( inject meta.plan.test-emr-cluster))
-          config:
-            params:
-              TF_WORKSPACE: qa
-              AWS_ACC: ((aws_account.qa))
-              AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
-
 
     on_failure:
       do:
@@ -113,4 +127,3 @@ jobs:
           config:
               params:
                 RESULT: SUCCESS
-
