@@ -44,7 +44,7 @@ set -o pipefail
   rm team_dbs.json
   for DB in $${TEAM_DBS[@]}; do
       DB=$(echo "$DB" | tr -d '"')
-      echo "CREATE DATABASE IF NOT EXISTS $${DB} LOCATION 's3://${published_bucket}/data/$${DB}'" >> create_db.sql
+      echo "CREATE DATABASE IF NOT EXISTS $${DB} LOCATION 's3://${published_bucket}/data/$${DB}';" >> create_db.sql
   done
   sudo /bin/hive -f create_db.sql
 
