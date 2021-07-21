@@ -396,7 +396,7 @@ resources:
         owner-id: "((dataworks.aws_management_acc))"
         is-public: false
         state: available
-        name: dw-al2-analytical-env-emr-ami-1626786770
+        name: dw-al2-emr-ami-1613152072
 
   - name: untested-al2-analytical-env-emr-ami
     type: ami
