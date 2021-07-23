@@ -68,6 +68,7 @@ groups:
       - mirror-git-repo-impact-measures-dev-development
       - mirror-git-repo-aws-how-many-development
       - mirror-git-repo-aws-how-many-dev-development
+      - mirror-git-repo-aws-dwx-housing-development
 
       - mirror-git-repo-uc-lab-repo-qa
       - mirror-git-repo-opsmi-ops-mi-repo-qa
@@ -86,6 +87,7 @@ groups:
       - mirror-git-repo-impact-measures-dev-qa
       - mirror-git-repo-aws-how-many-qa
       - mirror-git-repo-aws-how-many-dev-qa
+      - mirror-git-repo-aws-dwx-housing-qa
 
       - mirror-git-repo-uc-lab-repo-integration
       - mirror-git-repo-opsmi-ops-mi-repo-integration
@@ -104,6 +106,7 @@ groups:
       - mirror-git-repo-impact-measures-dev-integration
       - mirror-git-repo-aws-how-many-integration
       - mirror-git-repo-aws-how-many-dev-integration
+      - mirror-git-repo-aws-dwx-housing-integration
 
       - mirror-git-repo-uc-lab-repo-preprod
       - mirror-git-repo-opsmi-ops-mi-repo-preprod
@@ -122,6 +125,7 @@ groups:
       - mirror-git-repo-impact-measures-dev-preprod
       - mirror-git-repo-aws-how-many-preprod
       - mirror-git-repo-aws-how-many-dev-preprod
+      - mirror-git-repo-aws-dwx-housing-preprod
 
       - mirror-git-repo-uc-lab-repo-prod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
@@ -140,6 +144,7 @@ groups:
       - mirror-git-repo-impact-measures-dev-prod
       - mirror-git-repo-aws-how-many-prod
       - mirror-git-repo-aws-how-many-dev-prod
+      - mirror-git-repo-aws-dwx-housing-prod
 
   - name: mirror-ucsqlhelper
     jobs:
@@ -203,7 +208,7 @@ groups:
   - name: ami-test
     jobs:
       - apply-and-test-with-ami
-  
+
   - name: admin-stop-cluster
     jobs:
       - dev-stop-cluster
