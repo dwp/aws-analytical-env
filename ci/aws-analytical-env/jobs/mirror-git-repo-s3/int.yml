@@ -338,3 +338,23 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/dev/aws-how-many/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
+
+  - name: mirror-git-repo-aws-dwx-housing-integration
+    plan:
+      - get: aws-dwx-housing-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: integration
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-dwx-housing-repo
+          inputs:
+            - name: aws-dwx-housing-repo
+          params:
+            S3_ROOT: component/uc_repos/aws-dwx-housing/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
