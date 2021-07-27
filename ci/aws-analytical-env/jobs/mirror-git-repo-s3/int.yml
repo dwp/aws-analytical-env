@@ -358,3 +358,23 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-dwx-housing/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
+
+  - name: mirror-git-repo-aws-rtg-pdm-exports-integration
+    plan:
+      - get: aws-rtg-pdm-exports
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: integration
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-rtg-pdm-exports
+          inputs:
+            - name: aws-rtg-pdm-exports
+          params:
+            S3_ROOT: component/uc_repos/aws-rtg-pdm-exports
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
