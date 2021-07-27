@@ -91,7 +91,6 @@ groups:
       - mirror-git-repo-aws-dwx-housing-qa
       - mirror-git-repo-aws-rtg-pdm-exports-qa
 
-
       - mirror-git-repo-uc-lab-repo-integration
       - mirror-git-repo-opsmi-ops-mi-repo-integration
       - mirror-git-repo-aws-payment-timelines-integration
@@ -112,7 +111,6 @@ groups:
       - mirror-git-repo-aws-dwx-housing-integration
       - mirror-git-repo-aws-rtg-pdm-exports-integration
 
-
       - mirror-git-repo-uc-lab-repo-preprod
       - mirror-git-repo-opsmi-ops-mi-repo-preprod
       - mirror-git-repo-aws-payment-timelines-preprod
@@ -132,7 +130,6 @@ groups:
       - mirror-git-repo-aws-how-many-dev-preprod
       - mirror-git-repo-aws-dwx-housing-preprod
       - mirror-git-repo-aws-rtg-pdm-exports-preprod
-
 
       - mirror-git-repo-uc-lab-repo-prod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
