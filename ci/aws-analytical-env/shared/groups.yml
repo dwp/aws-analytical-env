@@ -151,7 +151,6 @@ groups:
       - mirror-git-repo-aws-dwx-housing-prod
       - mirror-git-repo-aws-rtg-pdm-exports-prod
 
-
   - name: mirror-ucsqlhelper
     jobs:
       - mirror-ucsqlhelper-development
