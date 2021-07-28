@@ -37,7 +37,7 @@ locals {
     qa          = 4
     integration = 4
     preprod     = 4
-    production  = 15
+    production  = 20
   }
 
   hive_compaction_threads = {
