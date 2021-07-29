@@ -30,14 +30,14 @@ locals {
     qa          = 1
     integration = 1
     preprod     = 1
-    production  = 8
+    production  = 15
   }
   autoscaling_max_capacity = {
     development = 4
     qa          = 4
     integration = 4
     preprod     = 4
-    production  = 20
+    production  = 30
   }
 
   hive_compaction_threads = {
