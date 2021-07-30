@@ -83,6 +83,7 @@ module "emr" {
 
   hive_custom_auth_provider_path = var.hive_custom_auth_jar_path
   hive_use_auth                  = var.emr_hive_use_auth[local.environment]
+  hive_heapsize                  = var.emr_hive_heapsize[local.environment]
 }
 
 module "pushgateway" {

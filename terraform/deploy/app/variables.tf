@@ -114,6 +114,16 @@ variable "emr_hive_max_reducers" {
   }
 }
 
+variable "emr_hive_heapsize" {
+  default = {
+    development = "4096"
+    qa          = "4096"
+    integration = "4096"
+    preprod     = "8192"
+    production  = "24576"
+  }
+}
+
 variable "emr_hive_use_auth" {
   default = {
     development = true

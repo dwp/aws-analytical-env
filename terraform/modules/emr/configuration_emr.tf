@@ -83,6 +83,7 @@ data "template_file" "hdfs_setup_sh" {
     hive_data_s3     = aws_s3_bucket.hive_data.arn
     config_bucket    = var.config_bucket_id
     published_bucket = var.dataset_s3.id
+    hive_heapsize    = var.hive_heapsize
   }
 }
 
