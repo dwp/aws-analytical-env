@@ -83,7 +83,7 @@ Configurations:
     "hive.vectorized.execution.ptf.enabled": "false"
     "hive.vectorized.row.serde.inputformat.excludes": ""
     "hive.server2.tez.sessions.per.default.queue": "${hive_tez_sessions_per_queue}"
-    "hive.server2.tez.initialize.default.sessions": "true"
+    "hive.server2.tez.initialize.default.sessions": "false"
     "hive.default.fileformat": "TextFile"
     "hive.default.fileformat.managed": "ORC"
     "hive.exec.orc.split.strategy": "HYBRID"
@@ -104,6 +104,7 @@ Configurations:
     "hive.server2.session.check.interval": "0"
     "hive.server2.idle.operation.timeout": "0"
     "hive.server2.idle.session.timeout": "0"
+    "hive.exec.max.dynamic.partitions.pernode": "1000"
 - Classification: "emrfs-site"
   Properties:
     "fs.s3.maxRetries": "20"

@@ -111,6 +111,7 @@ Configurations:
     "hive.vectorized.use.checked.expressions": "false"
     "hive.vectorized.adaptor.usage.mode": "chosen"
     "hive.vectorized.use.vector.serde.deserialize": "true"
+    "hive.exec.max.dynamic.partitions.pernode": "1000"
 
 - Classification: "emrfs-site"
   Properties:

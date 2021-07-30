@@ -308,3 +308,9 @@ variable "hive_custom_auth_provider_path" {
   type        = string
   description = "Local file path of the hive custom auth provider jar"
 }
+
+variable "hive_heapsize" {
+  type        = string
+  description = "Hive heapsize"
+  default     = "1024"
+}
