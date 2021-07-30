@@ -4,7 +4,7 @@ module analytical_env_vpc {
 
   common_tags                              = local.common_tags
   gateway_vpce_route_table_ids             = module.networking.outputs.aws_route_table_private_ids
-  interface_vpce_source_security_group_ids = []
+  interface_vpce_source_security_group_ids = [sort(data.terraform_remote_state.sagemaker_infra.outputs.sagemaker_domain.default_user_settings[0].security_groups)[0]]
   interface_vpce_subnet_ids                = module.networking.outputs.aws_subnets_private[*].id
   region                                   = data.aws_region.current.id
   vpc_cidr_block                           = local.cidr_block[local.environment]["aws-analytical-env-vpc"]
@@ -28,6 +28,7 @@ module analytical_env_vpc {
     "ssm",
     "ssmmessages",
     "git-codecommit",
+    "aws.sagemaker.${data.aws_region.current.id}.studio",
     "sts",
     "secretsmanager",
     "sns",
