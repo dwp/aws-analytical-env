@@ -121,7 +121,9 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
     sudo usermod -aG "$GROUP" "$USERNAME"
 
     echo "Adding user '$USERNAME' to at.allow"
-    sudo tee -a /etc/at.allow <<< "$USERNAME"
+    sudo tee -a /etc/at.allow <<< "${USERNAME}"
+    sudo mkdir -p "/mnt/${USERNAME}"
+    sudo chown -R ${USERNAME}:${USERNAME} "/mnt/${USERNAME}"
   done
 done
 
