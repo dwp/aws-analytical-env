@@ -1,17 +1,79 @@
 locals {
-  fqdn                            = format("%s.%s.%s.", "emr", var.emr_cluster_name, var.root_dns_name)
-  master_instance_type            = "m5.2xlarge"
-  core_instance_type              = "m5.2xlarge"
-  core_instance_count             = 1
-  task_instance_type              = "m5.2xlarge"
+  fqdn = format("%s.%s.%s", "emr", var.emr_cluster_name, var.root_dns_name)
+  master_instance_type = {
+    development = "m5.2xlarge"
+    qa          = "m5.2xlarge"
+    integration = "m5.2xlarge"
+    preprod     = "m5.2xlarge"
+    production  = "m5.8xlarge"
+  }
+  core_instance_type = {
+    development = "m5.2xlarge"
+    qa          = "m5.2xlarge"
+    integration = "m5.2xlarge"
+    preprod     = "m5.2xlarge"
+    production  = "m5.8xlarge"
+  }
+  core_instance_count = {
+    development = 1
+    qa          = 1
+    integration = 1
+    preprod     = 1
+    production  = 2
+  }
   ebs_root_volume_size            = 100
   ebs_config_size                 = 250
   ebs_config_type                 = "gp2"
   ebs_config_volumes_per_instance = 1
-  autoscaling_min_capacity        = 1
-  autoscaling_max_capacity        = 15
-  dks_port                        = 8443
-  full_proxy                      = "http://${var.internet_proxy_dns_name}:3128"
+  autoscaling_min_capacity = {
+    development = 1
+    qa          = 1
+    integration = 1
+    preprod     = 1
+    production  = 15
+  }
+  autoscaling_max_capacity = {
+    development = 4
+    qa          = 4
+    integration = 4
+    preprod     = 4
+    production  = 30
+  }
+
+  hive_compaction_threads = {
+    development = "1"
+    qa          = "1"
+    integration = "1"
+    preprod     = "1"
+    production  = "1"
+  }
+
+  hive_tez_sessions_per_queue = {
+    development = "10"
+    qa          = "10"
+    integration = "10"
+    preprod     = "20"
+    production  = "20"
+  }
+
+  hive_max_reducers = {
+    development = "1099"
+    qa          = "1099"
+    integration = "1099"
+    preprod     = "1099"
+    production  = "1099"
+  }
+
+  hive_tez_container_size = {
+    development = "4096"
+    qa          = "4096"
+    integration = "4096"
+    preprod     = "32768"
+    production  = "32768"
+  }
+
+  dks_port   = 8443
+  full_proxy = "http://${var.internet_proxy_dns_name}:3128"
 
   configurations_mysql_json = templatefile(format("%s/templates/emr/configuration.mysql.json", path.module), {
     logs_bucket_path             = format("s3://%s/logs", var.log_bucket)
@@ -24,6 +86,11 @@ locals {
     hive_metastore_database_name = var.hive_metastore_database_name
     hive_metastore_username      = var.hive_metastore_username
     hive_metastore_pwd           = var.hive_metastore_password
+    hive_compaction_threads      = local.hive_compaction_threads[var.environment]
+    hive_tez_sessions_per_queue  = local.hive_tez_sessions_per_queue[var.environment]
+    hive_max_reducers            = local.hive_max_reducers[var.environment]
+    use_auth                     = var.hive_use_auth
+    hive_tez_container_size      = local.hive_tez_container_size[var.environment]
   })
 
   configurations_glue_json = templatefile(format("%s/templates/emr/configuration.glue.json", path.module), {
@@ -128,4 +195,3 @@ locals {
 
 }
 
-#S3 Required in no proxy list as it is a gateway endpoint

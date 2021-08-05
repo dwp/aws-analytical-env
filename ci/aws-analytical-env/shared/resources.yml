@@ -5,7 +5,19 @@ resources:
       branch: master
       access_token: ((dataworks-secrets.concourse_github_pat))
       uri: https://github.com/dwp/aws-analytical-env.git
-    check_every: 720h
+    check_every: 5m
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-analytical-env-update-pipeline
+    type: git
+    source:
+      branch: master
+      access_token: ((dataworks-secrets.concourse_github_pat))
+      uri: https://github.com/dwp/aws-analytical-env.git
+      paths:
+        - ci/*
+        - aviator.yml
+    check_every: 5m
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
   - name: aws-analytical-env-pr
@@ -13,25 +25,6 @@ resources:
     source:
       access_token: ((dataworks-secrets.concourse_github_pat))
       repository: dwp/aws-analytical-env
-    check_every: 720h
-    webhook_token: ((dataworks.concourse_github_webhook_token))
-
-  - name: aws-dataworks-e2e-framework
-    type: git
-    source:
-      branch: master
-      username: ((dataworks.enterprise_github_username))
-      password: ((dataworks-secrets.enterprise_github_pat))
-      uri: https://((dataworks.enterprise_github_url))/dip/aws-dataworks-e2e-framework.git
-    check_every: 5m
-    webhook_token: ((dataworks.concourse_github_webhook_token))
-
-  - name: aws-analytical-dataset-generation
-    type: git
-    source:
-      branch: master
-      access_token: ((dataworks-secrets.concourse_github_pat))
-      uri: https://github.com/dwp/aws-analytical-dataset-generation.git
     check_every: 720h
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
@@ -90,15 +83,6 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/impact-measures.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
-#  - name: impact-measures-incoming-repo
-#    type: git
-#    source:
-#      branch: master
-#      username: ((dataworks.enterprise_github_username))
-#      password: ((dataworks-secrets.enterprise_github_pat))
-#      uri: https://((dataworks.enterprise_github_url))/dip/impact-measures-incoming.git
-#    webhook_token: ((dataworks.concourse_github_webhook_token))
-
   - name: chs-how-many-repo
     type: git
     source:
@@ -107,15 +91,6 @@ resources:
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/dip/chs-how-many.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
-
-#  - name: chs-how-many-incoming-repo
-#    type: git
-#    source:
-#      branch: master
-#      username: ((dataworks.enterprise_github_username))
-#      password: ((dataworks-secrets.enterprise_github_pat))
-#      uri: https://((dataworks.enterprise_github_url))/dip/chs-how-many-incoming.git
-#    webhook_token: ((dataworks.concourse_github_webhook_token))
 
   - name: chs-auditlog-repo
     type: git
@@ -126,40 +101,31 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/chs-auditlog.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
-#  - name: chs-auditlog-incoming-repo
-#    type: git
-#    source:
-#      branch: master
-#      username: ((dataworks.enterprise_github_username))
-#      password: ((dataworks-secrets.enterprise_github_pat))
-#      uri: https://((dataworks.enterprise_github_url))/dip/chs-auditlog-incoming.git
-#    webhook_token: ((dataworks.concourse_github_webhook_token))
-
-  - name: chs-uc-lab-repo
+  - name: aws-uc-lab-repo
     type: git
     source:
-      branch: Migrating-uc-lab-aws
+      branch: master
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
-      uri: https://((dataworks.enterprise_github_url))/dip/chs-uc-lab.git
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-uc-lab.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
-  - name: chs-payment-timelines-repo
+  - name: aws-payment-timelines-repo
     type: git
     source:
-      branch: DW-5492-Migrate-to-aws
+      branch: master
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
-      uri: https://((dataworks.enterprise_github_url))/dip/chs-payment-timelines.git
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-payment-timelines.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
-  - name: chs-cbol-data-repo
+  - name: aws-cbol-data-repo
     type: git
     source:
-      branch: DW-5713_Migrate_to_aws_CBOL
+      branch: master
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
-      uri: https://((dataworks.enterprise_github_url))/dip/chs-cbol-data.git
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-cbol-data.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
   - name: opsmi-chs-ops-mi-repo
@@ -189,14 +155,131 @@ resources:
       password: ((dataworks-secrets.enterprise_github_pat))
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
-#  - name: chs-uc-lab-incoming-repo
-#    type: git
-#    source:
-#      branch: master
-#      username: ((dataworks.enterprise_github_username))
-#      password: ((dataworks-secrets.enterprise_github_pat))
-#      uri: https://((dataworks.enterprise_github_url))/dip/chs-uc-lab-incoming.git
-#    webhook_token: ((dataworks.concourse_github_webhook_token))
+  - name: aws-user-data-migration-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-user-data-migration.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-claimant-history-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-claimant-history.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-data-exploration-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-data-exploration.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: azkaban-dev-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/azkaban-dev.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-auditlog-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-auditlog.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-auditlog-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-auditlog.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-claimant-history-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-claimant-history.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-uc-channel-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-uc-channel.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-uc-channel-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-uc-channel.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: impact-measures-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/impact-measures.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-how-many-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-how-many.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-how-many-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-how-many.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-dwx-housing-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-dwx-housing.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-rtg-pdm-exports
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-rtg-pdm-exports.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
 
 #  - name: datateam_dotfiles-repo
 #    type: git
@@ -238,6 +321,14 @@ resources:
     source:
       owner: dwp
       repository: manage-mysql-user
+    check_every: 1h
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: hive-custom-auth-release
+    type: github-release
+    source:
+      owner: dwp
+      repository: analytical-env-hive-custom-auth
     check_every: 1h
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
@@ -306,3 +397,34 @@ resources:
       stop: 20:00
       interval: 10m
       days: [Monday, Tuesday, Wednesday, Thursday, Friday]
+
+  - name: every-2h
+    type: time
+    icon: clock-outline
+    source:
+      interval: 2h
+
+  - name: emr-al2-ami
+    type: ami
+    check_every: 1h
+    source:
+      aws_role_arn: "arn:aws:iam::((dataworks.aws_management_acc)):role/ci"
+      region: ((dataworks.aws_region))
+      filters:
+        owner-id: "((dataworks.aws_management_acc))"
+        is-public: false
+        state: available
+        name: dw-al2-emr-ami-1613152072
+
+  - name: untested-al2-analytical-env-emr-ami
+    type: ami
+    check_every: 5m
+    source:
+      aws_role_arn: arn:aws:iam::((dataworks.aws_management_acc)):role/ci
+      region: ((dataworks.aws_region))
+      filters:
+        owner-id: ((dataworks.aws_management_acc))
+        is-public: false
+        state: available
+        name: untested-dw-al2-analytical-env-emr-ami-*
+        architecture: x86_64

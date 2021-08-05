@@ -36,6 +36,7 @@ variable "full_no_proxy" {}
 variable "hive_metastore_endpoint" {}
 variable "hive_metastore_database_name" {}
 variable "hive_metastore_username" {}
+variable "hive_metastore_secret_id" {}
 variable "hive_metastore_arn" {
   description = "the Hive metastore  arn "
   type        = string
@@ -74,4 +75,22 @@ variable "instance_type_core_three" {
   type        = string
   description = "(Optional) instance type3 of core node"
   default     = "m5d.2xlarge"
+}
+
+variable "hive_compaction_threads" {
+  type        = string
+  description = "Number of compaction threads"
+  default     = "1"
+}
+
+variable "hive_tez_sessions_per_queue" {
+  type        = string
+  description = "The number of sessions for each queue "
+  default     = "10"
+}
+
+variable "hive_max_reducers" {
+  type        = string
+  description = "Max number of reducers "
+  default     = "1099"
 }

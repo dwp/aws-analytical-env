@@ -36,6 +36,10 @@ data "template_file" "emr_setup_sh" {
     full_no_proxy                   = join(",", local.no_proxy_hosts)
     cognito_role_arn                = aws_iam_role.cogntio_read_only_role.arn
     user_pool_id                    = var.cognito_user_pool_id
+    azkaban_notifications_shell     = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_notifications_sh.key)
+    azkaban_metrics_shell           = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metrics_sh.key)
+    delete_azkaban_metrics_shell    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.delete_azkaban_metrics_sh.key)
+    sft_utility_shell               = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.sft_utility_sh.key)
     logging_shell                   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.logging_sh.key)
     cloudwatch_shell                = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.cloudwatch_sh.key)
     get_scripts_shell               = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.get_scripts_sh.key)
@@ -60,8 +64,9 @@ resource "aws_s3_bucket_object" "trigger_s3_tagger_batch_job_sh" {
 data "template_file" "trigger_s3_tagger_batch_job_sh" {
   template = file(format("%s/templates/emr/trigger_s3_tagger_batch_job.sh", path.module))
   vars = {
-    full_proxy    = local.full_proxy
-    config_bucket = var.config_bucket_id
+    full_proxy          = local.full_proxy
+    config_bucket       = var.config_bucket_id
+    job_definition_name = var.s3_tagger_job_definition_name
   }
 }
 
@@ -78,6 +83,7 @@ data "template_file" "hdfs_setup_sh" {
     hive_data_s3     = aws_s3_bucket.hive_data.arn
     config_bucket    = var.config_bucket_id
     published_bucket = var.dataset_s3.id
+    hive_heapsize    = var.hive_heapsize
   }
 }
 
@@ -87,6 +93,7 @@ resource "aws_s3_bucket_object" "livy_client_conf_sh" {
   content = data.template_file.livy_client_conf_sh.rendered
   tags    = merge(var.common_tags, { Name : "${var.name_prefix}-livy-config" })
 }
+
 
 # A shell script to update R and install required R packages
 resource "aws_s3_bucket_object" "r_packages_install" {
@@ -110,6 +117,16 @@ resource "aws_s3_bucket_object" "sparkR_install" {
     r_version     = local.r_version
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-sparkR-install" })
+}
+
+resource "aws_s3_bucket_object" "py_pckgs_install" {
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/py_pckgs_install.sh"
+  content = templatefile("${path.module}/templates/emr/py_pckgs_install.sh", {
+    full_proxy    = local.full_proxy,
+    full_no_proxy = join(",", local.no_proxy_hosts),
+  })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-py-pckgs-install" })
 }
 
 data "template_file" "livy_client_conf_sh" {
@@ -190,5 +207,61 @@ resource "aws_s3_bucket_object" "poll_status_table_sh" {
   content = file("${path.module}/templates/emr/poll_status_table.sh")
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-poll-status-table-sh" })
+}
 
+resource "aws_s3_bucket_object" "azkaban_notifications_sh" {
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/azkaban_notifications.sh"
+  content = templatefile("${path.module}/templates/emr/azkaban_notifications.sh",
+    {
+      monitoring_topic_arn = var.monitoring_sns_topic_arn,
+      aws_region           = var.region
+    }
+  )
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-azkaban-notifications-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_metrics_sh" {
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/azkaban_metrics.sh"
+  content = templatefile("${path.module}/templates/emr/azkaban_metrics.sh",
+    {
+      azkaban_pushgateway_hostname = var.azkaban_pushgateway_hostname
+    }
+  )
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-azkaban-notifications-sh" })
+}
+
+resource "aws_s3_bucket_object" "delete_azkaban_metrics_sh" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/emr/delete_azkaban_metrics.sh"
+  content = file("${path.module}/templates/emr/delete_azkaban_metrics.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-azkaban-notifications-sh" })
+}
+
+resource "aws_s3_bucket_object" "sft_utility_sh" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/emr/sft_utility.sh"
+  content = file("${path.module}/templates/emr/sft_utility.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-sft-utility-sh" })
+}
+
+data "template_file" "hive_auth_conf_sh" {
+  template = file(format("%s/templates/emr/hive_auth_conf.sh", path.module))
+  vars = {
+    aws_region                = var.region
+    user_pool_id              = var.cognito_user_pool_id
+    full_proxy                = local.full_proxy
+    full_no_proxy             = join(",", local.no_proxy_hosts)
+    hive_auth_provider_s3_uri = "s3://${aws_s3_bucket_object.hive_auth_provider_jar.bucket}/${aws_s3_bucket_object.hive_auth_provider_jar.key}"
+  }
+}
+
+resource "aws_s3_bucket_object" "hive_auth_conf_sh" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/emr/hive_auth_conf.sh"
+  content = data.template_file.hive_auth_conf_sh.rendered
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-hive-auth-conf-sh" })
 }

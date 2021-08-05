@@ -33,3 +33,14 @@ output "rbac_db" {
 output "emrfs_lambdas" {
   value = module.emrfs_lambda
 }
+
+output "s3fs_bucket_kms_arn" {
+  value = module.jupyter_s3_storage.s3fs_bucket_kms_arn
+}
+
+output "s3fs_bucket" {
+  value = {
+    id  = module.jupyter_s3_storage.jupyterhub_bucket.id
+    arn = module.jupyter_s3_storage.jupyterhub_bucket.arn
+  }
+}

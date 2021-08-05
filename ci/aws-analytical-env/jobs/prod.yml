@@ -17,6 +17,14 @@ jobs:
         passed:
           - preprod
         trigger: false
+      - get: hive-custom-auth-release
+        trigger: false
+        passed:
+          - preprod
+      - get: emr-al2-ami
+        passed:
+          - preprod
+        trigger: false
       - get: utc-2am-trigger
         trigger: true
 
@@ -45,6 +53,16 @@ jobs:
           - preprod
           - after-midnight-check
         trigger: false
+      - get: hive-custom-auth-release
+        trigger: true
+        passed:
+          - preprod
+          - after-midnight-check
+      - get: emr-al2-ami
+        passed:
+          - preprod
+          - after-midnight-check
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra
@@ -74,6 +92,7 @@ jobs:
             - name: emp-release
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           TF_WORKSPACE: 'production'
           TF_VAR_emp_dir_path: ../../../../emp-release
@@ -86,7 +105,19 @@ jobs:
             - name: emp-release
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           TF_WORKSPACE: 'production'
           TF_VAR_emp_dir_path: ../../../../emp-release
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: testing
+      - .: (( inject meta.plan.terraform-output-testing ))
+        params:
+          TF_WORKSPACE: 'production'
+      - .: (( inject meta.plan.test-emr-cluster ))
+        attempts: 3
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
 

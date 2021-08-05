@@ -6,6 +6,10 @@ jobs:
         trigger: true
         passed:
           - gh-proxy-mgmt-dev
+      - get: emr-al2-ami
+        trigger: true
+        passed:
+          - gh-proxy-mgmt-dev
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: github_proxy

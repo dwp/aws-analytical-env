@@ -25,7 +25,7 @@ resource "aws_emr_cluster" "cluster" {
   master_instance_group {
     name           = "MASTER"
     instance_count = 1
-    instance_type  = local.master_instance_type
+    instance_type  = local.master_instance_type[var.environment]
 
     ebs_config {
       size                 = local.ebs_config_size
@@ -37,8 +37,8 @@ resource "aws_emr_cluster" "cluster" {
 
   core_instance_group {
     name           = "CORE"
-    instance_count = local.core_instance_count
-    instance_type  = local.core_instance_type
+    instance_count = local.core_instance_count[var.environment]
+    instance_type  = local.core_instance_type[var.environment]
 
     ebs_config {
       size                 = local.ebs_config_size
@@ -48,14 +48,21 @@ resource "aws_emr_cluster" "cluster" {
     }
 
     autoscaling_policy = templatefile(format("%s/templates/emr/autoscaling_policy.json", path.module), {
-      autoscaling_min_capacity = local.autoscaling_min_capacity,
-      autoscaling_max_capacity = local.autoscaling_max_capacity,
+      autoscaling_min_capacity = local.autoscaling_min_capacity[var.environment],
+      autoscaling_max_capacity = local.autoscaling_max_capacity[var.environment],
       cooldown_scale_out       = 120,
       cooldown_scale_in        = 60 * 30 // Half an hour
     })
   }
 
   configurations_json = var.use_mysql_hive_metastore == true ? local.configurations_mysql_json : local.configurations_glue_json
+
+
+  bootstrap_action {
+    path = "file:/bin/echo"
+    name = "Dummy bootstrap action to track the md5 hash of the configuration json and redeploy only when changed"
+    args = [md5(var.use_mysql_hive_metastore == true ? local.configurations_mysql_json : local.configurations_glue_json)]
+  }
 
   bootstrap_action {
     name = "get-dks-cert"
@@ -65,6 +72,11 @@ resource "aws_emr_cluster" "cluster" {
   bootstrap_action {
     name = "emr-setup"
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.emr_setup_sh.key)
+  }
+
+  bootstrap_action {
+    name = "python-packages-install"
+    path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.py_pckgs_install.key)
   }
 
   step {
@@ -102,6 +114,17 @@ resource "aws_emr_cluster" "cluster" {
   }
 
   step {
+    name              = "hive-auth-conf"
+    action_on_failure = "CONTINUE"
+    hadoop_jar_step {
+      jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
+      args = [
+        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.hive_auth_conf_sh.key)
+      ]
+    }
+  }
+
+  step {
     name              = "get-scripts"
     action_on_failure = "CONTINUE"
     hadoop_jar_step {
@@ -127,12 +150,12 @@ resource "aws_emr_cluster" "cluster" {
     aws_s3_bucket_object.get_dks_cert_sh,
     aws_s3_bucket_object.livy_client_conf_sh,
     aws_s3_bucket_object.hdfs_setup_sh,
+    aws_emr_security_configuration.analytical_env_emrfs_em,
   ]
 
   lifecycle {
     ignore_changes = [
-      instance_group,
-      ec2_attributes
+      ec2_attributes, configurations_json
     ]
   }
 }

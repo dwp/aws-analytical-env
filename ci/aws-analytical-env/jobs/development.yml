@@ -11,11 +11,11 @@ jobs:
       - get: emr-launcher-release
         trigger: true
       - get: manage-mysql-user-release
-        trigger: false
-      - get: aws-dataworks-e2e-framework
-        trigger: false
-      - get: aws-analytical-dataset-generation
-        trigger: false
+        trigger: true
+      - get: hive-custom-auth-release
+        trigger: true
+      - get: emr-al2-ami
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra
@@ -43,6 +43,7 @@ jobs:
             - name: emp-release
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           TF_VAR_emp_dir_path: ../../../../emp-release
       - .: (( inject meta.plan.terraform-plan ))
@@ -54,5 +55,6 @@ jobs:
             - name: emp-release
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           TF_VAR_emp_dir_path: ../../../../emp-release

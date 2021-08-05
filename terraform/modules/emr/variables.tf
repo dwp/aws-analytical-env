@@ -16,11 +16,16 @@ variable "emr_release_label" {
 variable "emr_applications" {
   description = "List of applications to deploy to EMR Cluster"
   type        = list(string)
-  default     = ["Spark", "Livy", "Hive"]
+  default     = ["Spark", "Livy", "Hive", "TensorFlow"]
 }
 
 variable "monitoring_sns_topic_arn" {
   description = "Arn of SNS event to send alerts to Slack"
+  type        = string
+}
+
+variable "azkaban_pushgateway_hostname" {
+  description = "Azkaban pushgateway host"
   type        = string
 }
 
@@ -252,7 +257,60 @@ variable "s3_tagger_job_definition" {
   type        = string
 }
 
+variable "s3_tagger_job_definition_name" {
+  description = "The Batch Job Definition name for the PDM/S3 Data Tagger"
+  type        = string
+}
+
 variable "s3_tagger_job_queue" {
   description = "The Batch Job Queue ARN for the PDM/S3 Data Tagger"
   type        = string
+}
+
+variable "jupyterhub_bucket" {
+  description = "JupyterHub S3 bucket"
+  type = object({
+    id      = string
+    cmk_arn = string
+  })
+}
+
+variable "sns_monitoring_queue_arn" {
+  description = "The ARN for the monitoring SNS queue"
+  type        = string
+}
+
+variable "hive_compaction_threads" {
+  type        = string
+  description = "Number of compaction threads"
+  default     = "1"
+}
+
+variable "hive_tez_sessions_per_queue" {
+  type        = string
+  description = "The number of sessions for each queue "
+  default     = "10"
+}
+
+variable "hive_max_reducers" {
+  type        = string
+  description = "Max number of reducers "
+  default     = "1099"
+}
+
+variable "hive_use_auth" {
+  type        = bool
+  description = "Whether to use custom authentication for Hive Server"
+  default     = true
+}
+
+variable "hive_custom_auth_provider_path" {
+  type        = string
+  description = "Local file path of the hive custom auth provider jar"
+}
+
+variable "hive_heapsize" {
+  type        = string
+  description = "Hive heapsize"
+  default     = "1024"
 }

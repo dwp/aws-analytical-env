@@ -7,7 +7,21 @@ meta:
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_version))
+            tag: ((dataworks.terraform_13_version))
+        params:
+          TF_INPUT: false
+          TF_CLI_ARGS_apply: -lock-timeout=300s
+          TF_CLI_ARGS_plan: -lock-timeout=300s
+          TF_VAR_costcode: ((dataworks.costcode))
+
+    terraform-13-common-config:
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.terraform_repository))
+            tag: ((dataworks.terraform_13_version))
         params:
           TF_INPUT: false
           TF_CLI_ARGS_apply: -lock-timeout=300s
@@ -29,6 +43,9 @@ meta:
           args:
             - -exc
             - |
+              if [ -f ../previous_success/exit-if-succeeded.sh ]; then
+                source ../previous_success/exit-if-succeeded.sh
+              fi
               python bootstrap_terraform.py
               sed -i '/^assume_role/ d' terraform/deploy/$DEPLOY_PATH/terraform.tfvars
               cp terraform/deploy/$DEPLOY_PATH/terraform.tf ../terraform-config
@@ -50,6 +67,9 @@ meta:
           args:
             - -exc
             - |
+              if [ -f ../../../../previous_success/exit-if-succeeded.sh ]; then
+                source ../../../../previous_success/exit-if-succeeded.sh
+              fi
               apk add -q --update --no-cache python3 && ln -sf python3 /usr/bin/python
               python3 -m ensurepip
               pip3 install -q --no-cache --upgrade pip setuptools boto3
@@ -57,13 +77,17 @@ meta:
               cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
+              export TF_VAR_emr_al2_ami_id=$(cat ../../../../emr-al2-ami/id)
               export TF_VAR_aws_analytical_env_emr_launcher_zip="{base_path = \"../../../../emr-launcher-release\", version = \"$(cat ../../../../emr-launcher-release/version)\"}"
               export TF_VAR_manage_mysql_user_lambda_zip="{base_path = \"../../../../manage-mysql-user-release\", version = \"$(cat ../../../../manage-mysql-user-release/version)\"}"
+              custom_auth_jar_version=$(cat ../../../../hive-custom-auth-release/version) || true
+              export TF_VAR_hive_custom_auth_jar_path="../../../../hive-custom-auth-release/hive-custom-auth-${custom_auth_jar_version}.jar"
               terraform plan -out terraform.plan
               terraform apply -auto-approve terraform.plan
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
+          - name: emr-al2-ami
 
     terraform-plan:
       task: terraform-plan
@@ -74,6 +98,9 @@ meta:
           args:
             - -exc
             - |
+              if [ -f ../../../../previous_success/exit-if-succeeded.sh ]; then
+                source ../../../../previous_success/exit-if-succeeded.sh
+              fi
               apk add -q --update --no-cache python3 && ln -sf python3 /usr/bin/python
               python3 -m ensurepip
               pip3 install -q --no-cache --upgrade pip setuptools boto3
@@ -81,12 +108,16 @@ meta:
               cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
+              export TF_VAR_emr_al2_ami_id=$(cat ../../../../emr-al2-ami/id)
               export TF_VAR_aws_analytical_env_emr_launcher_zip="{base_path = \"../../../../emr-launcher-release\", version = \"$(cat ../../../../emr-launcher-release/version)\"}"
               export TF_VAR_manage_mysql_user_lambda_zip="{base_path = \"../../../../manage-mysql-user-release\", version = \"$(cat ../../../../manage-mysql-user-release/version)\"}"
+              custom_auth_jar_version=$(cat ../../../../hive-custom-auth-release/version) || true
+              export TF_VAR_hive_custom_auth_jar_path="../../../../hive-custom-auth-release/hive-custom-auth-${custom_auth_jar_version}.jar"
               terraform plan
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
+          - name: emr-al2-ami
 
     terraform-output-app:
       task: terraform-output-app
@@ -101,55 +132,42 @@ meta:
               cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
               terraform init
+              export TF_VAR_emr_al2_ami_id=$(cat ../../../../emr-al2-ami/id)
               export TF_VAR_aws_analytical_env_emr_launcher_zip="{base_path = \"../../../../emr-launcher-release\", version = \"$(cat ../../../../emr-launcher-release/version)\"}"
               terraform output --json > ../../../../terraform-output-app/outputs.json
           dir: aws-analytical-env/terraform/deploy/app
         inputs:
           - name: aws-analytical-env
           - name: terraform-config
+          - name: emr-al2-ami
         outputs:
           - name: terraform-output-app
 
-    analytical-env-e2e-tests:
-      task: analytical-env-e2e-tests
+
+    terraform-output-testing:
+      task: terraform-output-testing
+      .: (( inject meta.plan.terraform-common-config ))
       config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: ((dataworks.docker_python_boto_behave_repository))
-            version: ((dataworks.docker_python_boto_behave_version))
-            tag: ((dataworks.docker_python_boto_behave_version))
-        params:
-          E2E_TEST_TIMEOUT: 300
-          E2E_FEATURE_TAG_FILTER: '@analytical'
-          AWS_S3_INPUT_BUCKET: 'na'
-          AWS_ACC: ((dataworks.aws_dev_acc))
-          AWS_DEFAULT_PROFILE: 'default'
-          AWS_SNS_TOPIC_NAME: 'na'
-          DYNAMODB_TABLE_NAME: 'na'
-          MONGO_SNAPSHOT_BUCKET: 'na'
-          MONGO_SNAPSHOT_PATH: 'na'
-          DLQ_S3_PATH_PREFIX: 'na'
         run:
-          dir: aws-dataworks-e2e-framework
           path: sh
           args:
             - -exc
             - |
-              mkdir ~/.aws
-              cat << EOF > ~/.aws/config
-              [profile default]
-              role_arn = arn:aws:iam::((dataworks.aws_dev_acc)):role/ci
-              credential_source = Ec2InstanceMetadata
-              region = ((dataworks.aws_region))
-              EOF
-              cd src/runners
-              export no_proxy="$no_proxy,s3.*.amazonaws.com,s3.amazonaws.com"
-              ./run-ci.sh "../../../meta"
+              if [ -f ../../../../previous_success/exit-if-succeeded.sh ]; then
+                source ../../../../previous_success/exit-if-succeeded.sh
+              fi
+              cp ../../../../terraform-config/terraform.tf .
+              cp ../../../../terraform-config/terraform.tfvars .
+              terraform workspace show
+              terraform init
+              terraform output --json > ../../../../terraform-output-testing/outputs.json
+              cat ../../../../terraform-output-testing/outputs.json
+          dir: aws-analytical-env/terraform/deploy/testing
         inputs:
-          - name: aws-dataworks-e2e-framework
-          - name: meta
+          - name: aws-analytical-env
+          - name: terraform-config
+        outputs:
+          - name: terraform-output-testing
 
     terraform-taint:
       task: terraform-taint
@@ -167,31 +185,6 @@ meta:
               terraform taint "module.emr.aws_emr_cluster.cluster"
         inputs:
           - name: aws-analytical-env
-          - name: terraform-config
-
-    terraform-analytical-dataset-generation-bootstrap:
-      task: terraform-analytical-dataset-generation-bootstrap
-      .: (( inject meta.plan.terraform-common-config ))
-      config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: ((dataworks.docker_awscli_repository))
-            tag: ((dataworks.docker_awscli_version))
-        run:
-          path: sh
-          args:
-            - -exc
-            - |
-              export AWS_REGION=((dataworks.aws_region))
-              python bootstrap_terraform.py
-              cp terraform.tf ../terraform-config
-              cp terraform.tfvars ../terraform-config
-          dir: aws-analytical-dataset-generation
-        inputs:
-          - name: aws-analytical-dataset-generation
-        outputs:
           - name: terraform-config
 
     mirror-git-repo:
@@ -219,7 +212,7 @@ meta:
 
     terraform-output-common:
       task: terraform-output-common
-      .: (( inject meta.plan.terraform-common-config ))
+      .: (( inject meta.plan.terraform-13-common-config ))
       config:
         run:
           path: sh
@@ -513,8 +506,38 @@ meta:
           AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
           AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
 
-    get-uc-labs-files:
-      task: get-uc-labs-files
+    terraform-output-common-crown:
+      task: terraform-output-common-crown
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((terraform.repository))
+            version: 0.12.31
+            tag: 0.12.31
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              pwd
+              terraform workspace show
+              terraform init
+              terraform output --json > ../terraform-output-common-crown/outputs.json
+          dir: aws-common-infrastructure
+        inputs:
+          - name: aws-common-infrastructure
+        outputs:
+          - name: terraform-output-common-crown
+        params:
+          TF_CLI_ARGS_plan: -lock-timeout=300s
+          TF_INPUT: "false"
+          AWS_ACCESS_KEY_ID: ((ci.aws_access_key_id))
+          AWS_SECRET_ACCESS_KEY: ((ci.aws_secret_access_key))
+
+    get-files:
+      task: get-files
       attempts: 50
       config:
         platform: linux
@@ -527,7 +550,7 @@ meta:
         inputs:
           - name: ssh-credentials
         outputs:
-          - name: uc_labs
+          - name: files
         params:
           RETRY_SLEEP_TIME: 600
           TARGET_SERVER: "hdp-edge01.node.prd.dw"
@@ -538,7 +561,7 @@ meta:
             - |
               whoami
               cp -R ssh-credentials ~/.ssh
-              scp -r -o StrictHostKeyChecking=no hdp-edge01.node.prd.dw:${SOURCE_PATH}/* uc_labs/
+              scp -r -o StrictHostKeyChecking=no hdp-edge01.node.prd.dw:${SOURCE_PATH}/* files/
 
     load-s3:
       task: load-s3
@@ -552,9 +575,9 @@ meta:
             version: ((docker-awscli-ubuntu.version))
             tag: ((docker-awscli-ubuntu.version))
         inputs:
-          - name: uc_labs
+          - name: files
           - name: .aws
-          - name: terraform-output-adg
+          - name: terraform-output-common-crown
         params:
           AWS_PROFILE: ci
           AWS_SHARED_CREDENTIALS_FILE: .aws/credentials
@@ -563,11 +586,11 @@ meta:
           args:
             - -exc
             - |
-              AWS_PUBLISHED_BUCKET="$(cat terraform-output-adg/outputs.json |  jq -r '.published_bucket.value.id')"
-              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync uc_labs/ s3://${AWS_PUBLISHED_BUCKET}/uc-labs/
+              AWS_PUBLISHED_BUCKET="$(cat terraform-output-common-crown/outputs.json |  jq -r '.published_bucket.value.id')"
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync files/ s3://${AWS_PUBLISHED_BUCKET}/${S3_FOLDER}
 
-    stop-cluster:
-      task: stop-cluster
+    stop-batch-cluster:
+      task: stop-batch-cluster
       config:
         platform: linux
         image_resource:
@@ -592,6 +615,57 @@ meta:
                 aws emr terminate-clusters --cluster-ids $CLUSTER_ID
               done
 
+    stop-waiting-cluster:
+      task: stop-waiting-cluster
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              export AWS_DEFAULT_REGION
+              source /assume-role
+              set +x
+
+              for CLUSTER_ID in `aws emr list-clusters --cluster-state WAITING | jq -r '.Clusters[].Id'`
+              do
+                  echo "Checking cluster $CLUSTER_ID"
+
+                  # Is it an analytical cluster (should probably tag type of analytical-env ).
+
+                  APPNAME=`aws emr describe-cluster --cluster-id $CLUSTER_ID | jq -r ".Cluster.Tags[] | if .Key == \"Application\" then .Value else empty end"`
+                  CLEVEL=`aws emr describe-cluster --cluster-id $CLUSTER_ID | jq -r ".Cluster.StepConcurrencyLevel"`
+
+                  if [[ ${APPNAME:-""} == "aws-analytical-env" ]]
+                  then
+                      echo $CLUSTER_ID is an analytical env cluster
+
+                      # Currently the only way to know if its a batch cluster is to check if its concurrency is 256
+
+                      if [[ $CLEVEL -eq 256 ]]
+                      then
+                          echo $CLUSTER_ID is a batch cluster
+                          END_DATE=`aws emr list-steps --cluster-id $CLUSTER_ID | jq '.Steps[0].Status.Timeline.EndDateTime | floor'`
+                          let DELTA="`date +%s` - $END_DATE"
+
+                          if [[ $DELTA -gt 3600 ]]
+                          then
+                              echo Stopping cluster $CLUSTER_ID with a delta of $DELTA
+                              aws emr terminate-clusters --cluster-ids $CLUSTER_ID
+                          fi
+                      fi
+                  fi
+              done
 
     mirror-ucsqlhelper:
       task: mirror-ucsqlhelper
@@ -618,3 +692,154 @@ meta:
         inputs:
           - name: ucsqlhelper
           - name: terraform-output-common
+
+
+    test-emr-cluster:
+      task: test-emr-cluster
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              if [ -f ./previous_success/exit-if-succeeded.sh ]; then
+                source ./previous_success/exit-if-succeeded.sh
+              fi
+              source /assume-role
+              LAMBDA_NAME="$(jq -r '.testing.value.test_lambda.function_name' < ./terraform-output-testing/outputs.json)"
+              sleep 300 # wait for cluster to finish provisioning
+              aws lambda invoke --function-name $LAMBDA_NAME --invocation-type RequestResponse --cli-connect-timeout 600 --cli-read-timeout 600 output.json
+              jq -eC "if .errorMessage? then error(.errorMessage) else true end" < output.json
+        inputs:
+          - name: terraform-output-testing
+
+    ami-test-results:
+      task: ami-test-result
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.terraform_repository))
+            tag: ((dataworks.terraform_13_version))
+        params:
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+          GIT_USERNAME: ((dataworks.concourse_github_username))
+          GIT_EMAIL: ((dataworks.concourse_github_email))
+          GITHUB_TOKEN: ((dataworks-secrets.concourse_github_pat))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              set +x
+              source ./previous_success/exit-if-succeeded.sh
+
+              AMI_ID=$(cat emr-al2-ami/id)
+              DATE=$(date -u)
+              PIPELINE="$(cat meta/build_pipeline_name)"
+
+              git config --global user.name "${GIT_USERNAME}"
+              git config --global user.email "${GIT_EMAIL}"
+
+              git clone https://${GITHUB_TOKEN}:x-oauth-basic@github.com/dwp/ami-builder-configs
+              cd ami-builder-configs/results
+
+              echo "$AMI_ID $RESULT" > "$PIPELINE.test"
+
+              git add "$PIPELINE.test"
+              git commit -m "Updating $PIPELINE AMI test on ${DATE}"
+              git push https://${GITHUB_TOKEN}:x-oauth-basic@github.com/dwp/ami-builder-configs
+        inputs:
+          - name: meta
+          - name: emr-al2-ami
+          - name: previous_success
+
+    check-ami-test-results:
+      task: check-ami-test-result
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.terraform_repository))
+            tag: ((dataworks.terraform_13_version))
+        params:
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+          GIT_USERNAME: ((dataworks.concourse_github_username))
+          GIT_EMAIL: ((dataworks.concourse_github_email))
+          GITHUB_TOKEN: ((dataworks-secrets.concourse_github_pat))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              set +x
+              PREVIOUS_SUCCESS=false
+              AMI_ID=$(cat untested_ami/id)
+              DATE=$(date -u)
+              PIPELINE="$(cat meta/build_pipeline_name)"
+              PATH_TO_RESULTS="ami-builder-configs/results"
+
+              git config --global user.name "${GIT_USERNAME}"
+              git config --global user.email "${GIT_EMAIL}"
+              git clone https://${GITHUB_TOKEN}:x-oauth-basic@github.com/dwp/ami-builder-configs
+
+              if [ -f "./$PATH_TO_RESULTS/$PIPELINE.test" ]; then
+                set +e
+                grep "$AMI_ID SUCCESS" "./$PATH_TO_RESULTS/$PIPELINE.test"
+                if [ $? -eq 0 ]; then
+                  PREVIOUS_SUCCESS=true
+                fi
+                set -e
+              fi
+
+              touch ./previous_success/exit-if-succeeded.sh
+
+              if $PREVIOUS_SUCCESS; then
+                 echo 'echo "AMI already passed. Exiting..."; exit 0' > ./previous_success/exit-if-succeeded.sh
+              fi
+
+              chmod +x ./previous_success/exit-if-succeeded.sh
+        outputs:
+          - name: previous_success
+        inputs:
+          - name: meta
+          - name: untested_ami
+
+    stop-cluster:
+      task: stop-cluster
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              export AWS_DEFAULT_REGION
+              source /assume-role
+              set +x
+
+              for CLUSTER_ID in $(aws emr list-clusters --active | jq -r '.Clusters[] | select(.Name | test("aws-analytical-env")) | .Id');
+              do
+                echo "Stopping cluster with id of ${CLUSTER_ID}"
+                aws emr terminate-clusters --cluster-ids $CLUSTER_ID
+              done

@@ -53,28 +53,103 @@ groups:
     jobs:
       - mirror-git-repo-uc-lab-repo-development
       - mirror-git-repo-opsmi-ops-mi-repo-development
-      - mirror-git-repo-chs-payment-timelines-development
-      - mirror-git-repo-chs-cbol-data-development
+      - mirror-git-repo-aws-payment-timelines-development
+      - mirror-git-repo-aws-cbol-data-development
+      - mirror-git-repo-aws-user-data-migration-development
+      - mirror-git-repo-aws-claimant-history-development
+      - mirror-git-repo-aws-data-exploration-development
+      - mirror-git-repo-azkaban-dev-development
+      - mirror-git-repo-aws-auditlog-development
+      - mirror-git-repo-aws-auditlog-dev-development
+      - mirror-git-repo-aws-claimant-history-dev-development
+      - mirror-git-repo-aws-uc-channel-development
+      - mirror-git-repo-aws-uc-channel-dev-development
+      - mirror-git-repo-impact-measures-development
+      - mirror-git-repo-impact-measures-dev-development
+      - mirror-git-repo-aws-how-many-development
+      - mirror-git-repo-aws-how-many-dev-development
+      - mirror-git-repo-aws-dwx-housing-development
+      - mirror-git-repo-aws-rtg-pdm-exports-development
 
       - mirror-git-repo-uc-lab-repo-qa
       - mirror-git-repo-opsmi-ops-mi-repo-qa
-      - mirror-git-repo-chs-payment-timelines-qa
-      - mirror-git-repo-chs-cbol-data-qa
+      - mirror-git-repo-aws-payment-timelines-qa
+      - mirror-git-repo-aws-cbol-data-qa
+      - mirror-git-repo-aws-user-data-migration-qa
+      - mirror-git-repo-aws-claimant-history-qa
+      - mirror-git-repo-aws-data-exploration-qa
+      - mirror-git-repo-azkaban-dev-qa
+      - mirror-git-repo-aws-auditlog-qa
+      - mirror-git-repo-aws-auditlog-dev-qa
+      - mirror-git-repo-aws-claimant-history-dev-qa
+      - mirror-git-repo-aws-uc-channel-qa
+      - mirror-git-repo-aws-uc-channel-dev-qa
+      - mirror-git-repo-impact-measures-qa
+      - mirror-git-repo-impact-measures-dev-qa
+      - mirror-git-repo-aws-how-many-qa
+      - mirror-git-repo-aws-how-many-dev-qa
+      - mirror-git-repo-aws-dwx-housing-qa
+      - mirror-git-repo-aws-rtg-pdm-exports-qa
 
       - mirror-git-repo-uc-lab-repo-integration
       - mirror-git-repo-opsmi-ops-mi-repo-integration
-      - mirror-git-repo-chs-payment-timelines-integration
-      - mirror-git-repo-chs-cbol-data-integration
+      - mirror-git-repo-aws-payment-timelines-integration
+      - mirror-git-repo-aws-cbol-data-integration
+      - mirror-git-repo-aws-user-data-migration-integration
+      - mirror-git-repo-aws-claimant-history-integration
+      - mirror-git-repo-aws-data-exploration-integration
+      - mirror-git-repo-azkaban-dev-integration
+      - mirror-git-repo-aws-auditlog-integration
+      - mirror-git-repo-aws-auditlog-dev-integration
+      - mirror-git-repo-aws-claimant-history-dev-integration
+      - mirror-git-repo-aws-uc-channel-integration
+      - mirror-git-repo-aws-uc-channel-dev-integration
+      - mirror-git-repo-impact-measures-integration
+      - mirror-git-repo-impact-measures-dev-integration
+      - mirror-git-repo-aws-how-many-integration
+      - mirror-git-repo-aws-how-many-dev-integration
+      - mirror-git-repo-aws-dwx-housing-integration
+      - mirror-git-repo-aws-rtg-pdm-exports-integration
 
       - mirror-git-repo-uc-lab-repo-preprod
       - mirror-git-repo-opsmi-ops-mi-repo-preprod
-      - mirror-git-repo-chs-payment-timelines-preprod
-      - mirror-git-repo-chs-cbol-data-preprod
+      - mirror-git-repo-aws-payment-timelines-preprod
+      - mirror-git-repo-aws-cbol-data-preprod
+      - mirror-git-repo-aws-user-data-migration-preprod
+      - mirror-git-repo-aws-claimant-history-preprod
+      - mirror-git-repo-aws-data-exploration-preprod
+      - mirror-git-repo-azkaban-dev-preprod
+      - mirror-git-repo-aws-auditlog-preprod
+      - mirror-git-repo-aws-auditlog-dev-preprod
+      - mirror-git-repo-aws-claimant-history-dev-preprod
+      - mirror-git-repo-aws-uc-channel-preprod
+      - mirror-git-repo-aws-uc-channel-dev-preprod
+      - mirror-git-repo-impact-measures-preprod
+      - mirror-git-repo-impact-measures-dev-preprod
+      - mirror-git-repo-aws-how-many-preprod
+      - mirror-git-repo-aws-how-many-dev-preprod
+      - mirror-git-repo-aws-dwx-housing-preprod
+      - mirror-git-repo-aws-rtg-pdm-exports-preprod
 
       - mirror-git-repo-uc-lab-repo-prod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
-      - mirror-git-repo-chs-payment-timelines-prod
-      - mirror-git-repo-chs-cbol-data-prod
+      - mirror-git-repo-aws-payment-timelines-prod
+      - mirror-git-repo-aws-cbol-data-prod
+      - mirror-git-aws-user-data-migration-prod
+      - mirror-git-repo-aws-claimant-history-prod
+      - mirror-git-repo-aws-data-exploration-prod
+      - mirror-git-repo-azkaban-dev-prod
+      - mirror-git-repo-aws-auditlog-prod
+      - mirror-git-repo-aws-auditlog-dev-prod
+      - mirror-git-repo-aws-claimant-history-dev-prod
+      - mirror-git-repo-aws-uc-channel-prod
+      - mirror-git-repo-aws-uc-channel-dev-prod
+      - mirror-git-repo-impact-measures-prod
+      - mirror-git-repo-impact-measures-dev-prod
+      - mirror-git-repo-aws-how-many-prod
+      - mirror-git-repo-aws-how-many-dev-prod
+      - mirror-git-repo-aws-dwx-housing-prod
+      - mirror-git-repo-aws-rtg-pdm-exports-prod
 
   - name: mirror-ucsqlhelper
     jobs:
@@ -110,7 +185,7 @@ groups:
     jobs:
       - sync-cognito-users-to-rds-development
       - create-roles-and-munged-policies-development
-      
+
       - sync-cognito-users-to-rds-qa
       - create-roles-and-munged-policies-qa
 
@@ -122,11 +197,32 @@ groups:
 
       - sync-cognito-users-to-rds-production
       - create-roles-and-munged-policies-production
-      
-  - name: terminate-cluster
+
+  - name: admin-stop-batch-cluster
+    jobs:
+      - dev-stop-batch-cluster
+      - qa-stop-batch-cluster
+      - int-stop-batch-cluster
+      - preprod-stop-batch-cluster
+      - prod-stop-batch-cluster
+
+  - name: update-pipeline
+    jobs:
+      - update-pipeline
+
+  - name: ami-test
+    jobs:
+      - apply-and-test-with-ami
+
+  - name: admin-stop-cluster
     jobs:
       - dev-stop-cluster
+      - dev-stop-waiting
       - qa-stop-cluster
+      - qa-stop-waiting
       - int-stop-cluster
+      - int-stop-waiting
       - preprod-stop-cluster
+      - preprod-stop-waiting
       - prod-stop-cluster
+      - prod-stop-waiting

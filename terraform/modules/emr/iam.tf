@@ -578,7 +578,7 @@ data "aws_iam_policy_document" "analytical_env_metadata_change" {
     ]
 
     resources = [
-      "arn:aws:ec2:${var.region}:${var.account}:instance/*",
+      "*",
     ]
   }
 }
@@ -770,7 +770,7 @@ data "aws_iam_policy_document" "group_hive_data_access_documents" {
     ]
 
     resources = [
-      "${aws_s3_bucket.hive_data.arn}",
+      aws_s3_bucket.hive_data.arn,
       "${aws_s3_bucket.hive_data.arn}/*",
       "arn:aws:kms:${var.region}:${var.account}:alias/${each.key}-shared",
       aws_kms_key.hive_data_s3.arn
@@ -817,4 +817,30 @@ resource "aws_iam_policy" "dynamodb_pipeline_metadata_policy" {
 resource "aws_iam_role_policy_attachment" "dynamodb_pipeline_metadata" {
   role       = aws_iam_role.emr_ec2_role.name
   policy_arn = aws_iam_policy.dynamodb_pipeline_metadata_policy.arn
+}
+
+# SNS policy
+
+data "aws_iam_policy_document" "emr_sns_monitoring_policy" {
+  statement {
+    sid    = "AllowEMRUserSNSMonitoringPolicy"
+    effect = "Allow"
+    actions = [
+      "sns:Publish",
+    ]
+    resources = [
+      var.sns_monitoring_queue_arn
+    ]
+  }
+}
+
+resource "aws_iam_policy" "emr_sns_monitoring_policy" {
+  name        = "AnalyticalEnvSNSMonitoring"
+  description = "Allow editing of DynamoDb Metadata Table"
+  policy      = data.aws_iam_policy_document.emr_sns_monitoring_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "emr_sns_monitoring_policy" {
+  role       = aws_iam_role.emr_ec2_role.name
+  policy_arn = aws_iam_policy.emr_sns_monitoring_policy.arn
 }

@@ -6,6 +6,8 @@ jobs:
         resource: meta-testing-qa
       - get: aws-analytical-env
         trigger: false
+      - get: emr-al2-ami
+        trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: testing

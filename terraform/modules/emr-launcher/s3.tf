@@ -47,7 +47,11 @@ resource "aws_s3_bucket_object" "analytical_env_configurations" {
     hive_metastore_endpoint      = var.hive_metastore_endpoint
     hive_metastore_database_name = var.hive_metastore_database_name
     hive_metastore_username      = var.hive_metastore_username
+    hive_metastore_secret_id     = var.hive_metastore_secret_id
     environment                  = var.environment
+    hive_compaction_threads      = var.hive_compaction_threads
+    hive_tez_sessions_per_queue  = var.hive_tez_sessions_per_queue
+    hive_max_reducers            = var.hive_max_reducers
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-config" })
 }
@@ -82,7 +86,6 @@ resource "aws_s3_bucket_object" "batch_instances" {
     instance_type_core_one   = var.instance_type_core_one
     instance_type_core_two   = var.instance_type_core_two
     instance_type_core_three = var.instance_type_core_three
-
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-instances" })
 }
@@ -107,7 +110,11 @@ resource "aws_s3_bucket_object" "batch_configurations" {
     hive_metastore_endpoint      = var.hive_metastore_endpoint
     hive_metastore_database_name = var.hive_metastore_database_name
     hive_metastore_username      = var.hive_metastore_username
+    hive_metastore_secret_id     = var.hive_metastore_secret_id
     environment                  = var.environment
+    hive_compaction_threads      = var.hive_compaction_threads
+    hive_tez_sessions_per_queue  = var.hive_tez_sessions_per_queue
+    hive_max_reducers            = var.hive_max_reducers
   })
   tags = merge(var.common_tags, { Name : "batch-emr-launch-config" })
 }

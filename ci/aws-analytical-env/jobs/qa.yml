@@ -1,6 +1,7 @@
 jobs:
   - name: qa
     max_in_flight: 1
+    serial_groups: [qa-applies]
     plan:
       - put: meta
         resource: meta-qa
@@ -11,7 +12,11 @@ jobs:
       - get: emr-launcher-release
         trigger: true
       - get: manage-mysql-user-release
-        trigger: false
+        trigger: true
+      - get: hive-custom-auth-release
+        trigger: true
+      - get: emr-al2-ami
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra
@@ -41,6 +46,7 @@ jobs:
             - name: emp-release
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           TF_WORKSPACE: 'qa'
           TF_VAR_emp_dir_path: ../../../../emp-release  
@@ -53,7 +59,19 @@ jobs:
             - name: emp-release
             - name: emr-launcher-release
             - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
         params:
           TF_WORKSPACE: 'qa'
-          TF_VAR_emp_dir_path: ../../../../emp-release  
+          TF_VAR_emp_dir_path: ../../../../emp-release
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: testing
+      - .: (( inject meta.plan.terraform-output-testing ))
+        params:
+          TF_WORKSPACE: 'qa'
+      - .: (( inject meta.plan.test-emr-cluster ))
+        attempts: 3
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
 

@@ -4,6 +4,8 @@ jobs:
     plan:
       - get: aws-analytical-env
         trigger: true
+      - get: emr-al2-ami
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: github_proxy
