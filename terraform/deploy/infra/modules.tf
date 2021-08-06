@@ -28,6 +28,7 @@ module analytical_env_vpc {
     "ssm",
     "ssmmessages",
     "git-codecommit",
+    "${jsondecode(data.aws_secretsmanager_secret_version.ap_secrets.secret_binary).aws_vpce_services.prefix}.${data.aws_region.current.id}.${jsondecode(data.aws_secretsmanager_secret_version.ap_secrets.secret_binary).aws_vpce_services.suffix}",
     "sts",
     "secretsmanager",
     "sns",

@@ -3,6 +3,11 @@ data "aws_secretsmanager_secret_version" "internet_ingress" {
   secret_id = "/concourse/dataworks/internet-ingress"
 }
 
+data "aws_secretsmanager_secret_version" "ap_secrets" {
+  provider  = aws
+  secret_id = "/ap/configuration"
+}
+
 locals {
 
   env_prefix = {
