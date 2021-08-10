@@ -79,6 +79,14 @@ groups:
       - mirror-git-repo-opsmi-ops-mi-repo-preprod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
 
+  - name: aws-one-service
+    jobs:
+      - mirror-git-repo-aws-one-service-development
+      - mirror-git-repo-aws-one-service-qa
+      - mirror-git-repo-aws-one-service-integration
+      - mirror-git-repo-aws-one-service-preprod
+      - mirror-git-repo-aws-one-service-prod
+
   - name: aws-payment-timelines
     jobs:
       - mirror-git-repo-aws-payment-timelines-development

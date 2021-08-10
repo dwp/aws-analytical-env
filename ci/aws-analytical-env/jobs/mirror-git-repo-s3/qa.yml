@@ -378,3 +378,23 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-rtg-pdm-exports
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+
+  - name: mirror-git-repo-aws-one-service-qa
+    plan:
+      - get: aws-one-service-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: qa
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-one-service-repo
+          inputs:
+            - name: aws-one-service-repo
+          params:
+            S3_ROOT: component/uc_repos/aws-one-service
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
