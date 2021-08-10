@@ -1,0 +1,29 @@
+jobs:
+  - name: update-pipeline
+    plan:
+      - get: aws-analytical-env
+        resource: aws-analytical-env-update-pipeline
+        trigger: true
+      - task: aviator
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: ((dataworks.docker_aviator_repository))
+              version: ((dataworks.docker_aviator_version))
+          run:
+            path: sh
+            args:
+              - -exc
+              - |
+                sed -i 's/fly/nofly/' aviator_mirror.yml
+                /usr/bin/aviator -f aviator_mirror.yml
+                mv aviator_mirror_git.yml ../pipeline
+            dir: aws-analytical-env
+          inputs:
+            - name: aws-analytical-env
+          outputs:
+            - name: pipeline
+      - set_pipeline: mirror-git-to-s3
+        file: pipeline/aviator_mirror_git.yml

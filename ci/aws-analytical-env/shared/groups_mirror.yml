@@ -1,0 +1,180 @@
+groups:
+  - name: aws-auditlog
+    jobs:
+      - mirror-git-repo-aws-auditlog-development
+      - mirror-git-repo-aws-auditlog-qa
+      - mirror-git-repo-aws-auditlog-integration
+      - mirror-git-repo-aws-auditlog-preprod
+      - mirror-git-repo-aws-auditlog-prod
+
+  - name: aws-auditlog-dev
+    jobs:
+      - mirror-git-repo-aws-auditlog-dev-development
+      - mirror-git-repo-aws-auditlog-dev-qa
+      - mirror-git-repo-aws-auditlog-dev-integration
+      - mirror-git-repo-aws-auditlog-dev-preprod
+      - mirror-git-repo-aws-auditlog-dev-prod
+
+  - name: aws-cbol-data
+    jobs:
+      - mirror-git-repo-aws-cbol-data-development
+      - mirror-git-repo-aws-cbol-data-qa
+      - mirror-git-repo-aws-cbol-data-integration
+      - mirror-git-repo-aws-cbol-data-preprod
+      - mirror-git-repo-aws-cbol-data-prod
+
+  - name: aws-claimant-history
+    jobs:
+      - mirror-git-repo-aws-claimant-history-development
+      - mirror-git-repo-aws-claimant-history-qa
+      - mirror-git-repo-aws-claimant-history-integration
+      - mirror-git-repo-aws-claimant-history-preprod
+      - mirror-git-repo-aws-claimant-history-prod
+
+  - name: aws-claimant-history-dev
+    jobs:
+      - mirror-git-repo-aws-claimant-history-dev-development
+      - mirror-git-repo-aws-claimant-history-dev-qa
+      - mirror-git-repo-aws-claimant-history-dev-integration
+      - mirror-git-repo-aws-claimant-history-dev-preprod
+      - mirror-git-repo-aws-claimant-history-dev-prod
+
+  - name: aws-data-exploration
+    jobs:
+      - mirror-git-repo-aws-data-exploration-development
+      - mirror-git-repo-aws-data-exploration-qa
+      - mirror-git-repo-aws-data-exploration-integration
+      - mirror-git-repo-aws-data-exploration-preprod
+      - mirror-git-repo-aws-data-exploration-prod
+
+  - name: aws-dwx-housing
+    jobs:
+      - mirror-git-repo-aws-dwx-housing-development
+      - mirror-git-repo-aws-dwx-housing-qa
+      - mirror-git-repo-aws-dwx-housing-integration
+      - mirror-git-repo-aws-dwx-housing-preprod
+      - mirror-git-repo-aws-dwx-housing-prod
+
+  - name: aws-how-many
+    jobs:
+      - mirror-git-repo-aws-how-many-development
+      - mirror-git-repo-aws-how-many-qa
+      - mirror-git-repo-aws-how-many-integration
+      - mirror-git-repo-aws-how-many-preprod
+      - mirror-git-repo-aws-how-many-prod
+
+  - name: aws-how-many-dev
+    jobs:
+      - mirror-git-repo-aws-how-many-dev-development
+      - mirror-git-repo-aws-how-many-dev-qa
+      - mirror-git-repo-aws-how-many-dev-integration
+      - mirror-git-repo-aws-how-many-dev-preprod
+      - mirror-git-repo-aws-how-many-dev-prod
+
+  - name: opsmi-ops-mi
+    jobs:
+      - mirror-git-repo-opsmi-ops-mi-repo-development
+      - mirror-git-repo-opsmi-ops-mi-repo-qa
+      - mirror-git-repo-opsmi-ops-mi-repo-integration
+      - mirror-git-repo-opsmi-ops-mi-repo-preprod
+      - mirror-git-repo-opsmi-ops-mi-repo-prod
+
+  - name: aws-one-service
+    jobs:
+      - mirror-git-repo-aws-one-service-development
+      - mirror-git-repo-aws-one-service-qa
+      - mirror-git-repo-aws-one-service-integration
+      - mirror-git-repo-aws-one-service-preprod
+      - mirror-git-repo-aws-one-service-prod
+
+  - name: aws-payment-timelines
+    jobs:
+      - mirror-git-repo-aws-payment-timelines-development
+      - mirror-git-repo-aws-payment-timelines-qa
+      - mirror-git-repo-aws-payment-timelines-integration
+      - mirror-git-repo-aws-payment-timelines-preprod
+      - mirror-git-repo-aws-payment-timelines-prod
+
+  - name: aws-rtg-htme-exports
+    jobs:
+      - mirror-git-repo-aws-rtg-htme-exports-development
+      - mirror-git-repo-aws-rtg-htme-exports-qa
+      - mirror-git-repo-aws-rtg-htme-exports-integration
+      - mirror-git-repo-aws-rtg-htme-exports-preprod
+      - mirror-git-repo-aws-rtg-htme-exports-prod
+
+  - name: aws-rtg-pdm-exports
+    jobs:
+      - mirror-git-repo-aws-rtg-pdm-exports-development
+      - mirror-git-repo-aws-rtg-pdm-exports-qa
+      - mirror-git-repo-aws-rtg-pdm-exports-integration
+      - mirror-git-repo-aws-rtg-pdm-exports-preprod
+      - mirror-git-repo-aws-rtg-pdm-exports-prod
+
+  - name: aws-uc-channel
+    jobs:
+      - mirror-git-repo-aws-uc-channel-development
+      - mirror-git-repo-aws-uc-channel-qa
+      - mirror-git-repo-aws-uc-channel-integration
+      - mirror-git-repo-aws-uc-channel-preprod
+      - mirror-git-repo-aws-uc-channel-prod
+
+  - name: aws-uc-channel-dev
+    jobs:
+      - mirror-git-repo-aws-uc-channel-dev-development
+      - mirror-git-repo-aws-uc-channel-dev-qa
+      - mirror-git-repo-aws-uc-channel-dev-integration
+      - mirror-git-repo-aws-uc-channel-dev-preprod
+      - mirror-git-repo-aws-uc-channel-dev-prod
+
+  - name: aws-user-data-migration
+    jobs:
+      - mirror-git-repo-aws-user-data-migration-development
+      - mirror-git-repo-aws-user-data-migration-qa
+      - mirror-git-repo-aws-user-data-migration-integration
+      - mirror-git-repo-aws-user-data-migration-preprod
+      - mirror-git-repo-aws-user-data-migration-prod
+
+  - name: azkaban-dev
+    jobs:
+      - mirror-git-repo-azkaban-dev-development
+      - mirror-git-repo-azkaban-dev-qa
+      - mirror-git-repo-azkaban-dev-integration
+      - mirror-git-repo-azkaban-dev-preprod
+      - mirror-git-repo-azkaban-dev-prod
+
+  - name: impact-measures
+    jobs:
+      - mirror-git-repo-impact-measures-development
+      - mirror-git-repo-impact-measures-qa
+      - mirror-git-repo-impact-measures-integration
+      - mirror-git-repo-impact-measures-preprod
+      - mirror-git-repo-impact-measures-prod
+
+  - name: impact-measures-dev
+    jobs:
+      - mirror-git-repo-impact-measures-dev-development
+      - mirror-git-repo-impact-measures-dev-qa
+      - mirror-git-repo-impact-measures-dev-integration
+      - mirror-git-repo-impact-measures-dev-preprod
+      - mirror-git-repo-impact-measures-dev-prod
+
+  - name: uc-lab
+    jobs:
+      - mirror-git-repo-uc-lab-repo-development
+      - mirror-git-repo-uc-lab-repo-qa
+      - mirror-git-repo-uc-lab-repo-integration
+      - mirror-git-repo-uc-lab-repo-preprod
+      - mirror-git-repo-uc-lab-repo-prod
+
+  - name: mirror-ucsqlhelper
+    jobs:
+      - mirror-ucsqlhelper-development
+      - mirror-ucsqlhelper-qa
+      - mirror-ucsqlhelper-integration
+      - mirror-ucsqlhelper-preprod
+      - mirror-ucsqlhelper-production
+
+  - name: update-pipeline
+    jobs:
+      - update-pipeline
