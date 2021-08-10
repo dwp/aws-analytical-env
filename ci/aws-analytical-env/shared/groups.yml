@@ -70,6 +70,7 @@ groups:
       - mirror-git-repo-aws-how-many-dev-development
       - mirror-git-repo-aws-dwx-housing-development
       - mirror-git-repo-aws-rtg-pdm-exports-development
+      - mirror-git-repo-aws-rtg-htme-exports-development
       - mirror-git-repo-aws-one-service-development
 
       - mirror-git-repo-uc-lab-repo-qa
@@ -91,6 +92,7 @@ groups:
       - mirror-git-repo-aws-how-many-dev-qa
       - mirror-git-repo-aws-dwx-housing-qa
       - mirror-git-repo-aws-rtg-pdm-exports-qa
+      - mirror-git-repo-aws-rtg-htme-exports-qa
       - mirror-git-repo-aws-one-service-qa
 
       - mirror-git-repo-uc-lab-repo-integration
@@ -112,6 +114,7 @@ groups:
       - mirror-git-repo-aws-how-many-dev-integration
       - mirror-git-repo-aws-dwx-housing-integration
       - mirror-git-repo-aws-rtg-pdm-exports-integration
+      - mirror-git-repo-aws-rtg-htme-exports-integration
       - mirror-git-repo-aws-one-service-integration
 
       - mirror-git-repo-uc-lab-repo-preprod
@@ -133,6 +136,7 @@ groups:
       - mirror-git-repo-aws-how-many-dev-preprod
       - mirror-git-repo-aws-dwx-housing-preprod
       - mirror-git-repo-aws-rtg-pdm-exports-preprod
+      - mirror-git-repo-aws-rtg-htme-exports-preprod
       - mirror-git-repo-aws-one-service-preprod
 
       - mirror-git-repo-uc-lab-repo-prod
@@ -154,6 +158,7 @@ groups:
       - mirror-git-repo-aws-how-many-dev-prod
       - mirror-git-repo-aws-dwx-housing-prod
       - mirror-git-repo-aws-rtg-pdm-exports-prod
+      - mirror-git-repo-aws-rtg-htme-exports-prod
       - mirror-git-repo-aws-one-service-prod
 
   - name: mirror-ucsqlhelper
