@@ -3,17 +3,14 @@ spruce:
     prune:
       - meta
     merge:
-      - with_in: ci/aws-analytical-env
-        regexp: ".*yml"
-        except:
-          - groups.yml
-          - resources.yml
       - with_in: ci/aws-analytical-env/jobs/load-data/
       - with_in: ci/aws-analytical-env/shared/
         regexp: ".*yml"
         except:
           - groups.yml
+          - groups_mirror.yml
           - resources.yml
+          - resources_mirror.yml
     to: aviator_pipeline.yml
 fly:
   name: analytical-env
