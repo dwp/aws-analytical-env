@@ -380,9 +380,9 @@ jobs:
             S3_ROOT: component/uc_repos/aws-rtg-pdm-exports
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
 
-  - name: mirror-git-repo-chs-one-service-preprod
+  - name: mirror-git-repo-aws-one-service-preprod
     plan:
-      - get: chs-one-service-repo
+      - get: aws-one-service-repo
         trigger: true
       - get: aws-common-infrastructure
         trigger: false
@@ -393,9 +393,9 @@ jobs:
       - .: (( inject meta.plan.mirror-git-repo ))
         config:
           run:
-            dir: chs-one-service-repo
+            dir: aws-one-service-repo
           inputs:
-            - name: chs-one-service-repo
+            - name: aws-one-service-repo
           params:
-            S3_ROOT: component/uc_repos/chs-one-service
+            S3_ROOT: component/uc_repos/aws-one-service
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
