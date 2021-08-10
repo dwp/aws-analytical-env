@@ -358,3 +358,23 @@ jobs:
             S3_ROOT: component/uc_repos/aws-rtg-pdm-exports
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
 
+  - name: mirror-git-repo-chs-one-service-development
+    plan:
+      - get: chs-one-service-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: chs-one-service-repo
+          inputs:
+            - name: chs-one-service-repo
+          params:
+            S3_ROOT: component/uc_repos/chs-one-service
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
