@@ -281,6 +281,15 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/aws-rtg-pdm-exports.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+  - name: aws-one-service-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-one-service.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
 #  - name: datateam_dotfiles-repo
 #    type: git
 #    source:
