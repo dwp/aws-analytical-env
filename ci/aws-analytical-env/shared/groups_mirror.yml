@@ -95,6 +95,14 @@ groups:
       - mirror-git-repo-aws-payment-timelines-preprod
       - mirror-git-repo-aws-payment-timelines-prod
 
+  - name: aws-rtg-htme-exports
+    jobs:
+      - mirror-git-repo-aws-rtg-htme-exports-development
+      - mirror-git-repo-aws-rtg-htme-exports-qa
+      - mirror-git-repo-aws-rtg-htme-exports-integration
+      - mirror-git-repo-aws-rtg-htme-exports-preprod
+      - mirror-git-repo-aws-rtg-htme-exports-prod
+
   - name: aws-rtg-pdm-exports
     jobs:
       - mirror-git-repo-aws-rtg-pdm-exports-development

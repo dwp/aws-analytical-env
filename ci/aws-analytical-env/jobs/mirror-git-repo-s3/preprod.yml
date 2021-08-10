@@ -379,6 +379,28 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-rtg-pdm-exports
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+    
+  
+  - name: mirror-git-repo-aws-rtg-htme-exports-preprod
+    plan:
+      - get: aws-rtg-htme-exports
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: preprod
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-rtg-htme-exports
+          inputs:
+            - name: aws-rtg-htme-exports
+          params:
+            S3_ROOT: component/uc_repos/aws-rtg-htme-exports
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+
 
   - name: mirror-git-repo-aws-one-service-preprod
     plan:
