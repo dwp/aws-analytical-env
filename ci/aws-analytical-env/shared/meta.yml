@@ -843,3 +843,33 @@ meta:
                 echo "Stopping cluster with id of ${CLUSTER_ID}"
                 aws emr terminate-clusters --cluster-ids $CLUSTER_ID
               done
+
+    clean-security-configs:
+      task: clean-security-configs
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              export AWS_DEFAULT_REGION
+              source /assume-role
+              set +e
+              set +x
+
+              for NAME in $(aws emr list-security-configurations | jq -r '.SecurityConfigurations[].Name | match(".*_20\\d{12}$").string');
+              do
+                echo "Deleting configuration with name of ${NAME}"
+                aws emr delete-security-configuration --name ${NAME}
+              done
+              return 0

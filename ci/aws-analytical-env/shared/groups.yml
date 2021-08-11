@@ -88,7 +88,7 @@ groups:
       - sync-cognito-users-to-rds-production
       - create-roles-and-munged-policies-production
 
-  - name: admin-stop-batch-cluster
+  - name: admin-batch-cluster
     jobs:
       - dev-stop-batch-cluster
       - qa-stop-batch-cluster
@@ -96,23 +96,30 @@ groups:
       - preprod-stop-batch-cluster
       - prod-stop-batch-cluster
 
-  - name: update-pipeline
-    jobs:
-      - update-pipeline
+      - dev-cleanup
+      - qa-cleanup
+      - int-cleanup
+      - preprod-cleanup
+      - production-cleanup
+
+      - dev-stop-waiting
+      - qa-stop-waiting
+      - int-stop-waiting
+      - preprod-stop-waiting
+      - prod-stop-waiting
 
   - name: ami-test
     jobs:
       - apply-and-test-with-ami
 
-  - name: admin-stop-cluster
+  - name: admin-analytical-cluster
     jobs:
       - dev-stop-cluster
-      - dev-stop-waiting
       - qa-stop-cluster
-      - qa-stop-waiting
       - int-stop-cluster
-      - int-stop-waiting
       - preprod-stop-cluster
-      - preprod-stop-waiting
       - prod-stop-cluster
-      - prod-stop-waiting
+
+  - name: update-pipeline
+    jobs:
+      - update-pipeline
