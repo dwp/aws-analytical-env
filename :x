@@ -100,7 +100,7 @@ groups:
       - qa-cleanup
       - int-cleanup
       - preprod-cleanup
-      - production-cleanup
+      - prodution-cleanup
 
       - dev-stop-waiting
       - qa-stop-waiting
