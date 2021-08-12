@@ -39,7 +39,7 @@ resource "aws_cloudwatch_event_rule" "munge_lambda_failed" {
 "detail": {
   "alarmName": ["${aws_cloudwatch_metric_alarm.munge_lambda_failure.0.alarm_name}"],
   "state": {
-    "value": "ALARM"
+    "value": ["ALARM"]
   }
 }
 }
