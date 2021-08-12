@@ -19,7 +19,7 @@ locals {
     qa          = 1
     integration = 1
     preprod     = 1
-    production  = 2
+    production  = 15
   }
   ebs_root_volume_size            = 100
   ebs_config_size                 = 250
