@@ -8,7 +8,7 @@ resource "aws_cloudwatch_metric_alarm" "munge_lambda_failure" {
   alarm_description   = "This metric monitors failures of the lambda: ${aws_lambda_function.policy_munge_lambda.function_name}"
   threshold           = 1
   alarm_actions       = [var.monitoring_sns_topic_arn]
-  dimensions {
+  dimensions          = {
     FunctionName = aws_lambda_function.policy_munge_lambda.function_name
   }
 
@@ -34,5 +34,7 @@ resource "aws_cloudwatch_event_rule" "munge_lambda_failed" {
 }
 }
 EOF
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-policy-munge-failure-event" })
 }
 
