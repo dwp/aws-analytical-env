@@ -8,6 +8,7 @@ resource "aws_cloudwatch_metric_alarm" "munge_lambda_failure" {
   period              = "60"
   alarm_description   = "This metric monitors failures of the lambda: ${aws_lambda_function.policy_munge_lambda.function_name}"
   threshold           = 1
+  statistic           = "Sum"
   alarm_actions       = [var.monitoring_sns_topic_arn]
   dimensions = {
     FunctionName = aws_lambda_function.policy_munge_lambda.function_name
