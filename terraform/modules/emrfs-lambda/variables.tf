@@ -82,3 +82,8 @@ variable "s3fs_kms_arn" {
   type        = string
   description = "(Required) The bucket KMS ARN used for encryption of s3fs shared and home dir bucket"
 }
+
+variable "monitoring_sns_topic_arn" {
+  type        = string
+  description = "(Required) Arn of SNS event to send alerts to Slack"
+}
