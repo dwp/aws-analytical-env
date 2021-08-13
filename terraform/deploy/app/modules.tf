@@ -206,6 +206,7 @@ module "emrfs_lambda" {
   environment                = local.environment
   s3fs_bucket_id             = module.jupyter_s3_storage.jupyterhub_bucket.id
   s3fs_kms_arn               = module.jupyter_s3_storage.s3fs_bucket_kms_arn
+  monitoring_sns_topic_arn   = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
 }
 
 module "rbac_db" {

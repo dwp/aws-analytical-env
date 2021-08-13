@@ -373,10 +373,10 @@ meta:
               source /assume-role
 
               POLICY_MUNGE_FUNCTION_NAME=$(jq -r ".emrfs_lambdas.value.policy_munge_lambda.function_name" < ./terraform-output/outputs.json)
-              aws lambda invoke --function-name $POLICY_MUNGE_FUNCTION_NAME --invocation-type RequestResponse --cli-connect-timeout 600 --cli-read-timeout 600 output.json
+              aws lambda invoke --function-name $POLICY_MUNGE_FUNCTION_NAME --invocation-type Event --cli-connect-timeout 600 output.json
 
-              jq < output.json
-              jq -eC "if .errorMessage? then error(.errorMessage) else true end" < output.json
+              # Error if lamnbda invocation fails
+              cat output.json |  jq 'if .StatusCode>=400? then "Invocation of lambda failed with Status Code: \(.StatusCode)\n"|halt_error(1) else true end'
 
     terraform-bootstrap-crown:
       task: terraform-bootstrap-crown
