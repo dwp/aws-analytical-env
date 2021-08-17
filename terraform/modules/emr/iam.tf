@@ -485,6 +485,20 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
+    sid    = "AllowEmrToReadCompactionBucket"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket*",
+      "s3:GetObject*",
+      "s3:GetBucketLocation",
+    ]
+    resources = [
+      var.compaction_bucket.arn,
+      "${var.compaction_bucket.arn}/*",
+    ]
+  }
+
+  statement {
     sid    = "AllowAccessToS3Buckets"
     effect = "Allow"
     actions = [
@@ -516,7 +530,8 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
     resources = [
       var.published_bucket_cmk,
-      var.processed_bucket_cmk
+      var.processed_bucket_cmk,
+      var.compaction_bucket_cmk
     ]
   }
 
