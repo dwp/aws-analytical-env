@@ -484,7 +484,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
   }
 
-    statement {
+  statement {
     sid    = "AllowEmrToReadCompactionBucket"
     effect = "Allow"
     actions = [
