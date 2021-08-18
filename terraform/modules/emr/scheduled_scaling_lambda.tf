@@ -37,6 +37,7 @@ resource "aws_lambda_function" "emr_scheduled_scaling" {
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_call_emr_scaling_up_lambda" {
+  count         = local.emr_scheduled_scaling[var.environment] == true ? 1 : 0
   statement_id  = "AllowScalingUpExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.emr_scheduled_scaling[0].function_name
@@ -45,6 +46,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_emr_scaling_up_lambda
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_call_emr_scaling_down_lambda" {
+  count         = local.emr_scheduled_scaling[var.environment] == true ? 1 : 0
   statement_id  = "AllowScalingDownExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.emr_scheduled_scaling[0].function_name

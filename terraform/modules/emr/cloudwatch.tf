@@ -6,6 +6,7 @@ resource "aws_cloudwatch_event_rule" "EMRMorningScaleUp" {
 }
 
 resource "aws_cloudwatch_event_target" "EMR_Scale_up" {
+  count     = local.emr_scheduled_scaling[var.environment] == true ? 1 : 0
   rule      = aws_cloudwatch_event_rule.EMRMorningScaleUp[0].name
   target_id = "SendToLambdaEMRScaleUp"
   arn       = aws_lambda_function.emr_scheduled_scaling[0].arn
@@ -19,6 +20,7 @@ resource "aws_cloudwatch_event_rule" "EMRMorningScaleDown" {
 }
 
 resource "aws_cloudwatch_event_target" "EMR_Scale_Down" {
+  count     = local.emr_scheduled_scaling[var.environment] == true ? 1 : 0
   rule      = aws_cloudwatch_event_rule.EMRMorningScaleDown[0].name
   target_id = "SendToLambdaEMRScaleDown"
   arn       = aws_lambda_function.emr_scheduled_scaling[0].arn
