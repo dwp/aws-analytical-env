@@ -227,6 +227,16 @@ variable "published_bucket_cmk" {
   type        = string
 }
 
+variable "compaction_bucket" {
+  type        = map(string)
+  description = "compaction bucket - id (name) and arn included"
+}
+
+variable "compaction_bucket_cmk" {
+  description = "(Required) KMS key arn for accessing the compaction_bucket"
+  type        = string
+}
+
 variable "processed_bucket_arn" {
   description = "the processed bucket arn "
   type        = string
