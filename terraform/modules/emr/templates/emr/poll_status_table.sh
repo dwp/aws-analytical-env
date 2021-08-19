@@ -44,11 +44,7 @@ log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table
 
 count=0
 
-if [[ -n "$4" ]]; then
-  SNAPSHOT_TYPE = "$4"
-  query="SELECT correlation_id FROM audit.data_pipeline_metadata_hive WHERE dataproduct = '${DATASOURCE}' AND upper(status) = 'COMPLETED' AND dateproductrun = '${EXPORT_DATE}' AND snapshot_type = '${SNAPSHOT_TYPE}';"
-else query="SELECT correlation_id FROM audit.data_pipeline_metadata_hive WHERE dataproduct = '${DATASOURCE}' AND upper(status) = 'COMPLETED' AND dateproductrun = '${EXPORT_DATE}';"
-fi
+query="SELECT correlation_id FROM audit.data_pipeline_metadata_hive WHERE dataproduct = '${DATASOURCE}' AND upper(status) = 'COMPLETED' AND dateproductrun = '${EXPORT_DATE}';"
 
 MESSAGE="Beginning polling of status table..."
 echo $MESSAGE
