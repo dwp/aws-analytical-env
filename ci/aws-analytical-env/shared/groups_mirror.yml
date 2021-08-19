@@ -79,6 +79,22 @@ groups:
       - mirror-git-repo-opsmi-ops-mi-repo-preprod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
 
+  - name: opsmi-opti-azkaban-dev
+    jobs:
+      - mirror-git-repo-opsmi-opti-azkaban-dev-development
+      - mirror-git-repo-opsmi-opti-azkaban-dev-qa
+      - mirror-git-repo-opsmi-opti-azkaban-dev-integration
+      - mirror-git-repo-opsmi-opti-azkaban-dev-preprod
+      - mirror-git-repo-opsmi-opti-azkaban-dev-production
+
+  - name: opsmi-opti-azkaban
+    jobs:
+      - mirror-git-repo-opsmi-opti-azkaban-development
+      - mirror-git-repo-opsmi-opti-azkaban-qa
+      - mirror-git-repo-opsmi-opti-azkaban-integration
+      - mirror-git-repo-opsmi-opti-azkaban-preprod
+      - mirror-git-repo-opsmi-opti-azkaban-production
+
   - name: aws-one-service
     jobs:
       - mirror-git-repo-aws-one-service-development
