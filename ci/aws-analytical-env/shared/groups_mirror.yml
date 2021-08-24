@@ -55,6 +55,14 @@ groups:
       - mirror-git-repo-aws-dwx-housing-preprod
       - mirror-git-repo-aws-dwx-housing-prod
 
+  - name: aws-nat-stats
+    jobs:
+      - mirror-git-repo-aws-nat-stats-development
+      - mirror-git-repo-aws-nat-stats-qa
+      - mirror-git-repo-aws-nat-stats-integration
+      - mirror-git-repo-aws-nat-stats-preprod
+      - mirror-git-repo-aws-nat-stats-production
+
   - name: aws-how-many
     jobs:
       - mirror-git-repo-aws-how-many-development
