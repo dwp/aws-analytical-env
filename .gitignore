@@ -16,6 +16,7 @@ out/
 
 # Concourse
 aviator_pipeline.yml
+aviator_mirror_git.yml
 
 *.jar
 
