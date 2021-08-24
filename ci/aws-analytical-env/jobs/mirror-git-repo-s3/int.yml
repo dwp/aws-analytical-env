@@ -418,3 +418,43 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-one-service
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
+
+  - name: mirror-git-repo-opsmi-opti-azkaban-integration
+    plan:
+      - get: opsmi-opti-azkaban-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: integration
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opsmi-opti-azkaban-repo
+          inputs:
+            - name: opsmi-opti-azkaban-repo
+          params:
+            S3_ROOT: component/uc_repos/opti-azkaban
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
+
+  - name: mirror-git-repo-opsmi-opti-azkaban-dev-integration
+    plan:
+      - get: opsmi-opti-azkaban-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: integration
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opsmi-opti-azkaban-dev-repo
+          inputs:
+            - name: opsmi-opti-azkaban-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/opti-azkaban
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
