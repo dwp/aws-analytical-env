@@ -49,6 +49,10 @@ Configurations:
     "javax.jdo.option.ConnectionUserName": "${hive_metastore_username}"
 - Classification: "hive-site"
   Properties:
+    "hive.server2.enable.doAs": "false"
+    "hive.users.in.admin.role": "hive,hadoop"
+    "hive.security.metastore.authorization.manager": "org.apache.hadoop.hive.ql.security.authorization.MetaStoreAuthzAPIAuthorizerEmbedOnly"
+    "hive.security.authorization.manager": "org.apache.hadoop.hive.ql.security.authorization.plugin.sqlstd.SQLStdConfOnlyAuthorizerFactory"
     "hive.exec.dynamic.partition.mode": "nonstrict"
     "hive.server2.authentication": "nosasl"
     "hive.support.concurrency": "true"
@@ -112,3 +116,9 @@ Configurations:
   Properties:
     "tez.aux.uris": "/libs/"
     "tez.am.resource.memory.mb": "1024"
+- Classification: "hiveserver2-site"
+  Properties:
+    "hive.security.authenticator.manager": "org.apache.hadoop.hive.ql.security.SessionStateUserAuthenticator"
+    "hive.security.authorization.enabled": "true"
+    "hive.security.authorization.manager": "org.apache.hadoop.hive.ql.security.authorization.plugin.sqlstd.SQLStdHiveAuthorizerFactory"
+    "hive.metastore.uris": "thrift://localhost:9083"
