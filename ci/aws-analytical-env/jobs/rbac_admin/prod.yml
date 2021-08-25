@@ -90,7 +90,7 @@ jobs:
   - name: create-roles-and-munged-policies-production
     plan:
       - get: aws-analytical-env
-        trigger: false
+        trigger: true
         passed:
           - sync-cognito-users-to-rds-production
       - get: emr-al2-ami
