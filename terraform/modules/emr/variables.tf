@@ -227,9 +227,9 @@ variable "published_bucket_cmk" {
   type        = string
 }
 
-variable "compaction_bucket" {
-  type        = map(string)
-  description = "compaction bucket - id (name) and arn included"
+variable "compaction_bucket_id" {
+  description = "Id for compaction bucket"
+  type        = string
 }
 
 variable "compaction_bucket_cmk" {
