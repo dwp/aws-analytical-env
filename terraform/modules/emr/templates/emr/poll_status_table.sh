@@ -56,7 +56,7 @@ log_message $MESSAGE "INFO" "NOT_SET" $PROCESS_ID "batch_emr" "poll_status_table
 
 while [ $count -lt $TIMEOUT -a $(date +%s) -lt $ENDTIME ]; do
   CORRELATION_ID=$(hive -S -e "${query}")
-  if [ -z $CORRELATION_ID ]; then
+  if [ -z "$CORRELATION_ID" ]; then
     let count++ || true
     sleep 60
     MESSAGE="$count attempts of $TIMEOUT so far. Retrying..."
