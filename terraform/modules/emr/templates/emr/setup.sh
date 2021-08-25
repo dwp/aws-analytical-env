@@ -21,7 +21,7 @@ export NO_PROXY="$FULL_NO_PROXY"
 
 PUB_BUCKET_ID="${publish_bucket_id}"
 CONFIG_BUCKET_ID="${config_bucket}"
-COMPACTION_BUCKET_ID="${compaction_bucket}"
+COMPACTION_BUCKET_ID="${compaction_bucket_id}"
 echo "export PUBLISH_BUCKET_ID=$${PUB_BUCKET_ID}" | sudo tee /etc/profile.d/buckets.sh
 echo "export CONFIG_BUCKET_ID=$${CONFIG_BUCKET_ID}" | sudo tee -a /etc/profile.d/buckets.sh
 echo "export COMPACTION_BUCKET_ID=$${COMPACTION_BUCKET_ID}" | sudo tee -a /etc/profile.d/buckets.sh
