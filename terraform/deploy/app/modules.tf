@@ -69,7 +69,7 @@ module "emr" {
   config_bucket_id         = data.terraform_remote_state.common.outputs.config_bucket.id
   dataset_s3               = data.terraform_remote_state.common.outputs.published_bucket
   published_bucket_cmk     = data.terraform_remote_state.common.outputs.published_bucket_cmk.arn
-  compaction_bucket_id     = data.terraform_remote_state.internal_compute.outputs.compaction_bucket.id
+  compaction_bucket        = data.terraform_remote_state.internal_compute.outputs.compaction_bucket
   compaction_bucket_cmk    = data.terraform_remote_state.internal_compute.outputs.compaction_bucket_cmk.arn
   processed_bucket_arn     = data.terraform_remote_state.common.outputs.processed_bucket.arn
   processed_bucket_cmk     = data.terraform_remote_state.common.outputs.processed_bucket_cmk.arn
