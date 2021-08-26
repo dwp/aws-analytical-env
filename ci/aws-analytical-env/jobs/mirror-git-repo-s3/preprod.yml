@@ -400,7 +400,6 @@ jobs:
             S3_ROOT: component/uc_repos/aws-rtg-pdm-exports
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
 
-
   - name: mirror-git-repo-aws-rtg-htme-exports-preprod
     plan:
       - get: aws-rtg-htme-exports

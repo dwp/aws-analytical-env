@@ -1,5 +1,4 @@
 jobs:
-
   - name: mirror-git-repo-uc-lab-repo-integration
     plan:
       - get: aws-uc-lab-repo
