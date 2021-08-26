@@ -285,7 +285,7 @@ meta:
                 privileges=$(jq -r ".rbac_db.value.client_privileges[\"$client\"]" < ./terraform-output/outputs.json);
                 jq -n --arg Username "$client" --arg Paramname "$param_name" --arg privileges "$privileges" \
                   '{mysql_user_username: $Username, mysql_user_password_secret_name: $Paramname, privileges: $privileges}' > manifest.json
-                aws lambda invoke --function-name $MANAGE_USER_FUNCTION_NAME --invocation-type RequestResponse --payload file://manifest.json --cli-connect-timeout 600 --cli-read-timeout 600 output.json
+                aws lambda invoke --function-name $MANAGE_USER_FUNCTION_NAME --invocation-type RequestResponse --payload file://manifest.json --cli-connect-timeout 900 --cli-read-timeout 900 output.json
                 jq -eC "if .errorMessage? then error(.errorMessage) else true end" < output.json
               done || exit 1
         inputs:
@@ -315,7 +315,7 @@ meta:
               source /assume-role
 
               INITIALISE_DB_FUNCTION_NAME=$(jq -r ".rbac_db.value.initialise_db_lambda.function_name" < ./terraform-output/outputs.json)
-              aws lambda invoke --function-name $INITIALISE_DB_FUNCTION_NAME --invocation-type RequestResponse --cli-connect-timeout 600 --cli-read-timeout 600 output.json
+              aws lambda invoke --function-name $INITIALISE_DB_FUNCTION_NAME --invocation-type RequestResponse --cli-connect-timeout 900 --cli-read-timeout 900 output.json
 
               jq < output.json
               jq -eC "if .errorMessage? then error(.errorMessage) else true end" < output.json
@@ -344,7 +344,7 @@ meta:
               source /assume-role
 
               SYNC_RDS_FUNCTION_NAME=$(jq -r ".emrfs_lambdas.value.rds_sync_lambda.function_name" < ./terraform-output/outputs.json)
-              aws lambda invoke --function-name $SYNC_RDS_FUNCTION_NAME --invocation-type RequestResponse --cli-connect-timeout 600 --cli-read-timeout 600 output.json
+              aws lambda invoke --function-name $SYNC_RDS_FUNCTION_NAME --invocation-type RequestResponse --cli-connect-timeout 900 --cli-read-timeout 900 output.json
 
               jq < output.json
               jq -eC "if .errorMessage? then error(.errorMessage) else true end" < output.json
@@ -373,7 +373,7 @@ meta:
               source /assume-role
 
               POLICY_MUNGE_FUNCTION_NAME=$(jq -r ".emrfs_lambdas.value.policy_munge_lambda.function_name" < ./terraform-output/outputs.json)
-              aws lambda invoke --function-name $POLICY_MUNGE_FUNCTION_NAME --invocation-type Event --cli-connect-timeout 600 output.json
+              aws lambda invoke --function-name $POLICY_MUNGE_FUNCTION_NAME --invocation-type Event --cli-connect-timeout 900 output.json
 
               # Error if lamnbda invocation fails
               cat output.json |  jq 'if .StatusCode>=400? then "Invocation of lambda failed with Status Code: \(.StatusCode)\n"|halt_error(1) else true end'
@@ -717,7 +717,7 @@ meta:
               source /assume-role
               LAMBDA_NAME="$(jq -r '.testing.value.test_lambda.function_name' < ./terraform-output-testing/outputs.json)"
               sleep 300 # wait for cluster to finish provisioning
-              aws lambda invoke --function-name $LAMBDA_NAME --invocation-type RequestResponse --cli-connect-timeout 600 --cli-read-timeout 600 output.json
+              aws lambda invoke --function-name $LAMBDA_NAME --invocation-type RequestResponse --cli-connect-timeout 900 --cli-read-timeout 900 output.json
               jq -eC "if .errorMessage? then error(.errorMessage) else true end" < output.json
         inputs:
           - name: terraform-output-testing
