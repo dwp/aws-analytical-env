@@ -90,6 +90,24 @@ resource "aws_s3_bucket_object" "batch_instances" {
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-instances" })
 }
 
+resource "aws_s3_bucket_object" "uc_labs_batch_instances" {
+  bucket = var.config_bucket.id
+  key    = "emr/batch-cluster/uc_lab_instances.yaml"
+  content = templatefile("../../../batch_cluster_config/instances.yaml.tpl", {
+    common_security_group    = var.common_security_group
+    master_security_group    = var.master_security_group
+    slave_security_group     = var.slave_security_group
+    service_security_group   = var.service_security_group
+    subnet_ids               = join(",", var.subnet_ids)
+    core_instance_count      = var.uc_lab_emr_core_instance_count
+    instance_type_master     = var.instance_type_master
+    instance_type_core_one   = var.instance_type_core_one
+    instance_type_core_two   = var.instance_type_core_two
+    instance_type_core_three = var.instance_type_core_three
+  })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-uc-labs-emr-launch-instances" })
+}
+
 resource "aws_s3_bucket_object" "batch_steps" {
   bucket = var.config_bucket.id
   key    = "emr/batch-cluster/steps.yaml"
