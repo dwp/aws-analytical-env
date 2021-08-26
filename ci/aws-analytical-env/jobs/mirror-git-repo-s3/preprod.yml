@@ -482,7 +482,7 @@ jobs:
             S3_ROOT: component/uc_repos/dev/opti-azkaban
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
 
-- name: mirror-git-repo-ucfs-universe-repo-preprod
+  - name: mirror-git-repo-ucfs-universe-repo-preprod
     plan:
       - get: ucfs-universe-repo
         trigger: true
