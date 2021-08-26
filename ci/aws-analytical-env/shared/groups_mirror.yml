@@ -197,7 +197,7 @@ groups:
       - mirror-git-repo-ucfs-universe-repo-qa
       - mirror-git-repo-ucfs-universe-repo-integration
       - mirror-git-repo-ucfs-universe-repo-preprod
-      - mirror-git-repo-ucfs-universe-repo-prod
+      - mirror-git-repo-ucfs-universe-repo-production
 
   - name: mirror-ucsqlhelper
     jobs:
