@@ -69,6 +69,8 @@ module "emr" {
   config_bucket_id         = data.terraform_remote_state.common.outputs.config_bucket.id
   dataset_s3               = data.terraform_remote_state.common.outputs.published_bucket
   published_bucket_cmk     = data.terraform_remote_state.common.outputs.published_bucket_cmk.arn
+  compaction_bucket        = data.terraform_remote_state.internal_compute.outputs.compaction_bucket
+  compaction_bucket_cmk    = data.terraform_remote_state.internal_compute.outputs.compaction_bucket_cmk.arn
   processed_bucket_arn     = data.terraform_remote_state.common.outputs.processed_bucket.arn
   processed_bucket_cmk     = data.terraform_remote_state.common.outputs.processed_bucket_cmk.arn
   processed_bucket_id      = data.terraform_remote_state.common.outputs.processed_bucket.bucket
@@ -206,6 +208,7 @@ module "emrfs_lambda" {
   environment                = local.environment
   s3fs_bucket_id             = module.jupyter_s3_storage.jupyterhub_bucket.id
   s3fs_kms_arn               = module.jupyter_s3_storage.s3fs_bucket_kms_arn
+  monitoring_sns_topic_arn   = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
 }
 
 module "rbac_db" {

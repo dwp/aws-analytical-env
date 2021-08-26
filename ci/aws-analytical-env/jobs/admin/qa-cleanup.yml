@@ -1,0 +1,8 @@
+jobs:
+  - name: qa-cleanup
+    plan:
+      - .: (( inject meta.plan.clean-security-configs ))
+        task: clean-security-configs
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci

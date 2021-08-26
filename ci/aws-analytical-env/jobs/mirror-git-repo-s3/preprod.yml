@@ -360,6 +360,26 @@ jobs:
             S3_ROOT: component/uc_repos/aws-dwx-housing/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
 
+  - name: mirror-git-repo-aws-nat-stats-preprod
+    plan:
+      - get: aws-nat-stats
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: preprod
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-nat-stats
+          inputs:
+            - name: aws-nat-stats
+          params:
+            S3_ROOT: component/uc_repos/aws-nat-stats
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+
   - name: mirror-git-repo-aws-rtg-pdm-exports-preprod
     plan:
       - get: aws-rtg-pdm-exports
@@ -379,8 +399,7 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-rtg-pdm-exports
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
-    
-  
+
   - name: mirror-git-repo-aws-rtg-htme-exports-preprod
     plan:
       - get: aws-rtg-htme-exports
@@ -420,4 +439,64 @@ jobs:
             - name: aws-one-service-repo
           params:
             S3_ROOT: component/uc_repos/aws-one-service
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+
+  - name: mirror-git-repo-opsmi-opti-azkaban-preprod
+    plan:
+      - get: opsmi-opti-azkaban-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: preprod
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opsmi-opti-azkaban-repo
+          inputs:
+            - name: opsmi-opti-azkaban-repo
+          params:
+            S3_ROOT: component/uc_repos/opti-azkaban
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+
+  - name: mirror-git-repo-opsmi-opti-azkaban-dev-preprod
+    plan:
+      - get: opsmi-opti-azkaban-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: preprod
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opsmi-opti-azkaban-dev-repo
+          inputs:
+            - name: opsmi-opti-azkaban-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/opti-azkaban
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+
+  - name: mirror-git-repo-ucfs-universe-repo-preprod
+    plan:
+      - get: ucfs-universe-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: preprod
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: ucfs-universe-repo
+          inputs:
+            - name: ucfs-universe-repo
+          params:
+            S3_ROOT: component/uc_repos/ucfs-universe/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci

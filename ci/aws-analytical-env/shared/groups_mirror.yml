@@ -55,6 +55,14 @@ groups:
       - mirror-git-repo-aws-dwx-housing-preprod
       - mirror-git-repo-aws-dwx-housing-prod
 
+  - name: aws-nat-stats
+    jobs:
+      - mirror-git-repo-aws-nat-stats-development
+      - mirror-git-repo-aws-nat-stats-qa
+      - mirror-git-repo-aws-nat-stats-integration
+      - mirror-git-repo-aws-nat-stats-preprod
+      - mirror-git-repo-aws-nat-stats-production
+
   - name: aws-how-many
     jobs:
       - mirror-git-repo-aws-how-many-development
@@ -78,6 +86,22 @@ groups:
       - mirror-git-repo-opsmi-ops-mi-repo-integration
       - mirror-git-repo-opsmi-ops-mi-repo-preprod
       - mirror-git-repo-opsmi-ops-mi-repo-prod
+
+  - name: opsmi-opti-azkaban-dev
+    jobs:
+      - mirror-git-repo-opsmi-opti-azkaban-dev-development
+      - mirror-git-repo-opsmi-opti-azkaban-dev-qa
+      - mirror-git-repo-opsmi-opti-azkaban-dev-integration
+      - mirror-git-repo-opsmi-opti-azkaban-dev-preprod
+      - mirror-git-repo-opsmi-opti-azkaban-dev-production
+
+  - name: opsmi-opti-azkaban
+    jobs:
+      - mirror-git-repo-opsmi-opti-azkaban-development
+      - mirror-git-repo-opsmi-opti-azkaban-qa
+      - mirror-git-repo-opsmi-opti-azkaban-integration
+      - mirror-git-repo-opsmi-opti-azkaban-preprod
+      - mirror-git-repo-opsmi-opti-azkaban-production
 
   - name: aws-one-service
     jobs:
@@ -166,6 +190,14 @@ groups:
       - mirror-git-repo-uc-lab-repo-integration
       - mirror-git-repo-uc-lab-repo-preprod
       - mirror-git-repo-uc-lab-repo-prod
+
+  - name: ucfs-universe
+    jobs:
+      - mirror-git-repo-ucfs-universe-repo-development
+      - mirror-git-repo-ucfs-universe-repo-qa
+      - mirror-git-repo-ucfs-universe-repo-integration
+      - mirror-git-repo-ucfs-universe-repo-preprod
+      - mirror-git-repo-ucfs-universe-repo-production
 
   - name: mirror-ucsqlhelper
     jobs:

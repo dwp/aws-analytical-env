@@ -19,12 +19,41 @@ locals {
     qa          = 1
     integration = 1
     preprod     = 1
-    production  = 2
+    production  = 15
   }
   ebs_root_volume_size            = 100
   ebs_config_size                 = 250
   ebs_config_type                 = "gp2"
   ebs_config_volumes_per_instance = 1
+  autoscaling_min_capacity_up = {
+    development = 5
+    qa          = 1
+    integration = 1
+    preprod     = 2
+    production  = 15
+  }
+  autoscaling_max_capacity_up = {
+    development = 10
+    qa          = 4
+    integration = 4
+    preprod     = 4
+    production  = 30
+  }
+  autoscaling_min_capacity_down = {
+    development = 1
+    qa          = 1
+    integration = 1
+    preprod     = 1
+    production  = 15
+  }
+  autoscaling_max_capacity_down = {
+    development = 4
+    qa          = 4
+    integration = 4
+    preprod     = 4
+    production  = 30
+  }
+
   autoscaling_min_capacity = {
     development = 1
     qa          = 1
@@ -70,6 +99,14 @@ locals {
     integration = "4096"
     preprod     = "32768"
     production  = "32768"
+  }
+
+  emr_scheduled_scaling = {
+    development = true
+    qa          = false
+    integration = false
+    preprod     = true
+    production  = false
   }
 
   dks_port   = 8443
