@@ -478,3 +478,20 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/dev/opti-azkaban
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
+
+- name: mirror-git-repo-ucfs-universe-repo-production
+    plan:
+      - get: ucfs-universe-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: ucfs-universe-repo
+          inputs:
+            - name: ucfs-universe-repo
+          params:
+            S3_ROOT: component/uc_repos/ucfs-universe/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci

@@ -399,8 +399,8 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-rtg-pdm-exports
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
-    
-  
+
+
   - name: mirror-git-repo-aws-rtg-htme-exports-preprod
     plan:
       - get: aws-rtg-htme-exports
@@ -480,4 +480,21 @@ jobs:
             - name: opsmi-opti-azkaban-dev-repo
           params:
             S3_ROOT: component/uc_repos/dev/opti-azkaban
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+
+- name: mirror-git-repo-ucfs-universe-repo-preprod
+    plan:
+      - get: ucfs-universe-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: ucfs-universe-repo
+          inputs:
+            - name: ucfs-universe-repo
+          params:
+            S3_ROOT: component/uc_repos/ucfs-universe/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci

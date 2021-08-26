@@ -202,3 +202,11 @@ groups:
   - name: update-pipeline
     jobs:
       - update-pipeline
+
+  - name: ucfs-universe
+    jobs:
+      - mirror-git-repo-ucfs-universe-repo-development
+      - mirror-git-repo-ucfs-universe-repo-qa
+      - mirror-git-repo-ucfs-universe-repo-integration
+      - mirror-git-repo-ucfs-universe-repo-preprod
+      - mirror-git-repo-ucfs-universe-repo-prod
