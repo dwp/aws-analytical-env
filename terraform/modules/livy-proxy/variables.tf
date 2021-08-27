@@ -11,7 +11,7 @@ variable "ecs_cluster_name" {
 variable "desired_count" {
   type        = number
   description = "Number of ECS tasks to deploy"
-  default     = 1
+  default     = 0
 }
 
 variable "container_port" {

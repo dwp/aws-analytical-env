@@ -51,8 +51,7 @@ resource "aws_ecs_service" "livy-proxy" {
   name            = var.name
   cluster         = data.aws_ecs_cluster.ecs_main_cluster.arn
   task_definition = aws_ecs_task_definition.livy-proxy.arn
-//  desired_count   = var.desired_count
-  desired_count   = "0"
+  desired_count   = var.desired_count
   launch_type     = "EC2"
 
   network_configuration {
