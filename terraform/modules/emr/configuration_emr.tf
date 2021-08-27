@@ -65,6 +65,7 @@ data "template_file" "emr_setup_sh" {
 
     azkaban_common_aws_sh         = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_common_aws.key)
     azkaban_common_console_sh     = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_common_console.key)
+    azkaban_common_fs_sh          = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_common_fs.key)
     azkaban_common_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_common_environment.key)
   }
 }
@@ -349,6 +350,13 @@ resource "aws_s3_bucket_object" "azkaban_common_console" {
   key     = "scripts/azkaban/common/console.sh"
   content = file("${path.module}/files/azkaban/common/console.sh")
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-common-console-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_common_fs" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/common/fs.sh"
+  content = file("${path.module}/files/azkaban/common/fs.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-common-fs-sh" })
 }
 
 resource "aws_s3_bucket_object" "azkaban_common_environment" {
