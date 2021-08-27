@@ -65,8 +65,4 @@ resource "aws_ecs_service" "livy-proxy" {
     container_port   = var.container_port
   }
   tags = merge(var.common_tags, { Name : "${var.name}-proxy-ecs" })
-
-  lifecycle {
-    ignore_changes = [desired_count]
-  }
 }
