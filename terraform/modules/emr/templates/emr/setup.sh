@@ -61,6 +61,7 @@ aws s3 cp "${azkaban_enqueue_run_sh}" /opt/emr/azkaban/enqueue
 aws s3 cp "${azkaban_egress_run_sh}" /opt/emr/azkaban/egress
 aws s3 cp "${azkaban_common_aws_sh}" /opt/emr/azkaban/common
 aws s3 cp "${azkaban_common_console_sh}" /opt/emr/azkaban/common
+aws s3 cp "${azkaban_common_fs_sh}" /opt/emr/azkaban/common
 aws s3 cp "${azkaban_common_environment_sh}" /opt/emr/azkaban/common
 sudo chmod -R +x /opt/emr/azkaban
 sudo chown -R hadoop:hadoop /opt/emr/azkaban
