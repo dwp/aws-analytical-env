@@ -44,6 +44,13 @@ metrics::delete() {
     echo $(date '+%Y-%m-%d %H:%M:%S') deleted metrics, job: "$job", step: "$step", result "$result".
 }
 
+metrics::wipe() {
+    echo $(date '+%Y-%m-%d %H:%M:%S') "Flushing Azkaban pushgateway".
+    sleep 120
+    curl -X PUT "http://${azkaban_pushgateway_hostname}:9091/api/v1/admin/wipe"
+    echo $(date '+%Y-%m-%d %H:%M:%S') "Done flushing Azkaban pushgateway".
+}
+
 metrics::pushgateway_url() {
     local -r job=$${1:?Usage: $${FUNCNAME[0]} job step}
     local -r step=$${2:?Usage: $${FUNCNAME[0]} job step}

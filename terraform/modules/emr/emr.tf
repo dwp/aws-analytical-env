@@ -57,6 +57,13 @@ resource "aws_emr_cluster" "cluster" {
 
   configurations_json = var.use_mysql_hive_metastore == true ? local.configurations_mysql_json : local.configurations_glue_json
 
+
+  bootstrap_action {
+    path = "file:/bin/echo"
+    name = "Dummy bootstrap action to track the md5 hash of the configuration json and redeploy only when changed"
+    args = [md5(var.use_mysql_hive_metastore == true ? local.configurations_mysql_json : local.configurations_glue_json)]
+  }
+
   bootstrap_action {
     name = "get-dks-cert"
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.get_dks_cert_sh.key)
@@ -65,6 +72,11 @@ resource "aws_emr_cluster" "cluster" {
   bootstrap_action {
     name = "emr-setup"
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.emr_setup_sh.key)
+  }
+
+  bootstrap_action {
+    name = "python-packages-install"
+    path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.py_pckgs_install.key)
   }
 
   step {
@@ -86,18 +98,6 @@ resource "aws_emr_cluster" "cluster" {
       jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
       args = [
         format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.sparkR_install.key)
-      ]
-    }
-  }
-
-  step {
-    name              = "Install Python Packages"
-    action_on_failure = "CONTINUE"
-
-    hadoop_jar_step {
-      jar = "s3://eu-west-2.elasticmapreduce/libs/script-runner/script-runner.jar"
-      args = [
-        format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.py_pckgs_install.key)
       ]
     }
   }
@@ -150,12 +150,12 @@ resource "aws_emr_cluster" "cluster" {
     aws_s3_bucket_object.get_dks_cert_sh,
     aws_s3_bucket_object.livy_client_conf_sh,
     aws_s3_bucket_object.hdfs_setup_sh,
+    aws_emr_security_configuration.analytical_env_emrfs_em,
   ]
 
   lifecycle {
     ignore_changes = [
-      instance_group,
-      ec2_attributes
+      ec2_attributes, configurations_json
     ]
   }
 }

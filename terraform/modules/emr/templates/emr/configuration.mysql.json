@@ -89,7 +89,7 @@
       "hive.vectorized.execution.ptf.enabled": "false",
       "hive.vectorized.row.serde.inputformat.excludes": "",
       "hive.server2.tez.sessions.per.default.queue": "${hive_tez_sessions_per_queue}",
-      "hive.server2.tez.initialize.default.sessions": "true",
+      "hive.server2.tez.initialize.default.sessions": "false",
       "hive.default.fileformat": "TextFile",
       "hive.default.fileformat.managed": "ORC",
       "hive.exec.orc.split.strategy": "HYBRID",
@@ -107,7 +107,12 @@
       "hive.exec.reducers.max": "${hive_max_reducers}",
       "hive.resultset.use.unique.column.names": "false",
       "hive.auto.convert.join.noconditionaltask.size": "100000",
-      "hive.mapjoin.smalltable.filesize": "2500000"
+      "hive.mapjoin.smalltable.filesize": "2500000",
+      "hive.tez.container.size": "${hive_tez_container_size}",
+      "hive.server2.session.check.interval": "0",
+      "hive.server2.idle.operation.timeout": "0",
+      "hive.server2.idle.session.timeout": "0",
+      "hive.exec.max.dynamic.partitions.pernode": "1000"
     }
   },
   {

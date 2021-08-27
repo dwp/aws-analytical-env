@@ -91,6 +91,8 @@ jobs:
     plan:
       - get: aws-analytical-env
         trigger: false
+      - get: utc-11pm-trigger
+        trigger: true
         passed:
           - sync-cognito-users-to-rds-production
       - get: emr-al2-ami

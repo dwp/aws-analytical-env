@@ -227,6 +227,16 @@ variable "published_bucket_cmk" {
   type        = string
 }
 
+variable "compaction_bucket" {
+  type        = map(string)
+  description = "compaction bucket - id (name) and arn included"
+}
+
+variable "compaction_bucket_cmk" {
+  description = "(Required) KMS key arn for accessing the compaction_bucket"
+  type        = string
+}
+
 variable "processed_bucket_arn" {
   description = "the processed bucket arn "
   type        = string
@@ -254,6 +264,11 @@ variable "pipeline_metadata_table" {
 
 variable "s3_tagger_job_definition" {
   description = "The Batch Job Definition ARN for the PDM/S3 Data Tagger"
+  type        = string
+}
+
+variable "s3_tagger_job_definition_name" {
+  description = "The Batch Job Definition name for the PDM/S3 Data Tagger"
   type        = string
 }
 
@@ -302,4 +317,10 @@ variable "hive_use_auth" {
 variable "hive_custom_auth_provider_path" {
   type        = string
   description = "Local file path of the hive custom auth provider jar"
+}
+
+variable "hive_heapsize" {
+  type        = string
+  description = "Hive heapsize"
+  default     = "1024"
 }

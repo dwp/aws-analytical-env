@@ -49,41 +49,6 @@ groups:
       - gh-proxy-mgmt-dev
       - gh-proxy-mgmt
 
-  - name: mirror-git-repo-s3
-    jobs:
-      - mirror-git-repo-uc-lab-repo-development
-      - mirror-git-repo-opsmi-ops-mi-repo-development
-      - mirror-git-repo-aws-payment-timelines-development
-      - mirror-git-repo-aws-cbol-data-development
-
-      - mirror-git-repo-uc-lab-repo-qa
-      - mirror-git-repo-opsmi-ops-mi-repo-qa
-      - mirror-git-repo-aws-payment-timelines-qa
-      - mirror-git-repo-aws-cbol-data-qa
-
-      - mirror-git-repo-uc-lab-repo-integration
-      - mirror-git-repo-opsmi-ops-mi-repo-integration
-      - mirror-git-repo-aws-payment-timelines-integration
-      - mirror-git-repo-aws-cbol-data-integration
-
-      - mirror-git-repo-uc-lab-repo-preprod
-      - mirror-git-repo-opsmi-ops-mi-repo-preprod
-      - mirror-git-repo-aws-payment-timelines-preprod
-      - mirror-git-repo-aws-cbol-data-preprod
-
-      - mirror-git-repo-uc-lab-repo-prod
-      - mirror-git-repo-opsmi-ops-mi-repo-prod
-      - mirror-git-repo-aws-payment-timelines-prod
-      - mirror-git-repo-aws-cbol-data-prod
-
-  - name: mirror-ucsqlhelper
-    jobs:
-      - mirror-ucsqlhelper-development
-      - mirror-ucsqlhelper-qa
-      - mirror-ucsqlhelper-integration
-      - mirror-ucsqlhelper-preprod
-      - mirror-ucsqlhelper-production
-
   - name: admin-rbac
     jobs:
       - rotate-mysql-master-credentials-development
@@ -110,7 +75,7 @@ groups:
     jobs:
       - sync-cognito-users-to-rds-development
       - create-roles-and-munged-policies-development
-      
+
       - sync-cognito-users-to-rds-qa
       - create-roles-and-munged-policies-qa
 
@@ -122,19 +87,38 @@ groups:
 
       - sync-cognito-users-to-rds-production
       - create-roles-and-munged-policies-production
-      
-  - name: terminate-cluster
+
+  - name: admin-batch-cluster
+    jobs:
+      - dev-stop-batch-cluster
+      - qa-stop-batch-cluster
+      - int-stop-batch-cluster
+      - preprod-stop-batch-cluster
+      - prod-stop-batch-cluster
+
+      - dev-cleanup
+      - qa-cleanup
+      - int-cleanup
+      - preprod-cleanup
+      - production-cleanup
+
+      - dev-stop-waiting
+      - qa-stop-waiting
+      - int-stop-waiting
+      - preprod-stop-waiting
+      - prod-stop-waiting
+
+  - name: ami-test
+    jobs:
+      - apply-and-test-with-ami
+
+  - name: admin-analytical-cluster
     jobs:
       - dev-stop-cluster
-      - dev-stop-waiting
       - qa-stop-cluster
-      - qa-stop-waiting
       - int-stop-cluster
-      - int-stop-waiting
       - preprod-stop-cluster
-      - preprod-stop-waiting
       - prod-stop-cluster
-      - prod-stop-waiting
 
   - name: update-pipeline
     jobs:

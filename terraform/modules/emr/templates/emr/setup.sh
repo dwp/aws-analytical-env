@@ -21,8 +21,10 @@ export NO_PROXY="$FULL_NO_PROXY"
 
 PUB_BUCKET_ID="${publish_bucket_id}"
 CONFIG_BUCKET_ID="${config_bucket}"
+COMPACTION_BUCKET_ID="${compaction_bucket_id}"
 echo "export PUBLISH_BUCKET_ID=$${PUB_BUCKET_ID}" | sudo tee /etc/profile.d/buckets.sh
 echo "export CONFIG_BUCKET_ID=$${CONFIG_BUCKET_ID}" | sudo tee -a /etc/profile.d/buckets.sh
+echo "export COMPACTION_BUCKET_ID=$${COMPACTION_BUCKET_ID}" | sudo tee -a /etc/profile.d/buckets.sh
 source /etc/profile.d/buckets.sh
 
 sudo yum update -y amazon-ssm-agent
@@ -37,8 +39,33 @@ aws s3 cp "${get_scripts_shell}" /home/hadoop/get_scripts.sh
 aws s3 cp "${azkaban_notifications_shell}" /opt/emr/azkaban_notifications.sh
 aws s3 cp "${azkaban_metrics_shell}" /opt/emr/azkaban_metrics.sh
 aws s3 cp "${delete_azkaban_metrics_shell}" /opt/emr/delete_azkaban_metrics.sh
+aws s3 cp "${sft_utility_shell}" /opt/emr/sft_utility.sh
 aws s3 cp "${poll_status_table_shell}" /home/hadoop/poll_status_table.sh
 aws s3 cp "${trigger_tagger_shell}" /opt/emr/trigger_s3_tagger_batch_job.sh
+
+sudo mkdir -p /opt/emr/azkaban
+sudo mkdir -p /opt/emr/azkaban/chunk
+sudo mkdir -p /opt/emr/azkaban/metadata
+sudo mkdir -p /opt/emr/azkaban/enqueue
+sudo mkdir -p /opt/emr/azkaban/egress
+sudo mkdir -p /opt/emr/azkaban/common
+sudo chown -R hadoop:hadoop /opt/emr/azkaban
+
+aws s3 cp "${azkaban_chunk_environment_sh}" /opt/emr/azkaban/chunk
+aws s3 cp "${azkaban_metadata_environment_sh}" /opt/emr/azkaban/metadata
+aws s3 cp "${azkaban_enqueue_environment_sh}" /opt/emr/azkaban/enqueue
+aws s3 cp "${azkaban_egress_environment_sh}" /opt/emr/azkaban/egress
+aws s3 cp "${azkaban_chunk_run_sh}" /opt/emr/azkaban/chunk
+aws s3 cp "${azkaban_metadata_run_sh}" /opt/emr/azkaban/metadata
+aws s3 cp "${azkaban_enqueue_run_sh}" /opt/emr/azkaban/enqueue
+aws s3 cp "${azkaban_egress_run_sh}" /opt/emr/azkaban/egress
+aws s3 cp "${azkaban_common_aws_sh}" /opt/emr/azkaban/common
+aws s3 cp "${azkaban_common_console_sh}" /opt/emr/azkaban/common
+aws s3 cp "${azkaban_common_environment_sh}" /opt/emr/azkaban/common
+sudo chmod -R +x /opt/emr/azkaban
+sudo chown -R hadoop:hadoop /opt/emr/azkaban
+
+
 chmod u+x /opt/emr/cloudwatch.sh
 chmod u+x /opt/emr/logging.sh
 chmod u+x /home/hadoop/get_scripts.sh
@@ -85,6 +112,9 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
 
   echo "Adding user '$GROUP' to group '$GROUP'"
   sudo usermod -aG hadoop "$GROUP"
+
+  echo "Adding user '$GROUP' to group at.allow"
+  sudo tee -a /etc/at.allow <<< "$GROUP"
 
   echo "Adding users for group $GROUP"
   USERS=$(aws cognito-idp list-users-in-group --user-pool-id "${user_pool_id}" --group-name "$GROUP" | jq '.Users[]' | jq -r '(.Attributes[] | if .Name =="preferred_username" then .Value else empty end) // .Username')

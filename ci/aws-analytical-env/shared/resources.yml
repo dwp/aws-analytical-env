@@ -7,7 +7,7 @@ resources:
       uri: https://github.com/dwp/aws-analytical-env.git
     check_every: 5m
     webhook_token: ((dataworks.concourse_github_webhook_token))
-  
+
   - name: aws-analytical-env-update-pipeline
     type: git
     source:
@@ -74,15 +74,6 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/rnd_incoming.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
-  - name: impact-measures-repo
-    type: git
-    source:
-      branch: master
-      username: ((dataworks.enterprise_github_username))
-      password: ((dataworks-secrets.enterprise_github_pat))
-      uri: https://((dataworks.enterprise_github_url))/dip/impact-measures.git
-    webhook_token: ((dataworks.concourse_github_webhook_token))
-
   - name: chs-how-many-repo
     type: git
     source:
@@ -101,6 +92,15 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/chs-auditlog.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+  - name: impact-measures-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/impact-measures.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
   - name: aws-uc-lab-repo
     type: git
     source:
@@ -108,51 +108,6 @@ resources:
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/dip/aws-uc-lab.git
-    webhook_token: ((dataworks.concourse_github_webhook_token))
-
-  - name: aws-payment-timelines-repo
-    type: git
-    source:
-      branch: master
-      username: ((dataworks.enterprise_github_username))
-      password: ((dataworks-secrets.enterprise_github_pat))
-      uri: https://((dataworks.enterprise_github_url))/dip/aws-payment-timelines.git
-    webhook_token: ((dataworks.concourse_github_webhook_token))
-
-  - name: aws-cbol-data-repo
-    type: git
-    source:
-      branch: master
-      username: ((dataworks.enterprise_github_username))
-      password: ((dataworks-secrets.enterprise_github_pat))
-      uri: https://((dataworks.enterprise_github_url))/dip/aws-cbol-data.git
-    webhook_token: ((dataworks.concourse_github_webhook_token))
-
-  - name: opsmi-chs-ops-mi-repo
-    type: git
-    source:
-      branch: master
-      username: ((dataworks.enterprise_github_username))
-      password: ((dataworks-secrets.enterprise_github_pat))
-      uri: https://((dataworks.enterprise_github_url))/opsmi/chs-ops-mi.git
-    webhook_token: ((dataworks.concourse_github_webhook_token))
-
-  - name: aws-common-infrastructure
-    type: git
-    source:
-      branch: master
-      uri: https://((dataworks.enterprise_github_url))/dip/aws-common-infrastructure.git
-      username: ((dataworks.enterprise_github_username))
-      password: ((dataworks-secrets.enterprise_github_pat))
-    webhook_token: ((dataworks.concourse_github_webhook_token))
-
-  - name: ucsqlhelper
-    type: git
-    source:
-      branch: master
-      uri: https://((dataworks.enterprise_github_url))/dip/ucsqlhelper.git
-      username: ((dataworks.enterprise_github_username))
-      password: ((dataworks-secrets.enterprise_github_pat))
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
 #  - name: datateam_dotfiles-repo
@@ -289,3 +244,16 @@ resources:
         is-public: false
         state: available
         name: dw-al2-emr-ami-1613152072
+
+  - name: untested-al2-analytical-env-emr-ami
+    type: ami
+    check_every: 5m
+    source:
+      aws_role_arn: arn:aws:iam::((dataworks.aws_management_acc)):role/ci
+      region: ((dataworks.aws_region))
+      filters:
+        owner-id: ((dataworks.aws_management_acc))
+        is-public: false
+        state: available
+        name: untested-dw-al2-analytical-env-emr-ami-*
+        architecture: x86_64

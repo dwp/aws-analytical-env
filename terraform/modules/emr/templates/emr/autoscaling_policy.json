@@ -45,7 +45,7 @@
           "Namespace": "AWS/ElasticMapReduce",
           "Period": 120,
           "Statistic": "AVERAGE",
-          "Threshold": 70.0,
+          "Threshold": 75.0,
           "Unit": "PERCENT"
         }
       }

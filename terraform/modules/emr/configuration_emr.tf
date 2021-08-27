@@ -39,6 +39,7 @@ data "template_file" "emr_setup_sh" {
     azkaban_notifications_shell     = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_notifications_sh.key)
     azkaban_metrics_shell           = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metrics_sh.key)
     delete_azkaban_metrics_shell    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.delete_azkaban_metrics_sh.key)
+    sft_utility_shell               = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.sft_utility_sh.key)
     logging_shell                   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.logging_sh.key)
     cloudwatch_shell                = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.cloudwatch_sh.key)
     get_scripts_shell               = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.get_scripts_sh.key)
@@ -50,6 +51,21 @@ data "template_file" "emr_setup_sh" {
     aws_default_region              = "eu-west-2"
     cwa_metrics_collection_interval = local.cw_agent_metrics_collection_interval
     publish_bucket_id               = var.dataset_s3.id
+    compaction_bucket_id            = var.compaction_bucket.id
+
+    azkaban_chunk_environment_sh    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_chunk_environment.key)
+    azkaban_metadata_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metadata_environment.key)
+    azkaban_enqueue_environment_sh  = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_enqueue_environment.key)
+    azkaban_egress_environment_sh   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_egress_environment.key)
+
+    azkaban_chunk_run_sh    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_chunk_run.key)
+    azkaban_metadata_run_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metadata_run.key)
+    azkaban_enqueue_run_sh  = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_enqueue_run.key)
+    azkaban_egress_run_sh   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_egress_run.key)
+
+    azkaban_common_aws_sh         = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_common_aws.key)
+    azkaban_common_console_sh     = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_common_console.key)
+    azkaban_common_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_common_environment.key)
   }
 }
 
@@ -63,8 +79,9 @@ resource "aws_s3_bucket_object" "trigger_s3_tagger_batch_job_sh" {
 data "template_file" "trigger_s3_tagger_batch_job_sh" {
   template = file(format("%s/templates/emr/trigger_s3_tagger_batch_job.sh", path.module))
   vars = {
-    full_proxy    = local.full_proxy
-    config_bucket = var.config_bucket_id
+    full_proxy          = local.full_proxy
+    config_bucket       = var.config_bucket_id
+    job_definition_name = var.s3_tagger_job_definition_name
   }
 }
 
@@ -81,6 +98,7 @@ data "template_file" "hdfs_setup_sh" {
     hive_data_s3     = aws_s3_bucket.hive_data.arn
     config_bucket    = var.config_bucket_id
     published_bucket = var.dataset_s3.id
+    hive_heapsize    = var.hive_heapsize
   }
 }
 
@@ -237,6 +255,13 @@ resource "aws_s3_bucket_object" "delete_azkaban_metrics_sh" {
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-azkaban-notifications-sh" })
 }
 
+resource "aws_s3_bucket_object" "sft_utility_sh" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/emr/sft_utility.sh"
+  content = file("${path.module}/templates/emr/sft_utility.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-sft-utility-sh" })
+}
+
 data "template_file" "hive_auth_conf_sh" {
   template = file(format("%s/templates/emr/hive_auth_conf.sh", path.module))
   vars = {
@@ -254,4 +279,81 @@ resource "aws_s3_bucket_object" "hive_auth_conf_sh" {
   content = data.template_file.hive_auth_conf_sh.rendered
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-hive-auth-conf-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_chunk_environment" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/chunk/environment.sh"
+  content = file("${path.module}/files/azkaban/chunk/environment.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-chunk-environment-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_egress_environment" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/egress/environment.sh"
+  content = file("${path.module}/files/azkaban/egress/environment.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-egress-environment-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_enqueue_environment" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/enqueue/environment.sh"
+  content = file("${path.module}/files/azkaban/enqueue/environment.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-enqueue-environment-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_metadata_environment" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/metadata/environment.sh"
+  content = file("${path.module}/files/azkaban/metadata/environment.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-metadata-environment-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_chunk_run" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/chunk/run.sh"
+  content = file("${path.module}/files/azkaban/chunk/run.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-chunk-run-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_egress_run" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/egress/run.sh"
+  content = file("${path.module}/files/azkaban/egress/run.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-egress-run-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_enqueue_run" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/enqueue/run.sh"
+  content = file("${path.module}/files/azkaban/enqueue/run.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-enqueue-run-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_metadata_run" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/metadata/run.sh"
+  content = file("${path.module}/files/azkaban/metadata/run.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-metadata-run-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_common_aws" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/common/aws.sh"
+  content = file("${path.module}/files/azkaban/common/aws.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-common-aws-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_common_console" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/common/console.sh"
+  content = file("${path.module}/files/azkaban/common/console.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-common-console-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_common_environment" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/common/environment.sh"
+  content = file("${path.module}/files/azkaban/common/environment.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-common-environment-sh" })
 }

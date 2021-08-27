@@ -485,6 +485,20 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
+    sid    = "AllowEmrToReadCompactionBucket"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket*",
+      "s3:GetObject*",
+      "s3:GetBucketLocation",
+    ]
+    resources = [
+      var.compaction_bucket.arn,
+      "${var.compaction_bucket.arn}/*",
+    ]
+  }
+
+  statement {
     sid    = "AllowAccessToS3Buckets"
     effect = "Allow"
     actions = [
@@ -516,7 +530,8 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
     resources = [
       var.published_bucket_cmk,
-      var.processed_bucket_cmk
+      var.processed_bucket_cmk,
+      var.compaction_bucket_cmk
     ]
   }
 
@@ -770,7 +785,7 @@ data "aws_iam_policy_document" "group_hive_data_access_documents" {
     ]
 
     resources = [
-      "${aws_s3_bucket.hive_data.arn}",
+      aws_s3_bucket.hive_data.arn,
       "${aws_s3_bucket.hive_data.arn}/*",
       "arn:aws:kms:${var.region}:${var.account}:alias/${each.key}-shared",
       aws_kms_key.hive_data_s3.arn
@@ -843,4 +858,58 @@ resource "aws_iam_policy" "emr_sns_monitoring_policy" {
 resource "aws_iam_role_policy_attachment" "emr_sns_monitoring_policy" {
   role       = aws_iam_role.emr_ec2_role.name
   policy_arn = aws_iam_policy.emr_sns_monitoring_policy.arn
+}
+
+resource "aws_iam_role" "emr_scheduled_scaling_role" {
+  name               = "${var.name_prefix}-emr-scheduled-scaling-role"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
+  tags               = var.common_tags
+}
+
+data "aws_iam_policy_document" "assume_role_lambda" {
+  statement {
+    sid     = "EMRScheduledScalingLambdaAssumeRole"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      identifiers = ["lambda.amazonaws.com"]
+      type        = "Service"
+    }
+  }
+}
+
+data aws_iam_policy_document policy_logs_emr_scheduled_scaling {
+  statement {
+    sid = "AllowLambdaCreateLogs"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    effect    = "Allow"
+    resources = [aws_cloudwatch_log_group.emr_scheduled_scaling_lambda_logs.arn]
+  }
+}
+
+resource aws_iam_role_policy role_policy_emr_scheduled_scaling_logs {
+  name   = "Role-Policy-EMR-Scheduled-Scaling-Logs"
+  role   = aws_iam_role.emr_scheduled_scaling_role.id
+  policy = data.aws_iam_policy_document.policy_logs_emr_scheduled_scaling.json
+}
+
+data aws_iam_policy_document policy_emr_scheduled_scaling_put_autoscaling_policy {
+  statement {
+    sid = "AllowLambdaPutAutoscalingPolicy"
+    actions = [
+      "elasticmapreduce:PutAutoScalingPolicy"
+    ]
+    effect    = "Allow"
+    resources = [aws_emr_cluster.cluster.arn]
+  }
+}
+
+resource aws_iam_role_policy role_policy_emr_scheduled_scaling_put {
+  name   = "Role-Policy-EMR-Scheduled-Scaling-Put"
+  role   = aws_iam_role.emr_scheduled_scaling_role.id
+  policy = data.aws_iam_policy_document.policy_emr_scheduled_scaling_put_autoscaling_policy.json
 }

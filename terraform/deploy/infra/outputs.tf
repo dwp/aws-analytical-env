@@ -3,11 +3,15 @@ output vpc {
 }
 
 output alb {
-  value = module.alb.lb
+  value = {
+    name = module.alb.lb.name
+  }
 }
 
 output alb_sg {
-  value = module.alb.lb_sg
+  value = {
+    id = module.alb.lb_sg.id
+  }
 }
 
 output alb_fqdn {
@@ -25,7 +29,9 @@ output "parent_domain_name" {
 }
 
 output alb_listner {
-  value = module.alb.alb_listener
+  value = {
+    arn = module.alb.alb_listener.arn
+  }
 }
 
 output vpc_main {
@@ -58,4 +64,19 @@ output internet_proxy_sg {
 
 output no_proxy_list {
   value = module.analytical_env_vpc.no_proxy_list
+}
+
+output "private_dns" {
+  value = {
+    azkaban_service_discovery_dns = aws_service_discovery_private_dns_namespace.azkaban_services
+    azkaban_service_discovery     = aws_service_discovery_service.azkaban_services
+  }
+}
+
+output "vpce_security_groups" {
+  value = {
+    azkaban_pushgateway_vpce_security_group = {
+      id = aws_security_group.azkaban_pushgateway_vpce_security_group.id
+    }
+  }
 }

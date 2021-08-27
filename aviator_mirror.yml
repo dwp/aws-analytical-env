@@ -1,0 +1,25 @@
+
+spruce:
+  - base: ci/aws-analytical-env/shared/meta.yml
+    prune:
+      - meta
+    merge:
+      - with_in: ci/aws-analytical-env/jobs/mirror-git-repo-s3/
+        regexp: ".*yml"
+      - with_in: ci/aws-analytical-env/jobs/mirror-ucsqlhelper/
+        regexp: ".*yml"
+      - with_in: ci/aws-analytical-env/shared/
+        regexp: ".*yml"
+        except:
+          - groups.yml
+          - groups_crown.yml
+          - resources.yml
+          - resources_crown.yml
+
+    to: aviator_mirror_git.yml
+fly:
+  name: mirror-git-to-s3
+  target: utility
+  config: aviator_mirror_git.yml
+  expose: true
+  check_credentials: true

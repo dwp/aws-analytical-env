@@ -122,7 +122,7 @@ data "aws_iam_policy_document" "sync_rds_assume_role" {
 
     principals {
       type        = "AWS"
-      identifiers = ["${var.ci_role}"]
+      identifiers = [var.ci_role]
     }
   }
 }

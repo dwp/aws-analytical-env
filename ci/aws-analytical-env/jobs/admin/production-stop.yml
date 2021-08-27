@@ -1,0 +1,10 @@
+jobs:
+  - name: prod-stop-cluster
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - .: (( inject meta.plan.stop-cluster ))
+        task: stop-clusters
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
