@@ -49,19 +49,21 @@ sudo mkdir -p /opt/emr/azkaban/metadata
 sudo mkdir -p /opt/emr/azkaban/enqueue
 sudo mkdir -p /opt/emr/azkaban/egress
 sudo mkdir -p /opt/emr/azkaban/common
+sudo chown -R hadoop:hadoop /opt/emr/azkaban
+
 aws s3 cp "${azkaban_chunk_environment_sh}" /opt/emr/azkaban/chunk
 aws s3 cp "${azkaban_metadata_environment_sh}" /opt/emr/azkaban/metadata
 aws s3 cp "${azkaban_enqueue_environment_sh}" /opt/emr/azkaban/enqueue
 aws s3 cp "${azkaban_egress_environment_sh}" /opt/emr/azkaban/egress
 aws s3 cp "${azkaban_chunk_run_sh}" /opt/emr/azkaban/chunk
 aws s3 cp "${azkaban_metadata_run_sh}" /opt/emr/azkaban/metadata
-aws s3 cp "${azkaban_enqueue_run_sh}" /opt/emr/azkaba/enqueue
+aws s3 cp "${azkaban_enqueue_run_sh}" /opt/emr/azkaban/enqueue
 aws s3 cp "${azkaban_egress_run_sh}" /opt/emr/azkaban/egress
 aws s3 cp "${azkaban_common_aws_sh}" /opt/emr/azkaban/common
 aws s3 cp "${azkaban_common_console_sh}" /opt/emr/azkaban/common
 aws s3 cp "${azkaban_common_environment_sh}" /opt/emr/azkaban/common
 sudo chmod -R +x /opt/emr/azkaban
-sudo chown hadoop:hadoop /opt/emr/azkaban
+sudo chown -R hadoop:hadoop /opt/emr/azkaban
 
 
 chmod u+x /opt/emr/cloudwatch.sh

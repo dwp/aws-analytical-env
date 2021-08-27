@@ -53,19 +53,19 @@ data "template_file" "emr_setup_sh" {
     publish_bucket_id               = var.dataset_s3.id
     compaction_bucket_id            = var.compaction_bucket.id
 
-    azkaban_chunk_environment_sh    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azakaban_chunk_environment.key)
-    azkaban_metadata_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azakaban_metadata_environment.key)
-    azkaban_enqueue_environment_sh  = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azakaban_enqueue_environment.key)
-    azkaban_egress_environment_sh   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azakaban_egress_environment.key)
+    azkaban_chunk_environment_sh    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_chunk_environment.key)
+    azkaban_metadata_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metadata_environment.key)
+    azkaban_enqueue_environment_sh  = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_enqueue_environment.key)
+    azkaban_egress_environment_sh   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_egress_environment.key)
 
-    azkaban_chunk_run_sh            = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azakaban_chunk_run.key)
-    azkaban_metadata_run_sh         = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azakaban_metadata_run.key)
-    azkaban_enqueue_run_sh          = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azakaban_enqueue_run.key)
-    azkaban_egress_run_sh           = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azakaban_egress_run.key)
+    azkaban_chunk_run_sh    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_chunk_run.key)
+    azkaban_metadata_run_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metadata_run.key)
+    azkaban_enqueue_run_sh  = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_enqueue_run.key)
+    azkaban_egress_run_sh   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_egress_run.key)
 
-    azkaban_common_aws_sh           = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azakaban_common_aws.key)
-    azkaban_common_console_sh       = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azakaban_common_console.key)
-    azkaban_common_environment_sh   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azakaban_common_environment.key)
+    azkaban_common_aws_sh         = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_common_aws.key)
+    azkaban_common_console_sh     = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_common_console.key)
+    azkaban_common_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_common_environment.key)
   }
 }
 
@@ -281,77 +281,77 @@ resource "aws_s3_bucket_object" "hive_auth_conf_sh" {
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-hive-auth-conf-sh" })
 }
 
-resource "aws_s3_bucket_object" "azakaban_chunk_environment" {
+resource "aws_s3_bucket_object" "azkaban_chunk_environment" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/azkaban/chunk/environment.sh"
   content = file("${path.module}/files/azkaban/chunk/environment.sh")
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-chunk-environment-sh" })
 }
 
-resource "aws_s3_bucket_object" "azakaban_egress_environment" {
+resource "aws_s3_bucket_object" "azkaban_egress_environment" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/azkaban/egress/environment.sh"
   content = file("${path.module}/files/azkaban/egress/environment.sh")
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-egress-environment-sh" })
 }
 
-resource "aws_s3_bucket_object" "azakaban_enqueue_environment" {
+resource "aws_s3_bucket_object" "azkaban_enqueue_environment" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/azkaban/enqueue/environment.sh"
   content = file("${path.module}/files/azkaban/enqueue/environment.sh")
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-enqueue-environment-sh" })
 }
 
-resource "aws_s3_bucket_object" "azakaban_metadata_environment" {
+resource "aws_s3_bucket_object" "azkaban_metadata_environment" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/azkaban/metadata/environment.sh"
   content = file("${path.module}/files/azkaban/metadata/environment.sh")
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-metadata-environment-sh" })
 }
 
-resource "aws_s3_bucket_object" "azakaban_chunk_run" {
+resource "aws_s3_bucket_object" "azkaban_chunk_run" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/azkaban/chunk/run.sh"
   content = file("${path.module}/files/azkaban/chunk/run.sh")
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-chunk-run-sh" })
 }
 
-resource "aws_s3_bucket_object" "azakaban_egress_run" {
+resource "aws_s3_bucket_object" "azkaban_egress_run" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/azkaban/egress/run.sh"
   content = file("${path.module}/files/azkaban/egress/run.sh")
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-egress-run-sh" })
 }
 
-resource "aws_s3_bucket_object" "azakaban_enqueue_run" {
+resource "aws_s3_bucket_object" "azkaban_enqueue_run" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/azkaban/enqueue/run.sh"
   content = file("${path.module}/files/azkaban/enqueue/run.sh")
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-enqueue-run-sh" })
 }
 
-resource "aws_s3_bucket_object" "azakaban_metadata_run" {
+resource "aws_s3_bucket_object" "azkaban_metadata_run" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/azkaban/metadata/run.sh"
   content = file("${path.module}/files/azkaban/metadata/run.sh")
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-metadata-run-sh" })
 }
 
-resource "aws_s3_bucket_object" "azakaban_common_aws" {
+resource "aws_s3_bucket_object" "azkaban_common_aws" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/azkaban/common/aws.sh"
   content = file("${path.module}/files/azkaban/common/aws.sh")
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-common-aws-sh" })
 }
 
-resource "aws_s3_bucket_object" "azakaban_common_console" {
+resource "aws_s3_bucket_object" "azkaban_common_console" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/azkaban/common/console.sh"
   content = file("${path.module}/files/azkaban/common/console.sh")
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-common-console-sh" })
 }
 
-resource "aws_s3_bucket_object" "azakaban_common_environment" {
+resource "aws_s3_bucket_object" "azkaban_common_environment" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/azkaban/common/environment.sh"
   content = file("${path.module}/files/azkaban/common/environment.sh")
