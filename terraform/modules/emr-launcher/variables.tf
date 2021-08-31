@@ -52,7 +52,7 @@ variable "core_instance_count" {
   default     = "1"
 }
 
-variable "uc_lab_emr_core_instance_count" {
+variable "uc_lab_core_instance_count" {
   type        = string
   description = "(Optional) Number of core instances for uc lab clusters"
   default     = "1"

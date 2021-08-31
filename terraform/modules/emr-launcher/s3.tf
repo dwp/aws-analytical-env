@@ -144,7 +144,7 @@ resource "aws_s3_bucket_object" "uc_labs_instances" {
     slave_security_group     = var.slave_security_group
     service_security_group   = var.service_security_group
     subnet_ids               = join(",", var.subnet_ids)
-    core_instance_count      = var.uc_lab_emr_core_instance_count
+    core_instance_count      = var.uc_lab_core_instance_count
     instance_type_master     = var.instance_type_master
     instance_type_core_one   = var.instance_type_core_one
     instance_type_core_two   = var.instance_type_core_two

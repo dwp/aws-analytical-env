@@ -41,7 +41,7 @@ variable "emr_core_instance_count" {
   }
 }
 
-variable "uc_lab_emr_core_instance_count" {
+variable "uc_lab_core_instance_count" {
   default = {
     development = "1"
     qa          = "1"
