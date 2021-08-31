@@ -866,6 +866,11 @@ resource "aws_iam_role" "emr_scheduled_scaling_role" {
   tags               = var.common_tags
 }
 
+resource "aws_iam_role_policy_attachment" "emr_scheduled_scaling_basic_execution_policy_attachment" {
+  role       = aws_iam_role.emr_scheduled_scaling_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
 data "aws_iam_policy_document" "assume_role_lambda" {
   statement {
     sid     = "EMRScheduledScalingLambdaAssumeRole"
@@ -878,7 +883,7 @@ data "aws_iam_policy_document" "assume_role_lambda" {
   }
 }
 
-data aws_iam_policy_document policy_logs_emr_scheduled_scaling {
+data "aws_iam_policy_document" "policy_logs_emr_scheduled_scaling" {
   statement {
     sid = "AllowLambdaCreateLogs"
     actions = [
@@ -891,13 +896,13 @@ data aws_iam_policy_document policy_logs_emr_scheduled_scaling {
   }
 }
 
-resource aws_iam_role_policy role_policy_emr_scheduled_scaling_logs {
+resource "aws_iam_role_policy" "role_policy_emr_scheduled_scaling_logs" {
   name   = "Role-Policy-EMR-Scheduled-Scaling-Logs"
   role   = aws_iam_role.emr_scheduled_scaling_role.id
   policy = data.aws_iam_policy_document.policy_logs_emr_scheduled_scaling.json
 }
 
-data aws_iam_policy_document policy_emr_scheduled_scaling_put_autoscaling_policy {
+data "aws_iam_policy_document" "policy_emr_scheduled_scaling_put_autoscaling_policy" {
   statement {
     sid = "AllowLambdaPutAutoscalingPolicy"
     actions = [
@@ -908,7 +913,7 @@ data aws_iam_policy_document policy_emr_scheduled_scaling_put_autoscaling_policy
   }
 }
 
-resource aws_iam_role_policy role_policy_emr_scheduled_scaling_put {
+resource "aws_iam_role_policy" "role_policy_emr_scheduled_scaling_put" {
   name   = "Role-Policy-EMR-Scheduled-Scaling-Put"
   role   = aws_iam_role.emr_scheduled_scaling_role.id
   policy = data.aws_iam_policy_document.policy_emr_scheduled_scaling_put_autoscaling_policy.json
