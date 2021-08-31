@@ -162,7 +162,7 @@ resource "aws_s3_bucket_object" "uc_labs_steps" {
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
 
-resource "aws_s3_bucket_object" "batch_configurations" {
+resource "aws_s3_bucket_object" "uc_labs_configurations" {
   bucket = var.config_bucket.id
   key    = "emr/uc-labs-cluster-config/configurations.yaml"
   content = templatefile("../../../batch_cluster_config/configurations.yaml.tpl", {
