@@ -866,6 +866,11 @@ resource "aws_iam_role" "emr_scheduled_scaling_role" {
   tags               = var.common_tags
 }
 
+resource "aws_iam_role_policy_attachment" "emr_scheduled_scaling_basic_execution_policy_attachment" {
+  role       = aws_iam_role.emr_scheduled_scaling_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
 data "aws_iam_policy_document" "assume_role_lambda" {
   statement {
     sid     = "EMRScheduledScalingLambdaAssumeRole"
