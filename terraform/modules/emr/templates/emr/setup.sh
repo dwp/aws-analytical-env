@@ -42,6 +42,31 @@ aws s3 cp "${delete_azkaban_metrics_shell}" /opt/emr/delete_azkaban_metrics.sh
 aws s3 cp "${sft_utility_shell}" /opt/emr/sft_utility.sh
 aws s3 cp "${poll_status_table_shell}" /home/hadoop/poll_status_table.sh
 aws s3 cp "${trigger_tagger_shell}" /opt/emr/trigger_s3_tagger_batch_job.sh
+
+sudo mkdir -p /opt/emr/azkaban
+sudo mkdir -p /opt/emr/azkaban/chunk
+sudo mkdir -p /opt/emr/azkaban/metadata
+sudo mkdir -p /opt/emr/azkaban/enqueue
+sudo mkdir -p /opt/emr/azkaban/egress
+sudo mkdir -p /opt/emr/azkaban/common
+sudo chown -R hadoop:hadoop /opt/emr/azkaban
+
+aws s3 cp "${azkaban_chunk_environment_sh}" /opt/emr/azkaban/chunk
+aws s3 cp "${azkaban_metadata_environment_sh}" /opt/emr/azkaban/metadata
+aws s3 cp "${azkaban_enqueue_environment_sh}" /opt/emr/azkaban/enqueue
+aws s3 cp "${azkaban_egress_environment_sh}" /opt/emr/azkaban/egress
+aws s3 cp "${azkaban_chunk_run_sh}" /opt/emr/azkaban/chunk
+aws s3 cp "${azkaban_metadata_run_sh}" /opt/emr/azkaban/metadata
+aws s3 cp "${azkaban_enqueue_run_sh}" /opt/emr/azkaban/enqueue
+aws s3 cp "${azkaban_egress_run_sh}" /opt/emr/azkaban/egress
+aws s3 cp "${azkaban_common_aws_sh}" /opt/emr/azkaban/common
+aws s3 cp "${azkaban_common_console_sh}" /opt/emr/azkaban/common
+aws s3 cp "${azkaban_common_fs_sh}" /opt/emr/azkaban/common
+aws s3 cp "${azkaban_common_environment_sh}" /opt/emr/azkaban/common
+sudo chmod -R +x /opt/emr/azkaban
+sudo chown -R hadoop:hadoop /opt/emr/azkaban
+
+
 chmod u+x /opt/emr/cloudwatch.sh
 chmod u+x /opt/emr/logging.sh
 chmod u+x /home/hadoop/get_scripts.sh
