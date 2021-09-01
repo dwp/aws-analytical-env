@@ -934,19 +934,13 @@ resource "aws_iam_role_policy" "role_policy_emr_scheduled_scaling_put" {
 data "aws_iam_policy_document" "data_egress_queue" {
   statement {
     effect = "Allow"
-
     actions = [
       "sqs:SendMessage",
     ]
-
     resources = [
       "arn:aws:sqs:${var.region}:${var.account}:data_egress"
     ]
   }
-  
-  principals {
-      type  = "AWS"
-    }
 }
 
 resource "aws_iam_policy" "data_egress_queue" {
