@@ -609,6 +609,32 @@ resource "aws_iam_role_policy_attachment" "analytical_env_metadata_change" {
   policy_arn = aws_iam_policy.analytical_env_metadata_change.arn
 }
 
+data "aws_iam_policy_document" "secret_manager_read_value" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+
+    resources = [
+      "arn:aws:secretsmanager:${var.region}:${var.account}:secret:/concourse/dataworks/rtg/*",
+    ]
+  }
+}
+
+resource "aws_iam_policy" "secret_manager_read_value" {
+  name        = "SecretMangerReadValue"
+  description = "Allow reading value from secret manager"
+  policy      = data.aws_iam_policy_document.secret_manager_read_value.json
+}
+
+resource "aws_iam_role_policy_attachment" "secret_manager_read_value" {
+  role       = aws_iam_role.emr_ec2_role.name
+  policy_arn = aws_iam_policy.secret_manager_read_value.arn
+}
+
+
 # EMR SSM Policy
 resource aws_iam_role_policy amazon_ec2_role_for_ssm {
   role   = aws_iam_role.emr_ec2_role.name
