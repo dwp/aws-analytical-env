@@ -58,6 +58,12 @@ variable "uc_lab_core_instance_count" {
   default     = "1"
 }
 
+variable "payment_timelines_core_instance_count" {
+  type        = string
+  description = "(Optional) Number of core instances for payment timelines clusters"
+  default     = "1"
+}
+
 variable "environment" {}
 
 variable "instance_type_master" {

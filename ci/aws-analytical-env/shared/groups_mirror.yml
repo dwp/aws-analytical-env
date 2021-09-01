@@ -207,6 +207,21 @@ groups:
       - mirror-ucsqlhelper-preprod
       - mirror-ucsqlhelper-production
 
+  - name: ers-ucds-reporting
+    jobs:
+      - mirror-git-repo-ers-ucds-reporting-development
+      - mirror-git-repo-ers-ucds-reporting-qa
+      - mirror-git-repo-ers-ucds-reporting-integration
+      - mirror-git-repo-ers-ucds-reporting-preprod
+      - mirror-git-repo-ers-ucds-reporting-production
+
+  - name: ers-ucds-reporting-dev
+    jobs:
+      - mirror-git-repo-ers-ucds-reporting-dev-development
+      - mirror-git-repo-ers-ucds-reporting-dev-qa
+      - mirror-git-repo-ers-ucds-reporting-dev-integration
+      - mirror-git-repo-ers-ucds-reporting-dev-preprod
+      - mirror-git-repo-ers-ucds-reporting-dev-production
   - name: update-pipeline
     jobs:
       - update-pipeline
