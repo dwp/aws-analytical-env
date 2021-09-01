@@ -930,26 +930,3 @@ resource "aws_iam_role_policy" "role_policy_emr_scheduled_scaling_put" {
   role   = aws_iam_role.emr_scheduled_scaling_role.id
   policy = data.aws_iam_policy_document.policy_emr_scheduled_scaling_put_autoscaling_policy.json
 }
-
-data "aws_iam_policy_document" "data_egress_queue" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "sqs:SendMessage",
-    ]
-    resources = [
-      "arn:aws:sqs:${var.region}:${var.account}:data_egress"
-    ]
-  }
-}
-
-resource "aws_iam_policy" "data_egress_queue" {
-  name        = "data_egress_queue_access"
-  description = "Access to dataegress queue"
-  policy      = data.aws_iam_policy_document.data_egress_queue.json
-}
-
-resource "aws_iam_role_policy_attachment" "data_egress_queue" {
-  role       = aws_iam_role.emr_ec2_role.name
-  policy_arn = aws_iam_policy.data_egress_queue.arn
-}
