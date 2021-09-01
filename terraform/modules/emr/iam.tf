@@ -499,6 +499,18 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
+    sid    = "AllowEmrToReadSecretsManager"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+    resources = [
+      "arn:aws:secretsmanager:${var.region}:${var.account}:secret:/concourse/dataworks/rtg/*",
+    ]
+  }
+
+
+  statement {
     sid    = "AllowAccessToS3Buckets"
     effect = "Allow"
     actions = [
@@ -607,32 +619,6 @@ resource "aws_iam_policy" "analytical_env_metadata_change" {
 resource "aws_iam_role_policy_attachment" "analytical_env_metadata_change" {
   role       = aws_iam_role.emr_ec2_role.name
   policy_arn = aws_iam_policy.analytical_env_metadata_change.arn
-}
-
-
-data "aws_iam_policy_document" "secret_manager_read_value" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "secretsmanager:GetSecretValue",
-    ]
-
-    resources = [
-      "arn:aws:secretsmanager:${var.region}:${var.account}:secret:/concourse/dataworks/rtg/*",
-    ]
-  }
-}
-
-resource "aws_iam_policy" "secret_manager_read_value" {
-  name        = "SecretMangerReadValue"
-  description = "Allow reading value from secret manager"
-  policy      = data.aws_iam_policy_document.secret_manager_read_value.json
-}
-
-resource "aws_iam_role_policy_attachment" "secret_manager_read_value" {
-  role       = aws_iam_role.emr_ec2_role.name
-  policy_arn = aws_iam_policy.secret_manager_read_value.arn
 }
 
 # EMR SSM Policy
@@ -943,4 +929,33 @@ resource "aws_iam_role_policy" "role_policy_emr_scheduled_scaling_put" {
   name   = "Role-Policy-EMR-Scheduled-Scaling-Put"
   role   = aws_iam_role.emr_scheduled_scaling_role.id
   policy = data.aws_iam_policy_document.policy_emr_scheduled_scaling_put_autoscaling_policy.json
+}
+
+data "aws_iam_policy_document" "data_egress_queue" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "sqs:SendMessage",
+    ]
+
+    resources = [
+      "arn:aws:sqs:${var.region}:${var.account}:data_egress"
+    ]
+  }
+  
+  principals {
+      type  = "AWS"
+    }
+}
+
+resource "aws_iam_policy" "data_egress_queue" {
+  name        = "data_egress_queue_access"
+  description = "Access to dataegress queue"
+  policy      = data.aws_iam_policy_document.data_egress_queue.json
+}
+
+resource "aws_iam_role_policy_attachment" "data_egress_queue" {
+  role       = aws_iam_role.emr_ec2_role.name
+  policy_arn = aws_iam_policy.data_egress_queue.arn
 }
