@@ -500,3 +500,43 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/ucfs-universe/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+
+  - name: mirror-git-repo-ers-ucds-reporting-preprod
+    plan:
+      - get: ers-ucds-reporting
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: ers-ucds-reporting
+          inputs:
+            - name: ers-ucds-reporting
+          params:
+            S3_ROOT: component/uc_repos/ers-ucds-reporting/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+
+  - name: mirror-git-repo-ers-ucds-reporting-dev-preprod
+    plan:
+      - get: ers-ucds-reporting-dev
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: ers-ucds-reporting-dev
+          inputs:
+            - name: ers-ucds-reporting-dev
+          params:
+            S3_ROOT: component/uc_repos/dev/ers-ucds-reporting/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
