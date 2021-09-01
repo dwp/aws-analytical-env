@@ -33,7 +33,7 @@ resource "aws_lambda_function" "emr_scheduled_scaling" {
     }
   }
 
-  depends_on = [data.archive_file.emr_scheduled_scaling_lambda_zip]
+  depends_on = [data.archive_file.emr_scheduled_scaling_lambda_zip, aws_cloudwatch_log_group.emr_scheduled_scaling_lambda_logs]
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_call_emr_scaling_up_lambda" {

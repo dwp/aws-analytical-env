@@ -57,6 +57,8 @@ chunk::chunk() {
     local -r chunk_size=${optional_chunk_size:-1G}
     local -r prefix=${optional_prefix:-DWX_AWS_$(date +'%Y%m%d')_BATCH_}
 
+    fs::clear_directory "$target_directory"
+       
     if tar -C "$source_directory" -cvf - . \
             | split --suffix-length 5 \
                     --bytes "${chunk_size}" \
