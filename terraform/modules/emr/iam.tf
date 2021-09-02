@@ -137,6 +137,19 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
+    sid    = "AllowEmrToCreateDeleteAlarmsForEMROnly"
+    effect = "Allow"
+    actions = [
+      "cloudwatch:PutMetricAlarm",
+      "cloudwatch:DescribeAlarms",
+      "cloudwatch:DeleteAlarms",
+    ]
+    resources = [
+      "arn:aws:cloudwatch:${var.region}:${var.account}:alarm:j-*"
+    ]
+  }
+
+  statement {
     sid    = "AllowEmrToUseSpecificKMSKeys"
     effect = "Allow"
     actions = [
