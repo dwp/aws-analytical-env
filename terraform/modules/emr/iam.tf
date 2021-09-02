@@ -499,6 +499,18 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
   }
 
   statement {
+    sid    = "AllowEmrToReadSecretsManager"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+    resources = [
+      "arn:aws:secretsmanager:${var.region}:${var.account}:secret:/concourse/dataworks/rtg/*",
+    ]
+  }
+
+
+  statement {
     sid    = "AllowAccessToS3Buckets"
     effect = "Allow"
     actions = [
