@@ -12,6 +12,7 @@ module analytical_env_vpc {
 
   aws_vpce_services = [
     "dynamodb",
+    "sqs",
     "ecs",
     "ecs-agent",
     "ecs-telemetry",
