@@ -41,6 +41,26 @@ variable "emr_core_instance_count" {
   }
 }
 
+variable "uc_lab_core_instance_count" {
+  default = {
+    development = "1"
+    qa          = "1"
+    integration = "1"
+    preprod     = "3"
+    production  = "10"
+  }
+}
+
+variable "payment_timelines_core_instance_count" {
+  default = {
+    development = "1"
+    qa          = "1"
+    integration = "1"
+    preprod     = "3"
+    production  = "10"
+  }
+}
+
 variable "emr_instance_type_master" {
   default = {
     development = "m5.2xlarge"

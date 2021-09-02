@@ -192,6 +192,15 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/aws-dwx-housing.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+  - name: aws-nat-stats
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-nat-stats.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
   - name: aws-rtg-pdm-exports
     type: git
     source:
@@ -218,7 +227,7 @@ resources:
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/dip/aws-one-service.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
-    
+
   - name: opsmi-opti-azkaban-repo
     type: git
     source:
@@ -235,4 +244,31 @@ resources:
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/opsmi/opti-azkaban.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: ucfs-universe-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/ucfs/universe.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+    
+  - name: ers-ucds-reporting
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/ers-ucds-reporting.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+    
+  - name: ers-ucds-reporting-dev
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/ers-ucds-reporting.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
