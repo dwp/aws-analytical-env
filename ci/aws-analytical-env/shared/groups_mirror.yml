@@ -215,6 +215,14 @@ groups:
       - mirror-git-repo-ers-ucds-reporting-preprod
       - mirror-git-repo-ers-ucds-reporting-production
 
+  - name: aws-transform-json
+    jobs:
+      - mirror-git-repo-transform-json-repo-development
+      - mirror-git-repo-transform-json-repo-qa
+      - mirror-git-repo-transform-json-repo-integration
+      - mirror-git-repo-transform-json-repo-preprod
+      - mirror-git-repo-transform-json-repo-prod
+
   - name: ers-ucds-reporting-dev
     jobs:
       - mirror-git-repo-ers-ucds-reporting-dev-development
