@@ -520,7 +520,7 @@ jobs:
     
   - name: mirror-git-repo-transform-json-repo-development
     plan:
-      - get: aws-transform-json
+      - get: aws-transform-json-repo
         trigger: true
       - get: aws-common-infrastructure
         trigger: false
@@ -528,9 +528,9 @@ jobs:
       - .: (( inject meta.plan.mirror-git-repo ))
         config:
           run:
-            dir: aws-transform-json
+            dir: aws-transform-json-repo
           inputs:
-            - name: aws-transform-json
+            - name: aws-transform-json-repo
           params:
             S3_ROOT: component/uc_repos/aws-transform-json/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci  
