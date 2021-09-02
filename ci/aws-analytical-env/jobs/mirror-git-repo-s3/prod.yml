@@ -538,3 +538,23 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/dev/ers-ucds-reporting/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
+
+  - name: mirror-git-repo-transform-json-repo-prod
+    plan:
+      - get: aws-transform-json-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: production
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-transform-json-repo
+          inputs:
+            - name: aws-transform-json-repo
+          params:
+            S3_ROOT: component/uc_repos/aws-transform-json/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci

@@ -272,3 +272,12 @@ resources:
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/dip/ers-ucds-reporting.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-transform-json-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-transform-json.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
