@@ -26,19 +26,20 @@ locals {
   ebs_config_type                 = "gp2"
   ebs_config_volumes_per_instance = 1
   autoscaling_min_capacity_up = {
-    development = 5
+    development = 1
     qa          = 1
     integration = 1
     preprod     = 2
     production  = 15
   }
   autoscaling_max_capacity_up = {
-    development = 10
-    qa          = 4
-    integration = 4
+    development = 2
+    qa          = 2
+    integration = 2
     preprod     = 4
     production  = 30
   }
+
   autoscaling_min_capacity_down = {
     development = 1
     qa          = 1
@@ -46,10 +47,11 @@ locals {
     preprod     = 1
     production  = 15
   }
+
   autoscaling_max_capacity_down = {
-    development = 4
-    qa          = 4
-    integration = 4
+    development = 1
+    qa          = 1
+    integration = 1
     preprod     = 4
     production  = 30
   }
@@ -62,9 +64,9 @@ locals {
     production  = 15
   }
   autoscaling_max_capacity = {
-    development = 4
-    qa          = 4
-    integration = 4
+    development = 2
+    qa          = 2
+    integration = 2
     preprod     = 4
     production  = 30
   }
