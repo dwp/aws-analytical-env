@@ -106,7 +106,7 @@ locals {
     qa          = false
     integration = false
     preprod     = true
-    production  = false
+    production  = true
   }
 
   dks_port   = 8443
