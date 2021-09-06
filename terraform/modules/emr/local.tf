@@ -30,7 +30,7 @@ locals {
     qa          = 1
     integration = 1
     preprod     = 2
-    production  = 15
+    production  = 30
   }
   autoscaling_max_capacity_up = {
     development = 10
