@@ -188,6 +188,8 @@ module launcher {
   hive_compaction_threads               = var.emr_hive_compaction_threads[local.environment]
   hive_tez_sessions_per_queue           = var.emr_hive_tez_sessions_per_queue[local.environment]
   hive_max_reducers                     = var.emr_hive_max_reducers[local.environment]
+  alarm_sns_arn                         = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
+  alarm_on_failure                      = local.emr_launcher_failure_alert[local.environment]
 }
 
 module "emrfs_lambda" {

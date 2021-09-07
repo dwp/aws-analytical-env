@@ -107,3 +107,13 @@ variable "hive_max_reducers" {
   description = "Max number of reducers "
   default     = "1099"
 }
+
+variable "alarm_sns_arn" {
+  type        = string
+  description = "SNS topic for CW metric alarm"
+}
+
+variable "alarm_on_failure" {
+  type        = number
+  description = "0 or 1 value based on alarms needed per environment"
+}
