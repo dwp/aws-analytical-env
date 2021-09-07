@@ -1,4 +1,4 @@
-resource "aws_cloudwatch_metric_alarm" "uc_export_to_crown_controller_lambda_failure" {
+resource "aws_cloudwatch_metric_alarm" "analytical_env_emr_launcher_lambda_failure" {
   count                     = var.alarm_on_failure
   alarm_name                = "${title(var.name_prefix)} Launcher Lambda - Failed"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
