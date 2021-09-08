@@ -15,7 +15,7 @@ resource "aws_lambda_function" "rbac_test_lambda" {
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-rbac-test", ProtectSensitiveData = "True" })
   vpc_config {
     security_group_ids = [aws_security_group.rbac_lambda.id]
-    subnet_ids         = [var.vpc.aws_subnets_private[0].id]
+    subnet_ids         = [var.vpc.aws_subnets_private[*].id]
   }
   environment {
     variables = {
