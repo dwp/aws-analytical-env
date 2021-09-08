@@ -230,5 +230,7 @@ locals {
   aws_defaut_region                    = "eu-west-2"
   cw_agent_step_log_group_name         = "/app/analytical_batch/step_logs"
 
+  # Increment index of subnet to use an alternative AWS availability zone
+  emr_cluster_subnet_id = var.vpc.aws_subnets_private[0].id
 }
 
