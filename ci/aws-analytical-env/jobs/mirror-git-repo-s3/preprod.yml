@@ -503,8 +503,10 @@ jobs:
 
   - name: mirror-git-repo-ucfs-universe-repo-preprod
     plan:
-      - get: ucfs-universe-repo
+      - get: time-6am-trigger
         trigger: true
+      - get: ucfs-universe-repo
+        trigger: false
       - get: aws-common-infrastructure
         trigger: false
       - .: (( inject meta.plan.terraform-output-common ))
