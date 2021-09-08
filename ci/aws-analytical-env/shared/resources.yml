@@ -8,6 +8,15 @@ resources:
     check_every: 5m
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+  - name: aws-analytical-env-branch
+    type: git
+    source:
+      branch: test-dev
+      access_token: ((dataworks-secrets.concourse_github_pat))
+      uri: https://github.com/dwp/aws-analytical-env.git
+    check_every: 5m
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
   - name: aws-analytical-env-update-pipeline
     type: git
     source:

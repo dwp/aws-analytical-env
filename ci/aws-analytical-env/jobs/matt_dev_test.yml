@@ -1,0 +1,60 @@
+jobs:
+  - name: development
+    max_in_flight: 1
+    plan:
+      - put: meta
+        resource: meta-development
+      - get: emp-release
+        trigger: false
+      - get: aws-analytical-env-branch
+        trigger: false
+      - get: emr-launcher-release
+        trigger: false
+      - get: manage-mysql-user-release
+        trigger: false
+      - get: hive-custom-auth-release
+        trigger: false
+      - get: emr-al2-ami
+        trigger: false
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: infra
+      - .: (( inject meta.plan.terraform-apply ))
+        task: terraform-apply-infra
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/infra'
+      - .: (( inject meta.plan.terraform-plan ))
+        task: terraform-plan-infra
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/infra'
+          inputs:
+            - name: emr-launcher-release
+      - .: (( inject meta.plan.terraform-bootstrap ))
+        params:
+          DEPLOY_PATH: app
+      - .: (( inject meta.plan.terraform-apply ))
+        task: terraform-apply-app
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/app'
+          inputs:
+            - name: emp-release
+            - name: emr-launcher-release
+            - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
+        params:
+          TF_VAR_emp_dir_path: ../../../../emp-release
+      - .: (( inject meta.plan.terraform-plan ))
+        task: terraform-plan-app
+        config:
+          run:
+            dir: 'aws-analytical-env/terraform/deploy/app'
+          inputs:
+            - name: emp-release
+            - name: emr-launcher-release
+            - name: manage-mysql-user-release
+            - name: hive-custom-auth-release
+        params:
+          TF_VAR_emp_dir_path: ../../../../emp-release
