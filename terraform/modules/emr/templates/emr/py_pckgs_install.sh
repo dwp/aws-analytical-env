@@ -18,6 +18,7 @@ export HTTPS_PROXY="$FULL_PROXY"
 export no_proxy="$FULL_NO_PROXY"
 export NO_PROXY="$FULL_NO_PROXY"
 
+# building pandas from source requires installing a C compiler so just get a binary.
 cat <<EOF > /tmp/py_requirements.txt
 --only-binary=:pandas:
 nltk==3.6.1
@@ -33,4 +34,5 @@ numpy==1.17.3
 seaborn==0.11.1
 EOF
 
-sudo -E pip3 install -r /tmp/py_requirements.txt || true
+sudo -E pip3 install --upgrade pip setuptools || true
+sudo -E python3 -m pip install -r /tmp/py_requirements.txt || true
