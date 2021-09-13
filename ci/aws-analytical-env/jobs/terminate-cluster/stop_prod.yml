@@ -8,6 +8,15 @@ jobs:
           params:
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
 
+  - name: prod-stop-user-batch-cluster
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - .: (( inject meta.plan.stop-user-cluster ))
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
+
   - name: prod-stop-waiting
     plan:
       - get: every-2h
