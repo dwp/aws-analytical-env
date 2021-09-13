@@ -379,9 +379,9 @@ jobs:
             S3_ROOT: component/uc_repos/aws-nat-stats
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
 
-  - name: mirror-git-repo-aws-rtg-pdm-exports-integration
+  - name: mirror-git-repo-aws-pdm-to-rtg-exports-integration
     plan:
-      - get: aws-rtg-pdm-exports
+      - get: aws-pdm-to-rtg-exports
         trigger: true
       - get: aws-common-infrastructure
         trigger: false
@@ -392,16 +392,16 @@ jobs:
       - .: (( inject meta.plan.mirror-git-repo ))
         config:
           run:
-            dir: aws-rtg-pdm-exports
+            dir: aws-pdm-to-rtg-exports
           inputs:
-            - name: aws-rtg-pdm-exports
+            - name: aws-pdm-to-rtg-exports
           params:
-            S3_ROOT: component/uc_repos/aws-rtg-pdm-exports
+            S3_ROOT: component/uc_repos/aws-pdm-to-rtg-exports
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
 
-  - name: mirror-git-repo-aws-rtg-htme-exports-integration
+  - name: mirror-git-repo-aws-htme-to-rtg-exports-integration
     plan:
-      - get: aws-rtg-htme-exports
+      - get: aws-htme-to-rtg-exports
         trigger: true
       - get: aws-common-infrastructure
         trigger: false
@@ -412,11 +412,11 @@ jobs:
       - .: (( inject meta.plan.mirror-git-repo ))
         config:
           run:
-            dir: aws-rtg-htme-exports
+            dir: aws-htme-to-rtg-exports
           inputs:
-            - name: aws-rtg-htme-exports
+            - name: aws-htme-to-rtg-exports
           params:
-            S3_ROOT: component/uc_repos/aws-rtg-htme-exports
+            S3_ROOT: component/uc_repos/aws-htme-to-rtg-exports
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
 
   - name: mirror-git-repo-aws-one-service-integration
