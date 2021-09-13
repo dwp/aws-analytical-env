@@ -210,22 +210,22 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/aws-dwx-sas-extracts.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
-  - name: aws-rtg-pdm-exports
+  - name: aws-pdm-to-rtg-exports
     type: git
     source:
       branch: master
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
-      uri: https://((dataworks.enterprise_github_url))/dip/aws-rtg-pdm-exports.git
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-pdm-to-rtg-exports.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
-  - name: aws-rtg-htme-exports
+  - name: aws-htme-to-rtg-exports
     type: git
     source:
       branch: master
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
-      uri: https://((dataworks.enterprise_github_url))/dip/aws-rtg-htme-exports.git
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-htme-to-rtg-exports.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
   - name: aws-one-service-repo

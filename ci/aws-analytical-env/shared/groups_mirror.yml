@@ -127,21 +127,21 @@ groups:
       - mirror-git-repo-aws-payment-timelines-preprod
       - mirror-git-repo-aws-payment-timelines-prod
 
-  - name: aws-rtg-htme-exports
+  - name: aws-htme-to-rtg-exports
     jobs:
-      - mirror-git-repo-aws-rtg-htme-exports-development
-      - mirror-git-repo-aws-rtg-htme-exports-qa
-      - mirror-git-repo-aws-rtg-htme-exports-integration
-      - mirror-git-repo-aws-rtg-htme-exports-preprod
-      - mirror-git-repo-aws-rtg-htme-exports-prod
+      - mirror-git-repo-aws-htme-to-rtg-exports-development
+      - mirror-git-repo-aws-htme-to-rtg-exports-qa
+      - mirror-git-repo-aws-htme-to-rtg-exports-integration
+      - mirror-git-repo-aws-htme-to-rtg-exports-preprod
+      - mirror-git-repo-aws-htme-to-rtg-exports-prod
 
-  - name: aws-rtg-pdm-exports
+  - name: aws-pdm-to-rtg-exports
     jobs:
-      - mirror-git-repo-aws-rtg-pdm-exports-development
-      - mirror-git-repo-aws-rtg-pdm-exports-qa
-      - mirror-git-repo-aws-rtg-pdm-exports-integration
-      - mirror-git-repo-aws-rtg-pdm-exports-preprod
-      - mirror-git-repo-aws-rtg-pdm-exports-prod
+      - mirror-git-repo-aws-pdm-to-rtg-exports-development
+      - mirror-git-repo-aws-pdm-to-rtg-exports-qa
+      - mirror-git-repo-aws-pdm-to-rtg-exports-integration
+      - mirror-git-repo-aws-pdm-to-rtg-exports-preprod
+      - mirror-git-repo-aws-pdm-to-rtg-exports-prod
 
   - name: aws-uc-channel
     jobs:
