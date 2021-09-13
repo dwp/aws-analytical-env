@@ -13,7 +13,7 @@ resource "aws_emr_cluster" "cluster" {
   custom_ami_id                     = var.ami_id
 
   ec2_attributes {
-    subnet_id                         = var.vpc.aws_subnets_private[0].id
+    subnet_id                         = local.emr_cluster_subnet_id
     additional_master_security_groups = aws_security_group.emr.id
     additional_slave_security_groups  = aws_security_group.emr.id
     emr_managed_master_security_group = aws_security_group.emr_master_private.id

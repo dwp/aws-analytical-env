@@ -39,6 +39,8 @@ set -o pipefail
   #### Fix up Tez
   sudo -H -u hdfs bash -c "hdfs dfs -mkdir -p /libs"
   sudo -H -u hdfs bash -c "hdfs dfs -put /usr/lib/hbase/hbase-client*.jar /libs"
+  sudo -H -u hdfs bash -c "hdfs dfs -put /usr/share/java/Hive-JSON-Serde/hive-openx-serde.jar /libs"
+  sudo -H -u hdfs bash -c "hdfs dfs -put /usr/lib/hive/lib/hive-serde.jar /libs"
 
   aws s3 cp s3://${config_bucket}/rbac-teams/team_dbs.json .
   TEAM_DBS="$(cat ./team_dbs.json | jq  'fromjson | .[] | .database')"

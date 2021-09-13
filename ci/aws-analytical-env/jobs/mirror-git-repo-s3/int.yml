@@ -379,6 +379,26 @@ jobs:
             S3_ROOT: component/uc_repos/aws-nat-stats
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
 
+  - name: mirror-git-repo-aws-dwx-sas-extracts-integration
+    plan:
+      - get: aws-dwx-sas-extracts-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: integration
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-dwx-sas-extracts-repo
+          inputs:
+            - name: aws-dwx-sas-extracts-repo
+          params:
+            S3_ROOT: component/uc_repos/aws-dwx-sas-extracts
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
+            
   - name: mirror-git-repo-aws-pdm-to-rtg-exports-integration
     plan:
       - get: aws-pdm-to-rtg-exports
@@ -481,8 +501,10 @@ jobs:
 
   - name: mirror-git-repo-ucfs-universe-repo-integration
     plan:
-      - get: ucfs-universe-repo
+      - get: time-6am-trigger
         trigger: true
+      - get: ucfs-universe-repo
+        trigger: false
       - get: aws-common-infrastructure
         trigger: false
       - .: (( inject meta.plan.terraform-output-common ))
@@ -499,3 +521,64 @@ jobs:
             S3_ROOT: component/uc_repos/ucfs-universe/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
 
+
+  - name: mirror-git-repo-ers-ucds-reporting-integration
+    plan:
+      - get: ers-ucds-reporting
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: integration
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: ers-ucds-reporting
+          inputs:
+            - name: ers-ucds-reporting
+          params:
+            S3_ROOT: component/uc_repos/ers-ucds-reporting/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
+
+  - name: mirror-git-repo-ers-ucds-reporting-dev-integration
+    plan:
+      - get: ers-ucds-reporting-dev
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: integration
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: ers-ucds-reporting-dev
+          inputs:
+            - name: ers-ucds-reporting-dev
+          params:
+            S3_ROOT: component/uc_repos/dev/ers-ucds-reporting/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
+  
+  - name: mirror-git-repo-transform-json-repo-integration
+    plan:
+      - get: aws-transform-json-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: integration
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-transform-json-repo
+          inputs:
+            - name: aws-transform-json-repo
+          params:
+            S3_ROOT: component/uc_repos/aws-transform-json/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
+  

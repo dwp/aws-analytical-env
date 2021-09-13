@@ -179,6 +179,7 @@ module launcher {
   subnet_ids                            = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private.*.id
   core_instance_count                   = var.emr_core_instance_count[local.environment]
   uc_lab_core_instance_count            = var.uc_lab_core_instance_count[local.environment]
+  payment_timelines_core_instance_count = var.payment_timelines_core_instance_count[local.environment]
   environment                           = local.environment
   instance_type_master                  = var.emr_instance_type_master[local.environment]
   instance_type_core_one                = var.emr_instance_type_core_one[local.environment]
@@ -187,6 +188,8 @@ module launcher {
   hive_compaction_threads               = var.emr_hive_compaction_threads[local.environment]
   hive_tez_sessions_per_queue           = var.emr_hive_tez_sessions_per_queue[local.environment]
   hive_max_reducers                     = var.emr_hive_max_reducers[local.environment]
+  alarm_sns_arn                         = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
+  alarm_on_failure                      = local.emr_launcher_failure_alert[local.environment]
 }
 
 module "emrfs_lambda" {

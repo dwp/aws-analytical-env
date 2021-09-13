@@ -30,7 +30,7 @@ locals {
     qa          = 1
     integration = 1
     preprod     = 2
-    production  = 15
+    production  = 30
   }
   autoscaling_max_capacity_up = {
     development = 10
@@ -106,7 +106,7 @@ locals {
     qa          = false
     integration = false
     preprod     = true
-    production  = false
+    production  = true
   }
 
   dks_port   = 8443
@@ -230,5 +230,7 @@ locals {
   aws_defaut_region                    = "eu-west-2"
   cw_agent_step_log_group_name         = "/app/analytical_batch/step_logs"
 
+  # Increment index of subnet to use an alternative AWS availability zone
+  emr_cluster_subnet_id = var.vpc.aws_subnets_private[0].id
 }
 

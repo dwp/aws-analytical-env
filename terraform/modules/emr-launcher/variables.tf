@@ -58,6 +58,12 @@ variable "uc_lab_core_instance_count" {
   default     = "1"
 }
 
+variable "payment_timelines_core_instance_count" {
+  type        = string
+  description = "(Optional) Number of core instances for payment timelines clusters"
+  default     = "1"
+}
+
 variable "environment" {}
 
 variable "instance_type_master" {
@@ -100,4 +106,14 @@ variable "hive_max_reducers" {
   type        = string
   description = "Max number of reducers "
   default     = "1099"
+}
+
+variable "alarm_sns_arn" {
+  type        = string
+  description = "SNS topic for CW metric alarm"
+}
+
+variable "alarm_on_failure" {
+  type        = number
+  description = "0 or 1 value based on alarms needed per environment"
 }

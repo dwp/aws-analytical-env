@@ -137,6 +137,19 @@ data "aws_iam_policy_document" "elastic_map_reduce_role" {
   }
 
   statement {
+    sid    = "AllowEmrToCreateDeleteAlarmsForEMROnly"
+    effect = "Allow"
+    actions = [
+      "cloudwatch:PutMetricAlarm",
+      "cloudwatch:DescribeAlarms",
+      "cloudwatch:DeleteAlarms",
+    ]
+    resources = [
+      "arn:aws:cloudwatch:${var.region}:${var.account}:alarm:j-*"
+    ]
+  }
+
+  statement {
     sid    = "AllowEmrToUseSpecificKMSKeys"
     effect = "Allow"
     actions = [
@@ -497,6 +510,18 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "${var.compaction_bucket.arn}/*",
     ]
   }
+
+  statement {
+    sid    = "AllowEmrToReadSecretsManager"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+    resources = [
+      "arn:aws:secretsmanager:${var.region}:${var.account}:secret:/concourse/dataworks/rtg/*",
+    ]
+  }
+
 
   statement {
     sid    = "AllowAccessToS3Buckets"
