@@ -55,13 +55,13 @@ data "template_file" "emr_setup_sh" {
 
     azkaban_chunk_environment_sh    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_chunk_environment.key)
     azkaban_metadata_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metadata_environment.key)
-    azkaban_control_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_control_environment.key)
+    azkaban_control_environment_sh  = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_control_environment.key)
     azkaban_enqueue_environment_sh  = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_enqueue_environment.key)
     azkaban_egress_environment_sh   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_egress_environment.key)
 
     azkaban_chunk_run_sh    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_chunk_run.key)
     azkaban_metadata_run_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metadata_run.key)
-    azkaban_control_run_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_control_run.key)
+    azkaban_control_run_sh  = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_control_run.key)
     azkaban_enqueue_run_sh  = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_enqueue_run.key)
     azkaban_egress_run_sh   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_egress_run.key)
 
