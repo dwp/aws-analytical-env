@@ -55,11 +55,13 @@ data "template_file" "emr_setup_sh" {
 
     azkaban_chunk_environment_sh    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_chunk_environment.key)
     azkaban_metadata_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metadata_environment.key)
+    azkaban_control_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_control_environment.key)
     azkaban_enqueue_environment_sh  = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_enqueue_environment.key)
     azkaban_egress_environment_sh   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_egress_environment.key)
 
     azkaban_chunk_run_sh    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_chunk_run.key)
     azkaban_metadata_run_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metadata_run.key)
+    azkaban_control_run_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_control_run.key)
     azkaban_enqueue_run_sh  = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_enqueue_run.key)
     azkaban_egress_run_sh   = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_egress_run.key)
 
@@ -289,6 +291,13 @@ resource "aws_s3_bucket_object" "azkaban_chunk_environment" {
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-chunk-environment-sh" })
 }
 
+resource "aws_s3_bucket_object" "azkaban_control_environment" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/control/environment.sh"
+  content = file("${path.module}/files/azkaban/control/environment.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-control-environment-sh" })
+}
+
 resource "aws_s3_bucket_object" "azkaban_egress_environment" {
   bucket  = aws_s3_bucket.emr.id
   key     = "scripts/azkaban/egress/environment.sh"
@@ -336,6 +345,13 @@ resource "aws_s3_bucket_object" "azkaban_metadata_run" {
   key     = "scripts/azkaban/metadata/run.sh"
   content = file("${path.module}/files/azkaban/metadata/run.sh")
   tags    = merge(var.common_tags, { Name = "${var.name_prefix}-metadata-run-sh" })
+}
+
+resource "aws_s3_bucket_object" "azkaban_control_run" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/azkaban/control/run.sh"
+  content = file("${path.module}/files/azkaban/control/run.sh")
+  tags    = merge(var.common_tags, { Name = "${var.name_prefix}-control-run-sh" })
 }
 
 resource "aws_s3_bucket_object" "azkaban_common_aws" {
