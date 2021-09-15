@@ -96,6 +96,8 @@ groups:
       - preprod-stop-batch-cluster
       - prod-stop-batch-cluster
 
+      - prod-stop-user-batch-cluster
+
       - dev-cleanup
       - qa-cleanup
       - int-cleanup
