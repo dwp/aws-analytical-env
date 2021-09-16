@@ -88,7 +88,7 @@ groups:
       - sync-cognito-users-to-rds-production
       - create-roles-and-munged-policies-production
 
-  - name: admin-batch-cluster
+  - name: admin-batch-clusters
     jobs:
       - dev-stop-batch-cluster
       - qa-stop-batch-cluster
@@ -96,6 +96,22 @@ groups:
       - preprod-stop-batch-cluster
       - prod-stop-batch-cluster
 
+      - dev-stop-uc-lab-batch-cluster
+      - qa-stop-uc-lab-batch-cluster
+      - int-stop-uc-lab-batch-cluster
+      - preprod-stop-uc-lab-batch-cluster
+      - prod-stop-uc-lab-batch-cluster
+
+      - dev-stop-external-batch-cluster
+      - qa-stop-external-batch-cluster
+      - int-stop-external-batch-cluster
+      - preprod-stop-external-batch-cluster
+      - prod-stop-external-batch-cluster
+
+      - dev-stop-user-batch-cluster
+      - qa-stop-user-batch-cluster
+      - int-stop-user-batch-cluster
+      - preprod-stop-user-batch-cluster
       - prod-stop-user-batch-cluster
 
       - dev-cleanup

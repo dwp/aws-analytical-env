@@ -8,6 +8,33 @@ jobs:
           params:
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
 
+  - name: prod-stop-user-batch-cluster
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - .: (( inject meta.plan.stop-user-batch-cluster ))
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+
+  - name: prod-stop-external-batch-cluster
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - .: (( inject meta.plan.stop-external-batch-cluster ))
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+
+  - name: prod-stop-uc-lab-batch-cluster
+    plan:
+      - get: aws-analytical-env
+        trigger: false
+      - .: (( inject meta.plan.stop-uc-lab-batch-cluster ))
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+
   - name: qa-stop-waiting
     plan:
       - get: every-2h

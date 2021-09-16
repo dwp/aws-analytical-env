@@ -610,7 +610,91 @@ meta:
               export AWS_DEFAULT_REGION
               source /assume-role
               set +x
-              for CLUSTER_ID in $(aws emr list-clusters --active | jq -r '.Clusters[] | select(.Name | test("batch-analytical-env")) | .Id');
+              for CLUSTER_ID in $(aws emr list-clusters --active | jq -r '.Clusters[] | select(.Name | test("^batch-analytical-env")) | .Id');
+              do
+                if [ -z "SINGLE_CLUSTER_ID" ] || [ "SINGLE_CLUSTER_ID" == "$CLUSTER_ID" ]; then
+                  aws emr terminate-clusters --cluster-ids $CLUSTER_ID
+                fi
+              done
+
+    stop-uc-lab-batch-cluster:
+      task: stop-uc-lab-batch-cluster
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              export AWS_DEFAULT_REGION
+              source /assume-role
+              set +x
+              for CLUSTER_ID in $(aws emr list-clusters --active | jq -r '.Clusters[] | select(.Name | test("^uc-lab-batch-analytical-env")) | .Id');
+              do
+                if [ -z "SINGLE_CLUSTER_ID" ] || [ "SINGLE_CLUSTER_ID" == "$CLUSTER_ID" ]; then
+                  aws emr terminate-clusters --cluster-ids $CLUSTER_ID
+                fi
+              done
+
+    stop-user-batch-cluster:
+      task: stop-user-batch-cluster
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              export AWS_DEFAULT_REGION
+              source /assume-role
+              set +x
+              for CLUSTER_ID in $(aws emr list-clusters --active | jq -r '.Clusters[] | select(.Name | test("^user-batch-analytical-env")) | .Id');
+              do
+                if [ -z "SINGLE_CLUSTER_ID" ] || [ "SINGLE_CLUSTER_ID" == "$CLUSTER_ID" ]; then
+                  aws emr terminate-clusters --cluster-ids $CLUSTER_ID
+                fi
+              done
+
+    stop-external-batch-cluster:
+      task: stop-external-batch-cluster
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              export AWS_DEFAULT_REGION
+              source /assume-role
+              set +x
+              for CLUSTER_ID in $(aws emr list-clusters --active | jq -r '.Clusters[] | select(.Name | test("^external-batch-analytical-env")) | .Id');
               do
                 aws emr terminate-clusters --cluster-ids $CLUSTER_ID
               done
@@ -839,34 +923,6 @@ meta:
               set +x
 
               for CLUSTER_ID in $(aws emr list-clusters --active | jq -r '.Clusters[] | select(.Name | test("aws-analytical-env")) | .Id');
-              do
-                echo "Stopping cluster with id of ${CLUSTER_ID}"
-                aws emr terminate-clusters --cluster-ids $CLUSTER_ID
-              done
-
-    stop-user-cluster:
-      task: stop-user-cluster
-      config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: ((dataworks.docker_awscli_repository))
-            version: ((dataworks.docker_awscli_version))
-            tag: ((dataworks.docker_awscli_version))
-        params:
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
-          AWS_DEFAULT_REGION: ((dataworks.aws_region))
-        run:
-          path: sh
-          args:
-            - -exc
-            - |
-              export AWS_DEFAULT_REGION
-              source /assume-role
-              set +x
-
-              for CLUSTER_ID in $(aws emr list-clusters --active | jq -r '.Clusters[] | select(.Name | test("user-batch-analytical-env")) | .Id');
               do
                 echo "Stopping cluster with id of ${CLUSTER_ID}"
                 aws emr terminate-clusters --cluster-ids $CLUSTER_ID
