@@ -136,15 +136,6 @@ resources:
     check_every: 1h
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
-  - name: secrets-management
-    type: git
-    source:
-      branch: master
-      username: ((dataworks.enterprise_github_username))
-      password: ((dataworks-secrets.enterprise_github_pat))
-      uri: https://((dataworks.enterprise_github_url))/dip/secrets-management.git
-    check_every: 5m
-
   - name: manage-mysql-user-release
     type: github-release
     source:
@@ -197,20 +188,6 @@ resources:
   - name: meta-testing-integration
     type: meta
 
-  - name: utc-midnight-trigger
-    type: time
-    source:
-      location: UTC
-      start: 00:00
-      stop: 01:00
-
-  - name: utc-11pm-trigger
-    type: time
-    source:
-      location: UTC
-      start: 23:00
-      stop: 23:05
-
   - name: utc-2am-trigger
     type: time
     source:
@@ -226,12 +203,6 @@ resources:
       stop: 20:00
       interval: 10m
       days: [Monday, Tuesday, Wednesday, Thursday, Friday]
-
-  - name: every-2h
-    type: time
-    icon: clock-outline
-    source:
-      interval: 2h
 
   - name: emr-al2-ami
     type: ami
