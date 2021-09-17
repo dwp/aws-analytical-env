@@ -41,6 +41,6 @@ python-Levenshtein==0.12.2
 EOF
 
 sudo -E pip3 install --upgrade pip setuptools || true
-sudo yum install python3-devel || true
+sudo yum install -y python3-devel || true
 sudo -E python3 -m pip install -r /tmp/py_requirements.txt || true
-sudo yum remove -y python3-devel || true
+sudo yum remove -y python3-devel
