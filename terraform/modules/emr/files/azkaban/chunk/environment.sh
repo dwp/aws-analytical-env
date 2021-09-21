@@ -55,7 +55,7 @@ chunk::chunk() {
     local -r target_directory=${2:?Usage: ${FUNCNAME[0]} $options source-directory target-directory}
 
     local -r chunk_size=${optional_chunk_size:-1G}
-    local -r prefix=${optional_prefix:-DWX_AWS_$(date +'%Y%m%d')_BATCH_}
+    local -r prefix=${optional_prefix:-AWS_UCFS_SAS_$(date +'%Y%m%d_%H%M%S')}
 
     fs::clear_directory "$target_directory"
        
@@ -68,7 +68,7 @@ chunk::chunk() {
         local -r count=$(find "$target_directory" -maxdepth 1 -name "$prefix"'*' | wc -l)
 
         for file in "${target_directory%/}/${prefix}"*; do
-            mv "$file" "${file}_${count}.tar.part"
+            mv "$file" "${file}.tar.${count}"
         done
     fi
 }
