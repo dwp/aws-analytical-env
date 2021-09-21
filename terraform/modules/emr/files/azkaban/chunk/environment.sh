@@ -55,7 +55,7 @@ chunk::chunk() {
     local -r target_directory=${2:?Usage: ${FUNCNAME[0]} $options source-directory target-directory}
 
     local -r chunk_size=${optional_chunk_size:-1G}
-    local -r prefix=${optional_prefix:-AWS_UCFS_SAS_}$(date +'%Y%m%d_%H%M%S')
+    local -r prefix=${optional_prefix:-AWS_UCFS_SAS_$(date +'%Y%m%d_%H%M%S')}
 
     fs::clear_directory "$target_directory"
        
