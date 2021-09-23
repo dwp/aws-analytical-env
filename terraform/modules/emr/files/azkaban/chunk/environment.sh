@@ -68,7 +68,11 @@ chunk::chunk() {
         local -r count=$(find "$target_directory" -maxdepth 1 -name "$prefix"'*' | wc -l)
 
         for file in "${target_directory%/}/${prefix}"*; do
-            mv "$file" "${file}.tar.${count}"
+            #get the file numeric suffix
+            suffix=${file: -5}
+            #remove the numeric suffix from filename
+            filename_nosuffix=${file::-5}
+            mv "$file" "${filename_nosuffix}.tar.${count}-${suffix}"
         done
     fi
 }
