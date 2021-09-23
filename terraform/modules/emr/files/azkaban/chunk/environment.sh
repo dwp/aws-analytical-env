@@ -60,19 +60,22 @@ chunk::chunk() {
     fs::clear_directory "$target_directory"
        
     if tar -C "$source_directory" -cvf - . \
-            | split --suffix-length 5 \
+            | split --suffix-length 3 \
                     --bytes "${chunk_size}" \
                     --numeric-suffixes=1 \
                     - "${target_directory%/}/$prefix"; then
 
         local -r count=$(find "$target_directory" -maxdepth 1 -name "$prefix"'*' | wc -l)
 
+        #Padding count with leading zeros
+        printf -v padded_count "%03d" "$count"
+
         for file in "${target_directory%/}/${prefix}"*; do
             #get the file numeric suffix
-            suffix=${file: -5}
+            suffix=${file: -3}
             #remove the numeric suffix from filename
-            filename_nosuffix=${file::-5}
-            mv "$file" "${filename_nosuffix}.tar.${count}-${suffix}"
+            filename_nosuffix=${file::-3}
+            mv "$file" "${filename_nosuffix}.tar.${padded_count}-${suffix}"
         done
     fi
 }
