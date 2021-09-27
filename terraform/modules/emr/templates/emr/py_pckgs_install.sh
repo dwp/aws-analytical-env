@@ -35,7 +35,7 @@ seaborn==0.11.1
 statsmodels==0.12.2
 kaleido==0.2.1
 fuzzywuzzy==0.18.0  
-openpyxl==3.0.8
+openpyxl==3.0.7
 python-docx==0.8.11
 python-Levenshtein==0.12.2
 EOF
