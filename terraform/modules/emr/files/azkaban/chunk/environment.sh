@@ -55,20 +55,27 @@ chunk::chunk() {
     local -r target_directory=${2:?Usage: ${FUNCNAME[0]} $options source-directory target-directory}
 
     local -r chunk_size=${optional_chunk_size:-1G}
-    local -r prefix=${optional_prefix:-DWX_AWS_$(date +'%Y%m%d')_BATCH_}
+    local -r prefix=${optional_prefix:-AWS_UCFS_SAS_$(date +'%Y%m%d_%H%M%S')}
 
     fs::clear_directory "$target_directory"
        
     if tar -C "$source_directory" -cvf - . \
-            | split --suffix-length 5 \
+            | split --suffix-length 3 \
                     --bytes "${chunk_size}" \
                     --numeric-suffixes=1 \
                     - "${target_directory%/}/$prefix"; then
 
         local -r count=$(find "$target_directory" -maxdepth 1 -name "$prefix"'*' | wc -l)
 
+        #Padding count with leading zeros
+        printf -v padded_count "%03d" "$count"
+
         for file in "${target_directory%/}/${prefix}"*; do
-            mv "$file" "${file}_${count}.tar.part"
+            #get the file numeric suffix
+            suffix=${file: -3}
+            #remove the numeric suffix from filename
+            filename_nosuffix=${file::-3}
+            mv "$file" "${filename_nosuffix}.tar.${suffix}-${padded_count}"
         done
     fi
 }

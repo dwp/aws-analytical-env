@@ -133,6 +133,7 @@ resources:
     source:
       owner: dwp
       repository: emr-launcher
+      access_token: ((dataworks-secrets.concourse_github_pat))
     check_every: 1h
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
@@ -141,6 +142,7 @@ resources:
     source:
       owner: dwp
       repository: manage-mysql-user
+      access_token: ((dataworks-secrets.concourse_github_pat))
     check_every: 1h
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
@@ -149,6 +151,7 @@ resources:
     source:
       owner: dwp
       repository: analytical-env-hive-custom-auth
+      access_token: ((dataworks-secrets.concourse_github_pat))
     check_every: 1h
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
@@ -208,22 +211,34 @@ resources:
     type: ami
     check_every: 1h
     source:
-      aws_role_arn: "arn:aws:iam::((dataworks.aws_management_acc)):role/ci"
+      aws_role_arn: "arn:aws:iam::((aws_account.management)):role/ci"
       region: ((dataworks.aws_region))
       filters:
-        owner-id: "((dataworks.aws_management_acc))"
+        owner-id: "((aws_account.management))"
         is-public: false
         state: available
         name: dw-al2-emr-ami-1613152072
+
+  - name: emr-al2-ami-development
+    type: ami
+    check_every: 1h
+    source:
+      aws_role_arn: "arn:aws:iam::((aws_account.management)):role/ci"
+      region: ((dataworks.aws_region))
+      filters:
+        owner-id: "((aws_account.management))"
+        is-public: false
+        state: available
+        name: dw-al2-analytical-env-emr-ami-1631970780
 
   - name: untested-al2-analytical-env-emr-ami
     type: ami
     check_every: 5m
     source:
-      aws_role_arn: arn:aws:iam::((dataworks.aws_management_acc)):role/ci
+      aws_role_arn: arn:aws:iam::((aws_account.management)):role/ci
       region: ((dataworks.aws_region))
       filters:
-        owner-id: ((dataworks.aws_management_acc))
+        owner-id: ((aws_account.management))
         is-public: false
         state: available
         name: untested-dw-al2-analytical-env-emr-ami-*

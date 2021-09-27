@@ -15,6 +15,7 @@ jobs:
       - get: hive-custom-auth-release
         trigger: true
       - get: emr-al2-ami
+        resource: emr-al2-ami-development
         trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
