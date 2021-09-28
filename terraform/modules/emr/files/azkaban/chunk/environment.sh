@@ -58,24 +58,31 @@ chunk::chunk() {
     local -r prefix=${optional_prefix:-AWS_UCFS_SAS_$(date +'%Y%m%d_%H%M%S')}
 
     fs::clear_directory "$target_directory"
-       
+
+
     if tar -C "$source_directory" -cvf - . \
-            | split --suffix-length 3 \
+            | split --suffix-length 10 \
                     --bytes "${chunk_size}" \
                     --numeric-suffixes=1 \
                     - "${target_directory%/}/$prefix"; then
 
         local -r count=$(find "$target_directory" -maxdepth 1 -name "$prefix"'*' | wc -l)
 
+        if ((${#count} <= 3));
+        then
+            padding=3
+        else
+            padding=${#count}
+        fi
         #Padding count with leading zeros
-        printf -v padded_count "%03d" "$count"
+        printf -v padded_count "%0${padding}d" "$count"
 
         for file in "${target_directory%/}/${prefix}"*; do
             #get the file numeric suffix
-            suffix=${file: -3}
+            suffix=${file: -${padding}}
             #remove the numeric suffix from filename
-            filename_nosuffix=${file::-3}
-            mv "$file" "${filename_nosuffix}.tar.${padded_count}-${suffix}"
+            filename_nosuffix=${file::-${padding}}
+            mv "$file" "${filename_nosuffix}.tar.${suffix}-${padded_count}"
         done
     fi
 }
