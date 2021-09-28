@@ -81,7 +81,7 @@ chunk::chunk() {
             #get the file numeric suffix
             suffix=${file: -${padding}}
             #remove the numeric suffix from filename
-            filename_nosuffix=${file::-${padding}}
+            filename_nosuffix=${file::-10}
             mv "$file" "${filename_nosuffix}.tar.${suffix}-${padded_count}"
         done
     fi
