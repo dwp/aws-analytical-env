@@ -229,7 +229,7 @@ resources:
         owner-id: "((aws_account.management))"
         is-public: false
         state: available
-        name: dw-al2-analytical-env-emr-ami-1631970780
+        name: untested-dw-al2-analytical-env-emr-ami-1632839004
 
   - name: untested-al2-analytical-env-emr-ami
     type: ami
