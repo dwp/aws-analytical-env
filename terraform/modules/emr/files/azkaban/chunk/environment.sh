@@ -68,12 +68,14 @@ chunk::chunk() {
 
         local -r count=$(find "$target_directory" -maxdepth 1 -name "$prefix"'*' | wc -l)
 
+        #Add default padding of 3
         if ((${#count} <= 3));
         then
             padding=3
         else
             padding=${#count}
         fi
+        
         #Padding count with leading zeros
         printf -v padded_count "%0${padding}d" "$count"
 
