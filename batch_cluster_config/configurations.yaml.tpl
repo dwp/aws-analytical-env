@@ -64,7 +64,7 @@ Configurations:
     %{~ if environment == "production" ~}
     "hive.tez.container.size": "32768"
     "hive.tez.java.opts": "-Xmx26214m"
-    "hive.auto.convert.join.noconditionaltask.size": "10922"
+    "hive.auto.convert.join.noconditionaltask.size": "100000"
     "hive.exec.failure.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
     "hive.exec.post.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
     "hive.exec.pre.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
