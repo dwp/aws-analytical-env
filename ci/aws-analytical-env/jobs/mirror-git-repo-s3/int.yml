@@ -561,7 +561,7 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/dev/ers-ucds-reporting/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
-  
+
   - name: mirror-git-repo-transform-json-repo-integration
     plan:
       - get: aws-transform-json-repo
@@ -581,4 +581,43 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-transform-json/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
-  
+
+  - name: mirror-git-repo-vulnerable-journal-messages-integration
+    plan:
+      - get: vulnerable-journal-messages-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: vulnerable-journal-messages-repo
+          inputs:
+            - name: vulnerable-journal-messages-repo
+          params:
+            S3_ROOT: component/uc_repos/vulnerable_journal_messages/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
+
+  - name: mirror-git-repo-vulnerable-journal-messages-dev-integration
+    plan:
+      - get: vulnerable-journal-messages-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: vulnerable-journal-messages-dev-repo
+          inputs:
+            - name: vulnerable-journal-messages-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/vulnerable_journal_messages/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
