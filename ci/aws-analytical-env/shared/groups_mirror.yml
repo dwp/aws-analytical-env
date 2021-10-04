@@ -245,7 +245,7 @@ groups:
       - mirror-git-repo-vulnerable-journal-messages-qa
       - mirror-git-repo-vulnerable-journal-messages-integration
       - mirror-git-repo-vulnerable-journal-messages-preprod
-      - mirror-git-repo-vulnerable-journal-messages-production
+      - mirror-git-repo-vulnerable-journal-messages-prod
 
   - name: vulnerable-journal-messages-dev
     jobs:
@@ -253,7 +253,7 @@ groups:
       - mirror-git-repo-vulnerable-journal-messages-dev-qa
       - mirror-git-repo-vulnerable-journal-messages-dev-integration
       - mirror-git-repo-vulnerable-journal-messages-dev-preprod
-      - mirror-git-repo-vulnerable-journal-messages-dev-production
+      - mirror-git-repo-vulnerable-journal-messages-dev-prod
 
   - name: update-pipeline
     jobs:

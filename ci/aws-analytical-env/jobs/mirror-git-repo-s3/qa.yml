@@ -590,7 +590,7 @@ jobs:
       - .: (( inject meta.plan.terraform-output-common ))
         config:
           params:
-            TF_WORKSPACE: default
+            TF_WORKSPACE: qa
       - .: (( inject meta.plan.mirror-git-repo ))
         config:
           run:
@@ -610,7 +610,7 @@ jobs:
       - .: (( inject meta.plan.terraform-output-common ))
         config:
           params:
-            TF_WORKSPACE: default
+            TF_WORKSPACE: qa
       - .: (( inject meta.plan.mirror-git-repo ))
         config:
           run:
