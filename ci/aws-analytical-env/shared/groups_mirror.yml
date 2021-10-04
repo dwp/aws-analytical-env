@@ -238,6 +238,23 @@ groups:
       - mirror-git-repo-ers-ucds-reporting-dev-integration
       - mirror-git-repo-ers-ucds-reporting-dev-preprod
       - mirror-git-repo-ers-ucds-reporting-dev-production
+
+  - name: vulnerable-journal-messages
+    jobs:
+      - mirror-git-repo-vulnerable-journal-messages-development
+      - mirror-git-repo-vulnerable-journal-messages-qa
+      - mirror-git-repo-vulnerable-journal-messages-integration
+      - mirror-git-repo-vulnerable-journal-messages-preprod
+      - mirror-git-repo-vulnerable-journal-messages-production
+
+  - name: vulnerable-journal-messages-dev
+    jobs:
+      - mirror-git-repo-vulnerable-journal-messages-dev-development
+      - mirror-git-repo-vulnerable-journal-messages-dev-qa
+      - mirror-git-repo-vulnerable-journal-messages-dev-integration
+      - mirror-git-repo-vulnerable-journal-messages-dev-preprod
+      - mirror-git-repo-vulnerable-journal-messages-dev-production
+
   - name: update-pipeline
     jobs:
       - update-pipeline
