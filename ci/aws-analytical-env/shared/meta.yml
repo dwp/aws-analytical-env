@@ -346,8 +346,9 @@ meta:
           type: docker-image
           source:
             repository: ((terraform.repository))
-            version: 0.12.31
-            tag: 0.12.31
+            version: 0.13.4
+            version: 0.13.4
+            tag: 0.13.4
         run:
           path: sh
           args:
@@ -395,6 +396,33 @@ meta:
               cp -R ssh-credentials ~/.ssh
               scp -r -o StrictHostKeyChecking=no hdp-edge01.node.prd.dw:${SOURCE_PATH}/* files/
 
+    get-cyi-files:
+      task: get-cyi-files
+      attempts: 50
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((docker-awscli-ubuntu.repository))
+            version: ((docker-awscli-ubuntu.version))
+            tag: ((docker-awscli-ubuntu.version))
+        inputs:
+          - name: ssh-credentials
+        outputs:
+          - name: cyi-files
+        params:
+          RETRY_SLEEP_TIME: 600
+          TARGET_SERVER: "hdp-edge01.node.prd.dw"
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              whoami
+              cp -R ssh-credentials ~/.ssh
+              scp -r -o StrictHostKeyChecking=no hdp-edge01.node.prd.dw:${SOURCE_PATH}/* cyi-files/
+
     load-s3:
       task: load-s3
       attempts: 15
@@ -420,6 +448,32 @@ meta:
             - |
               AWS_PUBLISHED_BUCKET="$(cat terraform-output-common-crown/outputs.json |  jq -r '.published_bucket.value.id')"
               aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync files/ s3://${AWS_PUBLISHED_BUCKET}/${S3_FOLDER}
+
+    load-cyi-s3:
+        task: load-cyi-s3
+        attempts: 15
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: ((docker-awscli-ubuntu.repository))
+              version: ((docker-awscli-ubuntu.version))
+              tag: ((docker-awscli-ubuntu.version))
+          inputs:
+            - name: cyi-files
+            - name: .aws
+            - name: terraform-output-common-crown
+          params:
+            AWS_PROFILE: ci
+            AWS_SHARED_CREDENTIALS_FILE: .aws/credentials
+          run:
+            path: sh
+            args:
+              - -exc
+              - |
+                AWS_INGESTION_INPUT_STORAGE_BUCKET="$(cat terraform-output-common-crown/outputs.json |  jq -r '.ingestion_input_storage.value.id')"
+                aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync cyi-files/ s3://${AWS_INGESTION_INPUT_STORAGE_BUCKET}/${S3_FOLDER}
 
     stop-waiting-cluster:
       task: stop-waiting-cluster
