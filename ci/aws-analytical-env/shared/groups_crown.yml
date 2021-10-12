@@ -3,3 +3,4 @@ groups:
     jobs:
       - load-uc-labs-prod
       - load-user-tables-prod
+      - load-cyi-adhoc-prod
