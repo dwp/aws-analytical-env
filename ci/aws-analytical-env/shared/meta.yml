@@ -347,7 +347,6 @@ meta:
           source:
             repository: ((terraform.repository))
             version: 0.13.4
-            version: 0.13.4
             tag: 0.13.4
         run:
           path: sh
