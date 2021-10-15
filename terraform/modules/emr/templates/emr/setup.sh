@@ -42,6 +42,7 @@ aws s3 cp "${delete_azkaban_metrics_shell}" /opt/emr/delete_azkaban_metrics.sh
 aws s3 cp "${sft_utility_shell}" /opt/emr/sft_utility.sh
 aws s3 cp "${poll_status_table_shell}" /home/hadoop/poll_status_table.sh
 aws s3 cp "${trigger_tagger_shell}" /opt/emr/trigger_s3_tagger_batch_job.sh
+aws s3 cp "${parallel_shell}" /opt/emr/parallel.sh
 
 sudo mkdir -p /opt/emr/azkaban
 sudo mkdir -p /opt/emr/azkaban/chunk
