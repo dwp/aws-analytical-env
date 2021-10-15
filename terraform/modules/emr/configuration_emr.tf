@@ -186,11 +186,11 @@ resource "aws_s3_bucket_object" "parallel_sh" {
   bucket = aws_s3_bucket.emr.id
   key    = "scripts/emr/parallel.sh"
   content = templatefile("${path.module}/templates/emr/parallel.sh",
-  {
-    config_bucket = format("s3://%s", var.config_bucket_id)
-  }
+    {
+      config_bucket = format("s3://%s", var.config_bucket_id)
+    }
   )
-
+  
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-parallel-sh" })
 }
 
