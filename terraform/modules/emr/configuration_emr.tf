@@ -183,10 +183,10 @@ resource "aws_s3_bucket_object" "get_scripts_sh" {
 }
 
 resource "aws_s3_bucket_object" "parallel_sh" {
-  bucket = aws_s3_bucket.emr.id
-  key    = "scripts/emr/parallel.sh"
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/emr/parallel.sh"
   content = file("${path.module}/templates/emr/parallel.sh")
-  
+
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-parallel-sh" })
 }
 
