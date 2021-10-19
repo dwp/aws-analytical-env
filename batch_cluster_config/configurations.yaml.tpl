@@ -119,7 +119,7 @@ Configurations:
 - Classification: "tez-site"
   Properties:
     "tez.aux.uris": "/libs/"
-    "tez.am.resource.memory.mb": "1024"
+    "tez.am.resource.memory.mb": "4096"
 - Classification: "hive-env"
   Configurations:
   - Classification: "export"
