@@ -71,6 +71,8 @@ module "emr" {
   published_bucket_cmk     = data.terraform_remote_state.common.outputs.published_bucket_cmk.arn
   compaction_bucket        = data.terraform_remote_state.internal_compute.outputs.compaction_bucket
   compaction_bucket_cmk    = data.terraform_remote_state.internal_compute.outputs.compaction_bucket_cmk.arn
+  temporary_bucket         = data.terraform_remote_state.dataworks_aws_data_egress.outputs.rtg_temp_bucket
+  temporary_bucket_cmk     = data.terraform_remote_state.dataworks_aws_data_egress.outputs.rtg_temp_bucket_cmk.arn
   processed_bucket_arn     = data.terraform_remote_state.common.outputs.processed_bucket.arn
   processed_bucket_cmk     = data.terraform_remote_state.common.outputs.processed_bucket_cmk.arn
   processed_bucket_id      = data.terraform_remote_state.common.outputs.processed_bucket.bucket

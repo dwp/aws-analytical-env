@@ -398,7 +398,9 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
       "arn:aws:s3:::${var.log_bucket}",
       "arn:aws:s3:::${var.log_bucket}/*",
       "arn:aws:s3:::${var.artefact_bucket.id}",
-      "arn:aws:s3:::${var.artefact_bucket.id}/*"
+      "arn:aws:s3:::${var.artefact_bucket.id}/*",
+      "arn:aws:s3:::${var.temporary_bucket.id}",
+      "arn:aws:s3:::${var.temporary_bucket.id}/*"
     ]
   }
 
@@ -556,7 +558,8 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     resources = [
       var.published_bucket_cmk,
       var.processed_bucket_cmk,
-      var.compaction_bucket_cmk
+      var.compaction_bucket_cmk,
+      var.temporary_bucket_cmk
     ]
   }
 
