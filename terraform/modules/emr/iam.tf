@@ -521,6 +521,7 @@ data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
     ]
     resources = [
       "arn:aws:secretsmanager:${var.region}:${var.account}:secret:/concourse/dataworks/rtg/*",
+      "arn:aws:secretsmanager:${var.region}:${var.account}:secret:/concourse/dataworks/temporary_bucket_id"
     ]
   }
 
