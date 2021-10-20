@@ -38,6 +38,7 @@ fuzzywuzzy==0.18.0
 openpyxl==3.0.8
 python-docx==0.8.11
 python-Levenshtein==0.12.2
+PyDriller==2.0
 EOF
 
 sudo -E pip3 install --upgrade pip setuptools || true
