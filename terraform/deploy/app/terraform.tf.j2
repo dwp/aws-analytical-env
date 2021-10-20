@@ -187,6 +187,20 @@ data "terraform_remote_state" "aws_s3_object_tagger" {
   }
 }
 
+data "terraform_remote_state" "dataworks_aws_data_egress" {
+  backend = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/dataworks-aws-data-egress.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
 provider "aws" {
   version = "~> 3.42.0"
   alias  = "management-ami"

@@ -219,18 +219,6 @@ resources:
         state: available
         name: dw-al2-emr-ami-1613152072
 
-  - name: emr-al2-ami-development
-    type: ami
-    check_every: 1h
-    source:
-      aws_role_arn: "arn:aws:iam::((aws_account.management)):role/ci"
-      region: ((dataworks.aws_region))
-      filters:
-        owner-id: "((aws_account.management))"
-        is-public: false
-        state: available
-        name: dw-al2-analytical-env-emr-ami-1631970780
-
   - name: untested-al2-analytical-env-emr-ami
     type: ami
     check_every: 5m

@@ -324,3 +324,13 @@ variable "hive_heapsize" {
   description = "Hive heapsize"
   default     = "1024"
 }
+
+variable "temporary_bucket_cmk" {
+  description = "(Required) KMS key arn for accessing the temporary_bucket"
+  type        = string
+}
+
+variable "temporary_bucket" {
+  description = "temporary bucket - id (name) and arn included"
+  type        = map(string)
+}
