@@ -181,6 +181,7 @@ module launcher {
   subnet_ids                            = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private.*.id
   core_instance_count                   = var.emr_core_instance_count[local.environment]
   uc_lab_core_instance_count            = var.uc_lab_core_instance_count[local.environment]
+  test_core_instance_count              = var.test_core_instance_count[local.environment]
   payment_timelines_core_instance_count = var.payment_timelines_core_instance_count[local.environment]
   environment                           = local.environment
   instance_type_master                  = var.emr_instance_type_master[local.environment]
