@@ -50,6 +50,15 @@ variable "uc_lab_core_instance_count" {
     production  = "10"
   }
 }
+variable "test_core_instance_count" {
+  default = {
+    development = "1"
+    qa          = "1"
+    integration = "1"
+    preprod     = "1"
+    production  = "10"
+  }
+}
 
 variable "payment_timelines_core_instance_count" {
   default = {
