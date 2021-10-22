@@ -87,7 +87,7 @@ Configurations:
     "hive.default.fileformat.managed": "ORC"
     "hive.exec.orc.split.strategy": "HYBRID"
     "hive.merge.orcfile.stripe.level": "true"
-    "hive.orc.compute.splits.num.threads": "10"
+    "hive.orc.compute.splits.num.threads": "20"
     "hive.orc.splits.include.file.footer": "true"
     "hive.compactor.abortedtxn.threshold": "1000"
     "hive.compactor.check.interval": "300"
@@ -119,9 +119,10 @@ Configurations:
 - Classification: "tez-site"
   Properties:
     "tez.aux.uris": "/libs/"
-    "tez.am.resource.memory.mb": "1024"
+    "tez.am.resource.memory.mb": "10240"
+    "tez.am.resource.cpu.vcores": "10"
 - Classification: "hive-env"
   Configurations:
   - Classification: "export"
     Properties:
-      "HADOOP_HEAPSIZE": "2000"
+      "HADOOP_HEAPSIZE": "8000"
