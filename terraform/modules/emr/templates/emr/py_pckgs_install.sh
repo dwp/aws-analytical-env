@@ -21,7 +21,6 @@ export NO_PROXY="$FULL_NO_PROXY"
 # building pandas from source requires installing a C compiler so just get a binary.
 cat <<EOF > /tmp/py_requirements.txt
 --only-binary=:pandas:
-numpy==1.17.3
 nltk==3.6.1
 yake==0.4.7
 spark-nlp==3.0.1
@@ -39,6 +38,7 @@ openpyxl==3.0.7
 python-docx==0.8.11
 python-Levenshtein==0.12.2
 PyDriller==2.0
+numpy==1.17.3
 EOF
 
 sudo -E pip3 install --upgrade pip setuptools || true
