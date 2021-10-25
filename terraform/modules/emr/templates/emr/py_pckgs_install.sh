@@ -43,6 +43,7 @@ EOF
 
 sudo -E pip3 install --upgrade pip setuptools || true
 sudo yum install -y python3-devel || true
-yes | sudo -E python3 -m pip uninstall numpy || true
+echo "LISTING ALL INSTALLED PCKGS BEFORE PIP INSTALL"
+pip3 freeze
 sudo -E python3 -m pip install -r /tmp/py_requirements.txt || true
 sudo yum remove -y python3-devel || true
