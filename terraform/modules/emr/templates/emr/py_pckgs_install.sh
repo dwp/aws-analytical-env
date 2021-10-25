@@ -30,6 +30,8 @@ torch==1.8.1
 keras==2.4.3
 scipy==1.6.2
 pandas==1.3.0
+numpy==1.17.3
+wheel==0.37.0
 seaborn==0.11.1
 statsmodels==0.12.2
 kaleido==0.2.1
@@ -38,12 +40,10 @@ openpyxl==3.0.7
 python-docx==0.8.11
 python-Levenshtein==0.12.2
 PyDriller==2.0
-numpy==1.17.3
 EOF
 
 sudo -E pip3 install --upgrade pip setuptools || true
 sudo yum install -y python3-devel || true
-echo "LISTING ALL INSTALLED PCKGS BEFORE PIP INSTALL"
-pip3 freeze
+yes | sudo -E python3 -m pip uninstall numpy || true
 sudo -E python3 -m pip install -r /tmp/py_requirements.txt || true
 sudo yum remove -y python3-devel || true
