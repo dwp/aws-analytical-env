@@ -598,7 +598,7 @@ jobs:
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
 
 
-  - name: mirror-aws-dataworks-extracts-repo-development
+  - name: mirror-git-aws-dataworks-extracts-repo-development
     plan:
       - get: aws-dataworks-extracts-repo
         trigger: true

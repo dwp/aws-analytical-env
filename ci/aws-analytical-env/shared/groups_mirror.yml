@@ -255,6 +255,14 @@ groups:
       - mirror-git-repo-vulnerable-journal-messages-dev-preprod
       - mirror-git-repo-vulnerable-journal-messages-dev-prod
 
+  - name: aws-dataworks-extracts
+    jobs:
+      - mirror-git-aws-dataworks-extracts-repo-development
+      - mirror-git-repo-aws-dataworks-extracts-repo-integration
+      - mirror-git-aws-dataworks-extracts-repo-qa
+      - mirror-git-repo-aws-dataworks-extracts-preprod
+      - mirror-git-aws-dataworks-extracts-repo-prod
+
   - name: update-pipeline
     jobs:
       - update-pipeline
