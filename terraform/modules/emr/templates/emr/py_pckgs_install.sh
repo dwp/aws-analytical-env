@@ -21,6 +21,7 @@ export NO_PROXY="$FULL_NO_PROXY"
 # building pandas from source requires installing a C compiler so just get a binary.
 cat <<EOF > /tmp/py_requirements.txt
 --only-binary=:pandas:
+wheel==0.37.0
 nltk==3.6.1
 yake==0.4.7
 spark-nlp==3.0.1
@@ -31,7 +32,6 @@ keras==2.4.3
 scipy==1.6.2
 pandas==1.3.0
 numpy==1.17.3
-wheel==0.37.0
 seaborn==0.11.1
 statsmodels==0.12.2
 kaleido==0.2.1
