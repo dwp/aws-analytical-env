@@ -21,7 +21,6 @@ export NO_PROXY="$FULL_NO_PROXY"
 # building pandas from source requires installing a C compiler so just get a binary.
 cat <<EOF > /tmp/py_requirements.txt
 --only-binary=:pandas:
-wheel==0.37.0
 nltk==3.6.1
 yake==0.4.7
 spark-nlp==3.0.1
@@ -44,6 +43,6 @@ EOF
 
 sudo -E pip3 install --upgrade pip setuptools || true
 sudo yum install -y python3-devel || true
-yes | sudo -E python3 -m pip uninstall numpy || true
+sudo -E python3 -m pip install wheel==0.37.0 || true
 sudo -E python3 -m pip install -r /tmp/py_requirements.txt || true
 sudo yum remove -y python3-devel || true
