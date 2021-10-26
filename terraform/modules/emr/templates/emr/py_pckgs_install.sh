@@ -29,7 +29,7 @@ scikit-spark==0.4.0
 torch==1.8.1
 keras==2.4.3
 scipy==1.6.2
-pandas==1.3.0
+pandas==1.2.5
 numpy==1.17.3
 seaborn==0.11.1
 statsmodels==0.12.2
