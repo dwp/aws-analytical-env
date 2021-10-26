@@ -421,6 +421,95 @@ meta:
               whoami
               cp -R ssh-credentials ~/.ssh
               scp -r -o StrictHostKeyChecking=no hdp-edge01.node.prd.dw:${SOURCE_PATH}/* cyi-files/
+    
+    load-cyi-files-from-s3:
+      task: load-cyi-files-from-s3
+      attempts: 50
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((docker-awscli-ubuntu.repository))
+            version: ((docker-awscli-ubuntu.version))
+            tag: ((docker-awscli-ubuntu.version))
+        inputs:
+          - name: cyi-files-from-s3
+          - name: ssh-credentials
+        params:
+          RETRY_SLEEP_TIME: 600
+          TARGET_SERVER: "hdp-edge01.node.prd.dw"
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              whoami
+              cp -R ssh-credentials ~/.ssh
+              scp -r -o StrictHostKeyChecking=no cyi-files-from-s3/* hdp-edge01.node.prd.dw:${TARGET_PATH}/.
+
+    get-cyi-files-from-s3:
+      task: get-cyi-files-from-s3
+      attempts: 50
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((docker-awscli-ubuntu.repository))
+            version: ((docker-awscli-ubuntu.version))
+            tag: ((docker-awscli-ubuntu.version))
+        inputs:
+          - name: .aws
+        outputs:
+          - name: cyi-files-from-s3
+        params:
+          AWS_PROFILE: ci
+          AWS_SHARED_CREDENTIALS_FILE: .aws/credentials
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-17 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-18 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-19 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-20 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-21 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-22 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-23 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-24 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-25 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-26 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-27 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-28 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-29 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-09-30 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-01 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-02 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-03 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-04 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-05 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-06 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-07 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-08 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-09 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-10 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-11 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-12 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-13 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-14 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-15 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-16 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-17 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-18 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-19 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-20 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-21 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-22 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-23 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-24 cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://255883de728feb77814e2a29b4320291/${S3_FOLDER}/2021-10-25 cyi-files-from-s3/.
 
     load-s3:
       task: load-s3
@@ -471,8 +560,8 @@ meta:
             args:
               - -exc
               - |
-                AWS_INGESTION_INPUT_STORAGE_BUCKET="$(cat terraform-output-common-crown/outputs.json |  jq -r '.ingestion_input_storage.value.id')"
-                aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync cyi-files/ s3://${AWS_INGESTION_INPUT_STORAGE_BUCKET}/${S3_FOLDER}
+                AWS_PUBLISHED_BUCKET="255883de728feb77814e2a29b4320291"
+                aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync cyi-files/ s3://${AWS_PUBLISHED_BUCKET}/${S3_FOLDER}
 
     stop-waiting-cluster:
       task: stop-waiting-cluster
