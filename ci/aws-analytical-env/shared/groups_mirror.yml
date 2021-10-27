@@ -263,6 +263,14 @@ groups:
       - mirror-git-repo-aws-dataworks-extracts-preprod
       - mirror-git-aws-dataworks-extracts-repo-prod
 
+  - name: kds-rnd-repo
+    jobs:
+      - mirror-git-kds-rnd-repo-development
+      - mirror-git-kds-rnd-repo-integration
+      - mirror-git-kds-rnd-repo-qa
+      - mirror-git-kds-rnd-repo-preprod
+      - mirror-git-kds-rnd-repo-production
+
   - name: update-pipeline
     jobs:
       - update-pipeline
