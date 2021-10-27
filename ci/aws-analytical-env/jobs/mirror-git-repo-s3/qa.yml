@@ -640,3 +640,23 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-dataworks-extracts/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+
+  - name: mirror-git-kds-rnd-repo-qa
+    plan:
+      - get: kds-rnd-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: qa
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: kds-rnd-repo
+          inputs:
+            - name: kds-rnd-repo
+          params:
+            S3_ROOT: component/uc_repos/kds-rnd/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
