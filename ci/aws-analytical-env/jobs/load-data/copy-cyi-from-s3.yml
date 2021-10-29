@@ -2,6 +2,8 @@ jobs:
   - name: copy-cyi-from-s3
     serial: true
     plan:
+      - get: utc-7am-trigger
+        trigger: true
       - get: aws-common-infrastructure
       - get: aws-analytical-env
       - .: (( inject meta.plan.terraform-output-common-crown ))
@@ -20,7 +22,7 @@ jobs:
             S3_FOLDER: "cyi"
 
       - .: (( inject meta.plan.create-crown-credentials ))
-      - .: (( inject meta.plan.load-cyi-files-from-s3 ))
+      - .: (( inject meta.plan.copy-to-crown-cyi-files ))
         config:
           params:
             TARGET_PATH: "/cyi-historical-data/from-s3"

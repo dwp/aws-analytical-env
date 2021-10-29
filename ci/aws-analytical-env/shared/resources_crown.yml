@@ -25,3 +25,10 @@ resources:
       uri: git@github.ucds.io:dip/aws-common-infrastructure.git
     check_every: 15m
     webhook_token: ((ucfs-github.webhook-token))
+
+  - name: utc-7am-trigger
+    type: time
+    source:
+      location: UTC
+      start: 07:00
+      stop: 08:00
