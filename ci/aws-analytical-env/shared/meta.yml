@@ -501,7 +501,7 @@ meta:
               YESTERDAY="$(date +%Y-%m-%d -d 'yesterday')"
               # use 25... ingestion-input-storage bucketID
               SOME-BUCKET-ID="INGESTION_INPUT_STORAGE_BUCKET_ID"
-              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://${SOME-BUCKET-ID}/${S3_FOLDER}/$YESTERDAY cyi-files-from-s3/.
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://${SOME-BUCKET-ID}/${S3_FOLDER}/${YESTERDAY} cyi-files-from-s3/.
               chmod 766 -R cyi-files-from-s3/
 
     copy-to-crown-cyi-files:
