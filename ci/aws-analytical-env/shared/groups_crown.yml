@@ -7,3 +7,4 @@ groups:
   - name: copy-data
     jobs:
       - copy-cyi-from-s3
+      - copy-full-synth-json-prod

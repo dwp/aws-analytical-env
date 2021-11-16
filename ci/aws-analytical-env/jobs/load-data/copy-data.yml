@@ -26,4 +26,27 @@ jobs:
         config:
           params:
             TARGET_PATH: "/cyi-historical-data/from-s3"
-     
+  - name: copy-full-synth-json-prod
+    serial: true
+    plan:
+      - get: aws-common-infrastructure
+      - get: aws-analytical-env
+      - .: (( inject meta.plan.terraform-output-common-crown ))
+        config:
+          params:
+            TF_WORKSPACE: production
+            AWS_ACC: ((aws_account.production))
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
+      - .: (( inject meta.plan.create-aws-profiles ))
+        config:
+          params:
+            AWS_ROLE: arn:aws:iam::((aws_account.production)):role/ci
+      - .: (( inject meta.plan.create-crown-credentials ))
+      - .: (( inject meta.plan.get-full-synth-json-files ))
+        config:
+          params:
+            SOURCE_PATH: "/data/uc-data/chs-synthetic/synth-json/full"
+      - .: (( inject meta.plan.load-full-synth-json-files-on-s3 ))
+        config:
+          params:
+            S3_FOLDER: "dwh/synth"
