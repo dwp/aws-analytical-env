@@ -270,6 +270,14 @@ groups:
       - mirror-git-kds-rnd-repo-qa
       - mirror-git-kds-rnd-repo-preprod
       - mirror-git-kds-rnd-repo-production
+  
+  - name: aws-json-to-csv
+    jobs:
+      - mirror-git-repo-json-to-csv-repo-development
+      - mirror-git-repo-json-to-csv-repo-qa
+      - mirror-git-repo-json-to-csv-repo-integration
+      - mirror-git-repo-json-to-csv-repo-preprod
+      - mirror-git-repo-json-to-csv-repo-prod
 
   - name: update-pipeline
     jobs:

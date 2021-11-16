@@ -660,3 +660,23 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/kds-rnd/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+    
+  - name: mirror-git-repo-json-to-csv-repo-qa
+    plan:
+      - get: aws-json-to-csv-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: qa
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-json-to-csv-repo
+          inputs:
+            - name: aws-json-to-csv-repo
+          params:
+            S3_ROOT: component/uc_repos/aws-json-to-csv/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
