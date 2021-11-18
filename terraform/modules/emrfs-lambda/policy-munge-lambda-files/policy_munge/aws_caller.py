@@ -54,15 +54,16 @@ def get_groups_for_user(user_name_no_sub, user_pool_id, cognito_client):
             UserPoolId=user_pool_id,
         )
     except cognito_client.exceptions.UserNotFoundException:
-        user_name = cognito_client.list_users(
-            UserPoolId=user_pool_id,
-            Filter=f'preferred_username=\"{user_name_no_sub}\"'
-        ).get('Users')[0].get('Username')
+        return None
+        # user_name = cognito_client.list_users(
+        #     UserPoolId=user_pool_id,
+        #     Filter=f'preferred_username=\"{user_name_no_sub}\"'
+        # ).get('Users')[0].get('Username')
 
-        response = cognito_client.admin_list_groups_for_user(
-            Username=user_name,
-            UserPoolId=user_pool_id,
-        )
+        # response = cognito_client.admin_list_groups_for_user(
+        #     Username=user_name,
+        #     UserPoolId=user_pool_id,
+        # )
     return [group.get('GroupName') for group in response.get('Groups')]
 
 
