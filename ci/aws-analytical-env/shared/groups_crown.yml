@@ -4,3 +4,6 @@ groups:
       - load-uc-labs-prod
       - load-user-tables-prod
       - load-cyi-adhoc-prod
+  - name: copy-data
+    jobs:
+      - copy-cyi-from-s3

@@ -395,6 +395,32 @@ meta:
               cp -R ssh-credentials ~/.ssh
               scp -r -o StrictHostKeyChecking=no hdp-edge01.node.prd.dw:${SOURCE_PATH}/* files/
 
+    load-s3:
+      task: load-s3
+      attempts: 15
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((docker-awscli-ubuntu.repository))
+            version: ((docker-awscli-ubuntu.version))
+            tag: ((docker-awscli-ubuntu.version))
+        inputs:
+          - name: files
+          - name: .aws
+          - name: terraform-output-common-crown
+        params:
+          AWS_PROFILE: ci
+          AWS_SHARED_CREDENTIALS_FILE: .aws/credentials
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              AWS_PUBLISHED_BUCKET="$(cat terraform-output-common-crown/outputs.json |  jq -r '.published_bucket.value.id')"
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync files/ s3://${AWS_PUBLISHED_BUCKET}/${S3_FOLDER}
+
     get-cyi-files:
       task: get-cyi-files
       attempts: 50
@@ -422,32 +448,6 @@ meta:
               cp -R ssh-credentials ~/.ssh
               scp -r -o StrictHostKeyChecking=no hdp-edge01.node.prd.dw:${SOURCE_PATH}/* cyi-files/
 
-    load-s3:
-      task: load-s3
-      attempts: 15
-      config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: ((docker-awscli-ubuntu.repository))
-            version: ((docker-awscli-ubuntu.version))
-            tag: ((docker-awscli-ubuntu.version))
-        inputs:
-          - name: files
-          - name: .aws
-          - name: terraform-output-common-crown
-        params:
-          AWS_PROFILE: ci
-          AWS_SHARED_CREDENTIALS_FILE: .aws/credentials
-        run:
-          path: sh
-          args:
-            - -exc
-            - |
-              AWS_PUBLISHED_BUCKET="$(cat terraform-output-common-crown/outputs.json |  jq -r '.published_bucket.value.id')"
-              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync files/ s3://${AWS_PUBLISHED_BUCKET}/${S3_FOLDER}
-
     load-cyi-s3:
         task: load-cyi-s3
         attempts: 15
@@ -471,8 +471,65 @@ meta:
             args:
               - -exc
               - |
-                AWS_INGESTION_INPUT_STORAGE_BUCKET="$(cat terraform-output-common-crown/outputs.json |  jq -r '.ingestion_input_storage.value.id')"
-                aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync cyi-files/ s3://${AWS_INGESTION_INPUT_STORAGE_BUCKET}/${S3_FOLDER}
+                # use 25... ingestion-input-storage bucketID
+                AWS_PUBLISHED_BUCKET="SOME-BUCKET-ID"
+                aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com sync cyi-files/ s3://${AWS_PUBLISHED_BUCKET}/${S3_FOLDER}
+
+    get-cyi-files-from-s3:
+      task: get-cyi-files-from-s3
+      attempts: 10
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((docker-awscli-ubuntu.repository))
+            version: ((docker-awscli-ubuntu.version))
+            tag: ((docker-awscli-ubuntu.version))
+        inputs:
+          - name: .aws
+        outputs:
+          - name: cyi-files-from-s3
+        params:
+          AWS_PROFILE: ci
+          AWS_SHARED_CREDENTIALS_FILE: .aws/credentials
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              YESTERDAY="$(date +%Y-%m-%d -d 'yesterday')"
+              # use 25... ingestion-input-storage bucketID
+              SOME-BUCKET-ID="XXXXX"
+              aws s3 --endpoint-url=https://s3-eu-west-1.amazonaws.com cp --recursive s3://${SOME-BUCKET-ID}/${S3_FOLDER}/${YESTERDAY} cyi-files-from-s3/.
+              chmod 766 -R cyi-files-from-s3/
+
+    copy-to-crown-cyi-files:
+      task: copy-to-crown-cyi-files
+      attempts: 10
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((docker-awscli-ubuntu.repository))
+            version: ((docker-awscli-ubuntu.version))
+            tag: ((docker-awscli-ubuntu.version))
+        inputs:
+          - name: cyi-files-from-s3
+          - name: ssh-credentials
+        params:
+          RETRY_SLEEP_TIME: 600
+          TARGET_SERVER: "hdp-edge01.node.prd.dw"
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              whoami
+              cp -R ssh-credentials ~/.ssh
+              scp -r -o StrictHostKeyChecking=no cyi-files-from-s3/* hdp-edge01.node.prd.dw:${TARGET_PATH}/.
+              ssh -o StrictHostKeyChecking=no hdp-edge01.node.prd.dw "sudo su -l awsingest /cyi-historical-data/from-s3/copy-cyi-to-hdfs.sh"
 
     stop-waiting-cluster:
       task: stop-waiting-cluster
