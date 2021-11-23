@@ -62,7 +62,7 @@ Configurations:
     "hive.strict.checks.cartesian.product": "false"
     "hive.mapred.mode": "nonstrict"
     %{~ if environment == "production" ~}
-    "hive.tez.container.size": "32768"
+    "hive.tez.container.size": "16384"
     "hive.tez.java.opts": "-Xmx26214m"
     "hive.auto.convert.join.noconditionaltask.size": "100000"
     "hive.mapjoin.smalltable.filesize": "2500000"
