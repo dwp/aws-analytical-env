@@ -46,10 +46,16 @@ if cognito_user_pool_id is None:
     print(message)
     raise Exception(message)
 
+region_domain = os.environ.get("REGION_DOMAIN")
+if region_domain is None:
+    message = "Variable REGION_DOMAIN was not provided."
+    print(message)
+    raise Exception(message)
+
 dynamodb = boto3.resource("dynamodb", region_name=region_name)
 table = dynamodb.Table(table_name)
 s3 = boto3.client("s3")
-ses = boto3.client("ses", region_name=region_name)
+ses = boto3.client("ses", region_name=region_domain)
 cognito = boto3.client("cognito-idp", region_name=region_name)
 
 
