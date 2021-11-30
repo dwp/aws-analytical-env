@@ -43,6 +43,6 @@ module "check-user-expiry-lambda" {
   dynamodb_table_user_name = module.custom-auth-flow.dynamodb_table_user.name
   from_email_address       = "DataWorks Access Management <access-management@${data.terraform_remote_state.management.outputs.ses_domain_identity.domain}>"
   template_bucket          = data.terraform_remote_state.management.outputs.ses_mailer_bucket.id
-  region_domain            = var.region
+  region_domain            = "eu-west-1"
 }
 
