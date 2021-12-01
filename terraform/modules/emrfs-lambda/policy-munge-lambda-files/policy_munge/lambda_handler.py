@@ -86,15 +86,12 @@ def lambda_handler(event, context):
 
         a_user_filtered_policy_name_list = user_info[user_name]['policy_names']
 
-        if user_groups is not None and len(user_groups) == 1:
-            if COGNITO_PII_GROUP_NAME in user_groups:
-                # user is SC cleared - ie., can view pii data
-                a_user_filtered_policy_name_list = user_info[user_name]['policy_names']
-            else:
-                # user is NOT SC cleared - ie., remove PII policy names from the full user-policy list
-                a_user_filtered_policy_name_list = [p for p in user_info[user_name]['policy_names'] if RBAC_PII_DB_SUFFIX not in p ]
+        if COGNITO_PII_GROUP_NAME in user_groups:
+            # user is SC cleared - ie., can view pii data
+            a_user_filtered_policy_name_list = user_info[user_name]['policy_names']
         else:
-            logging.warning(f'User: {user_name} is either not found or is not any group or assigned multiple groups. Please check and correct.')
+            # user is NOT SC cleared - ie., remove PII policy names from the full user-policy list
+            a_user_filtered_policy_name_list = [p for p in user_info[user_name]['policy_names'] if RBAC_PII_DB_SUFFIX not in p ]
 
         if user_info[user_name]['role_name'] in existing_role_list:
             if user_info[user_name]['active']:
