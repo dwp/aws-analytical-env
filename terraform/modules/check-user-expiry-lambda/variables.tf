@@ -37,3 +37,8 @@ variable "template_bucket" {
   description = "(Required) The bucket that has the templated emails"
   type        = string
 }
+
+variable "region_domain" {
+  description = "(Required) Region where SES domain is registered"
+  type        = string
+}
