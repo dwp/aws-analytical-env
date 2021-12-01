@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_log_group" "check_user_expiry_lambda_logs" {
-  name              = "${var.name_prefix}-check-user-expiry-lambda-logs"
+  name              = "/aws/lambda/${var.name_prefix}-check-user-expiry"
   retention_in_days = 180
   tags              = merge(var.common_tags, { Name : "${var.name_prefix}-expiry-logs" })
 }
