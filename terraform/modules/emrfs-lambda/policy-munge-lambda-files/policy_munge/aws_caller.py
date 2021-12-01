@@ -54,7 +54,7 @@ def get_groups_for_user(user_name_no_sub, user_pool_id, cognito_client):
             UserPoolId=user_pool_id,
         )
     except cognito_client.exceptions.UserNotFoundException:
-        return None
+        return "None"
         # user_name = cognito_client.list_users(
         #     UserPoolId=user_pool_id,
         #     Filter=f'preferred_username=\"{user_name_no_sub}\"'
