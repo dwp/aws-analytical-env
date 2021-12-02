@@ -130,7 +130,7 @@ def extract_email_from_user_attributes(user):
         if attribute["Name"] == "email":
             return attribute["Value"]
         if attribute["Name"] == "preferred_username":
-            print user["Username"][4:]
+            return user["Username"][4:]
     message = "Email attribute not found for user: " + user["Username"]
     print(message)
     return ''
