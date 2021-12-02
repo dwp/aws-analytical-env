@@ -19,6 +19,7 @@ Configurations:
     "yarn.nodemanager.remote-app-log-dir": "s3://${log_bucket}/logs/yarn/"
     "yarn.resourcemanager.scheduler.class": "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler
     "yarn.scheduler.fair.preemption": "true"
+    "yarn.scheduler.minimum-allocation-mb": "2048"
 - Classification: "spark"
   Properties:
     "maximizeResourceAllocation": "false"
@@ -62,8 +63,8 @@ Configurations:
     "hive.strict.checks.cartesian.product": "false"
     "hive.mapred.mode": "nonstrict"
     %{~ if environment == "production" ~}
-    "hive.tez.container.size": "32768"
-    "hive.tez.java.opts": "-Xmx26214m"
+    "hive.tez.container.size": "12288"
+    "hive.tez.java.opts": "-Xmx9830m"
     "hive.auto.convert.join.noconditionaltask.size": "100000"
     "hive.mapjoin.smalltable.filesize": "2500000"
     "hive.exec.failure.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
@@ -111,4 +112,6 @@ Configurations:
 - Classification: "tez-site"
   Properties:
     "tez.aux.uris": "/libs/"
-    "tez.am.resource.memory.mb": "1024"
+    "tez.am.resource.memory.mb": "2048"
+    "tez.runtime.io.sort.mb" : "4820"
+    "tez.runtime.unordered.output.buffer.size-mb": "1228"
