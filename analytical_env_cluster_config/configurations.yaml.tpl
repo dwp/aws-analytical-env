@@ -64,7 +64,7 @@ Configurations:
     "hive.mapred.mode": "nonstrict"
     %{~ if environment == "production" ~}
     "hive.tez.container.size": "12288"
-    "hive.tez.java.opts": "-Xmx26214m"
+    "hive.tez.java.opts": "-Xmx9830m"
     "hive.auto.convert.join.noconditionaltask.size": "100000"
     "hive.mapjoin.smalltable.filesize": "2500000"
     "hive.exec.failure.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
