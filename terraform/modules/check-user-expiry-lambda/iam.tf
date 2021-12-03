@@ -46,7 +46,7 @@ data aws_iam_policy_document policy_logs_check_user_expiry {
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
-    resources = [aws_cloudwatch_log_group.check_user_expiry_lambda_logs_updated.arn]
+    resources = ["${aws_cloudwatch_log_group.check_user_expiry_lambda_logs_updated.arn}:*"]
   }
 }
 
