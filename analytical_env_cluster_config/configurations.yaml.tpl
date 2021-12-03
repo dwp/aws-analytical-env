@@ -17,7 +17,7 @@ Configurations:
     "yarn.log-aggregation-enable": "true"
     "yarn.log-aggregation.retain-seconds": "-1"
     "yarn.nodemanager.remote-app-log-dir": "s3://${log_bucket}/logs/yarn/"
-    "yarn.resourcemanager.scheduler.class": "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler
+    "yarn.resourcemanager.scheduler.class": "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler"
     "yarn.scheduler.fair.preemption": "true"
     "yarn.scheduler.minimum-allocation-mb": "2048"
 - Classification: "spark"
@@ -95,8 +95,6 @@ Configurations:
     "hive.compactor.check.interval": "300"
     "hive.compactor.delta.num.threshold": "10"
     "hive.compactor.delta.pct.threshold": "0.1f"
-    "hive.compactor.initiator.on": "true"
-    "hive.compactor.worker.threads": "1"
     "hive.compactor.worker.timeout": "86400"
     "hive.blobstore.optimizations.enabled": "true"
     "hive.blobstore.use.blobstore.as.scratchdir": "false"
