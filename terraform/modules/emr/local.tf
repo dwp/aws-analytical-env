@@ -97,8 +97,8 @@ locals {
     development = "4096"
     qa          = "4096"
     integration = "4096"
-    preprod     = "12288"
-    production  = "12288"
+    preprod     = "32768"
+    production  = "32768"
   }
 
   emr_scheduled_scaling = {
@@ -128,9 +128,9 @@ locals {
     hive_max_reducers                   = local.hive_max_reducers[var.environment]
     use_auth                            = var.hive_use_auth
     hive_tez_container_size             = local.hive_tez_container_size[var.environment]
-    hive_java_ops_xmx                   = format("%.0f", local.hive_tez_container_size[var.environment] * 0.8)
-    tez_runtime_io_sort                 = format("%.0f", local.hive_tez_container_size[var.environment] * 0.4)
-    tez_runtime_unordered_output_buffer = format("%.0f", local.hive_tez_container_size[var.environment] * 0.1)
+    # hive_java_ops_xmx                   = format("%.0f", local.hive_tez_container_size[var.environment] * 0.8)
+    # tez_runtime_io_sort                 = format("%.0f", local.hive_tez_container_size[var.environment] * 0.4)
+    # tez_runtime_unordered_output_buffer = format("%.0f", local.hive_tez_container_size[var.environment] * 0.1)
   })
 
   configurations_glue_json = templatefile(format("%s/templates/emr/configuration.glue.json", path.module), {
