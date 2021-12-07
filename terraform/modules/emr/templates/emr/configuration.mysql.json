@@ -110,7 +110,7 @@
       "hive.auto.convert.join.noconditionaltask.size": "100000",
       "hive.mapjoin.smalltable.filesize": "2500000",
       "hive.tez.container.size": "${hive_tez_container_size}",
-      "hive.tez.java.opts": "-Xmx9830m",
+      "hive.tez.java.opts": "-Xmx${hive_java_ops_xmx}m",
       "hive.server2.session.check.interval": "0",
       "hive.server2.idle.operation.timeout": "0",
       "hive.server2.idle.session.timeout": "0",
@@ -128,8 +128,8 @@
     "Properties": {
       "tez.aux.uris": "/libs/",
       "tez.am.resource.memory.mb": "2048",
-      "tez.runtime.io.sort.mb" : "4820",
-      "tez.runtime.unordered.output.buffer.size-mb": "1228"
+      "tez.runtime.io.sort.mb" : "${tez_runtime_io_sort}",
+      "tez.runtime.unordered.output.buffer.size-mb": "${tez_runtime_unordered_output_buffer}"
     }
   }
 ]
