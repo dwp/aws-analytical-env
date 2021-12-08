@@ -25,7 +25,8 @@
       "yarn.log-aggregation.retain-seconds": "-1",
       "yarn.nodemanager.remote-app-log-dir": "${logs_bucket_path}/yarn/",
       "yarn.resourcemanager.scheduler.class": "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler",
-      "yarn.scheduler.fair.preemption": "true"
+      "yarn.scheduler.fair.preemption": "true",
+      "yarn.scheduler.minimum-allocation-mb": "${yarn_scheduler_min_alloc_mem}"
     }
   },
   {
@@ -109,6 +110,7 @@
       "hive.auto.convert.join.noconditionaltask.size": "100000",
       "hive.mapjoin.smalltable.filesize": "2500000",
       "hive.tez.container.size": "${hive_tez_container_size}",
+      "hive.tez.java.opts": "-Xmx${hive_java_ops_xmx}m",
       "hive.server2.session.check.interval": "0",
       "hive.server2.idle.operation.timeout": "0",
       "hive.server2.idle.session.timeout": "0",
@@ -125,7 +127,9 @@
     "Classification": "tez-site",
     "Properties": {
       "tez.aux.uris": "/libs/",
-      "tez.am.resource.memory.mb": "1024"
+      "tez.am.resource.memory.mb": "${yarn_scheduler_min_alloc_mem}",
+      "tez.runtime.io.sort.mb" : "${tez_runtime_io_sort}",
+      "tez.runtime.unordered.output.buffer.size-mb": "${tez_runtime_unordered_output_buffer}"
     }
   }
 ]
