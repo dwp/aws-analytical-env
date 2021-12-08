@@ -97,8 +97,16 @@ locals {
     development = "4096"
     qa          = "4096"
     integration = "4096"
-    preprod     = "32768"
-    production  = "32768"
+    preprod     = "12288"
+    production  = "12288"
+  }
+
+  yarn_scheduler_min_alloc_mem = {
+    development = "1024"
+    qa          = "1024"
+    integration = "1024"
+    preprod     = "2048"
+    production  = "2048"
   }
 
   emr_scheduled_scaling = {
@@ -113,21 +121,25 @@ locals {
   full_proxy = "http://${var.internet_proxy_dns_name}:3128"
 
   configurations_mysql_json = templatefile(format("%s/templates/emr/configuration.mysql.json", path.module), {
-    logs_bucket_path             = format("s3://%s/logs", var.log_bucket)
-    data_bucket_path             = format("s3://%s/data", aws_s3_bucket.emr.id)
-    notebook_bucket_path         = format("%s/data", aws_s3_bucket.emr.id)
-    proxy_host                   = var.internet_proxy_dns_name
-    full_no_proxy                = join("|", local.no_proxy_hosts)
-    r_version                    = local.r_version
-    hive_metastore_endpoint      = var.hive_metastore_endpoint
-    hive_metastore_database_name = var.hive_metastore_database_name
-    hive_metastore_username      = var.hive_metastore_username
-    hive_metastore_pwd           = var.hive_metastore_password
-    hive_compaction_threads      = local.hive_compaction_threads[var.environment]
-    hive_tez_sessions_per_queue  = local.hive_tez_sessions_per_queue[var.environment]
-    hive_max_reducers            = local.hive_max_reducers[var.environment]
-    use_auth                     = var.hive_use_auth
-    hive_tez_container_size      = local.hive_tez_container_size[var.environment]
+    logs_bucket_path                    = format("s3://%s/logs", var.log_bucket)
+    data_bucket_path                    = format("s3://%s/data", aws_s3_bucket.emr.id)
+    notebook_bucket_path                = format("%s/data", aws_s3_bucket.emr.id)
+    proxy_host                          = var.internet_proxy_dns_name
+    full_no_proxy                       = join("|", local.no_proxy_hosts)
+    r_version                           = local.r_version
+    hive_metastore_endpoint             = var.hive_metastore_endpoint
+    hive_metastore_database_name        = var.hive_metastore_database_name
+    hive_metastore_username             = var.hive_metastore_username
+    hive_metastore_pwd                  = var.hive_metastore_password
+    hive_compaction_threads             = local.hive_compaction_threads[var.environment]
+    hive_tez_sessions_per_queue         = local.hive_tez_sessions_per_queue[var.environment]
+    hive_max_reducers                   = local.hive_max_reducers[var.environment]
+    use_auth                            = var.hive_use_auth
+    hive_tez_container_size             = local.hive_tez_container_size[var.environment]
+    hive_java_ops_xmx                   = format("%.0f", local.hive_tez_container_size[var.environment] * 0.8)
+    tez_runtime_io_sort                 = format("%.0f", local.hive_tez_container_size[var.environment] * 0.4)
+    tez_runtime_unordered_output_buffer = format("%.0f", local.hive_tez_container_size[var.environment] * 0.1)
+    yarn_scheduler_min_alloc_mem        = local.yarn_scheduler_min_alloc_mem[var.environment]
   })
 
   configurations_glue_json = templatefile(format("%s/templates/emr/configuration.glue.json", path.module), {
