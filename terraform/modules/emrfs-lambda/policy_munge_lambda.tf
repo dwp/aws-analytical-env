@@ -6,7 +6,7 @@ resource "aws_lambda_function" "policy_munge_lambda" {
   runtime          = "python3.8"
   source_code_hash = data.archive_file.policy_munge_lambda_zip.output_base64sha256
   tags             = merge(var.common_tags, { Name = "${var.name_prefix}-policy-munge", "ProtectSensitiveData" = "False" })
-  timeout          = 840
+  timeout          = 900
 
   environment {
     variables = {
