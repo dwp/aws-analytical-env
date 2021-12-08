@@ -46,7 +46,7 @@ data aws_iam_policy_document policy_logs_check_user_expiry {
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
-    resources = [aws_cloudwatch_log_group.check_user_expiry_lambda_logs.arn]
+    resources = ["${aws_cloudwatch_log_group.check_user_expiry_lambda_logs_updated.arn}:*"]
   }
 }
 
@@ -102,6 +102,6 @@ data aws_iam_policy_document policy_ses_send_reminder_email {
       "SES:SendEmail",
       "SES:SendRawEmail"
     ]
-    resources = ["arn:aws:ses:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:identity/*"]
+    resources = ["arn:aws:ses:${var.region_domain}:${data.aws_caller_identity.current.account_id}:identity/*"]
   }
 }

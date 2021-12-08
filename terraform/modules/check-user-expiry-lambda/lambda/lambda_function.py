@@ -3,6 +3,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
+import botocore.exceptions
 
 mail_from = os.environ.get("MAIL_FROM")
 if mail_from is None:
@@ -46,10 +47,16 @@ if cognito_user_pool_id is None:
     print(message)
     raise Exception(message)
 
+region_domain = os.environ.get("REGION_DOMAIN")
+if region_domain is None:
+    message = "Variable REGION_DOMAIN was not provided."
+    print(message)
+    raise Exception(message)
+
 dynamodb = boto3.resource("dynamodb", region_name=region_name)
 table = dynamodb.Table(table_name)
 s3 = boto3.client("s3")
-ses = boto3.client("ses", region_name=region_name)
+ses = boto3.client("ses", region_name=region_domain)
 cognito = boto3.client("cognito-idp", region_name=region_name)
 
 
@@ -103,24 +110,30 @@ def process_items(items, subject, template):
             "[[ recipient_name ]]", item["username"][:-3]
         ).replace("[[ number_of_days_until_expiry ]]", str(days.days)).replace("[[ title ]]", subject_with_username)
         email_to = query_user_email_from_cognito(item["username"][:-3])
-        print("Sending email to: " + email_to)
-        send_email(email_from, email_to, subject_with_username, email_body_with_values)
+        if email_to != '':
+            print("Sending email to: " + email_to)
+            send_email(email_from, email_to, subject_with_username, email_body_with_values)
 
 
 def query_user_email_from_cognito(username):
-    response = cognito.admin_get_user(
-        UserPoolId=cognito_user_pool_id, Username=username
-    )
-    return extract_email_from_user_attributes(response)
+    try:
+        response = cognito.admin_get_user(
+            UserPoolId=cognito_user_pool_id, Username=username
+        )
+        return extract_email_from_user_attributes(response)
+    except botocore.exceptions.ClientError:
+        return ''
 
 
 def extract_email_from_user_attributes(user):
     for attribute in user["UserAttributes"]:
         if attribute["Name"] == "email":
             return attribute["Value"]
+        if attribute["Name"] == "preferred_username":
+            return user["Username"][4:]
     message = "Email attribute not found for user: " + user["Username"]
     print(message)
-    raise Exception(message)
+    return ''
 
 
 def send_email(email_from, email_to, email_subject, email_body):

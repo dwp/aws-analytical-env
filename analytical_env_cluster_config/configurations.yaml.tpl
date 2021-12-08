@@ -17,8 +17,9 @@ Configurations:
     "yarn.log-aggregation-enable": "true"
     "yarn.log-aggregation.retain-seconds": "-1"
     "yarn.nodemanager.remote-app-log-dir": "s3://${log_bucket}/logs/yarn/"
-    "yarn.resourcemanager.scheduler.class": "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler
+    "yarn.resourcemanager.scheduler.class": "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler"
     "yarn.scheduler.fair.preemption": "true"
+    "yarn.scheduler.minimum-allocation-mb": "2048"
 - Classification: "spark"
   Properties:
     "maximizeResourceAllocation": "false"
@@ -62,8 +63,8 @@ Configurations:
     "hive.strict.checks.cartesian.product": "false"
     "hive.mapred.mode": "nonstrict"
     %{~ if environment == "production" ~}
-    "hive.tez.container.size": "32768"
-    "hive.tez.java.opts": "-Xmx26214m"
+    "hive.tez.container.size": "12288"
+    "hive.tez.java.opts": "-Xmx9830m"
     "hive.auto.convert.join.noconditionaltask.size": "100000"
     "hive.mapjoin.smalltable.filesize": "2500000"
     "hive.exec.failure.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
@@ -94,8 +95,6 @@ Configurations:
     "hive.compactor.check.interval": "300"
     "hive.compactor.delta.num.threshold": "10"
     "hive.compactor.delta.pct.threshold": "0.1f"
-    "hive.compactor.initiator.on": "true"
-    "hive.compactor.worker.threads": "1"
     "hive.compactor.worker.timeout": "86400"
     "hive.blobstore.optimizations.enabled": "true"
     "hive.blobstore.use.blobstore.as.scratchdir": "false"
@@ -111,4 +110,6 @@ Configurations:
 - Classification: "tez-site"
   Properties:
     "tez.aux.uris": "/libs/"
-    "tez.am.resource.memory.mb": "1024"
+    "tez.am.resource.memory.mb": "2048"
+    "tez.runtime.io.sort.mb" : "4820"
+    "tez.runtime.unordered.output.buffer.size-mb": "1228"

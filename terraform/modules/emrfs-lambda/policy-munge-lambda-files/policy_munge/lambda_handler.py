@@ -21,6 +21,10 @@ CHAR_LIMIT_JSON_POLICY = 6144
 CHARS_EMPTY_TAG = 0
 CHAR_LIMIT_TAG_VALUE = 200
 
+# vars to filter pii users and policies
+COGNITO_PII_GROUP_NAME = "UC_DataScience_PII"
+RBAC_PII_DB_SUFFIX = "unredacted"
+
 """
 ============================================================================================================
 ========================================== Policy Munging Lambda ===========================================
@@ -60,6 +64,7 @@ to a single IAM role than would otherwise be possible.
 def lambda_handler(event, context):
     config = get_config()
 
+    cognito_client = aws_caller.create_cognito_client(get_config(ConfigKeys.mgmt_account))
     user_info: dict[str, UserInfo] = get_db_user_info()
 
     pre_creation_existing_role_list = aws_caller.get_emrfs_roles()
@@ -75,11 +80,24 @@ def lambda_handler(event, context):
 
     for user_name in user_info:
         logging.info(f'Starting to process policies for user: {user_name}')
+        # get user's group from cognito
+        # supply username without the sub (ie., remove last 3 char)
+        user_groups = aws_caller.get_groups_for_user(user_name[:-3], get_config(ConfigKeys.user_pool_id),cognito_client)
+
+        a_user_filtered_policy_name_list = user_info[user_name]['policy_names']
+
+        if COGNITO_PII_GROUP_NAME in user_groups:
+            # user is SC cleared - ie., can view pii data
+            a_user_filtered_policy_name_list = user_info[user_name]['policy_names']
+        else:
+            # user is NOT SC cleared - ie., remove PII policy names from the full user-policy list
+            a_user_filtered_policy_name_list = [p for p in user_info[user_name]['policy_names'] if RBAC_PII_DB_SUFFIX not in p ]
+
         if user_info[user_name]['role_name'] in existing_role_list:
             if user_info[user_name]['active']:
 
                 list_of_policy_objects = get_policy_info(
-                    user_info[user_name]['policy_names'],
+                    a_user_filtered_policy_name_list,
                     all_policy_list
                 )
 
@@ -120,7 +138,7 @@ def lambda_handler(event, context):
                 }
 
                 tag_role_with_policies(
-                    user_info[user_name]['policy_names'],
+                    a_user_filtered_policy_name_list,
                     user_info[user_name]['role_name'],
                     additional_tags
                 )
@@ -393,7 +411,6 @@ def create_policy_document_from_template(user_name, bucket_id, kms_arn):
     s3fslist.append(
         bucket_id
     )
-
     return statement
 
 

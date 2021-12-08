@@ -12,6 +12,7 @@ resource "aws_lambda_function" "lambda_check_user_expiry" {
       BUCKET_NAME           = var.template_bucket,
       COGNITO_USER_POOL_ID  = var.cognito_user_pool_id,
       MAIL_FROM             = var.from_email_address,
+      REGION_DOMAIN         = var.region_domain,
       REMINDER_SUBJECT_LINE = "[[ recipient_name ]]. Your access to DataWorks AWS is about to expire"
       EXPIRED_SUBJECT_LINE  = "[[ recipient_name ]]. Your access to DataWorks AWS has expired"
     }
