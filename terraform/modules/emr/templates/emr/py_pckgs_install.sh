@@ -39,6 +39,8 @@ openpyxl==3.0.7
 python-docx==0.8.11
 python-Levenshtein==0.12.2
 PyDriller==2.0
+dplython==0.0.7
+dfply==0.3.3
 EOF
 
 sudo -E pip3 install --upgrade pip setuptools || true
