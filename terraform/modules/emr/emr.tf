@@ -65,6 +65,11 @@ resource "aws_emr_cluster" "cluster" {
   }
 
   bootstrap_action {
+    name = "run-log4j-patch"
+    path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.patch_log4j_emr_sh.key)
+  }
+
+  bootstrap_action {
     name = "get-dks-cert"
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.get_dks_cert_sh.key)
   }
