@@ -15,7 +15,7 @@ module "emr" {
   log_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
 
   ami_id                  = var.emr_al2_ami_id
-  emr_release_label       = "emr-6.2.1"
+  emr_release_label       = "emr-6.2.0"
   cognito_user_pool_id    = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
   dks_sg_id               = data.terraform_remote_state.crypto.outputs.dks_sg_id[local.environment]
   dks_subnet              = data.terraform_remote_state.crypto.outputs.dks_subnet
@@ -163,7 +163,7 @@ module launcher {
   account                               = local.account[local.environment]
   analytical_env_security_configuration = module.emr.analytical_env_security_configuration
   costcode                              = var.costcode
-  release_version                       = "6.2.1"
+  release_version                       = "6.2.0"
   common_security_group                 = module.emr.common_security_group
   master_security_group                 = module.emr.master_security_group
   slave_security_group                  = module.emr.slave_security_group
