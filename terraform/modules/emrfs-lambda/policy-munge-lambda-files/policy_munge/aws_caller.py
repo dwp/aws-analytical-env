@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from typing import List
 
 import boto3
@@ -64,6 +65,40 @@ def get_groups_for_user(user_name_no_sub, user_pool_id, cognito_client):
             UserPoolId=user_pool_id,
         )
     return [group.get('GroupName') for group in response.get('Groups')]
+
+
+# returns list of usernames those are in PII group
+def get_pii_users(user_pool_id, pii_group_name, cognito_client):
+    paginated_pii_users = []
+    tmp_pii_users = []
+    pii_users = []
+    next_token=''
+    while next_token is not None:
+        if next_token:
+            paginated_pii_users = cognito_client.list_users_in_group(
+            UserPoolId = user_pool_id,
+            GroupName = pii_group_name,
+            NextToken = next_token
+            )
+        else:
+            paginated_pii_users = cognito_client.list_users_in_group(
+            UserPoolId = user_pool_id,
+            GroupName = pii_group_name,
+        )
+        if set(["NextToken","Next"]).intersection(set(paginated_pii_users)):
+            next_token = paginated_pii_users["NextToken"] if "NextToken" in paginated_pii_users else paginated_pii_users['Next']
+        else:
+            next_token = None
+        tmp_pii_users.append(paginated_pii_users['Users'])
+    for p_list in tmp_pii_users:
+        for u in p_list:
+            if u['UserStatus'] != 'EXTERNAL_PROVIDER':
+                pii_users.append(u['Username'])
+            elif u['UserStatus'] == 'EXTERNAL_PROVIDER':
+                for a in u['Attributes']:
+                    if a['Name'] == 'preferred_username':
+                        pii_users.append(a['Value'])
+    return pii_users
 
 
 def list_all_policies_in_account():
