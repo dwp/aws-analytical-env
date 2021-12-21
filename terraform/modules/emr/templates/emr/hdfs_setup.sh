@@ -16,7 +16,7 @@ set -o pipefail
   fi
 
   #Needed to correctly collect EMR metricts after cluster update to 6.2.1
-  systemctl start metricscollector.service
+  systemctl restart metricscollector
 
   USERS=$(< /opt/dataworks/users)
   USER_GROUPS=$(< /opt/dataworks/groups)
