@@ -84,11 +84,18 @@ def get_pii_users(user_pool_id, pii_group_name, cognito_client):
             UserPoolId = user_pool_id,
             GroupName = pii_group_name,
         )
+        
+        # get next page token
         if set(["NextToken","Next"]).intersection(set(paginated_pii_users)):
             next_token = paginated_pii_users["NextToken"] if "NextToken" in paginated_pii_users else paginated_pii_users['Next']
         else:
             next_token = None
+        
+        # put paginated user objects into a temp list
         tmp_pii_users.append(paginated_pii_users['Users'])
+    
+    # remove other un-necessary meta and produce list with just usernames
+    # considering adfs and non-adfs users
     for p_list in tmp_pii_users:
         for u in p_list:
             if u['UserStatus'] != 'EXTERNAL_PROVIDER':
