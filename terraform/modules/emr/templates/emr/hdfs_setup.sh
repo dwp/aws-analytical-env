@@ -15,6 +15,9 @@ set -o pipefail
     exit 0
   fi
 
+  #Needed to correctly collect EMR metricts after cluster update to 6.2.1
+  systemctl start metricscollector.service
+
   USERS=$(< /opt/dataworks/users)
   USER_GROUPS=$(< /opt/dataworks/groups)
   S3_FILE_PATH=$(echo ${hive_data_s3} | awk -F ':' '{print $3 "://" $6}')
