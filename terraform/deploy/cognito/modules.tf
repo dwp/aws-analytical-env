@@ -35,7 +35,7 @@ module "custom-auth-flow" {
 module "check-user-expiry-lambda" {
   source = "../../modules/check-user-expiry-lambda"
 
-  name_prefix              = var.name_prefix
+  name_prefix              = "test"
   common_tags              = local.common_tags
   cognito_user_pool_id     = module.cognito-fs.outputs.user_pool_id
   cognito_user_pool_arn    = module.cognito-fs.outputs.user_pool_arn
