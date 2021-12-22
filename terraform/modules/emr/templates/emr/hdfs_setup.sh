@@ -15,9 +15,6 @@ set -o pipefail
     exit 0
   fi
 
-  #Needed to correctly collect EMR metricts after cluster update to 6.2.1
-  sudo systemctl restart metricscollector.service
-
   USERS=$(< /opt/dataworks/users)
   USER_GROUPS=$(< /opt/dataworks/groups)
   S3_FILE_PATH=$(echo ${hive_data_s3} | awk -F ':' '{print $3 "://" $6}')
@@ -53,5 +50,8 @@ set -o pipefail
       echo "CREATE DATABASE IF NOT EXISTS $${DB} LOCATION 's3://${published_bucket}/data/$${DB}';" >> create_db.sql
   done
   sudo /bin/hive -f create_db.sql
+
+  #Needed to correctly collect EMR metrics after cluster update to 6.2.1
+  sudo systemctl restart metricscollector.service
 
 ) >> /var/log/batch/hdfs_setup.log 2>&1
