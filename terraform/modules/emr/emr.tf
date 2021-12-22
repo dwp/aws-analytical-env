@@ -57,7 +57,7 @@ resource "aws_emr_cluster" "cluster" {
 
   configurations_json = var.use_mysql_hive_metastore == true ? local.configurations_mysql_json : local.configurations_glue_json
 
-   bootstrap_action {
+  bootstrap_action {
     name = "run-log4j-patch"
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.patch_log4j_emr_sh.key)
   }
