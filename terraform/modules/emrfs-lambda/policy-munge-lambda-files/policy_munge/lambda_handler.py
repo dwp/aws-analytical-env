@@ -65,6 +65,9 @@ def lambda_handler(event, context):
     config = get_config()
 
     cognito_client = aws_caller.create_cognito_client(get_config(ConfigKeys.mgmt_account))
+    
+    pii_users = aws_caller.get_pii_users(get_config(ConfigKeys.user_pool_id),COGNITO_PII_GROUP_NAME ,cognito_client)
+    
     user_info: dict[str, UserInfo] = get_db_user_info()
 
     pre_creation_existing_role_list = aws_caller.get_emrfs_roles()
@@ -82,11 +85,12 @@ def lambda_handler(event, context):
         logging.info(f'Starting to process policies for user: {user_name}')
         # get user's group from cognito
         # supply username without the sub (ie., remove last 3 char)
-        user_groups = aws_caller.get_groups_for_user(user_name[:-3], get_config(ConfigKeys.user_pool_id),cognito_client)
+        # user_groups = aws_caller.get_groups_for_user(user_name[:-3], get_config(ConfigKeys.user_pool_id),cognito_client)
 
         a_user_filtered_policy_name_list = user_info[user_name]['policy_names']
 
-        if COGNITO_PII_GROUP_NAME in user_groups:
+        # if COGNITO_PII_GROUP_NAME in user_groups:
+        if user_name[:-3] in pii_users:
             # user is SC cleared - ie., can view pii data
             a_user_filtered_policy_name_list = user_info[user_name]['policy_names']
         else:
