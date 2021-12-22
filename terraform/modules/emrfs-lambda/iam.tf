@@ -241,6 +241,7 @@ data aws_iam_policy_document mgmt_rbac_lambda_document {
     actions = [
       "cognito-idp:AdminListGroupsForUser",
       "cognito-idp:ListUsers",
+      "cognito-idp:ListUsersInGroup",
     ]
     resources = [
       "arn:aws:cognito-idp:${var.region}:${var.mgmt_account}:userpool/${var.cognito_user_pool_id}"
