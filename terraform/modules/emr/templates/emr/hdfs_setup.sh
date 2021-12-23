@@ -51,7 +51,4 @@ set -o pipefail
   done
   sudo /bin/hive -f create_db.sql
 
-  #Needed to correctly collect EMR metrics after cluster update to 6.2.1
-  sudo systemctl restart metricscollector.service
-
 ) >> /var/log/batch/hdfs_setup.log 2>&1
