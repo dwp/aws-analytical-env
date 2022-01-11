@@ -57,15 +57,30 @@ sft::chunked() {
     local -r prefix=${optional_prefix:-DWX_AWS_$(date +'%Y%m%d')_BATCH_}
 
     if tar -C "$source_directory" -cvf - . \
-            | split --suffix-length 5 \
+            | split --suffix-length 10 \
                     --bytes "${chunk_size}" \
                     --numeric-suffixes=1 \
                     - "${target_directory%/}/$prefix"; then
 
         local -r count=$(find "$target_directory" -maxdepth 1 -name "$prefix"'*' | wc -l)
 
+        #Add default padding of 3
+        if ((${#count} <= 3));
+        then
+            padding=3
+        else
+            padding=${#count}
+        fi
+        
+        #Padding count with leading zeros
+        printf -v padded_count "%0${padding}d" "$count"
+
         for file in "${target_directory%/}/${prefix}"*; do
-            mv "$file" "${file}_${count}.tar.part"
+            #get the file numeric suffix
+            suffix=${file: -${padding}}
+            #remove the numeric suffix from filename
+            filename_nosuffix=${file::-10}
+            mv "$file" "${filename_nosuffix}.tar.${suffix}-${padded_count}"
         done
     fi
 }
