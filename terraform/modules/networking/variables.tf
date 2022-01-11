@@ -23,6 +23,16 @@ variable "vpc" {
   })
 }
 
+variable "public_subnets" {
+  description = "CIDR ranges of public vpc subnets"
+  type        = list(string)
+}
+
+variable "private_subnets" {
+  description = "CIDR ranges of private vpc subnets"
+  type        = list(string)
+}
+
 variable "role_arn" {
   description = "role arns for inclear module providers"
   type        = map(string)

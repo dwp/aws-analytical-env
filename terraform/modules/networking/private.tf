@@ -1,6 +1,6 @@
 resource "aws_subnet" "private" {
   count                = local.zone_count
-  cidr_block           = cidrsubnet(var.vpc.cidr_block, 3, count.index)
+  cidr_block           = var.private_subnets[count.index]
   vpc_id               = var.vpc.id
   availability_zone_id = data.aws_availability_zones.current.zone_ids[count.index]
   tags                 = merge(var.common_tags, { Name = "${var.name}-private-${local.zone_names[count.index]}" })

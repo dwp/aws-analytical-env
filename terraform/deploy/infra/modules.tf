@@ -66,6 +66,18 @@ module networking {
     main_route_table_id = module.analytical_env_vpc.vpc.main_route_table_id
   }
 
+  public_subnets      = [
+    cidrsubnet(module.analytical_env_vpc.vpc.cidr_block, 4, 12),
+    cidrsubnet(module.analytical_env_vpc.vpc.cidr_block, 4, 13),
+    cidrsubnet(module.analytical_env_vpc.vpc.cidr_block, 4, 14)
+  ]
+
+  private_subnets      = [
+    cidrsubnet(module.analytical_env_vpc.vpc.cidr_block, 2, 0),
+    cidrsubnet(module.analytical_env_vpc.vpc.cidr_block, 2, 1),
+    cidrsubnet(module.analytical_env_vpc.vpc.cidr_block, 2, 2)
+  ]
+
   crypto_vpc          = data.terraform_remote_state.crypto.outputs.crypto_vpc
   crypto_vpc_owner_id = local.account[local.management_account[local.environment]]
   dks_subnet          = data.terraform_remote_state.crypto.outputs.dks_subnet
