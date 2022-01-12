@@ -336,6 +336,95 @@ resources:
       uri: https://((dataworks.enterprise_github_url))/dip/aws-json-to-csv.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
 
+  - name: opti-az-common-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/opsmi/opti-az-common.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: opti-az-common-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/opsmi/opti-az-common.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: opti-az-daily-opsmi-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/opsmi/opti-az-daily-opsmi.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: opti-az-daily-opsmi-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/opsmi/opti-az-daily-opsmi.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: opti-az-labour-market-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/opsmi/opti-az-labour-market.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: opti-az-labour-market-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/opsmi/opti-az-labour-market.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: opti-az-case-cleanse-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/opsmi/opti-az-case-cleanse.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: opti-az-case-cleanse-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/opsmi/opti-az-case-cleanse.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: opti-az-wca-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/opsmi/opti-az-wca.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: opti-az-wca-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/opsmi/opti-az-wca.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
 
   - name: time-6am-trigger
     type: time
