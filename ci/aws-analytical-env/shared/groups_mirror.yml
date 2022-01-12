@@ -279,6 +279,86 @@ groups:
       - mirror-git-repo-json-to-csv-repo-preprod
       - mirror-git-repo-json-to-csv-repo-prod
 
+  - name: opti-az-common
+    jobs:
+      - mirror-git-opti-az-common-repo-development
+      - mirror-git-opti-az-common-repo-qa
+      - mirror-git-opti-az-common-repo-integration
+      - mirror-git-opti-az-common-repo-preprod
+      - mirror-git-opti-az-common-repo-prod
+
+  - name: opti-az-common-dev
+    jobs:
+      - mirror-git-opti-az-common-dev-repo-development
+      - mirror-git-opti-az-common-dev-repo-qa
+      - mirror-git-opti-az-common-dev-repo-integration
+      - mirror-git-opti-az-common-dev-repo-preprod
+      - mirror-git-opti-az-common-dev-repo-prod
+
+  - name: opti-az-daily-opsmi
+    jobs:
+      - mirror-git-opti-az-daily-opsmi-repo-development
+      - mirror-git-opti-az-daily-opsmi-repo-qa
+      - mirror-git-opti-az-daily-opsmi-repo-integration
+      - mirror-git-opti-az-daily-opsmi-repo-preprod
+      - mirror-git-opti-az-daily-opsmi-repo-prod
+
+  - name: opti-az-daily-opsmi-dev
+    jobs:
+      - mirror-git-opti-az-daily-opsmi-dev-repo-development
+      - mirror-git-opti-az-daily-opsmi-dev-repo-qa
+      - mirror-git-opti-az-daily-opsmi-dev-repo-integration
+      - mirror-git-opti-az-daily-opsmi-dev-repo-preprod
+      - mirror-git-opti-az-daily-opsmi-dev-repo-prod
+
+  - name: opti-az-labour-market
+    jobs:
+      - mirror-git-opti-az-labour-market-repo-development
+      - mirror-git-opti-az-labour-market-repo-qa
+      - mirror-git-opti-az-labour-market-repo-integration
+      - mirror-git-opti-az-labour-market-repo-preprod
+      - mirror-git-opti-az-labour-market-repo-prod
+
+  - name: opti-az-labour-market-dev
+    jobs:
+      - mirror-git-opti-az-labour-market-dev-repo-development
+      - mirror-git-opti-az-labour-market-dev-repo-qa
+      - mirror-git-opti-az-labour-market-dev-repo-integration
+      - mirror-git-opti-az-labour-market-dev-repo-preprod
+      - mirror-git-opti-az-labour-market-dev-repo-prod
+
+  - name: opti-az-case-cleanse
+    jobs:
+      - mirror-git-opti-az-case-cleanse-repo-development
+      - mirror-git-opti-az-case-cleanse-repo-qa
+      - mirror-git-opti-az-case-cleanse-repo-integration
+      - mirror-git-opti-az-case-cleanse-repo-preprod
+      - mirror-git-opti-az-case-cleanse-repo-prod
+
+  - name: opti-az-case-cleanse-dev
+    jobs:
+      - mirror-git-opti-az-case-cleanse-dev-repo-development
+      - mirror-git-opti-az-case-cleanse-dev-repo-qa
+      - mirror-git-opti-az-case-cleanse-dev-repo-integration
+      - mirror-git-opti-az-case-cleanse-dev-repo-preprod
+      - mirror-git-opti-az-case-cleanse-dev-repo-prod
+
+  - name: git-opti-az-wca
+    jobs:
+      - mirror-git-opti-az-wca-repo-development
+      - mirror-git-opti-az-wca-repo-qa
+      - mirror-git-opti-az-wca-repo-integration
+      - mirror-git-opti-az-wca-repo-preprod
+      - mirror-git-opti-az-wca-repo-prod
+
+  - name: git-opti-az-wca-dev
+    jobs:
+      - mirror-git-opti-az-wca-dev-repo-development
+      - mirror-git-opti-az-wca-dev-repo-qa
+      - mirror-git-opti-az-wca-dev-repo-integration
+      - mirror-git-opti-az-wca-dev-repo-preprod
+      - mirror-git-opti-az-wca-dev-repo-prod
+
   - name: update-pipeline
     jobs:
       - update-pipeline

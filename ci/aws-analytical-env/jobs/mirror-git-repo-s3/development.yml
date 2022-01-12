@@ -647,3 +647,174 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-json-to-csv/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+
+  - name: mirror-git-opti-az-common-repo-development
+    plan:
+      - get: opti-az-common-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-az-common-repo
+          inputs:
+            - name: opti-az-common-repo
+          params:
+            S3_ROOT: component/uc_repos/opti-az-common/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-opti-az-common-dev-repo-development
+    plan:
+      - get: opti-az-common-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-az-common-dev-repo
+          inputs:
+            - name: opti-az-common-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/opti-az-common/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-opti-az-daily-opsmi-repo-development
+    plan:
+      - get: opti-az-daily-opsmi-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-az-daily-opsmi-repo
+          inputs:
+            - name: opti-az-daily-opsmi-repo
+          params:
+            S3_ROOT: component/uc_repos/opti-az-daily-opsmi/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-opti-az-daily-opsmi-dev-repo-development
+    plan:
+      - get: opti-az-daily-opsmi-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-az-daily-opsmi-dev-repo
+          inputs:
+            - name: opti-az-daily-opsmi-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/opti-az-daily-opsmi/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-opti-az-labour-market-repo-development
+    plan:
+      - get: opti-az-labour-market-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-az-labour-market-repo
+          inputs:
+            - name: opti-az-labour-market-repo
+          params:
+            S3_ROOT: component/uc_repos/opti-az-labour-market/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-opti-az-labour-market-dev-repo-development
+    plan:
+      - get: opti-az-labour-market-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-az-labour-market-dev-repo
+          inputs:
+            - name: opti-az-labour-market-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/opti-az-labour-market/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-opti-az-case-cleanse-repo-development
+    plan:
+      - get: opti-az-case-cleanse-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-az-case-cleanse-repo
+          inputs:
+            - name: opti-az-case-cleanse-repo
+          params:
+            S3_ROOT: component/uc_repos/opti-az-case-cleanse/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-opti-az-case-cleanse-dev-repo-development
+    plan:
+      - get: opti-az-case-cleanse-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-az-case-cleanse-dev-repo
+          inputs:
+            - name: opti-az-case-cleanse-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/opti-az-case-cleanse/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-opti-az-wca-repo-development
+    plan:
+      - get: opti-az-wca-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-az-wca-repo
+          inputs:
+            - name: opti-az-wca-repo
+          params:
+            S3_ROOT: component/uc_repos/opti-az-wca/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-opti-az-wca-dev-repo-development
+    plan:
+      - get: opti-az-wca-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-az-wca-dev-repo
+          inputs:
+            - name: opti-az-wca-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/opti-az-wca/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
