@@ -14,7 +14,7 @@ resource aws_cognito_user_pool emr {
 
     invite_message_template {
       email_message = var.email_template
-      email_subject = "Your temporary password"
+      email_subject = "Your temporary password (please reset - valid only for 24 hours)"
       sms_message   = "Your username is {username} and temporary password is {####}"
     }
   }
