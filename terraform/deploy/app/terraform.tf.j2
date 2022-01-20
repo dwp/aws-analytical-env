@@ -1,5 +1,5 @@
 terraform {
-  required_version = "{{terraform.terraform_13_version}}"
+  required_version = "{{terraform.terraform_14_version}}"
 
   backend "s3" {
     bucket         = "{{terraform.state_file_bucket}}"
@@ -9,11 +9,16 @@ terraform {
     kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
     dynamodb_table = "remote_state_locks"
   }
+
+  required_providers {
+    aws = {
+      version = "~> 3.42.0"
+    }
+  }
 }
 
 provider "aws" {
   region = var.region
-  version = "~> 3.42.0"
   assume_role {
     role_arn = "arn:aws:iam::${local.account[local.environment]}:role/${var.assume_role}"
   }
@@ -202,7 +207,6 @@ data "terraform_remote_state" "dataworks_aws_data_egress" {
 }
 
 provider "aws" {
-  version = "~> 3.42.0"
   alias  = "management-ami"
   region = var.region
 
@@ -212,7 +216,6 @@ provider "aws" {
 }
 
 provider "aws" {
-  version = "~> 3.42.0"
   alias  = "management"
   region = var.region
 
