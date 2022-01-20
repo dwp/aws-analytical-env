@@ -7,21 +7,21 @@ meta:
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_14_version))
+            tag: ((dataworks.terraform_13_version))
         params:
           TF_INPUT: false
           TF_CLI_ARGS_apply: -lock-timeout=300s
           TF_CLI_ARGS_plan: -lock-timeout=300s
           TF_VAR_costcode: ((dataworks.costcode))
 
-    terraform-14-common-config:
+    terraform-13-common-config:
       config:
         platform: linux
         image_resource:
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_14_version))
+            tag: ((dataworks.terraform_13_version))
         params:
           TF_INPUT: false
           TF_CLI_ARGS_apply: -lock-timeout=300s
@@ -107,7 +107,6 @@ meta:
               cp ../../../../terraform-config/terraform.tf .
               cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
-              export TF_LOG=DEBUG
               terraform init
               export TF_VAR_emr_al2_ami_id=$(cat ../../../../emr-al2-ami/id)
               export TF_VAR_aws_analytical_env_emr_launcher_zip="{base_path = \"../../../../emr-launcher-release\", version = \"$(cat ../../../../emr-launcher-release/version)\"}"
@@ -195,7 +194,7 @@ meta:
 
     terraform-output-common:
       task: terraform-output-common
-      .: (( inject meta.plan.terraform-14-common-config ))
+      .: (( inject meta.plan.terraform-13-common-config ))
       config:
         run:
           path: sh
@@ -347,8 +346,8 @@ meta:
           type: docker-image
           source:
             repository: ((terraform.repository))
-            version: 0.14.9
-            tag: 0.14.9
+            version: 0.13.4
+            tag: 0.13.4
         run:
           path: sh
           args:
@@ -647,7 +646,7 @@ meta:
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_14_version))
+            tag: ((dataworks.terraform_13_version))
         params:
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
           GIT_USERNAME: ((dataworks.concourse_github_username))
@@ -689,7 +688,7 @@ meta:
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_14_version))
+            tag: ((dataworks.terraform_13_version))
         params:
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
           GIT_USERNAME: ((dataworks.concourse_github_username))
