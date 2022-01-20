@@ -107,6 +107,7 @@ meta:
               cp ../../../../terraform-config/terraform.tf .
               cp ../../../../terraform-config/terraform.tfvars .
               terraform workspace show
+              export TF_LOG=DEBUG
               terraform init
               export TF_VAR_emr_al2_ami_id=$(cat ../../../../emr-al2-ami/id)
               export TF_VAR_aws_analytical_env_emr_launcher_zip="{base_path = \"../../../../emr-launcher-release\", version = \"$(cat ../../../../emr-launcher-release/version)\"}"
