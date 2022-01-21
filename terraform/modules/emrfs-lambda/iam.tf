@@ -21,7 +21,7 @@ resource "aws_iam_role_policy" "policy_munge_lambda_basic_policy_attach" {
   policy = data.aws_iam_policy_document.policy_munge_lambda_execution_policy_document.json
 }
 
-data aws_iam_policy_document policy_munge_lambda_execution_policy_document {
+data "aws_iam_policy_document" "policy_munge_lambda_execution_policy_document" {
   statement {
     sid       = "CognitoRdsSyncMgmt"
     actions   = ["sts:AssumeRole"]
@@ -44,7 +44,7 @@ resource "aws_iam_role_policy" "policy_munge_lambda_iam_service_policy" {
   policy = data.aws_iam_policy_document.policy_munge_lambda_document.json
 }
 
-data aws_iam_policy_document policy_munge_lambda_document {
+data "aws_iam_policy_document" "policy_munge_lambda_document" {
   statement {
     sid = "PolicyMungeLambdaIam"
     actions = [
@@ -163,7 +163,7 @@ resource "aws_iam_role_policy" "cognito_rds_sync_lambda_logging_policy" {
   policy = data.aws_iam_policy_document.cognito_rds_sync_lambda_logging_policy_document.json
 }
 
-data aws_iam_policy_document cognito_rds_sync_lambda_logging_policy_document {
+data "aws_iam_policy_document" "cognito_rds_sync_lambda_logging_policy_document" {
   statement {
     sid = "CognitoRdsSyncLambdaLogging"
     actions = [
@@ -179,7 +179,7 @@ resource "aws_iam_role_policy" "cognito_rds_sync_lambda_iam_service_policy" {
   policy = data.aws_iam_policy_document.cognito_rds_sync_lambda_document.json
 }
 
-data aws_iam_policy_document cognito_rds_sync_lambda_document {
+data "aws_iam_policy_document" "cognito_rds_sync_lambda_document" {
   statement {
     sid    = "AllowGetCredentials"
     effect = "Allow"
@@ -235,7 +235,7 @@ resource "aws_iam_role_policy" "mgmt_cognito_rds_sync_lambda_policy" {
   provider   = aws.management
 }
 
-data aws_iam_policy_document mgmt_rbac_lambda_document {
+data "aws_iam_policy_document" "mgmt_rbac_lambda_document" {
   statement {
     sid = "CognitoSyncLambda"
     actions = [

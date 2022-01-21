@@ -1,4 +1,4 @@
-resource aws_cognito_user_pool emr {
+resource "aws_cognito_user_pool" "emr" {
   name = local.name
 
   mfa_configuration = "OPTIONAL"
@@ -61,11 +61,11 @@ resource aws_cognito_user_pool emr {
   }
 }
 
-data template_file metadata_adfs {
+data "template_file" "metadata_adfs" {
   template = file("${path.module}/FederationMetadata-20200402.xml.tpl")
 }
 
-resource aws_cognito_identity_provider adfs_dwp {
+resource "aws_cognito_identity_provider" "adfs_dwp" {
   user_pool_id  = aws_cognito_user_pool.emr.id
   provider_name = "DWP"
   provider_type = "SAML"

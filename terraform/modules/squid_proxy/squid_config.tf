@@ -21,7 +21,7 @@ resource "aws_s3_bucket_object" "squid_conf" {
   tags       = merge(var.common_tags, { Name : "${var.name_prefix}-squid-config" })
 }
 
-data template_file "whitelist" {
+data "template_file" "whitelist" {
   template = file("${path.module}/templates/whitelist.tpl")
 }
 

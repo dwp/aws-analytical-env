@@ -1,11 +1,11 @@
-resource aws_vpc_peering_connection crypto {
+resource "aws_vpc_peering_connection" "crypto" {
   peer_owner_id = var.crypto_vpc_owner_id
   peer_vpc_id   = var.crypto_vpc.id
   vpc_id        = var.vpc.id
   tags          = var.common_tags
 }
 
-resource aws_vpc_peering_connection_accepter crypto {
+resource "aws_vpc_peering_connection_accepter" "crypto" {
   provider = aws.management-crypto
 
   vpc_peering_connection_id = aws_vpc_peering_connection.crypto.id
@@ -15,7 +15,7 @@ resource aws_vpc_peering_connection_accepter crypto {
   depends_on = [aws_vpc_peering_connection.crypto]
 }
 
-resource aws_vpc_peering_connection_options crypto_accepter {
+resource "aws_vpc_peering_connection_options" "crypto_accepter" {
   provider = aws.management-crypto
 
   vpc_peering_connection_id = aws_vpc_peering_connection_accepter.crypto.id
@@ -27,7 +27,7 @@ resource aws_vpc_peering_connection_options crypto_accepter {
   depends_on = [aws_vpc_peering_connection_accepter.crypto]
 }
 
-resource aws_vpc_peering_connection_options crypto_requester {
+resource "aws_vpc_peering_connection_options" "crypto_requester" {
   vpc_peering_connection_id = aws_vpc_peering_connection_accepter.crypto.id
 
   requester {
@@ -37,7 +37,7 @@ resource aws_vpc_peering_connection_options crypto_requester {
   depends_on = [aws_vpc_peering_connection_accepter.crypto]
 }
 
-resource aws_route private_a_to_dks {
+resource "aws_route" "private_a_to_dks" {
   for_each = toset(var.dks_subnet.cidr_blocks)
 
   route_table_id            = aws_route_table.private[0].id
@@ -45,7 +45,7 @@ resource aws_route private_a_to_dks {
   vpc_peering_connection_id = aws_vpc_peering_connection_accepter.crypto.id
 }
 
-resource aws_route private_b_to_dks {
+resource "aws_route" "private_b_to_dks" {
   for_each = toset(var.dks_subnet.cidr_blocks)
 
   route_table_id            = aws_route_table.private[1].id
@@ -53,7 +53,7 @@ resource aws_route private_b_to_dks {
   vpc_peering_connection_id = aws_vpc_peering_connection_accepter.crypto.id
 }
 
-resource aws_route private_c_to_dks {
+resource "aws_route" "private_c_to_dks" {
   for_each = toset(var.dks_subnet.cidr_blocks)
 
   route_table_id            = aws_route_table.private[2].id

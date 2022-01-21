@@ -1,6 +1,6 @@
 /* ========== Batch Service Role ========== */
 
-data aws_iam_policy_document policy_assume_role_batch_service {
+data "aws_iam_policy_document" "policy_assume_role_batch_service" {
   statement {
     sid = "AllowBatchServiceToAssumeRole"
     actions = [
@@ -70,7 +70,7 @@ resource "aws_iam_role_policy_attachment" "aws_batch_service_role_ebs_cmk" {
 
 /* ========== Batch Instance Role ========== */
 
-data aws_iam_policy_document policy_assume_role_batch_instance {
+data "aws_iam_policy_document" "policy_assume_role_batch_instance" {
   statement {
     sid = "AllowBatchJobToAssumeRole"
     actions = [
@@ -136,7 +136,7 @@ resource "aws_iam_role_policy_attachment" "ecs_instance_role_batch_ecr" {
 
 /* ========== Batch Job Role ========== */
 
-data aws_iam_policy_document policy_assume_role_batch_job {
+data "aws_iam_policy_document" "policy_assume_role_batch_job" {
   statement {
     sid = "AllowBatchJobToAssumeRole"
     actions = [

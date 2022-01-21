@@ -1,4 +1,4 @@
-module analytical_env_vpc {
+module "analytical_env_vpc" {
   source  = "dwp/vpc/aws"
   version = "3.0.10"
 
@@ -49,7 +49,7 @@ module analytical_env_vpc {
   ]
 }
 
-module networking {
+module "networking" {
   source = "../../modules/networking"
 
   common_tags = local.common_tags
@@ -73,7 +73,7 @@ module networking {
   region              = var.region
 }
 
-module waf {
+module "waf" {
   source = "../../modules/waf"
 
   name       = local.name
@@ -84,7 +84,7 @@ module waf {
   name_prefix           = local.name
 }
 
-module alb {
+module "alb" {
   source = "../../modules/alb"
 
   vpc_id = module.networking.outputs.aws_vpc.id

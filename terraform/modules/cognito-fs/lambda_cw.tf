@@ -1,4 +1,4 @@
-resource aws_cloudwatch_event_rule snapshot_cognito_pool {
+resource "aws_cloudwatch_event_rule" "snapshot_cognito_pool" {
   name        = "snapshot_cognito_pool"
   description = "Capture changes to the Cognito Pool made by an Administrator"
   depends_on = [
@@ -35,7 +35,7 @@ resource aws_cloudwatch_event_rule snapshot_cognito_pool {
   tags          = merge(var.common_tags, { Name : "${var.name_prefix}-cognito-pool-rule" })
 }
 
-resource aws_cloudwatch_event_target notification {
+resource "aws_cloudwatch_event_target" "notification" {
   target_id = "CognitoSnapshotLambda"
   rule      = aws_cloudwatch_event_rule.snapshot_cognito_pool.name
   arn       = aws_lambda_function.snapshot_cognito_pool.arn

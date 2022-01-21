@@ -1,4 +1,4 @@
-data aws_iam_policy_document policy_assume_role_lambda {
+data "aws_iam_policy_document" "policy_assume_role_lambda" {
   statement {
     sid = "AllowLambdaToAssumeRole"
     actions = [

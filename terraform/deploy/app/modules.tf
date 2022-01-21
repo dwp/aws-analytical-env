@@ -151,7 +151,7 @@ module "codecommit" {
 }
 
 
-module launcher {
+module "launcher" {
   source = "../../modules/emr-launcher"
 
   emr_bucket                            = module.emr.emr_bucket

@@ -49,7 +49,7 @@ variable "whitelist_cidr_blocks" {
   description = "(Required) Rangese we will accept traffic from"
 }
 
-variable role_arn {
+variable "role_arn" {
   type        = map(string)
   description = "(Required) The role used for creating DNS/ACM"
 }

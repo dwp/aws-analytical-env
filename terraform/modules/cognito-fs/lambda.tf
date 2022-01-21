@@ -1,4 +1,4 @@
-data archive_file snapshot_cognito_pool {
+data "archive_file" "snapshot_cognito_pool" {
   type        = "zip"
   source_file = "${path.module}/audit.py"
   output_path = "${path.module}/audit.zip"

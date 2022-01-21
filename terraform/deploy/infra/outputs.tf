@@ -1,20 +1,20 @@
-output vpc {
+output "vpc" {
   value = module.networking.outputs
 }
 
-output alb {
+output "alb" {
   value = {
     name = module.alb.lb.name
   }
 }
 
-output alb_sg {
+output "alb_sg" {
   value = {
     id = module.alb.lb_sg.id
   }
 }
 
-output alb_fqdn {
+output "alb_fqdn" {
   value = module.alb.fqdn
 }
 
@@ -28,41 +28,41 @@ output "parent_domain_name" {
   value       = local.parent_domain_name[local.environment]
 }
 
-output alb_listner {
+output "alb_listner" {
   value = {
     arn = module.alb.alb_listener.arn
   }
 }
 
-output vpc_main {
+output "vpc_main" {
   value = module.analytical_env_vpc
 }
 
-output interface_vpce_sg_id {
+output "interface_vpce_sg_id" {
   value = module.analytical_env_vpc.interface_vpce_sg_id
 }
 
-output s3_prefix_list_id {
+output "s3_prefix_list_id" {
   value = module.analytical_env_vpc.prefix_list_ids.s3
 }
 
-output dynamodb_prefix_list_id {
+output "dynamodb_prefix_list_id" {
   value = module.analytical_env_vpc.prefix_list_ids.dynamodb
 }
 
-output internet_proxy_dns_name {
+output "internet_proxy_dns_name" {
   value = module.analytical_env_vpc.custom_vpce_dns_names["proxy_vpc_endpoint"][0]
 }
 
-output github_proxy_dns_name {
+output "github_proxy_dns_name" {
   value = module.analytical_env_vpc.custom_vpce_dns_names["github_proxy_vpc_endpoint"][0]
 }
 
-output internet_proxy_sg {
+output "internet_proxy_sg" {
   value = module.analytical_env_vpc.custom_vpce_sg_id
 }
 
-output no_proxy_list {
+output "no_proxy_list" {
   value = module.analytical_env_vpc.no_proxy_list
 }
 

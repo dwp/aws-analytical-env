@@ -6,7 +6,7 @@ resource "aws_security_group" "lb_sg" {
   revoke_rules_on_delete = true
 }
 
-resource aws_security_group_rule ingress_to_alb {
+resource "aws_security_group_rule" "ingress_to_alb" {
   description       = "ingress_to_alb"
   from_port         = 443
   protocol          = "tcp"
