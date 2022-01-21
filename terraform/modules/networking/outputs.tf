@@ -1,4 +1,4 @@
-output outputs {
+output "outputs" {
   value = {
     aws_availability_zones = data.aws_availability_zones.current
     aws_nat_gateways       = aws_nat_gateway.nat

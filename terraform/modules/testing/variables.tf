@@ -40,7 +40,7 @@ variable "metrics_data_s3_folder" {
   description = "(Required) local file path to EMR metrics data docker folder"
 }
 
-variable log_bucket {
+variable "log_bucket" {
   description = "Bucket to store audit trail in"
   type        = string
 }

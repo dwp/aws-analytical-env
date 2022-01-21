@@ -19,7 +19,7 @@ variable "account" {
 }
 
 variable "aws_subnets_private" {
-  type        = list
+  type        = list(any)
   description = "(Required) The subnet in which the lambda will run"
 }
 

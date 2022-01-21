@@ -237,7 +237,7 @@ resource "aws_iam_role_policy" "elastic_map_reduce_for_ec2_role" {
   policy = data.aws_iam_policy_document.elastic_map_reduce_for_ec2_role.json
 }
 
-data aws_iam_policy_document elastic_map_reduce_for_ec2_role {
+data "aws_iam_policy_document" "elastic_map_reduce_for_ec2_role" {
   statement {
     sid    = "AllowEmrEC2toPutCloudwatchMetrics"
     effect = "Allow"
@@ -639,13 +639,13 @@ resource "aws_iam_role_policy_attachment" "analytical_env_metadata_change" {
 }
 
 # EMR SSM Policy
-resource aws_iam_role_policy amazon_ec2_role_for_ssm {
+resource "aws_iam_role_policy" "amazon_ec2_role_for_ssm" {
   role   = aws_iam_role.emr_ec2_role.name
   policy = data.aws_iam_policy_document.amazon_ec2_role_for_ssm.json
   name   = "AE_ElasticMapReduceforEC2Role_SSM"
 }
 
-data aws_iam_policy_document amazon_ec2_role_for_ssm {
+data "aws_iam_policy_document" "amazon_ec2_role_for_ssm" {
   statement {
     sid    = "AllowSSMActions"
     effect = "Allow"
@@ -832,7 +832,7 @@ resource "aws_iam_policy" "group_hive_data_access_policy" {
 
 # DynamoDb meta data table policy
 
-data aws_iam_policy_document dynamodb_pipeline_metadata_policy {
+data "aws_iam_policy_document" "dynamodb_pipeline_metadata_policy" {
   statement {
     sid    = "AllowRWUserDynamoDBPipelineMetaTable"
     effect = "Allow"

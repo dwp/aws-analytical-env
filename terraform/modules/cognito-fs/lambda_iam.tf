@@ -1,4 +1,4 @@
-data aws_iam_policy_document snapshot_cognito_pool_lambda {
+data "aws_iam_policy_document" "snapshot_cognito_pool_lambda" {
   statement {
     sid = "CognitoPoolLambdaAssumeRole"
     actions = [
@@ -11,7 +11,7 @@ data aws_iam_policy_document snapshot_cognito_pool_lambda {
   }
 }
 
-data aws_iam_policy_document lambda_s3 {
+data "aws_iam_policy_document" "lambda_s3" {
   statement {
     sid = "AllowLambdaS3PutSnapshotBucket"
     actions = [
@@ -36,7 +36,7 @@ data aws_iam_policy_document lambda_s3 {
   }
 }
 
-data aws_iam_policy_document lambda_s3_list {
+data "aws_iam_policy_document" "lambda_s3_list" {
   statement {
     sid = "AllowLambdas3ListLogBucket"
     actions = [
@@ -48,7 +48,7 @@ data aws_iam_policy_document lambda_s3_list {
   }
 }
 
-data aws_iam_policy_document lambda_logging {
+data "aws_iam_policy_document" "lambda_logging" {
   statement {
     sid = "AllowLambdaLoggingToSnapshotLogGroup"
     actions = [
@@ -63,28 +63,28 @@ data aws_iam_policy_document lambda_logging {
   }
 }
 
-resource aws_iam_role lambda_execution_role {
+resource "aws_iam_role" "lambda_execution_role" {
   name               = "snapshot-cognito-pool-lambda-execution-role"
   assume_role_policy = data.aws_iam_policy_document.snapshot_cognito_pool_lambda.json
   tags               = merge(var.common_tags, { Name : "${var.name_prefix}-cognito-execution" })
 }
 
-resource aws_iam_role_policy lambda_log {
+resource "aws_iam_role_policy" "lambda_log" {
   role   = aws_iam_role.lambda_execution_role.id
   policy = data.aws_iam_policy_document.lambda_logging.json
 }
 
-resource aws_iam_role_policy lambda_s3 {
+resource "aws_iam_role_policy" "lambda_s3" {
   role   = aws_iam_role.lambda_execution_role.id
   policy = data.aws_iam_policy_document.lambda_s3.json
 }
 
-resource aws_iam_role_policy lambda_s3_list {
+resource "aws_iam_role_policy" "lambda_s3_list" {
   role   = aws_iam_role.lambda_execution_role.id
   policy = data.aws_iam_policy_document.lambda_s3_list.json
 }
 
-resource aws_iam_role_policy_attachment cognito_ro_attach {
+resource "aws_iam_role_policy_attachment" "cognito_ro_attach" {
   role       = aws_iam_role.lambda_execution_role.id
   policy_arn = "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
 }

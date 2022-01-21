@@ -1,16 +1,16 @@
 /* Roles */
 
-resource aws_iam_role role_for_lambda_create_auth_challenge {
+resource "aws_iam_role" "role_for_lambda_create_auth_challenge" {
   name               = "Role-Lambda-Create-Auth_Challenge"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
   tags               = merge(var.common_tags, { Name : "${var.name_prefix}-auth-challenge" })
 }
-resource aws_iam_role role_for_lambda_define_auth_challenge {
+resource "aws_iam_role" "role_for_lambda_define_auth_challenge" {
   name               = "Role-Lambda-Define-Auth_Challenge"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
   tags               = merge(var.common_tags, { Name : "${var.name_prefix}-define-auth" })
 }
-resource aws_iam_role role_for_lambda_verify_auth_challenge {
+resource "aws_iam_role" "role_for_lambda_verify_auth_challenge" {
   name               = "Role-Lambda-Verify-Auth_Challenge"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
   tags               = merge(var.common_tags, { Name : "${var.name_prefix}-verify-auth" })
@@ -22,19 +22,19 @@ resource "aws_iam_role" "role_for_lambda_pre_token_generation" {
   tags               = merge(var.common_tags, { Name : "${var.name_prefix}-pre-token" })
 }
 
-resource aws_iam_role role_for_lambda_pre_auth {
+resource "aws_iam_role" "role_for_lambda_pre_auth" {
   name               = "Role-Lambda-Pre-Auth"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
   tags               = merge(var.common_tags, { Name = "${var.name_prefix}-pre-auth" })
 }
 
-resource aws_iam_role role_for_lambda_post_auth {
+resource "aws_iam_role" "role_for_lambda_post_auth" {
   name               = "Role-Lambda-Post-Auth"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
   tags               = merge(var.common_tags, { Name = "${var.name_prefix}-post-auth" })
 }
 
-data aws_iam_policy_document assume_role_lambda {
+data "aws_iam_policy_document" "assume_role_lambda" {
   statement {
     sid = "AllowLambdaToAssumeRole"
     actions = [
@@ -81,13 +81,13 @@ resource "aws_iam_role_policy_attachment" "cognito_post_auth_basic_execution" {
 
 /* Create Auth Challenge policy */
 
-resource aws_iam_role_policy cognito_create_auth_policy {
+resource "aws_iam_role_policy" "cognito_create_auth_policy" {
   policy = data.aws_iam_policy_document.cognito_create_auth_policy_document.json
   role   = aws_iam_role.role_for_lambda_create_auth_challenge.name
 }
 
 // Work around for AWS SMS / SNS - SEE - https://stackoverflow.com/questions/38871201/authorization-when-sending-a-text-message-using-amazonsnsclient
-data aws_iam_policy_document cognito_create_auth_policy_document {
+data "aws_iam_policy_document" "cognito_create_auth_policy_document" {
   statement {
     sid    = "AllowLambdaToSendSNSToAllResources"
     effect = "Allow"
@@ -108,12 +108,12 @@ data aws_iam_policy_document cognito_create_auth_policy_document {
 
 /* Define Auth Challenge policy */
 
-resource aws_iam_role_policy cognito_define_auth_policy {
+resource "aws_iam_role_policy" "cognito_define_auth_policy" {
   policy = data.aws_iam_policy_document.cognito_define_auth_policy.json
   role   = aws_iam_role.role_for_lambda_define_auth_challenge.name
 }
 
-data aws_iam_policy_document cognito_define_auth_policy {
+data "aws_iam_policy_document" "cognito_define_auth_policy" {
   statement {
     sid    = "AllowCognitoGetUser"
     effect = "Allow"
@@ -128,12 +128,12 @@ data aws_iam_policy_document cognito_define_auth_policy {
 
 /* Pre Auth Policy */
 
-resource aws_iam_role_policy cognito_pre_auth_policy {
+resource "aws_iam_role_policy" "cognito_pre_auth_policy" {
   policy = data.aws_iam_policy_document.cognito_pre_auth_policy.json
   role   = aws_iam_role.role_for_lambda_pre_auth.name
 }
 
-data aws_iam_policy_document cognito_pre_auth_policy {
+data "aws_iam_policy_document" "cognito_pre_auth_policy" {
   statement {
     sid    = "AllowRWUserDynamoDBTable"
     effect = "Allow"
@@ -158,12 +158,12 @@ data aws_iam_policy_document cognito_pre_auth_policy {
 
 /* Post Auth Policy */
 
-resource aws_iam_role_policy cognito_pre_post_auth_policy {
+resource "aws_iam_role_policy" "cognito_pre_post_auth_policy" {
   policy = data.aws_iam_policy_document.cognito_post_auth_policy.json
   role   = aws_iam_role.role_for_lambda_post_auth.name
 }
 
-data aws_iam_policy_document cognito_post_auth_policy {
+data "aws_iam_policy_document" "cognito_post_auth_policy" {
   statement {
     sid    = "AllowRWUserDynamoDBTable"
     effect = "Allow"

@@ -111,7 +111,7 @@ variable "env_certificate_bucket" {
   description = "Bucket that contains environment public certificates"
 }
 
-variable mgmt_certificate_bucket {
+variable "mgmt_certificate_bucket" {
   description = "Bucket that contains management environment public certificates"
 }
 
@@ -121,12 +121,12 @@ variable "dataset_glue_db" {
   description = "Glue database where data generation metadata is stored"
 }
 
-variable log_bucket {
+variable "log_bucket" {
   description = "(Required) The EMR Log bucket"
   type        = string
 }
 
-variable artefact_bucket {
+variable "artefact_bucket" {
   description = "(Required) S3 artefacts bucket"
   type = object({
     id      = string
@@ -134,28 +134,28 @@ variable artefact_bucket {
   })
 }
 
-variable region {
+variable "region" {
   description = "AWS region"
   type        = string
   default     = "eu-west-2"
 }
 
-variable account {
+variable "account" {
   description = "AWS account number"
   type        = string
 }
 
-variable environment {
+variable "environment" {
   description = "Current environment"
   type        = string
 }
 
-variable truststore_aliases {
+variable "truststore_aliases" {
   description = "Truststore aliases"
   type        = string
 }
 
-variable truststore_certs {
+variable "truststore_certs" {
   description = "Truststore Certificates"
   type        = string
 }
