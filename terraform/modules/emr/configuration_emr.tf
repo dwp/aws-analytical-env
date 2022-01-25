@@ -46,6 +46,7 @@ data "template_file" "emr_setup_sh" {
     poll_status_table_shell         = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.poll_status_table_sh.key)
     trigger_tagger_shell            = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.trigger_s3_tagger_batch_job_sh.key)
     parallel_shell                  = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.parallel_sh.key)
+    patch_log4j_emr_shell           = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.patch_log4j_emr_sh.key)
     cwa_namespace                   = local.cw_agent_namespace
     cwa_log_group_name              = local.cw_agent_step_log_group_name
     config_bucket                   = var.config_bucket_id
@@ -235,6 +236,15 @@ resource "aws_s3_bucket_object" "poll_status_table_sh" {
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-poll-status-table-sh" })
 }
+
+resource "aws_s3_bucket_object" "patch_log4j_emr_sh" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/emr/patch-log4j-emr-6.2.1-v1.sh"
+  content = file("${path.module}/templates/emr/patch-log4j-emr-6.2.1-v1.sh")
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-patch-log4j-emr-sh" })
+}
+
 
 resource "aws_s3_bucket_object" "azkaban_notifications_sh" {
   bucket = aws_s3_bucket.emr.id
