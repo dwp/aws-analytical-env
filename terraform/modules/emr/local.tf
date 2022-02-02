@@ -97,8 +97,8 @@ locals {
     development = "4096"
     qa          = "4096"
     integration = "4096"
-    preprod     = "8192"
-    production  = "8192"
+    preprod     = "4096"
+    production  = "4096"
   }
 
   yarn_scheduler_min_alloc_mem = {
