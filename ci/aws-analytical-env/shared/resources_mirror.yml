@@ -200,7 +200,16 @@ resources:
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/dip/aws-nat-stats.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
-
+    
+  - name: aws-welfare-grant
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-welfare-grant.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+    
   - name: aws-dwx-sas-extracts-repo
     type: git
     source:

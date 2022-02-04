@@ -882,3 +882,23 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/dev/opti-az-wca/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
+            
+  - name: mirror-git-repo-aws-welfare-grant-integration
+    plan:
+      - get: aws-welfare-grant
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: integration
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-welfare-grant
+          inputs:
+            - name: aws-welfare-grant
+          params:
+            S3_ROOT: component/uc_repos/aws-welfare-grant
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci            

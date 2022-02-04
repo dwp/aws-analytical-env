@@ -362,3 +362,11 @@ groups:
   - name: update-pipeline
     jobs:
       - update-pipeline
+      
+  - name: aws-welfare-grant
+    jobs:
+      - mirror-git-repo-aws-welfare-grant-development
+      - mirror-git-repo-aws-welfare-grant-qa
+      - mirror-git-repo-aws-welfare-grant-integration
+      - mirror-git-repo-aws-welfare-grant-preprod
+      - mirror-git-repo-aws-welfare-grant-production      
