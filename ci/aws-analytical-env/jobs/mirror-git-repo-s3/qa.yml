@@ -398,7 +398,7 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-dwx-sas-extracts
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
-            
+
   - name: mirror-git-repo-aws-pdm-to-rtg-exports-qa
     plan:
       - get: aws-pdm-to-rtg-exports
@@ -660,7 +660,7 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/kds-rnd/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
-    
+
   - name: mirror-git-repo-json-to-csv-repo-qa
     plan:
       - get: aws-json-to-csv-repo
@@ -881,8 +881,8 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/dev/opti-az-wca/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
-            
-- name: mirror-git-repo-aws-welfare-grant-qa
+
+  - name: mirror-git-repo-aws-welfare-grant-qa
     plan:
       - get: aws-welfare-grant
         trigger: true
@@ -901,4 +901,4 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-welfare-grant
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
-            
+
