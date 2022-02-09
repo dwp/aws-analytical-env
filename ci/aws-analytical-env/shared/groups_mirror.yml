@@ -370,3 +370,11 @@ groups:
       - mirror-git-repo-aws-welfare-grant-integration
       - mirror-git-repo-aws-welfare-grant-preprod
       - mirror-git-repo-aws-welfare-grant-production      
+
+  - name: ni-payment-scan
+    jobs:
+      - mirror-git-repo-ni-payment-scan-development
+      - mirror-git-repo-ni-payment-scan-qa
+      - mirror-git-repo-ni-payment-scan-integration
+      - mirror-git-repo-ni-payment-scan-preprod
+      - mirror-git-repo-ni-payment-scan-prod
