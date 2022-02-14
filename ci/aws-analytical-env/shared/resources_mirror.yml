@@ -445,7 +445,7 @@ resources:
   - name: ni-payment-scan
     type: git
     source:
-      branch: master
+      branch: main
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/dip/ni-payment-scan.git

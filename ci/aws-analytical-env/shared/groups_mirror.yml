@@ -377,4 +377,4 @@ groups:
       - mirror-git-repo-ni-payment-scan-qa
       - mirror-git-repo-ni-payment-scan-integration
       - mirror-git-repo-ni-payment-scan-preprod
-      - mirror-git-repo-ni-payment-scan-prod
+      - mirror-git-repo-ni-payment-scan-production
