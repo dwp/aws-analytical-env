@@ -82,3 +82,8 @@ variable "base64_keystore_data" {
   type        = string
   description = "Base64 encoded Cognito JWK keystore data"
 }
+
+variable "livy_image_tag" {
+  type    = string
+  default = "latest"
+}

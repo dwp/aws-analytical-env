@@ -135,6 +135,7 @@ module "livy_proxy" {
   s3_prefix_list_id    = data.terraform_remote_state.aws_analytical_environment_infra.outputs.s3_prefix_list_id
   interface_vpce_sg_id = data.terraform_remote_state.aws_analytical_environment_infra.outputs.interface_vpce_sg_id
   livy_sg_id           = module.emr.emr_security_group_id
+  livy_image_tag       = local.livy_image_tag[local.environment]
 
   common_tags = local.common_tags
 

@@ -9,7 +9,7 @@ resource "aws_ecs_task_definition" "livy-proxy" {
   container_definitions = <<DEFINITION
 [
   {
-    "image": "${var.image_ecr_repository}:latest",
+    "image": "${var.image_ecr_repository}:${var.livy_image_tag}",
     "name": "${var.name}",
     "networkMode": "awsvpc",
     "portMappings": [
