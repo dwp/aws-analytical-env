@@ -8,4 +8,12 @@ locals {
     preprod     = 1
     production  = 1
   }
+
+  livy_image_tag = {
+    development = "latest"
+    qa          = "latest"
+    integration = "latest"
+    preprod     = "latest"
+    production  = "0.0.161"
+  }
 }
