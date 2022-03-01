@@ -10,10 +10,10 @@ locals {
   }
 
   livy_image_tag = {
-    development = "latest"
-    qa          = "latest"
-    integration = "latest"
-    preprod     = "latest"
-    production  = "0.0.161"
+    development = "0.0.162"
+    qa          = "0.0.162"
+    integration = "0.0.162"
+    preprod     = "0.0.162"
+    production  = "0.0.162"
   }
 }
