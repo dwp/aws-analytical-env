@@ -13,7 +13,9 @@ The user batch cluster is deployed by the `emr-launcher`([GitHub](https://github
 
 ### EMR Security Configurations
 
-As part of the EMR Launcher Lambda, when a Batch EMR cluster is deployed, it has a new security configuration copied from the previous security configuration and associated with the new EMR cluster. As per ([DW-6602](https://projects.ucd.gpn.gov.uk/browse/DW-6602)) and ([DW-6602](https://projects.ucd.gpn.gov.uk/browse/DW-6624)), these security configurations are copied by the EMR Launcher Lambda for the Batch EMR clusters only. The reason for doing this is described in the tickets, but this can mean we have many security configurations. If the number of EMR security configurations reaches the maximum of 600, we will be unable to launch any more EMR clusters. This can lead to outages of the user facing aws-analytical-env EMR cluster and the batch clusters if these aren't preiodically cleaned up.
+As part of the EMR Launcher Lambda, when a Batch EMR cluster is deployed, it has a new security configuration copied from the previous security configuration and associated with the new EMR cluster. As per ([DW-6602](https://projects.ucd.gpn.gov.uk/browse/DW-6602)) and ([DW-6602](https://projects.ucd.gpn.gov.uk/browse/DW-6624)), these security configurations are copied by the EMR Launcher Lambda for the Batch EMR clusters only. The reason for doing this is described in the tickets, but this can mean we have many security configurations. If the number of EMR security configurations reaches the maximum of 600, we will be unable to launch any more EMR clusters. This can lead to outages of the user facing aws-analytical-env EMR cluster and the batch clusters if these aren't periodically cleaned up.
+
+The following ([Concourse Job](https://ci.dataworks.dwp.gov.uk/teams/utility/pipelines/analytical-env-admin?group=admin-all-batch-clusters)) is responsible for ensuring security configurations are periodically cleaned up.
 
 
 ### Logging
