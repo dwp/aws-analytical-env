@@ -242,6 +242,7 @@ module "rbac_db" {
 
   clients = {
     "emrfs-lambda"           = "SELECT, INSERT, UPDATE",
+    "batch-rbac"             = "SELECT, INSERT, UPDATE",
     "analytical_env_support" = "ALL",
     "orchestration_service"  = "SELECT, INSERT"
   }
