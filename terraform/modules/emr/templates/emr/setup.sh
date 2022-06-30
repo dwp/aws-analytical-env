@@ -93,6 +93,8 @@ export AWS_ACCESS_KEY_ID=$(echo "$CREDS" | jq -r .AccessKeyId)
 export AWS_SECRET_ACCESS_KEY=$(echo "$CREDS" | jq -r .SecretAccessKey)
 export AWS_SESSION_TOKEN=$(echo "$CREDS" | jq -r .SessionToken)
 
+# Fix for TooManyRequestsException error when calling the cognito-idp api
+sleep "$(( $RANDOM % 5 )).$(( $RANDOM % 1000 ))"s
 COGNITO_GROUPS=$(aws cognito-idp list-groups --user-pool-id "${user_pool_id}" | jq '.Groups' | jq -r '.[].GroupName')
 
 sudo mkdir -p /opt/dataworks
@@ -123,8 +125,12 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
   sudo tee -a /etc/at.allow <<< "$GROUP"
 
   echo "Adding users for group $GROUP"
+  # Fix for TooManyRequestsException error when calling the cognito-idp api
+  sleep "$(( $RANDOM % 5 )).$(( $RANDOM % 1000 ))"s
   USERS=$(aws cognito-idp list-users-in-group --user-pool-id "${user_pool_id}" --group-name "$GROUP" | jq '.Users[]' | jq -r '(.Attributes[] | if .Name =="preferred_username" then .Value else empty end) // .Username')
 
+  # Fix for TooManyRequestsException error when calling the cognito-idp api
+  sleep "$(( $RANDOM % 5 )).$(( $RANDOM % 1000 ))"s
   USERDIR=$(aws cognito-idp list-users --user-pool-id "${user_pool_id}")
 
   for USER in $${USERS[@]}; do
