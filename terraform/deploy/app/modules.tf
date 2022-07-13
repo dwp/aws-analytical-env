@@ -199,24 +199,25 @@ module "launcher" {
 module "emrfs_lambda" {
   source = "../../modules/emrfs-lambda"
 
-  emrfs_iam_assume_role_json = module.emr.emrfs_iam_assume_role_json
-  account                    = local.account[local.environment]
-  aws_subnets_private        = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
-  common_tags                = local.common_tags
-  name_prefix                = "analytical-env-emrfs-lambda"
-  region                     = var.region
-  vpc_id                     = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
-  internet_proxy_sg_id       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_sg
-  db_client_secret_arn       = module.rbac_db.secrets.client_credentials["emrfs-lambda"].arn
-  db_cluster_arn             = module.rbac_db.rds_cluster.arn
-  db_name                    = module.rbac_db.db_name
-  cognito_user_pool_id       = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
-  mgmt_account               = local.account[local.management_account[local.environment]]
-  management_role_arn        = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
-  environment                = local.environment
-  s3fs_bucket_id             = module.jupyter_s3_storage.jupyterhub_bucket.id
-  s3fs_kms_arn               = module.jupyter_s3_storage.s3fs_bucket_kms_arn
-  monitoring_sns_topic_arn   = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
+  emrfs_iam_assume_role_json        = module.emr.emrfs_iam_assume_role_json
+  account                           = local.account[local.environment]
+  aws_subnets_private               = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private[*].id
+  common_tags                       = local.common_tags
+  name_prefix                       = "analytical-env-emrfs-lambda"
+  region                            = var.region
+  vpc_id                            = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_vpc.id
+  internet_proxy_sg_id              = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_sg
+  db_client_secret_arn              = module.rbac_db.secrets.client_credentials["emrfs-lambda"].arn
+  db_cluster_arn                    = module.rbac_db.rds_cluster.arn
+  db_name                           = module.rbac_db.db_name
+  cognito_user_pool_id              = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
+  mgmt_account                      = local.account[local.management_account[local.environment]]
+  management_role_arn               = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
+  environment                       = local.environment
+  s3fs_bucket_id                    = module.jupyter_s3_storage.jupyterhub_bucket.id
+  s3fs_kms_arn                      = module.jupyter_s3_storage.s3fs_bucket_kms_arn
+  monitoring_sns_topic_arn          = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
+  batch_rbac_container_iam_role_arn = data.terraform_remote_state.dataworks-rbac-munge-policies-infra.outputs.batch_rbac_container_iam_role_arn
 }
 
 module "rbac_db" {

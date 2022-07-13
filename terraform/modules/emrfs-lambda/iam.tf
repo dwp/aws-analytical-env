@@ -223,7 +223,7 @@ data "aws_iam_policy_document" "rbac_lambdas_trust_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = [aws_iam_role.cognito_rds_sync_lambda_role.arn, aws_iam_role.policy_munge_lambda_role.arn]
+      identifiers = [aws_iam_role.cognito_rds_sync_lambda_role.arn, aws_iam_role.policy_munge_lambda_role.arn, var.batch_rbac_container_iam_role_arn]
     }
   }
 }
