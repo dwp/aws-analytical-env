@@ -378,3 +378,11 @@ groups:
       - mirror-git-repo-ni-payment-scan-integration
       - mirror-git-repo-ni-payment-scan-preprod
       - mirror-git-repo-ni-payment-scan-production
+
+  - name: aws-crypto-data
+    jobs:
+      - mirror-git-repo-aws-crypto-data-development
+      - mirror-git-repo-aws-crypto-data-qa
+      - mirror-git-repo-aws-crypto-data-integration
+      - mirror-git-repo-aws-crypto-data-preprod
+      - mirror-git-repo-aws-crypto-data-production
