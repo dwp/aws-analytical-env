@@ -53,6 +53,36 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
             "log_group_name": "${cwa_log_group_name}",
             "log_stream_name": "{instance_id}_livy_client_conf.logg",
             "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/hive/hive-server2.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "{instance_id}_hive_server2.log",
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/hive/hive-server2.out",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "{instance_id}_hive_server2.out",
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/hive/user/hadoop/hive.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "{instance_id}_hive_hadoop_user.log",
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/hive/user/hive/hive.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "{instance_id}_hive_hive_user.log",
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/hive/user/root/hive.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "{instance_id}_hive_root_user.log",
+            "timezone": "UTC"
           }
         ] 
       }
