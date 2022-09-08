@@ -21,7 +21,7 @@ variable "subnet_ids" {
 variable "engine_version" {
   type        = string
   description = "Version to use for the Aurora MySQL engine. Must be compatible with the serverless engine mode and aurora-mysql5.7 parameter group family"
-  default     = "5.7.mysql_aurora.2.07.1"
+  default     = "5.7.serverless_mysql_aurora.2.08.3"
 }
 
 variable "scaling_configuration" {
