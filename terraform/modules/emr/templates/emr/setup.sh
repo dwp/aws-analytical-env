@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
 set -u
 set -x
 set -o pipefail
@@ -93,7 +92,21 @@ export AWS_ACCESS_KEY_ID=$(echo "$CREDS" | jq -r .AccessKeyId)
 export AWS_SECRET_ACCESS_KEY=$(echo "$CREDS" | jq -r .SecretAccessKey)
 export AWS_SESSION_TOKEN=$(echo "$CREDS" | jq -r .SessionToken)
 
-COGNITO_GROUPS=$(aws cognito-idp list-groups --user-pool-id "${user_pool_id}" | jq '.Groups' | jq -r '.[].GroupName')
+# Fix for TooManyRequestsException error when calling the cognito-idp api
+MAX_RETRY_COUNT=20
+RETRY_COUNT=0
+until [ "$RETRY_COUNT" -ge "$MAX_RETRY_COUNT" ]
+do
+  COGNITO_GROUPS=$(aws cognito-idp list-groups --user-pool-id "${user_pool_id}" | jq '.Groups' | jq -r '.[].GroupName')
+  if [ -z "$COGNITO_GROUPS" ]; then 
+    RETRY_COUNT=$((RETRY_COUNT+1))
+    echo "Cognito api call failed while getting groups, re-trying ($RETRY_COUNT/$MAX_RETRY_COUNT)..."
+    sleep "$(( $RANDOM % 5 )).$(( $RANDOM % 1000 ))"s
+  else
+    echo "Cognito groups fetched successfully."
+    break
+  fi
+done
 
 sudo mkdir -p /opt/dataworks
 sudo touch /opt/dataworks/users
@@ -123,9 +136,36 @@ for GROUP in $${COGNITO_GROUPS[@]}; do
   sudo tee -a /etc/at.allow <<< "$GROUP"
 
   echo "Adding users for group $GROUP"
-  USERS=$(aws cognito-idp list-users-in-group --user-pool-id "${user_pool_id}" --group-name "$GROUP" | jq '.Users[]' | jq -r '(.Attributes[] | if .Name =="preferred_username" then .Value else empty end) // .Username')
 
-  USERDIR=$(aws cognito-idp list-users --user-pool-id "${user_pool_id}")
+  # Fix for TooManyRequestsException error when calling the cognito-idp api
+  RETRY_COUNT=0
+  until [ "$RETRY_COUNT" -ge "$MAX_RETRY_COUNT" ]
+  do
+    USERS=$(aws cognito-idp list-users-in-group --user-pool-id "${user_pool_id}" --group-name "$GROUP" | jq '.Users[]' | jq -r '(.Attributes[] | if .Name =="preferred_username" then .Value else empty end) // .Username')
+    if [ -z "$USERS" ]; then 
+      RETRY_COUNT=$((RETRY_COUNT+1))
+      echo "Cognito api call failed while getting groups, re-trying ($RETRY_COUNT/$MAX_RETRY_COUNT)..."
+      sleep "$(( $RANDOM % 5 )).$(( $RANDOM % 1000 ))"s
+    else
+      echo "Cognito groups fetched successfully."
+      break
+    fi
+  done
+
+  # Fix for TooManyRequestsException error when calling the cognito-idp api
+  RETRY_COUNT=0
+  until [ "$RETRY_COUNT" -ge "$MAX_RETRY_COUNT" ]
+  do
+    USERDIR=$(aws cognito-idp list-users --user-pool-id "${user_pool_id}")
+    if [ -z "$USERDIR" ]; then 
+      RETRY_COUNT=$((RETRY_COUNT+1))
+      echo "Cognito api call failed while getting groups, re-trying ($RETRY_COUNT/$MAX_RETRY_COUNT)..."
+      sleep "$(( $RANDOM % 5 )).$(( $RANDOM % 1000 ))"s
+    else
+      echo "Cognito groups fetched successfully."
+      break
+    fi
+  done
 
   for USER in $${USERS[@]}; do
 

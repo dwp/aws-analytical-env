@@ -87,3 +87,8 @@ variable "monitoring_sns_topic_arn" {
   type        = string
   description = "(Required) Arn of SNS event to send alerts to Slack"
 }
+
+variable "batch_rbac_container_iam_role_arn" {
+  type        = string
+  description = "(Required) Arn of aws batch rbac role"
+}
