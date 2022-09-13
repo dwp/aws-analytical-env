@@ -83,6 +83,12 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
             "log_group_name": "${cwa_log_group_name}",
             "log_stream_name": "{instance_id}_hive_root_user.log",
             "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/batch/transform_json.out",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "{instance_id}_transform_json.out",
+            "timezone": "UTC"
           }
         ] 
       }
