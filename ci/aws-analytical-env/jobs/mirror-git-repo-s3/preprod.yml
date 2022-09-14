@@ -923,3 +923,23 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/ni-payment-scan
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+
+  - name: mirror-git-repo-aws-crypto-data-preprod
+    plan:
+      - get: aws-crypto-data-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: preprod
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-crypto-data-repo
+          inputs:
+            - name: aws-crypto-data-repo
+          params:
+            S3_ROOT: component/uc_repos/aws-crypto-data/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
