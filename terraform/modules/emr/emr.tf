@@ -209,3 +209,10 @@ resource "aws_cloudwatch_log_group" "analytical_batch_step_logs" {
   retention_in_days = 180
   tags              = merge(var.common_tags, { Name : "${var.name_prefix}-get-step-logs" })
 }
+
+# add lg here
+resource "aws_cloudwatch_log_group" "batch_si_step_logs" {
+  name              = local.cw_agent_si_step_log_group_name
+  retention_in_days = 180
+  tags              = merge(var.common_tags, { Name : "${var.name_prefix}-get-step-logs" })
+}

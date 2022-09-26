@@ -49,6 +49,8 @@ data "template_file" "emr_setup_sh" {
     patch_log4j_emr_shell           = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.patch_log4j_emr_sh.key)
     cwa_namespace                   = local.cw_agent_namespace
     cwa_log_group_name              = local.cw_agent_step_log_group_name
+    cwa_si_namespace                   = local.cw_agent_si_namespace
+    cwa_si_log_group_name              = local.cw_agent_si_step_log_group_name
     config_bucket                   = var.config_bucket_id
     aws_default_region              = "eu-west-2"
     cwa_metrics_collection_interval = local.cw_agent_metrics_collection_interval

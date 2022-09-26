@@ -82,7 +82,7 @@ chmod u+x /home/hadoop/step.sh
 
 sudo /opt/emr/cloudwatch.sh \
     "${cwa_metrics_collection_interval}" "${cwa_log_group_name}" "${aws_default_region}" \
-    "${cwa_namespace}"
+    "${cwa_namespace}" "${cwa_si_namespace}" "${cwa_si_log_group_name}"
 
 echo "Assuming Cognito Role. Output hidden"
 set +x
