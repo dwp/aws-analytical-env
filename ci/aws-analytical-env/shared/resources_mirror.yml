@@ -459,3 +459,12 @@ resources:
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/dip/aws-crypto-data.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: aws-bcp-extract-repo
+    type: git
+    source:
+      branch: master
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/dip/aws-bcp-extract.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))

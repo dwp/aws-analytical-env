@@ -386,3 +386,11 @@ groups:
       - mirror-git-repo-aws-crypto-data-integration
       - mirror-git-repo-aws-crypto-data-preprod
       - mirror-git-repo-aws-crypto-data-production
+
+  - name: aws-bcp-extract
+    jobs:
+      - mirror-git-repo-aws-bcp-extract-development
+      - mirror-git-repo-aws-bcp-extract-qa
+      - mirror-git-repo-aws-bcp-extract-integration
+      - mirror-git-repo-aws-bcp-extract-preprod
+      - mirror-git-repo-aws-bcp-extract-production

@@ -875,3 +875,20 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-crypto-data/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+
+  - name: mirror-git-repo-aws-bcp-extract-development
+    plan:
+      - get: aws-bcp-extract-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: aws-bcp-extract-repo
+          inputs:
+            - name: aws-bcp-extract-repo
+          params:
+            S3_ROOT: component/uc_repos/aws-bcp-extract/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
