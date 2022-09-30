@@ -7,7 +7,7 @@ meta:
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_14_version))
+            tag: ((dataworks.terraform_version))
         params:
           TF_INPUT: false
           TF_CLI_ARGS_apply: -lock-timeout=300s
@@ -21,7 +21,7 @@ meta:
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_14_version))
+            tag: ((dataworks.terraform_version))
         params:
           TF_INPUT: false
           TF_CLI_ARGS_apply: -lock-timeout=300s
@@ -646,7 +646,7 @@ meta:
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_14_version))
+            tag: ((dataworks.terraform_version))
         params:
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
           GIT_USERNAME: ((dataworks.concourse_github_username))
@@ -688,7 +688,7 @@ meta:
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_14_version))
+            tag: ((dataworks.terraform_version))
         params:
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
           GIT_USERNAME: ((dataworks.concourse_github_username))
