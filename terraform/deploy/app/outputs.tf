@@ -32,6 +32,7 @@ output "emr_launcher_lambda" {
 
 output "rbac_db" {
   value = module.rbac_db
+  sensitive = true
 }
 
 output "emrfs_lambdas" {
