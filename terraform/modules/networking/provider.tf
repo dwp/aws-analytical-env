@@ -7,8 +7,8 @@ terraform {
 }
 
 provider "aws" {
-  alias = "management-internet-egress"
-  region  = var.region
+  alias  = "management-internet-egress"
+  region = var.region
 
   assume_role {
     role_arn = var.role_arn.management-internet-egress
@@ -16,8 +16,8 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias = "management-crypto"
-  region  = var.region
+  alias  = "management-crypto"
+  region = var.region
 
   assume_role {
     role_arn = var.role_arn.management-crypto
