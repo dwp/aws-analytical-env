@@ -71,6 +71,7 @@ output "private_dns" {
     azkaban_service_discovery_dns = aws_service_discovery_private_dns_namespace.azkaban_services
     azkaban_service_discovery     = aws_service_discovery_service.azkaban_services
   }
+  sensitive = true
 }
 
 output "vpce_security_groups" {
