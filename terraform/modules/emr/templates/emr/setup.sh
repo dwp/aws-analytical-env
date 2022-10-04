@@ -32,6 +32,10 @@ sudo yum install -y jq
 sudo mkdir -p /var/log/batch
 sudo chown hadoop:hadoop /var/log/batch
 
+sudo mkdir -p /var/log/si
+sudo chown -R hadoop:hadoop /var/log/si
+sudo chmod -R 775 /var/log/si
+
 aws s3 cp "${logging_shell}"     /opt/emr/logging.sh
 aws s3 cp "${cloudwatch_shell}"  /opt/emr/cloudwatch.sh
 aws s3 cp "${get_scripts_shell}" /home/hadoop/get_scripts.sh
