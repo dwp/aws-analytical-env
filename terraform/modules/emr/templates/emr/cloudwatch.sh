@@ -5,6 +5,8 @@ cwa_metrics_collection_interval="$1"
 cwa_log_group_name="$2"
 aws_default_region="$3"
 cwa_namespace="$4"
+cwa_si_namespace="$5"
+cwa_si_log_group_name="$6"
 
 # Create config file required for CloudWatch Agent
 mkdir -p /opt/aws/amazon-cloudwatch-agent/etc
@@ -83,17 +85,27 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
             "log_group_name": "${cwa_log_group_name}",
             "log_stream_name": "{instance_id}_hive_root_user.log",
             "timezone": "UTC"
-          },
-          {
-            "file_path": "/var/log/batch/transform_json.out",
-            "log_group_name": "${cwa_log_group_name}",
-            "log_stream_name": "{instance_id}_transform_json.out",
-            "timezone": "UTC"
           }
         ] 
       }
     },
     "log_stream_name": "${cwa_namespace}",
+    "force_flush_interval": 15
+  },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/var/log/si/strategic_ingest.out",
+            "log_group_name": "${cwa_si_log_group_name}",
+            "log_stream_name": "{instance_id}_strategic_ingest.out", 
+            "timezone": "UTC"
+          }
+        ] 
+      }
+    },
+    "log_stream_name": "${cwa_si_namespace}",
     "force_flush_interval": 15
   }
 }
