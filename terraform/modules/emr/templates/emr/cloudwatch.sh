@@ -97,7 +97,7 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
       "files": {
         "collect_list": [
           {
-            "file_path": "/logs/strategic_ingest.out",
+            "file_path": "/var/log/si/strategic_ingest.out",
             "log_group_name": "${cwa_si_log_group_name}",
             "log_stream_name": "{instance_id}_strategic_ingest.out", 
             "timezone": "UTC"
