@@ -189,6 +189,7 @@ module "launcher" {
   instance_type_core_one                = var.emr_instance_type_core_one[local.environment]
   instance_type_core_two                = var.emr_instance_type_core_two[local.environment]
   instance_type_core_three              = var.emr_instance_type_core_three[local.environment]
+  instance_ebs_type                     = var.emr_instance_ebs_type[local.environment]
   hive_compaction_threads               = var.emr_hive_compaction_threads[local.environment]
   hive_tez_sessions_per_queue           = var.emr_hive_tez_sessions_per_queue[local.environment]
   hive_max_reducers                     = var.emr_hive_max_reducers[local.environment]

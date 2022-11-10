@@ -86,6 +86,7 @@ resource "aws_s3_bucket_object" "batch_instances" {
     instance_type_core_one   = var.instance_type_core_one
     instance_type_core_two   = var.instance_type_core_two
     instance_type_core_three = var.instance_type_core_three
+    instance_ebs_type        = var.instance_ebs_type
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-instances" })
 }
@@ -149,6 +150,7 @@ resource "aws_s3_bucket_object" "uc_labs_instances" {
     instance_type_core_one   = var.instance_type_core_one
     instance_type_core_two   = var.instance_type_core_two
     instance_type_core_three = var.instance_type_core_three
+    instance_ebs_type        = var.instance_ebs_type
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-uc-labs-emr-launch-instances" })
 }
@@ -212,6 +214,7 @@ resource "aws_s3_bucket_object" "payment_timelines_instances" {
     instance_type_core_one   = var.instance_type_core_one
     instance_type_core_two   = var.instance_type_core_two
     instance_type_core_three = var.instance_type_core_three
+    instance_ebs_type        = var.instance_ebs_type
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-payment-timelines-emr-launch-instances" })
 }

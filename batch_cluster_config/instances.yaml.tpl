@@ -18,7 +18,7 @@ Instances:
         EbsBlockDeviceConfigs:
         - VolumeSpecification:
             SizeInGB: 16384
-            VolumeType: "gp2"
+            VolumeType: "${instance_ebs_type}"
           VolumesPerInstance: 1
       InstanceType: "${instance_type_master}"
   - InstanceFleetType: "CORE"
@@ -29,20 +29,20 @@ Instances:
         EbsBlockDeviceConfigs:
         - VolumeSpecification:
             SizeInGB: 1024
-            VolumeType: "gp2"
+            VolumeType: "${instance_ebs_type}"
           VolumesPerInstance: 1
       InstanceType: "${instance_type_core_one}"
     - EbsConfiguration:
         EbsBlockDeviceConfigs:
         - VolumeSpecification:
             SizeInGB: 1024
-            VolumeType: "gp2"
+            VolumeType: "${instance_ebs_type}"
           VolumesPerInstance: 1
       InstanceType:  "${instance_type_core_two}"
     - EbsConfiguration:
         EbsBlockDeviceConfigs:
         - VolumeSpecification:
             SizeInGB: 1024
-            VolumeType: "gp2"
+            VolumeType: "${instance_ebs_type}"
           VolumesPerInstance: 1
       InstanceType: "${instance_type_core_three}"
