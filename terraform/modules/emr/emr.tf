@@ -29,7 +29,7 @@ resource "aws_emr_cluster" "cluster" {
 
     ebs_config {
       size                 = local.ebs_config_size
-      type                 = local.ebs_config_type
+      type                 = var.instance_ebs_type
       iops                 = 0
       volumes_per_instance = local.ebs_config_volumes_per_instance
     }

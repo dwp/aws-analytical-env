@@ -107,6 +107,12 @@ variable "ami_id" {
   description = "ID of AMI to be used for EMR clusters"
 }
 
+variable "instance_ebs_type" {
+  type        = string
+  description = "(Optional) type of ebs volume i.e. gp2, gp3, io2"
+  default     = "gp3"
+}
+
 variable "env_certificate_bucket" {
   description = "Bucket that contains environment public certificates"
 }
