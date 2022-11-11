@@ -109,16 +109,6 @@ variable "emr_instance_type_core_three" {
   }
 }
 
-variable "emr_instance_ebs_type" {
-  default = {
-    development = "gp3"
-    qa          = "gp2"
-    integration = "gp2"
-    preprod     = "gp2"
-    production  = "gp2"
-  }
-}
-
 variable "emr_al2_ami_id" {
   description = "ID of AMI to be used for EMR clusters"
 }
