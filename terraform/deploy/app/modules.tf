@@ -15,6 +15,7 @@ module "emr" {
   log_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
 
   ami_id                  = var.emr_al2_ami_id
+  instance_ebs_type       = var.emr_instance_ebs_type[local.environment]
   emr_release_label       = "emr-6.2.0"
   cognito_user_pool_id    = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
   dks_sg_id               = data.terraform_remote_state.crypto.outputs.dks_sg_id[local.environment]
