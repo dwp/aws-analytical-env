@@ -15,7 +15,6 @@ module "emr" {
   log_bucket = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
 
   ami_id                  = var.emr_al2_ami_id
-  instance_ebs_type       = var.emr_instance_ebs_type[local.environment]
   emr_release_label       = "emr-6.2.0"
   cognito_user_pool_id    = data.terraform_remote_state.cognito.outputs.cognito.user_pool_id
   dks_sg_id               = data.terraform_remote_state.crypto.outputs.dks_sg_id[local.environment]
@@ -190,7 +189,6 @@ module "launcher" {
   instance_type_core_one                = var.emr_instance_type_core_one[local.environment]
   instance_type_core_two                = var.emr_instance_type_core_two[local.environment]
   instance_type_core_three              = var.emr_instance_type_core_three[local.environment]
-  instance_ebs_type                     = var.emr_instance_ebs_type[local.environment]
   hive_compaction_threads               = var.emr_hive_compaction_threads[local.environment]
   hive_tez_sessions_per_queue           = var.emr_hive_tez_sessions_per_queue[local.environment]
   hive_max_reducers                     = var.emr_hive_max_reducers[local.environment]
