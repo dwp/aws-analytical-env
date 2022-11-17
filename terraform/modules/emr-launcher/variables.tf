@@ -96,12 +96,6 @@ variable "instance_type_core_three" {
   default     = "m5d.2xlarge"
 }
 
-variable "instance_ebs_type" {
-  type        = string
-  description = "(Optional) type of ebs volume i.e. gp2, gp3, io2"
-  default     = "gp3"
-}
-
 variable "hive_compaction_threads" {
   type        = string
   description = "Number of compaction threads"
