@@ -120,6 +120,25 @@ jobs:
           config:
             params:
               RESULT: FAILED
+        - get: emr-al2-ami-restored
+          resource: emr-al2-ami
+          trigger: false
+        - .: (( inject meta.plan.terraform-bootstrap ))
+          config:
+            params:
+              AWS_ACC: ((aws_account.qa))
+        - .: (( inject meta.plan.terraform-apply ))
+          config:
+            params:
+              TF_WORKSPACE: qa
+          input_mapping:
+            al2-emr-ami: emr-al2-ami-restored
+        - .: (( inject meta.plan.terraform-plan ))
+          config:
+            params:
+              TF_WORKSPACE: qa
+          input_mapping:
+            al2-emr-ami: emr-al2-ami-restored
     on_success:
       do:
         - .: (( inject meta.plan.ami-test-results ))
