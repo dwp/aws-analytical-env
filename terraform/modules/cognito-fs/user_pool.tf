@@ -62,7 +62,7 @@ resource "aws_cognito_user_pool" "emr" {
 }
 
 data "template_file" "metadata_adfs" {
-  template = file("${path.module}/FederationMetadata-20200402.xml.tpl")
+  template = file("${path.module}/FederationMetadata-20230209.xml.tpl")
 }
 
 resource "aws_cognito_identity_provider" "adfs_dwp" {
