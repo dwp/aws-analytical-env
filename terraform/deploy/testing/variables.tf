@@ -1,6 +1,6 @@
 variable "assume_role" {
   type    = string
-  default = "ci"
+  default = "administrator"
 }
 
 variable "region" {
