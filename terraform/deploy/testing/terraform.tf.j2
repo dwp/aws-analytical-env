@@ -22,6 +22,15 @@ provider "aws" {
   assume_role {
     role_arn = "arn:aws:iam::${lookup(local.account, local.environment)}:role/${var.assume_role}"
   }
+
+  default_tags {
+    tags = {
+      Application      = "DataWorks"                              # As per our definition on ServiceNow
+      Function         = "Data and Analytics"                     # As per our definition on ServiceNow
+      Environment      = local.hcs_environment[local.environment] # Set up locals as per Tagging doc requirements https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+      Business-Project = "PRJ0022507"                             # This seems to replace costcode as per the doc https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+    }
+  }
 }
 
 data "terraform_remote_state" "aws_analytical_environment_infra" {
@@ -115,18 +124,27 @@ locals {
     production  = "management"
   }
 
+  # Configured as per Tagging doc requirements https://engineering.dwp.gov.uk/policies/hcs-cloud-hosting-policies/resource-identification-tagging/
+  # Also required as per Tenable documentation https://engineering.dwp.gov.uk/products/gold-images/agents/tenable/
+  hcs_environment = {
+    development    = "Dev"
+    qa             = "Test"
+    integration    = "Stage"
+    preprod        = "Stage"
+    production     = "Production"
+    management     = "SP_Tooling"
+    management-dev = "DT_Tooling"
+  }
+
   management_workspace = {
     management-dev = "default"
     management     = "management"
   }
 
   common_tags = {
-    {% for key, value in common_tags.items() %}
-      {{key}} = "{{value}}"
-    {% endfor %}
     Name         = local.name
-    Environment  = local.environment
-    Application  = local.name
+    DWX_Environment  = local.environment
+    DWX_Application  = local.name
     Persistence  = "Ignore"
     AutoShutdown = "False"
     Costcode     = var.costcode
