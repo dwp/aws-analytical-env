@@ -21,7 +21,7 @@ resource "aws_lb_target_group" "proxy" {
   proxy_protocol_v2 = true
 
   stickiness {
-    type    = "lb_cookie"
+    type    = "source_ip"
     enabled = false
   }
 
@@ -45,4 +45,3 @@ resource "aws_lb_listener" "container_internet_proxy" {
     target_group_arn = aws_lb_target_group.proxy.arn
   }
 }
-
