@@ -18,7 +18,7 @@ Instances:
         EbsBlockDeviceConfigs:
         - VolumeSpecification:
             SizeInGB: 250
-            VolumeType: "gp2"
+            VolumeType: "gp3"
           VolumesPerInstance: 1
       InstanceType: "m5.2xlarge"
   - InstanceFleetType: "CORE"
@@ -29,20 +29,20 @@ Instances:
         EbsBlockDeviceConfigs:
         - VolumeSpecification:
             SizeInGB: 250
-            VolumeType: "gp2"
+            VolumeType: "gp3"
           VolumesPerInstance: 1
       InstanceType: "m5.2xlarge"
     - EbsConfiguration:
         EbsBlockDeviceConfigs:
         - VolumeSpecification:
             SizeInGB: 250
-            VolumeType: "gp2"
+            VolumeType: "gp3"
           VolumesPerInstance: 1
       InstanceType: "m5a.2xlarge"
     - EbsConfiguration:
         EbsBlockDeviceConfigs:
         - VolumeSpecification:
             SizeInGB: 250
-            VolumeType: "gp2"
+            VolumeType: "gp3"
           VolumesPerInstance: 1
       InstanceType: "m5d.2xlarge"

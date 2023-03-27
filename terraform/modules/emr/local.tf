@@ -23,7 +23,7 @@ locals {
   }
   ebs_root_volume_size            = 100
   ebs_config_size                 = 250
-  ebs_config_type                 = "gp2"
+  ebs_config_type                 = "gp3"
   ebs_config_volumes_per_instance = 1
   autoscaling_min_capacity_up = {
     development = 5
