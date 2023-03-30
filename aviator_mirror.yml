@@ -8,6 +8,8 @@ spruce:
         regexp: ".*yml"
       - with_in: ci/aws-analytical-env/jobs/mirror-ucsqlhelper/
         regexp: ".*yml"
+      - with_in: ci/aws-analytical-env/jobs/mirror-artifacts/
+        regexp: ".*yml"
       - with_in: ci/aws-analytical-env/shared/
         regexp: ".*yml"
         except:

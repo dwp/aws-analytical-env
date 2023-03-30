@@ -1,0 +1,12 @@
+jobs:
+  - name: mirror-apache-maven-development
+    plan:
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+      - .: (( inject meta.plan.mirror-artifact ))
+        config:
+          params:
+            MAVEN_S3_PATH: component/maven
+            VERSION: 3.6.3
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
