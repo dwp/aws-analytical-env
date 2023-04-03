@@ -99,8 +99,8 @@ resource "aws_s3_bucket_object" "batch_steps" {
   content = templatefile("../../../batch_cluster_config/steps.yaml.tpl", {
     config_bucket   = var.emr_bucket.id
     environment     = local.hcs_environment[local.environment]
-    proxy_http_host = data.terraform_remote_state.internal_compute.outputs.internet_proxy.host
-    proxy_http_port = data.terraform_remote_state.internal_compute.outputs.internet_proxy.port
+    proxy_http_host = var.proxy_http_host
+    proxy_http_port = var.proxy_http_port
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
@@ -165,8 +165,8 @@ resource "aws_s3_bucket_object" "uc_labs_steps" {
   content = templatefile("../../../batch_cluster_config/steps.yaml.tpl", {
     config_bucket   = var.emr_bucket.id
     environment     = local.hcs_environment[local.environment]
-    proxy_http_host = data.terraform_remote_state.internal_compute.outputs.internet_proxy.host
-    proxy_http_port = data.terraform_remote_state.internal_compute.outputs.internet_proxy.port
+    proxy_http_host = var.proxy_http_host
+    proxy_http_port = var.proxy_http_port
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
@@ -231,8 +231,8 @@ resource "aws_s3_bucket_object" "payment_timelines_steps" {
   content = templatefile("../../../batch_cluster_config/steps.yaml.tpl", {
     config_bucket   = var.emr_bucket.id
     environment     = local.hcs_environment[local.environment]
-    proxy_http_host = data.terraform_remote_state.internal_compute.outputs.internet_proxy.host
-    proxy_http_port = data.terraform_remote_state.internal_compute.outputs.internet_proxy.port
+    proxy_http_host = var.proxy_http_host
+    proxy_http_port = var.proxy_http_port
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
@@ -298,8 +298,8 @@ resource "aws_s3_bucket_object" "test_batch_steps" {
   content = templatefile("../../../test_batch_cluster_config/steps.yaml.tpl", {
     config_bucket   = var.emr_bucket.id
     environment     = local.hcs_environment[local.environment]
-    proxy_http_host = data.terraform_remote_state.internal_compute.outputs.internet_proxy.host
-    proxy_http_port = data.terraform_remote_state.internal_compute.outputs.internet_proxy.port
+    proxy_http_host = var.proxy_http_host
+    proxy_http_port = var.proxy_http_port
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }

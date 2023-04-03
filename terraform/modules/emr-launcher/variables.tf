@@ -32,6 +32,8 @@ variable "master_security_group" {}
 variable "slave_security_group" {}
 variable "service_security_group" {}
 variable "proxy_host" {}
+variable "proxy_http_host" {}
+variable "proxy_http_port" {}
 variable "full_no_proxy" {}
 variable "hive_metastore_endpoint" {}
 variable "hive_metastore_database_name" {}
