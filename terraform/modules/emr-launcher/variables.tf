@@ -25,7 +25,6 @@ variable "ami" {}
 variable "account" {}
 variable "analytical_env_security_configuration" {}
 variable "batch_security_configuration" {}
-variable "costcode" {}
 variable "release_version" {}
 variable "common_security_group" {}
 variable "master_security_group" {}

@@ -7,7 +7,6 @@ resource "aws_s3_bucket_object" "analytical_env_cluster" {
     ami                        = var.ami
     account                    = var.account
     security_configuration     = var.analytical_env_security_configuration
-    costcode                   = var.costcode
     release_version            = var.release_version
     dwx_environment_tag_value  = var.environment
     application_tag_value      = var.application_tag_value
@@ -69,7 +68,6 @@ resource "aws_s3_bucket_object" "batch_cluster" {
     ami                        = var.ami
     account                    = var.account
     security_configuration     = var.batch_security_configuration
-    costcode                   = var.costcode
     release_version            = var.release_version
     dwx_environment_tag_value  = var.environment
     application_tag_value      = var.application_tag_value
@@ -136,7 +134,6 @@ resource "aws_s3_bucket_object" "uc_labs_cluster" {
     ami                        = var.ami
     account                    = var.account
     security_configuration     = var.batch_security_configuration
-    costcode                   = var.costcode
     release_version            = var.release_version
     dwx_environment_tag_value  = var.environment
     application_tag_value      = var.application_tag_value
@@ -203,7 +200,6 @@ resource "aws_s3_bucket_object" "payment_timelines_cluster" {
     ami                        = var.ami
     account                    = var.account
     security_configuration     = var.batch_security_configuration
-    costcode                   = var.costcode
     release_version            = var.release_version
     dwx_environment_tag_value  = var.environment
     application_tag_value      = var.application_tag_value
@@ -271,7 +267,6 @@ resource "aws_s3_bucket_object" "test_batch_cluster" {
     ami                        = var.ami
     account                    = var.account
     security_configuration     = var.batch_security_configuration
-    costcode                   = var.costcode
     release_version            = var.release_version
     dwx_environment_tag_value  = var.environment
     application_tag_value      = var.application_tag_value

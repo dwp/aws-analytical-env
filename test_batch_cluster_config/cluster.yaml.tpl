@@ -18,8 +18,6 @@ Tags:
   Value: "aws-analytical-env"
 - Key: "AutoShutdown"
   Value: "False"
-- Key: "Costcode"
-  Value: "${costcode}"
 - Key: "CreatedBy"
   Value: "emr-launcher"
 - Key: "Environment"

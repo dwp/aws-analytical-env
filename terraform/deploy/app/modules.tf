@@ -163,7 +163,6 @@ module "launcher" {
   log_bucket                            = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
   account                               = local.account[local.environment]
   analytical_env_security_configuration = module.emr.analytical_env_security_configuration
-  costcode                              = var.costcode
   release_version                       = "6.2.0"
   common_security_group                 = module.emr.common_security_group
   master_security_group                 = module.emr.master_security_group
