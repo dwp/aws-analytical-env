@@ -27,7 +27,7 @@ Tags:
 - Key: "DWX_Application"
   Value: "aws-analytical-env"
 - Key: "DWX_Environment"
-  Value: "${environment}"
+  Value: "${dwx_environment_tag_value}"
 - Key: "AutoShutdown"
   Value: "False"
 - Key: "Persistence"
