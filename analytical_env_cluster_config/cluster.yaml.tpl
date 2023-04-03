@@ -14,8 +14,6 @@ ServiceRole: "arn:aws:iam::${account}:role/AE_EMR_Role"
 JobFlowRole: "arn:aws:iam::${account}:instance-profile/AE_EMR_EC2_Role"
 VisibleToAllUsers: True
 Tags:
-- Key: "AutoShutdown"
-  Value: "False"
 - Key: "Name"
   Value: "aws-analytical-env"
 - Key: "Application"
@@ -30,6 +28,8 @@ Tags:
   Value: "aws-analytical-env"
 - Key: "DWX_Environment"
   Value: "${environment}"
+- Key: "AutoShutdown"
+  Value: "False"
 - Key: "Persistence"
   Value: "True"
 - Key: "ProtectSensitiveData"
