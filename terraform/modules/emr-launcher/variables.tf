@@ -74,6 +74,8 @@ variable "payment_timelines_core_instance_count" {
 
 variable "environment" {}
 
+variable "hcs_environment" {}
+
 variable "instance_type_master" {
   type        = string
   description = "(Optional) instance type of master"
