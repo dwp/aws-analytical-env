@@ -1,5 +1,13 @@
 ---
 BootstrapActions:
+- Name: "config_hcs"
+  ScriptBootstrapAction:
+    Path: "s3://${config_bucket}/scripts/emr/config_hcs.sh"
+    Args: [
+      "${environment}", 
+      "${proxy_http_host}",
+      "${proxy_http_port}"
+    ]
 - Name: "get-dks-cert"
   ScriptBootstrapAction:
     Path: "s3://${config_bucket}/scripts/emr/get_dks_cert.sh"
