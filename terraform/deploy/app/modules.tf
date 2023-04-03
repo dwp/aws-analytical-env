@@ -185,6 +185,10 @@ module "launcher" {
   test_core_instance_count              = var.test_core_instance_count[local.environment]
   payment_timelines_core_instance_count = var.payment_timelines_core_instance_count[local.environment]
   environment                           = local.environment
+  application_tag_value                 = data.aws_default_tags.provider_tags.tags.Application
+  function_tag_value                    = data.aws_default_tags.provider_tags.tags.Function
+  business_project_tag_value            = data.aws_default_tags.provider_tags.tags.Business-Project
+  environment_tag_value                 = data.aws_default_tags.provider_tags.tags.Environment
   instance_type_master                  = var.emr_instance_type_master[local.environment]
   instance_type_core_one                = var.emr_instance_type_core_one[local.environment]
   instance_type_core_two                = var.emr_instance_type_core_two[local.environment]

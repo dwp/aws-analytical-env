@@ -3,13 +3,17 @@ resource "aws_s3_bucket_object" "analytical_env_cluster" {
   bucket = var.config_bucket.id
   key    = "emr/aws-analytical-env/cluster.yaml"
   content = templatefile("../../../analytical_env_cluster_config/cluster.yaml.tpl", {
-    log_bucket             = var.log_bucket
-    ami                    = var.ami
-    account                = var.account
-    security_configuration = var.analytical_env_security_configuration
-    costcode               = var.costcode
-    release_version        = var.release_version
-    environment            = var.environment
+    log_bucket                 = var.log_bucket
+    ami                        = var.ami
+    account                    = var.account
+    security_configuration     = var.analytical_env_security_configuration
+    costcode                   = var.costcode
+    release_version            = var.release_version
+    dwx_environment_tag_value  = var.environment
+    application_tag_value      = var.application_tag_value
+    environment_tag_value      = var.environment_tag_value
+    function_tag_value         = var.function_tag_value
+    business_project_tag_value = var.business_project_tag_value
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-cluster" })
 }
@@ -61,13 +65,17 @@ resource "aws_s3_bucket_object" "batch_cluster" {
   bucket = var.config_bucket.id
   key    = "emr/batch-cluster/cluster.yaml"
   content = templatefile("../../../batch_cluster_config/cluster.yaml.tpl", {
-    log_bucket             = var.log_bucket
-    ami                    = var.ami
-    account                = var.account
-    security_configuration = var.batch_security_configuration
-    costcode               = var.costcode
-    release_version        = var.release_version
-    environment            = var.environment
+    log_bucket                 = var.log_bucket
+    ami                        = var.ami
+    account                    = var.account
+    security_configuration     = var.batch_security_configuration
+    costcode                   = var.costcode
+    release_version            = var.release_version
+    dwx_environment_tag_value  = var.environment
+    application_tag_value      = var.application_tag_value
+    environment_tag_value      = var.environment_tag_value
+    function_tag_value         = var.function_tag_value
+    business_project_tag_value = var.business_project_tag_value
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-cluster" })
 }
@@ -124,13 +132,17 @@ resource "aws_s3_bucket_object" "uc_labs_cluster" {
   bucket = var.config_bucket.id
   key    = "emr/uc-labs-cluster-config/cluster.yaml"
   content = templatefile("../../../batch_cluster_config/cluster.yaml.tpl", {
-    log_bucket             = var.log_bucket
-    ami                    = var.ami
-    account                = var.account
-    security_configuration = var.batch_security_configuration
-    costcode               = var.costcode
-    release_version        = var.release_version
-    environment            = var.environment
+    log_bucket                 = var.log_bucket
+    ami                        = var.ami
+    account                    = var.account
+    security_configuration     = var.batch_security_configuration
+    costcode                   = var.costcode
+    release_version            = var.release_version
+    dwx_environment_tag_value  = var.environment
+    application_tag_value      = var.application_tag_value
+    environment_tag_value      = var.environment_tag_value
+    function_tag_value         = var.function_tag_value
+    business_project_tag_value = var.business_project_tag_value
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-cluster" })
 }
@@ -187,13 +199,17 @@ resource "aws_s3_bucket_object" "payment_timelines_cluster" {
   bucket = var.config_bucket.id
   key    = "emr/payment-timelines-cluster-config/cluster.yaml"
   content = templatefile("../../../batch_cluster_config/cluster.yaml.tpl", {
-    log_bucket             = var.log_bucket
-    ami                    = var.ami
-    account                = var.account
-    security_configuration = var.batch_security_configuration
-    costcode               = var.costcode
-    release_version        = var.release_version
-    environment            = var.environment
+    log_bucket                 = var.log_bucket
+    ami                        = var.ami
+    account                    = var.account
+    security_configuration     = var.batch_security_configuration
+    costcode                   = var.costcode
+    release_version            = var.release_version
+    dwx_environment_tag_value  = var.environment
+    application_tag_value      = var.application_tag_value
+    environment_tag_value      = var.environment_tag_value
+    function_tag_value         = var.function_tag_value
+    business_project_tag_value = var.business_project_tag_value
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-cluster" })
 }
@@ -251,13 +267,17 @@ resource "aws_s3_bucket_object" "test_batch_cluster" {
   bucket = var.config_bucket.id
   key    = "emr/test-batch-cluster/cluster.yaml"
   content = templatefile("../../../test_batch_cluster_config/cluster.yaml.tpl", {
-    log_bucket             = var.log_bucket
-    ami                    = var.ami
-    account                = var.account
-    security_configuration = var.batch_security_configuration
-    costcode               = var.costcode
-    release_version        = var.release_version
-    environment            = var.environment
+    log_bucket                 = var.log_bucket
+    ami                        = var.ami
+    account                    = var.account
+    security_configuration     = var.batch_security_configuration
+    costcode                   = var.costcode
+    release_version            = var.release_version
+    dwx_environment_tag_value  = var.environment
+    application_tag_value      = var.application_tag_value
+    environment_tag_value      = var.environment_tag_value
+    function_tag_value         = var.function_tag_value
+    business_project_tag_value = var.business_project_tag_value
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-cluster" })
 }

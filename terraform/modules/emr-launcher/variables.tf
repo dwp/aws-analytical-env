@@ -72,6 +72,26 @@ variable "payment_timelines_core_instance_count" {
 
 variable "environment" {}
 
+variable "application_tag_value" {
+  type        = string
+  description = "Name of the business Application."
+}
+
+variable "environment_tag_value" {
+  type        = string
+  description = "Name of the HCS Environment."
+}
+
+variable "function_tag_value" {
+  type        = string
+  description = "Function of the organisation."
+}
+
+variable "business_project_tag_value" {
+  type        = string
+  description = "Business Project code for cost allocation."
+}
+
 variable "instance_type_master" {
   type        = string
   description = "(Optional) instance type of master"
