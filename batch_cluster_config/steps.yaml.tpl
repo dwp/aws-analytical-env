@@ -7,7 +7,11 @@ BootstrapActions:
   ScriptBootstrapAction:
     Path: "s3://${config_bucket}/scripts/emr/config_hcs.sh"
     Args: [
+<<<<<<< HEAD
       "${hcs_environment}", 
+=======
+      "${environment}", 
+>>>>>>> 8db24c3 (chore: Add Tenable config)
       "${proxy_http_host}",
       "${proxy_http_port}"
     ]
