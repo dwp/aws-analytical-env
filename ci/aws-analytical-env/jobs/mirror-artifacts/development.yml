@@ -4,6 +4,9 @@ jobs:
       - get: aws-common-infrastructure
         trigger: false
       - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: default
       - .: (( inject meta.plan.mirror-artifact ))
         config:
           params:
