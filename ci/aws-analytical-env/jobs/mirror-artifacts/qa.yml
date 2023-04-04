@@ -7,6 +7,7 @@ jobs:
       - .: (( inject meta.plan.mirror-artifact ))
         config:
           params:
+            TF_WORKSPACE: qa
             MAVEN_S3_PATH: component/maven
             VERSION: 3.6.3
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
