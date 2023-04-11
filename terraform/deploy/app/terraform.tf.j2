@@ -265,6 +265,8 @@ provider "aws" {
   }
 }
 
+data "aws_default_tags" "provider_tags" {}
+
 locals {
   name        = "aws-analytical-env"
   environment = terraform.workspace == "default" ? "development" : terraform.workspace

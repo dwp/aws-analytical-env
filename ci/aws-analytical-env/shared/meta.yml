@@ -191,6 +191,33 @@ meta:
               aws s3 sync . s3://$AWS_COMMOM_BUCKET/$S3_ROOT --include "*" --exclude ".git/*"
         inputs:
           - name: terraform-output-common
+    
+    mirror-artifact:
+      task: mirror-artifact
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              source /assume-role
+              AWS_COMMOM_BUCKET="$(cat ./terraform-output-common/outputs.json |  jq -r '.config_bucket.value.id')"
+              
+              MAVEN="apache-maven"
+              curl -o $MAVEN-$VERSION-bin.tar.gz https://archive.apache.org/dist/maven/maven-3/$VERSION/binaries/$MAVEN-$VERSION-bin.tar.gz
+
+              aws s3 cp $MAVEN-$VERSION-bin.tar.gz s3://$AWS_COMMOM_BUCKET/$MAVEN_S3_PATH/$MAVEN-$VERSION-bin.tar.gz
+        inputs:
+          - name: terraform-output-common
 
     terraform-output-common:
       task: terraform-output-common
