@@ -336,7 +336,13 @@ variable "temporary_bucket" {
 }
 
 variable "proxy_port" {
+<<<<<<< HEAD
   type        = string
   description = "Proxy port"
   default     = "3128"
+=======
+  description = "proxy port"
+  type        = string
+  default     = 3128
+>>>>>>> b17af24 (chore: bootstra actions config)
 }
