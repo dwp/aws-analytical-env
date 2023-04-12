@@ -34,7 +34,10 @@ resource "aws_s3_bucket_object" "analytical_env_steps" {
   bucket = var.config_bucket.id
   key    = "emr/aws-analytical-env/steps.yaml"
   content = templatefile("../../../analytical_env_cluster_config/steps.yaml.tpl", {
-    config_bucket = var.emr_bucket.id
+    config_bucket   = var.emr_bucket.id
+    hcs_environment = var.hcs_environment
+    proxy_http_host = var.proxy_http_host
+    proxy_http_port = var.proxy_http_port
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
@@ -100,7 +103,10 @@ resource "aws_s3_bucket_object" "batch_steps" {
   bucket = var.config_bucket.id
   key    = "emr/batch-cluster/steps.yaml"
   content = templatefile("../../../batch_cluster_config/steps.yaml.tpl", {
-    config_bucket = var.emr_bucket.id
+    config_bucket   = var.emr_bucket.id
+    hcs_environment = var.hcs_environment
+    proxy_http_host = var.proxy_http_host
+    proxy_http_port = var.proxy_http_port
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
@@ -166,7 +172,10 @@ resource "aws_s3_bucket_object" "uc_labs_steps" {
   bucket = var.config_bucket.id
   key    = "emr/uc-labs-cluster-config/steps.yaml"
   content = templatefile("../../../batch_cluster_config/steps.yaml.tpl", {
-    config_bucket = var.emr_bucket.id
+    config_bucket   = var.emr_bucket.id
+    hcs_environment = var.hcs_environment
+    proxy_http_host = var.proxy_http_host
+    proxy_http_port = var.proxy_http_port
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
@@ -232,7 +241,10 @@ resource "aws_s3_bucket_object" "payment_timelines_steps" {
   bucket = var.config_bucket.id
   key    = "emr/payment-timelines-cluster-config/steps.yaml"
   content = templatefile("../../../batch_cluster_config/steps.yaml.tpl", {
-    config_bucket = var.emr_bucket.id
+    config_bucket   = var.emr_bucket.id
+    hcs_environment = var.hcs_environment
+    proxy_http_host = var.proxy_http_host
+    proxy_http_port = var.proxy_http_port
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
@@ -299,7 +311,10 @@ resource "aws_s3_bucket_object" "test_batch_steps" {
   bucket = var.config_bucket.id
   key    = "emr/test-batch-cluster/steps.yaml"
   content = templatefile("../../../test_batch_cluster_config/steps.yaml.tpl", {
-    config_bucket = var.emr_bucket.id
+    config_bucket   = var.emr_bucket.id
+    hcs_environment = var.hcs_environment
+    proxy_http_host = var.proxy_http_host
+    proxy_http_port = var.proxy_http_port
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }

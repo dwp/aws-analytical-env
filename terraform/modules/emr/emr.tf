@@ -63,6 +63,11 @@ resource "aws_emr_cluster" "cluster" {
   }
 
   bootstrap_action {
+    name = "config-hcs"
+    path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.config_hcs_sh.key)
+  }
+
+  bootstrap_action {
     path = "file:/bin/echo"
     name = "Dummy bootstrap action to track the md5 hash of the configuration json and redeploy only when changed"
     args = [md5(var.use_mysql_hive_metastore == true ? local.configurations_mysql_json : local.configurations_glue_json)]
