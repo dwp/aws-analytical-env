@@ -334,3 +334,9 @@ variable "temporary_bucket" {
   description = "temporary bucket - id (name) and arn included"
   type        = map(string)
 }
+
+variable "proxy_port" {
+  description = "proxy port"
+  type        = string
+  default     = 3128
+}

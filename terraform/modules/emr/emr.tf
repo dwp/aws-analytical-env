@@ -67,8 +67,8 @@ resource "aws_emr_cluster" "cluster" {
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.config_hcs_sh.key)
     args = [
       local.hcs_environment[local.environment], 
-      data.terraform_remote_state.internal_compute.outputs.internet_proxy.host, 
-      data.terraform_remote_state.internal_compute.outputs.internet_proxy.port
+      data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_dns_name, 
+      var.proxy_port
     ]
   }
 
