@@ -338,5 +338,5 @@ variable "temporary_bucket" {
 variable "proxy_port" {
   description = "proxy port"
   type        = string
-  default     = 3128
+  default     = "3128"
 }
