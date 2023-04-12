@@ -336,14 +336,7 @@ variable "temporary_bucket" {
 }
 
 variable "proxy_port" {
-<<<<<<< HEAD
   type        = string
   description = "Proxy port"
   default     = "3128"
 }
-=======
-  description = "proxy port"
-  type        = string
-  default     = 3128
-}
->>>>>>> f61ca6e (chore: Adding bootstrap args)
