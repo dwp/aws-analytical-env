@@ -65,6 +65,7 @@ resource "aws_emr_cluster" "cluster" {
   bootstrap_action {
     name = "config-hcs"
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.config_hcs_sh.key)
+    args = [var.hcs_environment, var.proxy_http_host, var.proxy_http_port]
   }
 
   bootstrap_action {
