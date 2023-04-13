@@ -47,6 +47,7 @@ aws s3 cp "${poll_status_table_shell}" /home/hadoop/poll_status_table.sh
 aws s3 cp "${trigger_tagger_shell}" /opt/emr/trigger_s3_tagger_batch_job.sh
 aws s3 cp "${parallel_shell}" /opt/emr/parallel.sh
 aws s3 cp "${patch_log4j_emr_shell}" /opt/emr/patch-log4j-emr-6.2.1-v1.sh
+aws s3 cp "${config_hcs_shell}" /opt/emr/config_hcs.sh
 
 sudo mkdir -p /opt/emr/azkaban
 sudo mkdir -p /opt/emr/azkaban/chunk
@@ -74,7 +75,7 @@ aws s3 cp "${azkaban_common_environment_sh}" /opt/emr/azkaban/common
 sudo chmod -R +x /opt/emr/azkaban
 sudo chown -R hadoop:hadoop /opt/emr/azkaban
 
-
+chmod u+x /opt/emr/config_hcs.sh
 chmod u+x /opt/emr/cloudwatch.sh
 chmod u+x /opt/emr/logging.sh
 chmod u+x /home/hadoop/get_scripts.sh
@@ -87,6 +88,9 @@ chmod u+x /home/hadoop/step.sh
 sudo /opt/emr/cloudwatch.sh \
     "${cwa_metrics_collection_interval}" "${cwa_log_group_name}" "${aws_default_region}" \
     "${cwa_namespace}" "${cwa_si_namespace}" "${cwa_si_log_group_name}"
+
+echo "Running config_hcs script"
+sudo /opt/emr/config_hcs.sh "${hcs_environment}" "${http_proxy_host}" "${http_proxy_port}"
 
 echo "Assuming Cognito Role. Output hidden"
 set +x
