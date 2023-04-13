@@ -47,6 +47,7 @@ data "template_file" "emr_setup_sh" {
     trigger_tagger_shell            = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.trigger_s3_tagger_batch_job_sh.key)
     parallel_shell                  = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.parallel_sh.key)
     patch_log4j_emr_shell           = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.patch_log4j_emr_sh.key)
+    config_hcs_shell                = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.config_hcs_sh.key)
     cwa_namespace                   = local.cw_agent_namespace
     cwa_log_group_name              = local.cw_agent_step_log_group_name
     cwa_si_namespace                = local.cw_agent_si_namespace
@@ -56,6 +57,9 @@ data "template_file" "emr_setup_sh" {
     cwa_metrics_collection_interval = local.cw_agent_metrics_collection_interval
     publish_bucket_id               = var.dataset_s3.id
     compaction_bucket_id            = var.compaction_bucket.id
+    hcs_environment                 = local.hcs_environment[local.environment]
+    http_proxy_host                 = var.internet_proxy_dns_name
+    http_proxy_port                 = var.proxy_port
 
     azkaban_chunk_environment_sh    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_chunk_environment.key)
     azkaban_metadata_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metadata_environment.key)
@@ -199,6 +203,14 @@ resource "aws_s3_bucket_object" "cloudwatch_sh" {
   content = file("${path.module}/templates/emr/cloudwatch.sh")
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-cw-sh" })
+}
+
+resource "aws_s3_bucket_object" "config_hcs_sh" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/emr/config_hcs.sh"
+  content = file("${path.module}/templates/emr/config_hcs.sh")
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-config-hcs-sh" })
 }
 
 resource "aws_s3_bucket_object" "create_dbs_sh" {
