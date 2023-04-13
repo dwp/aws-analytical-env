@@ -197,9 +197,6 @@ module "launcher" {
   hive_max_reducers                     = var.emr_hive_max_reducers[local.environment]
   alarm_sns_arn                         = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
   alarm_on_failure                      = local.emr_launcher_failure_alert[local.environment]
-  proxy_http_host                       = data.terraform_remote_state.internal_compute.outputs.internet_proxy.host
-  proxy_http_port                       = data.terraform_remote_state.internal_compute.outputs.internet_proxy.port
-  hcs_environment                       = local.hcs_environment[local.environment]
 }
 
 module "emrfs_lambda" {
