@@ -90,6 +90,7 @@ sudo /opt/emr/cloudwatch.sh \
     "${cwa_namespace}" "${cwa_si_namespace}" "${cwa_si_log_group_name}"
 
 echo "Running config_hcs script"
+sudo mkdir -p /var/log/hcs
 sudo /opt/emr/config_hcs.sh "${hcs_environment}" "${http_proxy_host}" "${http_proxy_port}"
 
 echo "Assuming Cognito Role. Output hidden"

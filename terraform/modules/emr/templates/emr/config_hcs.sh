@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-
 set +e
-
 
 (
     # Import the logging functions
