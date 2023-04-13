@@ -21,4 +21,4 @@
 
 
 
-)   >> /var/log/batch/config_hcs.log 2>&1
+)   >> /var/log/hcs/config_hcs.log 2>&1
