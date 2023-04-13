@@ -142,3 +142,9 @@ variable "alarm_on_failure" {
   type        = number
   description = "0 or 1 value based on alarms needed per environment"
 }
+
+variable "proxy_port" {
+  type        = string
+  description = "Proxy port"
+  default     = "3128"
+}

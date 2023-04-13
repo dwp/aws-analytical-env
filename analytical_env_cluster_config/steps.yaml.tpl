@@ -7,7 +7,7 @@ BootstrapActions:
   ScriptBootstrapAction:
     Path: "s3://${config_bucket}/scripts/emr/config_hcs.sh"
     Args: [
-      "${environment}", 
+      "${hcs_environment}", 
       "${proxy_http_host}",
       "${proxy_http_port}"
     ]
