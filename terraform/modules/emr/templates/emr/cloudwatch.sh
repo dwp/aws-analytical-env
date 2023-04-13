@@ -27,7 +27,7 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
             "timezone": "UTC"
           },
           {
-            "file_path": "/var/log/batch/config_hcs.log",
+            "file_path": "/var/log/hcs/config_hcs.log",
             "log_group_name": "${cwa_log_group_name}",  
             "log_stream_name": "{instance_id}_config_hcs.log",
             "timezone": "UTC"
