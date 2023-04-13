@@ -1,4 +1,5 @@
 locals {
+
   environment = terraform.workspace == "default" ? "development" : terraform.workspace
   hcs_environment = {
     development    = "Dev"
@@ -9,6 +10,7 @@ locals {
     management     = "SP_Tooling"
     management-dev = "DT_Tooling"
   }
+
 
   fqdn = format("%s.%s.%s", "emr", var.emr_cluster_name, var.root_dns_name)
   master_instance_type = {

@@ -163,7 +163,6 @@ module "launcher" {
   log_bucket                            = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
   account                               = local.account[local.environment]
   analytical_env_security_configuration = module.emr.analytical_env_security_configuration
-  costcode                              = var.costcode
   release_version                       = "6.2.0"
   common_security_group                 = module.emr.common_security_group
   master_security_group                 = module.emr.master_security_group
@@ -185,6 +184,10 @@ module "launcher" {
   test_core_instance_count              = var.test_core_instance_count[local.environment]
   payment_timelines_core_instance_count = var.payment_timelines_core_instance_count[local.environment]
   environment                           = local.environment
+  application_tag_value                 = data.aws_default_tags.provider_tags.tags.Application
+  function_tag_value                    = data.aws_default_tags.provider_tags.tags.Function
+  business_project_tag_value            = data.aws_default_tags.provider_tags.tags.Business-Project
+  environment_tag_value                 = data.aws_default_tags.provider_tags.tags.Environment
   instance_type_master                  = var.emr_instance_type_master[local.environment]
   instance_type_core_one                = var.emr_instance_type_core_one[local.environment]
   instance_type_core_two                = var.emr_instance_type_core_two[local.environment]

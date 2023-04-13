@@ -386,3 +386,12 @@ groups:
       - mirror-git-repo-aws-crypto-data-integration
       - mirror-git-repo-aws-crypto-data-preprod
       - mirror-git-repo-aws-crypto-data-production
+
+  - name: apache-maven
+    jobs:
+      - mirror-apache-maven-development
+      - mirror-apache-maven-qa
+      - mirror-apache-maven-integration
+      - mirror-apache-maven-preprod
+      - mirror-apache-maven-production
+      
