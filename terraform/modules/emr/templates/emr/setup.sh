@@ -89,10 +89,10 @@ sudo /opt/emr/cloudwatch.sh \
     "${cwa_metrics_collection_interval}" "${cwa_log_group_name}" "${aws_default_region}" \
     "${cwa_namespace}" "${cwa_si_namespace}" "${cwa_si_log_group_name}"
 
-echo "Running config_hcs script"
+echo "config_hcs script logging"
 sudo mkdir -p /var/log/hcs
+sudo chown hadoop:hadoop /var/log/hcs
 sudo chmod -R 775 /var/log/hcs
-sudo /opt/emr/config_hcs.sh "${hcs_environment}" "${http_proxy_host}" "${http_proxy_port}"
 
 echo "Assuming Cognito Role. Output hidden"
 set +x
