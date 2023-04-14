@@ -91,6 +91,7 @@ sudo /opt/emr/cloudwatch.sh \
 
 echo "Running config_hcs script"
 sudo mkdir -p /var/log/hcs
+sudo chmod -R 775 /var/log/hcs
 sudo /opt/emr/config_hcs.sh "${hcs_environment}" "${http_proxy_host}" "${http_proxy_port}"
 
 echo "Assuming Cognito Role. Output hidden"
