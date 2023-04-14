@@ -91,7 +91,7 @@ sudo /opt/emr/cloudwatch.sh \
 
 echo "config_hcs script logging"
 sudo mkdir -p /var/log/hcs
-sudo chown -R hadoop:hadoop
+sudo chown hadoop:hadoop /var/log/hcs
 sudo chmod -R 775 /var/log/hcs
 
 echo "Assuming Cognito Role. Output hidden"
