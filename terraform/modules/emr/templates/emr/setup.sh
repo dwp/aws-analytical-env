@@ -93,7 +93,6 @@ echo "Running config_hcs script"
 sudo mkdir -p /var/log/hcs
 sudo chown -R hadoop:hadoop
 sudo chmod -R 775 /var/log/hcs
-/opt/emr/config_hcs.sh "${hcs_environment}" "${http_proxy_host}" "${http_proxy_port}"
 
 
 echo "Assuming Cognito Role. Output hidden"
