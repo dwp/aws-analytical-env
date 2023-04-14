@@ -53,13 +53,13 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
           {
             "file_path": "/var/log/batch/sparkR_install.log",
             "log_group_name": "${cwa_log_group_name}",
-            "log_stream_name": "{instance_id}_sparkR_install.logg",
+            "log_stream_name": "{instance_id}_sparkR_install.log",
             "timezone": "UTC"
           },
           {
             "file_path": "/var/log/batch/livy_client_conf.log",
             "log_group_name": "${cwa_log_group_name}",
-            "log_stream_name": "{instance_id}_livy_client_conf.logg",
+            "log_stream_name": "{instance_id}_livy_client_conf.log",
             "timezone": "UTC"
           },
           {
