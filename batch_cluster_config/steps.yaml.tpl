@@ -3,6 +3,12 @@ BootstrapActions:
 - Name: "run-log4j-patch"
   ScriptBootstrapAction:
     Path: "s3://${config_bucket}/scripts/emr/patch-log4j-emr-6.2.1-v1.sh"
+- Name: "get-dks-cert"
+  ScriptBootstrapAction:
+    Path: "s3://${config_bucket}/scripts/emr/get_dks_cert.sh"
+- Name: "emr-setup"
+  ScriptBootstrapAction:
+    Path: "s3://${config_bucket}/scripts/emr/setup.sh"
 - Name: "config_hcs"
   ScriptBootstrapAction:
     Path: "s3://${config_bucket}/scripts/emr/config_hcs.sh"
@@ -11,12 +17,6 @@ BootstrapActions:
       "${proxy_http_host}",
       "${proxy_http_port}"
     ]
-- Name: "get-dks-cert"
-  ScriptBootstrapAction:
-    Path: "s3://${config_bucket}/scripts/emr/get_dks_cert.sh"
-- Name: "emr-setup"
-  ScriptBootstrapAction:
-    Path: "s3://${config_bucket}/scripts/emr/setup.sh"
 Steps:
 - Name: "hdfs-setup"
   HadoopJarStep:
