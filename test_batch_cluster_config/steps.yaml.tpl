@@ -1,5 +1,11 @@
 ---
 BootstrapActions:
+- Name: "get-dks-cert"
+  ScriptBootstrapAction:
+    Path: "s3://${config_bucket}/scripts/emr/get_dks_cert.sh"
+- Name: "emr-setup"
+  ScriptBootstrapAction:
+    Path: "s3://${config_bucket}/scripts/emr/setup.sh"
 - Name: "config_hcs"
   ScriptBootstrapAction:
     Path: "s3://${config_bucket}/scripts/emr/config_hcs.sh"
@@ -8,12 +14,6 @@ BootstrapActions:
       "${proxy_http_host}",
       "${proxy_http_port}"
     ]
-- Name: "get-dks-cert"
-  ScriptBootstrapAction:
-    Path: "s3://${config_bucket}/scripts/emr/get_dks_cert.sh"
-- Name: "emr-setup"
-  ScriptBootstrapAction:
-    Path: "s3://${config_bucket}/scripts/emr/setup.sh"
 Steps:
 - Name: "hdfs-setup"
   HadoopJarStep:
