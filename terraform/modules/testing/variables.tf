@@ -190,3 +190,13 @@ variable "cw_agent_netstat_metrics_collection_interval" {
   type        = string
   default     = 60
 }
+
+variable "asg_autoshutdown" {
+  type        = map(string)
+  description = "ASG Shutdown Flag"
+}
+
+variable "asg_ssmenabled" {
+  type        = map(string)
+  description = "SSM Enabled Flag"
+}

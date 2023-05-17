@@ -28,4 +28,6 @@ module "testing" {
   hcs_environment               = local.hcs_environment[local.environment]
   cwa_namespace                 = local.cw_metrics_data_agent_namespace
   cwa_log_group_name            = "${local.cw_metrics_data_agent_namespace}-${local.environment}"
+  asg_autoshutdown              = local.asg_autoshutdown[local.environment]
+  asg_ssmenabled                = local.asg_ssmenabled[local.environment]
 }

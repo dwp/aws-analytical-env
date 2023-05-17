@@ -166,13 +166,6 @@ locals {
   cw_metrics_data_agent_namespace                       = "/app/metrics-data-batch"
   cw_metrics_data_agent_log_group_name                  = "/app/metrics-data-batch"
 
-  cw_agent_metrics_collection_interval                  = 60
-  cw_agent_cpu_metrics_collection_interval              = 60
-  cw_agent_disk_measurement_metrics_collection_interval = 60
-  cw_agent_disk_io_metrics_collection_interval          = 60
-  cw_agent_mem_metrics_collection_interval              = 60
-  cw_agent_netstat_metrics_collection_interval          = 60
-
   asg_autoshutdown = {
     development = "False"
     qa          = "False"

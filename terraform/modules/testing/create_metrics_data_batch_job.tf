@@ -76,11 +76,11 @@ resource "aws_launch_template" "create_metrics_data_environment" {
     resource_type = "instance"
 
     tags = merge(
-      local.common_tags,
+      var.common_tags,
       {
         Name                = "metrics-data-batch",
-        AutoShutdown        = local.asg_autoshutdown[local.environment],
-        SSMEnabled          = local.asg_ssmenabled[local.environment],
+        AutoShutdown        = var.asg_autoshutdown[var.environment],
+        SSMEnabled          = var.asg_ssmenabled[var.environment],
         Persistence         = "Ignore",
         propagate_at_launch = true,
       }
