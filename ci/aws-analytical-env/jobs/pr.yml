@@ -10,6 +10,7 @@ jobs:
       - get: manage-mysql-user-release
       - get: hive-custom-auth-release
       - get: emr-al2-ami
+      - get: dw-al2-ecs-ami
       - put: aws-analytical-env
         resource: aws-analytical-env-pr
         params:
