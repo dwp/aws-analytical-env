@@ -42,12 +42,12 @@ resource "aws_launch_template" "create_metrics_data_environment" {
   image_id = data.aws_ami.hardened.id
 
   user_data = base64encode(templatefile("files/batch/userdata.tpl", {
-    region                                           = data.aws_region.current.name
+    region                                           = var.region
     name                                             = "metrics-data-batch"
     proxy_port                                       = var.proxy_port
-    proxy_host                                       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_dns_name
+    proxy_host                                       = var.proxy_host
     hcs_environment                                  = var.hcs_environment[var.environment]
-    s3_scripts_bucket                                = data.terraform_remote_state.common.outputs.config_bucket.id
+    s3_scripts_bucket                                = var.common_config_bucket
     s3_script_logrotate                              = aws_s3_object.batch_logrotate_script.id
     s3_script_cloudwatch_shell                       = aws_s3_object.batch_cloudwatch_script.id
     s3_script_logging_shell                          = aws_s3_object.batch_logging_script.id

@@ -144,6 +144,10 @@ variable "emr_host_sg" {
   description = "Security Group for the EMR cluster"
 }
 
+variable "proxy_host" {
+  description = "proxy host"
+  type        = string
+}
 variable "proxy_port" {
   description = "proxy port"
   type        = string
