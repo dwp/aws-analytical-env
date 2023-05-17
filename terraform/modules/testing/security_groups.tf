@@ -142,7 +142,7 @@ resource "aws_security_group_rule" "ingress_livy_from_rbac_lambda" {
 
 
 resource "aws_security_group_rule" "metrics_batch_to_internet_proxy" {
-  description              = "k2hb recon trimmer batch to Internet Proxy (for hcs services)"
+  description              = "metrics batch to Internet Proxy (for hcs services)"
   type                     = "egress"
   protocol                 = "tcp"
   from_port                = 3128
@@ -151,7 +151,7 @@ resource "aws_security_group_rule" "metrics_batch_to_internet_proxy" {
   security_group_id        = aws_security_group.batch_job_sg.id
 }
 resource "aws_security_group_rule" "metrics_batch_from_internet_proxy" {
-  description              = "Allow proxy access from k2hb recon trimmer batch"
+  description              = "Allow proxy access from metrics batch"
   type                     = "ingress"
   from_port                = 3128
   to_port                  = 3128
