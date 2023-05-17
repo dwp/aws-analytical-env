@@ -3,7 +3,7 @@ data "local_file" "batch_config_hcs" {
 }
 
 resource "aws_s3_object" "batch_config_hcs" {
-  bucket     = var.common_config_bucke
+  bucket     = var.common_config_bucket
   key        = "component/metrics_batch/batch_config_hcs"
   content    = data.local_file.batch_config_hcs.content
   kms_key_id = var.common_config_bucket_cmk_arn
