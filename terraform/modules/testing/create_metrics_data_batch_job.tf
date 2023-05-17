@@ -66,7 +66,7 @@ resource "aws_launch_template" "create_metrics_data_environment" {
   instance_initiated_shutdown_behavior = "terminate"
 
   tags = merge(
-    local.common_tags,
+    var.common_tags,
     {
       Name = "metrics-data-batch"
     }
@@ -91,7 +91,7 @@ resource "aws_launch_template" "create_metrics_data_environment" {
     resource_type = "volume"
 
     tags = merge(
-      local.common_tags,
+      var.common_tags,
       {
         Name = "metrics-data-batch",
       }
