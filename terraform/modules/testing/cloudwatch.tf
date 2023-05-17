@@ -28,7 +28,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_metrics_lambda" {
 */
 
 resource "aws_cloudwatch_log_group" "metrics_data_agent" {
-  name              = local.cw_metrics_data_agent_log_group_name
+  name              = var.cw_metrics_data_agent_log_group_name
   retention_in_days = 180
-  tags              = local.common_tags
+  tags              = var.common_tags
 }

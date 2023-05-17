@@ -22,8 +22,8 @@ resource "aws_batch_compute_environment" "create_metrics_data_environment" {
     type = "EC2"
 
     launch_template {
-      launch_template_id      = aws_launch_template.create_metrics_data_environment.id
-      version                 = aws_launch_template.create_metrics_data_environment.latest_version
+      launch_template_id = aws_launch_template.create_metrics_data_environment.id
+      version            = aws_launch_template.create_metrics_data_environment.latest_version
     }
 
     tags = merge(
