@@ -147,7 +147,7 @@ resource "aws_security_group_rule" "metrics_batch_to_internet_proxy" {
   protocol                 = "tcp"
   from_port                = 3128
   to_port                  = 3128
-  source_security_group_id = var.interface_vpce_sg_id
+  source_security_group_id = var.internet_proxy_sg_id
   security_group_id        = aws_security_group.batch_job_sg.id
 }
 resource "aws_security_group_rule" "metrics_batch_from_internet_proxy" {
@@ -157,5 +157,5 @@ resource "aws_security_group_rule" "metrics_batch_from_internet_proxy" {
   to_port                  = 3128
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.batch_job_sg.id
-  security_group_id        = var.interface_vpce_sg_id
+  security_group_id        = var.internet_proxy_sg_id
 }

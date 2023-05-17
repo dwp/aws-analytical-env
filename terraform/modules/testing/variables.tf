@@ -229,3 +229,8 @@ variable "ecs_hardened_ami_id" {
   description = "The AMI ID of the latest/pinned Hardened AMI AL2 Image"
   type        = string
 }
+
+variable "internet_proxy_sg_id" {
+  type        = string
+  description = "(Required) Internet proxy SG ID"
+}
