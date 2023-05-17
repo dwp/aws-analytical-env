@@ -24,4 +24,8 @@ module "testing" {
   push_host                     = data.terraform_remote_state.aws_analytical_environment_app.outputs.pushgateway.fqdn
   push_host_sg                  = data.terraform_remote_state.aws_analytical_environment_app.outputs.pushgateway.lb_sg.id
   emr_host_sg                   = data.terraform_remote_state.aws_analytical_environment_app.outputs.emr_sg_id
+
+  hcs_environment               = local.hcs_environment[local.environment]
+  cwa_namespace                 = local.cw_metrics_data_agent_namespace
+  cwa_log_group_name            = "${local.cw_metrics_data_agent_namespace}-${local.environment}"
 }

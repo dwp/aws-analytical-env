@@ -6,7 +6,6 @@ resource "aws_batch_compute_environment" "create_metrics_data_environment" {
   ]
   compute_environment_name = "${var.name_prefix}-create-metrics-data-environment"
   compute_resources {
-    image_id      = data.aws_ami.hardened.id
     instance_role = aws_iam_instance_profile.create_metrics_data_instance_profile.arn
     instance_type = [
       "optimal"
@@ -21,12 +20,80 @@ resource "aws_batch_compute_environment" "create_metrics_data_environment" {
       var.subnets[0]
     ]
     type = "EC2"
+
+    launch_template {
+      launch_template_id      = aws_launch_template.create_metrics_data_environment.id
+      version                 = aws_launch_template.create_metrics_data_environment.latest_version
+    }
+
     tags = merge(
       var.common_tags,
       {
         Name         = "${var.name_prefix}-create-metrics-data-batch-instance",
         Persistence  = "Ignore",
         AutoShutdown = "False",
+      }
+    )
+  }
+}
+
+resource "aws_launch_template" "create_metrics_data_environment" {
+  name     = "metrics-data-batch"
+  image_id = data.aws_ami.hardened.id
+
+  user_data = base64encode(templatefile("files/batch/userdata.tpl", {
+    region                                           = data.aws_region.current.name
+    name                                             = "metrics-data-batch"
+    proxy_port                                       = var.proxy_port
+    proxy_host                                       = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_dns_name
+    hcs_environment                                  = var.hcs_environment[var.environment]
+    s3_scripts_bucket                                = data.terraform_remote_state.common.outputs.config_bucket.id
+    s3_script_logrotate                              = aws_s3_object.batch_logrotate_script.id
+    s3_script_cloudwatch_shell                       = aws_s3_object.batch_cloudwatch_script.id
+    s3_script_logging_shell                          = aws_s3_object.batch_logging_script.id
+    s3_script_config_hcs_shell                       = aws_s3_object.batch_config_hcs.id
+    cwa_namespace                                    = var.cw_metrics_data_agent_namespace
+    cwa_log_group_name                               = "${var.cw_metrics_data_agent_namespace}-${var.environment}"
+    cwa_metrics_collection_interval                  = var.cw_agent_metrics_collection_interval
+    cwa_cpu_metrics_collection_interval              = var.cw_agent_cpu_metrics_collection_interval
+    cwa_disk_measurement_metrics_collection_interval = var.cw_agent_disk_measurement_metrics_collection_interval
+    cwa_disk_io_metrics_collection_interval          = var.cw_agent_disk_io_metrics_collection_interval
+    cwa_mem_metrics_collection_interval              = var.cw_agent_mem_metrics_collection_interval
+    cwa_netstat_metrics_collection_interval          = var.cw_agent_netstat_metrics_collection_interval
+
+  }))
+
+  instance_initiated_shutdown_behavior = "terminate"
+
+  tags = merge(
+    local.common_tags,
+    {
+      Name = "metrics-data-batch"
+    }
+  )
+
+  tag_specifications {
+    resource_type = "instance"
+
+    tags = merge(
+      local.common_tags,
+      {
+        Name                = "metrics-data-batch",
+        AutoShutdown        = local.asg_autoshutdown[local.environment],
+        SSMEnabled          = local.asg_ssmenabled[local.environment],
+        Persistence         = "Ignore",
+        propagate_at_launch = true,
+      }
+    )
+  }
+
+  tag_specifications {
+    resource_type = "volume"
+
+    tags = merge(
+      local.common_tags,
+      {
+        Name = "metrics-data-batch",
       }
     )
   }
