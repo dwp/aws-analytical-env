@@ -43,7 +43,7 @@ resource "aws_batch_compute_environment" "create_metrics_data_environment" {
 
 resource "aws_launch_template" "create_metrics_data_environment" {
   name     = "metrics-data-batch"
-  image_id = data.aws_ami.hardened.id
+  image_id = var.ecs_hardened_ami_id
 
   user_data = base64encode(templatefile("${path.module}/files/batch/userdata.tpl", {
     region                                           = var.region

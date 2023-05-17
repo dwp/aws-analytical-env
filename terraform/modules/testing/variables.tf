@@ -224,3 +224,8 @@ variable "s3_scripts_bucket" {
   type        = string
   description = "S3 Scripts bucket"
 }
+
+variable "ecs_hardened_ami_id" {
+  description = "The AMI ID of the latest/pinned Hardened AMI AL2 Image"
+  type        = string
+}
