@@ -4,7 +4,7 @@ resource "aws_batch_compute_environment" "create_metrics_data_environment" {
   depends_on = [
     aws_iam_role_policy_attachment.create_metrics_data_batch_service_role_attachment
   ]
-  compute_environment_name = "${var.name_prefix}-create-metrics-data-environment"
+  compute_environment_name_prefix = "${var.name_prefix}-create-metrics-data-environment-"
   compute_resources {
     instance_role = aws_iam_instance_profile.create_metrics_data_instance_profile.arn
     instance_type = [
