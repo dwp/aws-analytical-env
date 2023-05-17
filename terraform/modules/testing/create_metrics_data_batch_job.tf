@@ -41,7 +41,7 @@ resource "aws_launch_template" "create_metrics_data_environment" {
   name     = "metrics-data-batch"
   image_id = data.aws_ami.hardened.id
 
-  user_data = base64encode(templatefile("files/batch/userdata.tpl", {
+  user_data = base64encode(templatefile("./files/batch/userdata.tpl", {
     region                                           = var.region
     name                                             = "metrics-data-batch"
     proxy_port                                       = var.proxy_port
