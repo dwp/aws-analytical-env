@@ -80,6 +80,8 @@ jobs:
         trigger: false
       - get: emr-al2-ami
         trigger: false
+      - get: dw-al2-ecs-ami
+        trigger: false
       - get: onboarding-email-template
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
