@@ -155,6 +155,11 @@ variable "cw_metrics_data_agent_namespace" {
   type        = string
 }
 
+variable "cw_metrics_data_agent_log_group_name" {
+  description = "cw metrics data agent log group name"
+  type        = string
+}
+
 variable "cw_agent_metrics_collection_interval" {
   description = "cw metrics collection interval"
   type        = string
