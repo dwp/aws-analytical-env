@@ -127,7 +127,7 @@ data "aws_iam_policy_document" "ecs_instance_role_batch_ebs_cmk" {
       "s3:GetBucketLocation",
     ]
 
-    resources = [data.terraform_remote_state.common.outputs.config_bucket.arn]
+    resources = [var.common_config_bucket_cmk_arn]
   }
 
   statement {
@@ -136,7 +136,7 @@ data "aws_iam_policy_document" "ecs_instance_role_batch_ebs_cmk" {
 
     actions = ["s3:GetObject"]
 
-    resources = ["${data.terraform_remote_state.common.outputs.config_bucket.arn}/*"]
+    resources = ["${var.common_config_bucket_cmk_arn}/*"]
   }
 
   statement {
@@ -148,7 +148,7 @@ data "aws_iam_policy_document" "ecs_instance_role_batch_ebs_cmk" {
       "kms:GenerateDataKey",
     ]
 
-    resources = [data.terraform_remote_state.common.outputs.config_bucket_cmk.arn]
+    resources = [var.common_config_bucket_cmk_arn]
   }
 
   statement {
@@ -159,7 +159,7 @@ data "aws_iam_policy_document" "ecs_instance_role_batch_ebs_cmk" {
       "logs:PutLogEvents",
       "logs:DescribeLogStreams"
     ]
-    resources = data.terraform_remote_state.common.outputs.ami_ecs_test_services ? [aws_cloudwatch_log_group.metrics_data_agent.arn, data.terraform_remote_state.common.outputs.ami_ecs_test_log_group_arn] : [aws_cloudwatch_log_group.metrics_data_agent.arn]
+    resources = [aws_cloudwatch_log_group.metrics_data_agent.arn]
   }
 
   statement {
@@ -170,7 +170,7 @@ data "aws_iam_policy_document" "ecs_instance_role_batch_ebs_cmk" {
       "ec2:ModifyInstanceMetadataOptions",
       "ec2:*Tags",
     ]
-    resources = ["arn:aws:ec2:${var.region}:${local.account[local.environment]}:instance/*"]
+    resources = ["arn:aws:ec2:${var.region}:${var.account[var.environment]}:instance/*"]
   }
 
   statement {

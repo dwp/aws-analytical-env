@@ -197,11 +197,21 @@ variable "cw_agent_netstat_metrics_collection_interval" {
 }
 
 variable "asg_autoshutdown" {
-  type        = map(string)
+  type        = string
   description = "ASG Shutdown Flag"
 }
 
 variable "asg_ssmenabled" {
-  type        = map(string)
+  type        = string
   description = "SSM Enabled Flag"
+}
+
+variable "common_config_bucket" {
+  type        = string
+  description = "Common config bucket"
+}
+
+variable "common_config_bucket_cmk_arn" {
+  type        = string
+  description = "Common config bucket cmk arn"
 }
