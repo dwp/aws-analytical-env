@@ -26,6 +26,10 @@ resource "aws_batch_compute_environment" "create_metrics_data_environment" {
       version            = aws_launch_template.create_metrics_data_environment.latest_version
     }
 
+    lifecycle {
+      create_before_destroy = true
+    }
+
     tags = merge(
       var.common_tags,
       {
