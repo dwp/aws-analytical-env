@@ -34,5 +34,6 @@ module "testing" {
   common_config_bucket_cmk_arn         = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   proxy_host                           = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_dns_name
   s3_scripts_bucket                    = data.terraform_remote_state.common.outputs.config_bucket.id
+  ecs_hardened_ami_id                  = var.ecs_hardened_ami_id
 
 }
