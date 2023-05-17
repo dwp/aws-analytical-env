@@ -1,5 +1,5 @@
 data "local_file" "batch_config_hcs" {
-  filename = "files/batch/batch_config_hcs.sh"
+  filename = "${path.module}files/batch/batch_config_hcs.sh"
 }
 
 resource "aws_s3_object" "batch_config_hcs" {
@@ -17,7 +17,7 @@ resource "aws_s3_object" "batch_config_hcs" {
 }
 
 data "local_file" "batch_logrotate_script" {
-  filename = "files/batch/batch.logrotate"
+  filename = "${path.module}files/batch/batch.logrotate"
 }
 
 resource "aws_s3_object" "batch_logrotate_script" {
@@ -35,7 +35,7 @@ resource "aws_s3_object" "batch_logrotate_script" {
 }
 
 data "local_file" "batch_cloudwatch_script" {
-  filename = "files/batch/batch_cloudwatch.sh"
+  filename = "${path.module}files/batch/batch_cloudwatch.sh"
 }
 
 resource "aws_s3_object" "batch_cloudwatch_script" {
@@ -53,7 +53,7 @@ resource "aws_s3_object" "batch_cloudwatch_script" {
 }
 
 data "local_file" "batch_logging_script" {
-  filename = "files/batch/batch_logging.sh"
+  filename = "${path.module}files/batch/batch_logging.sh"
 }
 
 resource "aws_s3_object" "batch_logging_script" {

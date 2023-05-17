@@ -30,7 +30,7 @@ module "testing" {
   cw_metrics_data_agent_log_group_name = local.cw_metrics_data_agent_log_group_name
   asg_autoshutdown                     = local.asg_autoshutdown[local.environment]
   asg_ssmenabled                       = local.asg_ssmenabled[local.environment]
-  common_config_bucket                 = data.terraform_remote_state.common.outputs.config_bucket
+  common_config_bucket                 = data.terraform_remote_state.common.outputs.config_bucket.id
   common_config_bucket_cmk_arn         = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   proxy_host                           = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_dns_name
   s3_scripts_bucket                    = data.terraform_remote_state.common.outputs.config_bucket.id
