@@ -6,11 +6,15 @@ jobs:
         resource: meta-testing-dev
       - get: aws-analytical-env
         trigger: false
+      - get: aws-analytical-env-dev
+        trigger: true
       - get: emr-al2-ami
         trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: testing
+        input_mapping:
+          aws-analytical-env: aws-analytical-env-dev
       - .: (( inject meta.plan.terraform-apply ))
         task: terraform-apply-testing
         config:
@@ -18,6 +22,8 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/testing'
         params:
           DEPLOY_PATH: testing
+        input_mapping:
+          aws-analytical-env: aws-analytical-env-dev
       - .: (( inject meta.plan.terraform-plan ))
         task: terraform-plan-testing
         config:
@@ -25,3 +31,5 @@ jobs:
             dir: 'aws-analytical-env/terraform/deploy/testing'
         params:
           DEPLOY_PATH: testing
+        input_mapping:
+          aws-analytical-env: aws-analytical-env-dev
