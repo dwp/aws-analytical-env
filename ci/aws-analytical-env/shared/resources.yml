@@ -232,11 +232,4 @@ resources:
         name: untested-dw-al2-analytical-env-emr-ami-*
         architecture: x86_64
 
-  - name: aws-analytical-env-dev
-    type: git
-    source:
-      branch: DTWRKS-976
-      access_token: ((dataworks-secrets.concourse_github_pat))
-      uri: https://github.com/dwp/aws-analytical-env.git
-    check_every: 5m
-    webhook_token: ((dataworks.concourse_github_webhook_token))
+
