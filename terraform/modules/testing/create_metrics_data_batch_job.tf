@@ -46,7 +46,7 @@ resource "aws_launch_template" "create_metrics_data_environment" {
     name                                             = "metrics-data-batch"
     proxy_port                                       = var.proxy_port
     proxy_host                                       = var.proxy_host
-    hcs_environment                                  = var.hcs_environment[var.environment]
+    hcs_environment                                  = var.hcs_environment
     s3_scripts_bucket                                = var.s3_scripts_bucket
     s3_script_logrotate                              = aws_s3_object.batch_logrotate_script.id
     s3_script_cloudwatch_shell                       = aws_s3_object.batch_cloudwatch_script.id
