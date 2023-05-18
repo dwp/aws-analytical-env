@@ -101,7 +101,7 @@ resource "aws_iam_role_policy_attachment" "policy_attachment_for_create_metrics_
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
 
-# Custom policy to allow use of default EBS encryption key by Batch instance role
+# Custom policy to allow use of default EBS encryption key by Batch instance role and access to Config bucket
 data "aws_iam_policy_document" "ecs_instance_role_batch_ebs_cmk" {
   statement {
     sid    = "AllowUseDefaultEbsCmk"
@@ -116,6 +116,83 @@ data "aws_iam_policy_document" "ecs_instance_role_batch_ebs_cmk" {
     ]
 
     resources = [var.default_ebs_kms_key]
+  }
+
+  statement {
+    effect = "Allow"
+    sid    = "AllowAccessToConfigBucket"
+
+    actions = [
+      "s3:ListBucket",
+      "s3:GetBucketLocation",
+    ]
+
+    resources = [var.common_config_bucket_cmk_arn]
+  }
+
+  statement {
+    effect = "Allow"
+    sid    = "AllowAccessToConfigBucketObjects"
+
+    actions = ["s3:GetObject"]
+
+    resources = ["${var.common_config_bucket_cmk_arn}/*"]
+  }
+
+  statement {
+    sid    = "AllowKMSDecryptionOfS3ConfigBucketObj"
+    effect = "Allow"
+
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+    ]
+
+    resources = [var.common_config_bucket_cmk_arn]
+  }
+
+  statement {
+    sid    = "AllowAccessLogGroups"
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:DescribeLogStreams"
+    ]
+    resources = [aws_cloudwatch_log_group.metrics_data_agent.arn]
+  }
+
+  statement {
+    sid    = "EnableEC2TaggingHost"
+    effect = "Allow"
+
+    actions = [
+      "ec2:ModifyInstanceMetadataOptions",
+      "ec2:*Tags",
+    ]
+    resources = ["arn:aws:ec2:${var.region}:${var.account}:instance/*"]
+  }
+
+  statement {
+    sid    = "ECSListClusters"
+    effect = "Allow"
+
+    actions = [
+      "ecs:ListClusters",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ssm:*",
+    ]
+
+    resources = [
+      "*"
+    ]
   }
 }
 
@@ -132,6 +209,16 @@ resource "aws_iam_role_policy_attachment" "ecs_instance_role_ebs_cmk" {
 resource "aws_iam_role_policy_attachment" "ecs_instance_role_batch_ecr" {
   role       = aws_iam_role.instance_role_for_create_metrics_data_batch.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_instance_role_batch_cwasp" {
+  role       = aws_iam_role.instance_role_for_create_metrics_data_batch.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_instance_role_batch_ec2_for_ssm_attachment" {
+  role       = aws_iam_role.instance_role_for_create_metrics_data_batch.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
 }
 
 /* ========== Batch Job Role ========== */

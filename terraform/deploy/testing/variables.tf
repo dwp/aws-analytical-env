@@ -43,3 +43,8 @@ variable "costcode" {
   type    = string
   default = ""
 }
+
+variable "ecs_hardened_ami_id" {
+  description = "The AMI ID of the latest/pinned Hardened AMI AL2 Image"
+  type        = string
+}

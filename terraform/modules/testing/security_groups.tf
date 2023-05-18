@@ -139,3 +139,23 @@ resource "aws_security_group_rule" "ingress_livy_from_rbac_lambda" {
   type                     = "ingress"
   source_security_group_id = aws_security_group.rbac_lambda.id
 }
+
+
+resource "aws_security_group_rule" "metrics_batch_to_internet_proxy" {
+  description              = "metrics batch to Internet Proxy (for hcs services)"
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = 3128
+  to_port                  = 3128
+  source_security_group_id = var.internet_proxy_sg_id
+  security_group_id        = aws_security_group.batch_job_sg.id
+}
+resource "aws_security_group_rule" "metrics_batch_from_internet_proxy" {
+  description              = "Allow proxy access from metrics batch"
+  type                     = "ingress"
+  from_port                = 3128
+  to_port                  = 3128
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.batch_job_sg.id
+  security_group_id        = var.internet_proxy_sg_id
+}

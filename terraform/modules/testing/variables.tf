@@ -20,6 +20,11 @@ variable "environment" {
   description = "the current environment"
 }
 
+variable "hcs_environment" {
+  type        = string
+  description = "the hcs environment"
+}
+
 variable "account" {
   type        = string
   description = "(Required) AWS account number"
@@ -137,4 +142,95 @@ variable "push_host_sg" {
 variable "emr_host_sg" {
   type        = string
   description = "Security Group for the EMR cluster"
+}
+
+variable "proxy_host" {
+  description = "proxy host"
+  type        = string
+}
+variable "proxy_port" {
+  description = "proxy port"
+  type        = string
+  default     = "3128"
+}
+
+variable "cw_metrics_data_agent_namespace" {
+  description = "cw metrics data agent namespace"
+  type        = string
+}
+
+variable "cw_metrics_data_agent_log_group_name" {
+  description = "cw metrics data agent log group name"
+  type        = string
+}
+
+variable "cw_agent_metrics_collection_interval" {
+  description = "cw metrics collection interval"
+  type        = string
+  default     = 60
+}
+
+variable "cw_agent_cpu_metrics_collection_interval" {
+  description = "cw cpu metrics collection interval"
+  type        = string
+  default     = 60
+}
+
+variable "cw_agent_disk_measurement_metrics_collection_interval" {
+  description = "cw disk metrics collection interval"
+  type        = string
+  default     = 60
+}
+
+variable "cw_agent_disk_io_metrics_collection_interval" {
+  description = "cw disk io metrics collection interval"
+  type        = string
+  default     = 60
+}
+
+variable "cw_agent_mem_metrics_collection_interval" {
+  description = "cw mem metrics collection interval"
+  type        = string
+  default     = 60
+}
+
+variable "cw_agent_netstat_metrics_collection_interval" {
+  description = "cw netstat metrics collection interval"
+  type        = string
+  default     = 60
+}
+
+variable "asg_autoshutdown" {
+  type        = string
+  description = "ASG Shutdown Flag"
+}
+
+variable "asg_ssmenabled" {
+  type        = string
+  description = "SSM Enabled Flag"
+}
+
+variable "common_config_bucket" {
+  type        = string
+  description = "Common config bucket"
+}
+
+variable "common_config_bucket_cmk_arn" {
+  type        = string
+  description = "Common config bucket cmk arn"
+}
+
+variable "s3_scripts_bucket" {
+  type        = string
+  description = "S3 Scripts bucket"
+}
+
+variable "ecs_hardened_ami_id" {
+  description = "The AMI ID of the latest/pinned Hardened AMI AL2 Image"
+  type        = string
+}
+
+variable "internet_proxy_sg_id" {
+  type        = string
+  description = "(Required) Internet proxy SG ID"
 }

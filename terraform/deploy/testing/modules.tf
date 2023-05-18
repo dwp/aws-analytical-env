@@ -24,4 +24,17 @@ module "testing" {
   push_host                     = data.terraform_remote_state.aws_analytical_environment_app.outputs.pushgateway.fqdn
   push_host_sg                  = data.terraform_remote_state.aws_analytical_environment_app.outputs.pushgateway.lb_sg.id
   emr_host_sg                   = data.terraform_remote_state.aws_analytical_environment_app.outputs.emr_sg_id
+  internet_proxy_sg_id          = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_sg
+
+  hcs_environment                      = local.hcs_environment[local.environment]
+  cw_metrics_data_agent_namespace      = local.cw_metrics_data_agent_namespace
+  cw_metrics_data_agent_log_group_name = local.cw_metrics_data_agent_log_group_name
+  asg_autoshutdown                     = local.asg_autoshutdown[local.environment]
+  asg_ssmenabled                       = local.asg_ssmenabled[local.environment]
+  common_config_bucket                 = data.terraform_remote_state.common.outputs.config_bucket.id
+  common_config_bucket_cmk_arn         = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
+  proxy_host                           = data.terraform_remote_state.aws_analytical_environment_infra.outputs.internet_proxy_dns_name
+  s3_scripts_bucket                    = data.terraform_remote_state.common.outputs.config_bucket.id
+  ecs_hardened_ami_id                  = var.ecs_hardened_ami_id
+
 }

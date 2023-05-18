@@ -162,4 +162,24 @@ locals {
     Persistence  = "Ignore"
     AutoShutdown = "False"
   }
+
+  cw_metrics_data_agent_namespace      = "/app/metrics-data-batch"
+  cw_metrics_data_agent_log_group_name = "/app/metrics-data-batch"
+
+  asg_autoshutdown = {
+    development = "False"
+    qa          = "False"
+    integration = "False"
+    preprod     = "False"
+    production  = "False"
+  }
+
+  asg_ssmenabled = {
+    development = "True"
+    qa          = "True"
+    integration = "True"
+    preprod     = "False"
+    production  = "False"
+  }
+
 }
