@@ -12,7 +12,7 @@ PATCH_COMPLETED=/tmp/created_jndi_patch
 
 
 function check_release_version {
-    CLUSTER_RELEASE=`cat /mnt/var/lib/instance-controller/extraInstanceData.json | jq -r '.releaseLabel' | cut -d "." -f 1,2`
+    CLUSTER_RELEASE=$(cat < /mnt/var/lib/instance-controller/extraInstanceData.json | jq -r '.releaseLabel' | cut -d "." -f 1,2)
     if [[ "$EMR_RELEASE" != "$CLUSTER_RELEASE" ]]; then
 	echo "This script is written for $EMR_RELEASE and this cluster is $CLUSTER_RELEASE. Please use the correct bootstrap script for this release."
 	exit 1
@@ -158,14 +158,14 @@ create_manifest_patch
 create_hive_log4j_patch
 
 # Install Hive before patch runs if kerberos is enabled
-COMPONENTS=`curl --retry 10 -s localhost:8321/configuration 2>/dev/null | jq '.componentNames'`
+COMPONENTS=$(curl --retry 10 -s localhost:8321/configuration 2>/dev/null | jq '.componentNames')
 
 if [ -z "$COMPONENTS" ]; then
     echo "Unable to determine components. Exiting."
     exit 1
 fi
 
-if echo $COMPONENTS | grep -q kerberos; then
+if echo "$COMPONENTS" | grep -q kerberos; then
     sudo yum install -y hive
 fi
 
