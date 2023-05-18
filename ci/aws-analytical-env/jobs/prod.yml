@@ -25,6 +25,10 @@ jobs:
         passed:
           - preprod
         trigger: false
+      - get: dw-al2-ecs-ami
+        trigger: false
+        passed:
+          - preprod
       - get: utc-2am-trigger
         trigger: true
 

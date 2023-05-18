@@ -28,6 +28,10 @@ jobs:
         trigger: true
         passed:
           - qa
+      - get: dw-al2-ecs-ami
+        trigger: true
+        passed:
+          - qa
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra

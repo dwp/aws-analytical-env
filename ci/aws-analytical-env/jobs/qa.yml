@@ -17,6 +17,8 @@ jobs:
         trigger: true
       - get: emr-al2-ami
         trigger: true
+      - get: dw-al2-ecs-ami
+        trigger: true
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra
