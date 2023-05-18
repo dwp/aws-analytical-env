@@ -20,6 +20,10 @@ jobs:
         trigger: true
         passed:
           - management-dev
+      - get: dw-al2-ecs-ami
+        trigger: true
+        passed:
+          - management-dev
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: cognito
