@@ -29,6 +29,9 @@ jobs:
           - get: emr-al2-ami
             resource: untested-al2-analytical-env-emr-ami
             trigger: true
+          - get: dw-al2-ecs-ami
+            resource: untested-dw-al2-ecs-ami
+            trigger: true
       - .: (( inject meta.plan.check-ami-test-results ))
         input_mapping:
           untested_ami: emr-al2-ami
