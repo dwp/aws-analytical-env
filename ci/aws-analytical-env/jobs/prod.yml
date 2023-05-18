@@ -67,6 +67,10 @@ jobs:
           - preprod
           - after-midnight-check
         trigger: true
+      - get: dw-al2-ecs-ami
+        passed:
+          - preprod
+          - after-midnight-check
       - .: (( inject meta.plan.terraform-bootstrap ))
         params:
           DEPLOY_PATH: infra
