@@ -253,8 +253,8 @@ resource "aws_s3_bucket_object" "poll_status_table_sh" {
 
 resource "aws_s3_bucket_object" "patch_log4j_emr_sh" {
   bucket  = aws_s3_bucket.emr.id
-  key     = "scripts/emr/patch-log4j-emr-6.2.1-v1.sh"
-  content = file("${path.module}/templates/emr/patch-log4j-emr-6.2.1-v1.sh")
+  key     = "scripts/emr/patch-log4j-emr-6.3.1-v2.sh"
+  content = file("${path.module}/templates/emr/patch-log4j-emr-6.3.1-v2.sh")
 
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-patch-log4j-emr-sh" })
 }
