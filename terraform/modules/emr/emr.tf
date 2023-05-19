@@ -89,6 +89,11 @@ resource "aws_emr_cluster" "cluster" {
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.py_pckgs_install.key)
   }
 
+  bootstrap_action {
+    name = "replace-rpms-hive"
+    path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.replace_rpms_hive_sh.key)
+  }
+
   step {
     name              = "hdfs-setup"
     action_on_failure = "CONTINUE"
