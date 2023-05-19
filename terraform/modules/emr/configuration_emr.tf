@@ -259,6 +259,14 @@ resource "aws_s3_bucket_object" "patch_log4j_emr_sh" {
   tags = merge(var.common_tags, { Name = "${var.name_prefix}-patch-log4j-emr-sh" })
 }
 
+resource "aws_s3_bucket_object" "replace_rpms_hive_sh" {
+  bucket  = aws_s3_bucket.emr.id
+  key     = "scripts/emr/replace-rpms-hive.sh"
+  content = file("${path.module}/templates/emr/replace-rpms-hive.sh")
+
+  tags = merge(var.common_tags, { Name = "${var.name_prefix}-replace-rpms-hive-sh" })
+}
+
 
 resource "aws_s3_bucket_object" "azkaban_notifications_sh" {
   bucket = aws_s3_bucket.emr.id
