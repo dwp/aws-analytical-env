@@ -1,8 +1,14 @@
 #!/bin/bash
 set -ex
+
+sudo mkdir -p /var/log/analytical_batch
+sudo chown hadoop:hadoop /var/log/analytical_batch
+
 (
     prefix="${hive_scratch_dir_s3_prefix}"
     local_repo=/var/aws/emr/packages/bigtop
+
+    sudo mkdir -p "$local_repo"
 
     exclude_pkgs=""
 
@@ -52,4 +58,4 @@ gpgcheck=0
 priority=4
 EOL
     fi
-) >> /var/log/pdm/replace_rpms_hive.log 2>&1
+) >> /var/log/analytical_batch/replace_rpms_hive.log 2>&1

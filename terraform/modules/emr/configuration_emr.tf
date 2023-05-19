@@ -262,9 +262,9 @@ resource "aws_s3_bucket_object" "patch_log4j_emr_sh" {
 resource "aws_s3_bucket_object" "replace_rpms_hive_sh" {
   bucket = aws_s3_bucket.emr.id
   key    = "scripts/emr/replace-rpms-hive.sh"
-  content = file("${path.module}/templates/emr/replace-rpms-hive.sh",
+  content = templatefile("${path.module}/templates/emr/replace-rpms-hive.sh",
     {
-      hive_scratch_dir_s3_prefix = "s3://${data.terraform_remote_state.management_artefact.outputs.artefact_bucket.id}/${local.hive_scratch_dir_patch_files_s3_prefix}"
+      hive_scratch_dir_s3_prefix = var.hive_scratch_dir_s3
     }
   )
 

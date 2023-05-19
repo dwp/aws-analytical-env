@@ -1,3 +1,8 @@
+variable "hive_scratch_dir_s3" {
+  description = "The S3 path where hive jar sit"
+  type        = string
+}
+
 variable "common_tags" {
   description = "common tags to apply to aws resources"
   type        = map(string)

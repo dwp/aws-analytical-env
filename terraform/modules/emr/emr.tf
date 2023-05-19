@@ -92,6 +92,7 @@ resource "aws_emr_cluster" "cluster" {
   bootstrap_action {
     name = "replace-rpms-hive"
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.replace_rpms_hive_sh.key)
+    args = ["hive"]
   }
 
   step {
