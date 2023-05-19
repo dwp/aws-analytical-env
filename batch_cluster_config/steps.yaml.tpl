@@ -17,6 +17,11 @@ BootstrapActions:
       "${proxy_http_host}",
       "${proxy_http_port}"
     ]
+- Name: "replace-rpms-hive"
+  ScriptBootstrapAction:
+    Path: "s3://${config_bucket}/scripts/emr/replace-rpms-hive.sh"
+    Args:
+    - "hive"
 Steps:
 - Name: "hdfs-setup"
   HadoopJarStep:
