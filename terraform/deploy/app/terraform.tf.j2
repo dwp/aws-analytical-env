@@ -229,6 +229,20 @@ data "terraform_remote_state" "dataworks-rbac-munge-policies-infra" {
   }
 }
 
+data "terraform_remote_state" "management_artefact" {
+  backend   = "s3"
+  workspace = "management"
+
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/management.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
 provider "aws" {
   alias  = "management-ami"
   region = var.region
@@ -354,4 +368,6 @@ locals {
     preprod     = 2
     production  = 2
   }
+  
+  hive_scratch_dir_patch_files_s3_prefix = "non_source_control_large_files/emr_patches/hive_scratch_dir/"
 }

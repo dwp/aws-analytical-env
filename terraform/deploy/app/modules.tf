@@ -88,6 +88,7 @@ module "emr" {
   hive_custom_auth_provider_path = var.hive_custom_auth_jar_path
   hive_use_auth                  = var.emr_hive_use_auth[local.environment]
   hive_heapsize                  = var.emr_hive_heapsize[local.environment]
+  hive_scratch_dir_s3            = "s3://${data.terraform_remote_state.management_artefact.outputs.artefact_bucket.id}/${local.hive_scratch_dir_patch_files_s3_prefix}"
 }
 
 module "pushgateway" {

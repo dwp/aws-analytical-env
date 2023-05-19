@@ -25,7 +25,8 @@ set -o pipefail
     sudo -H -u hdfs bash -c "hdfs dfs -chmod 770 /user/$USER"
   done
 
-  sudo cp /usr/share/java/mariadb-connector-java.jar /usr/lib/spark/jars/
+  # disabled in EMR 6.3.0 as it breaks the hdfs-install step
+  # sudo cp /usr/share/java/mariadb-connector-java.jar /usr/lib/spark/jars/
 
   ##### Fix up Hive
   echo -e "\nexport AWS_STS_REGIONAL_ENDPOINTS=regional" | sudo tee -a /etc/hive/conf/hive-env.sh
