@@ -16,7 +16,7 @@ resource "aws_ecs_task_definition" "proxy" {
   container_definitions = <<DEFINITION
 [
   {
-    "image": "${var.ecr_dkr_endpoint}/squid-s3:latest",
+    "image": "${var.ecr_dkr_endpoint}/squid-s3:${local.squid_s3_docker_tag[local.environment]}",
     "name": "squid-s3",
     "networkMode": "awsvpc",
     "portMappings": [
