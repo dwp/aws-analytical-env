@@ -77,3 +77,7 @@ variable "name_prefix" {
   type        = string
   description = "Name of service to be used as prefix for resources."
 }
+variable "squid_proxy_image_tag" {
+  type        = string
+  description = "Docker image tag value for squid proxy."
+}
