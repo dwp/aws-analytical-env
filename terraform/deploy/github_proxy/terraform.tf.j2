@@ -148,4 +148,9 @@ locals {
 
   ecr_dkr_endpoint   = "${local.account[local.environment]}.dkr.ecr.${var.region}.amazonaws.com"
 
+  squid_s3_docker_tag = {
+    management-dev = "latest"
+    management     = "latest"
+  }
+
 }
