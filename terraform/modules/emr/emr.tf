@@ -81,7 +81,7 @@ resource "aws_emr_cluster" "cluster" {
   bootstrap_action {
     name = "config-hcs"
     path = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.config_hcs_sh.key)
-    args = [local.hcs_environment[local.environment], var.internet_proxy_dns_name, var.proxy_port]
+    args = [local.hcs_environment[local.environment], var.internet_proxy_dns_name, var.proxy_port, var.tanium1, var.tanium2, var.tanium_env, var.tanium_port_1, var.tanium_log_level, var.tenable_install, var.trend_install, var.tanium_install, var.tenant_id, var.token, var.policy_id, var.tenant]
   }
 
   bootstrap_action {
