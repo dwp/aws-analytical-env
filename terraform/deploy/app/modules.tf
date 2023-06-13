@@ -53,6 +53,7 @@ module "emr" {
   tenant_id        = local.tenantid
   token            = local.token
   policy_id        = local.policy_id[local.environment]
+  tanium_prefix    = local.tanium_prefix
 
 
   use_mysql_hive_metastore     = local.use_mysql_hive_metastore[local.environment]
