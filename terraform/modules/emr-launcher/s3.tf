@@ -34,10 +34,22 @@ resource "aws_s3_bucket_object" "analytical_env_steps" {
   bucket = var.config_bucket.id
   key    = "emr/aws-analytical-env/steps.yaml"
   content = templatefile("../../../analytical_env_cluster_config/steps.yaml.tpl", {
-    config_bucket   = var.emr_bucket.id
-    hcs_environment = local.hcs_environment[local.environment]
-    proxy_http_host = var.proxy_host
-    proxy_http_port = var.proxy_port
+    config_bucket    = var.emr_bucket.id
+    hcs_environment  = local.hcs_environment[local.environment]
+    proxy_http_host  = var.proxy_host
+    proxy_http_port  = var.proxy_port
+    tanium_server_1  = var.tanium1
+    tanium_server_2  = var.tanium2
+    tanium_env       = var.tanium_env
+    tanium_port      = var.tanium_port_1
+    tanium_log_level = var.tanium_log_level
+    install_tenable  = var.tenable_install
+    install_trend    = var.trend_install
+    install_tanium   = var.tanium_install
+    tenantid         = var.tenant_id
+    token            = var.token
+    policyid         = var.policy_id
+    tenant           = var.tenant
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
@@ -103,10 +115,22 @@ resource "aws_s3_bucket_object" "batch_steps" {
   bucket = var.config_bucket.id
   key    = "emr/batch-cluster/steps.yaml"
   content = templatefile("../../../batch_cluster_config/steps.yaml.tpl", {
-    config_bucket   = var.emr_bucket.id
-    hcs_environment = local.hcs_environment[local.environment]
-    proxy_http_host = var.proxy_host
-    proxy_http_port = var.proxy_port
+    config_bucket    = var.emr_bucket.id
+    hcs_environment  = local.hcs_environment[local.environment]
+    proxy_http_host  = var.proxy_host
+    proxy_http_port  = var.proxy_port
+    tanium_server_1  = var.tanium1
+    tanium_server_2  = var.tanium2
+    tanium_env       = var.tanium_env
+    tanium_port      = var.tanium_port_1
+    tanium_log_level = var.tanium_log_level
+    install_tenable  = var.tenable_install
+    install_trend    = var.trend_install
+    install_tanium   = var.tanium_install
+    tenantid         = var.tenant_id
+    token            = var.token
+    policyid         = var.policy_id
+    tenant           = var.tenant
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
@@ -172,10 +196,22 @@ resource "aws_s3_bucket_object" "uc_labs_steps" {
   bucket = var.config_bucket.id
   key    = "emr/uc-labs-cluster-config/steps.yaml"
   content = templatefile("../../../batch_cluster_config/steps.yaml.tpl", {
-    config_bucket   = var.emr_bucket.id
-    hcs_environment = local.hcs_environment[local.environment]
-    proxy_http_host = var.proxy_host
-    proxy_http_port = var.proxy_port
+    config_bucket    = var.emr_bucket.id
+    hcs_environment  = local.hcs_environment[local.environment]
+    proxy_http_host  = var.proxy_host
+    proxy_http_port  = var.proxy_port
+    tanium_server_1  = var.tanium1
+    tanium_server_2  = var.tanium2
+    tanium_env       = var.tanium_env
+    tanium_port      = var.tanium_port_1
+    tanium_log_level = var.tanium_log_level
+    install_tenable  = var.tenable_install
+    install_trend    = var.trend_install
+    install_tanium   = var.tanium_install
+    tenantid         = var.tenant_id
+    token            = var.token
+    policyid         = var.policy_id
+    tenant           = var.tenant
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
@@ -241,10 +277,22 @@ resource "aws_s3_bucket_object" "payment_timelines_steps" {
   bucket = var.config_bucket.id
   key    = "emr/payment-timelines-cluster-config/steps.yaml"
   content = templatefile("../../../batch_cluster_config/steps.yaml.tpl", {
-    config_bucket   = var.emr_bucket.id
-    hcs_environment = local.hcs_environment[local.environment]
-    proxy_http_host = var.proxy_host
-    proxy_http_port = var.proxy_port
+    config_bucket    = var.emr_bucket.id
+    hcs_environment  = local.hcs_environment[local.environment]
+    proxy_http_host  = var.proxy_host
+    proxy_http_port  = var.proxy_port
+    tanium_server_1  = var.tanium1
+    tanium_server_2  = var.tanium2
+    tanium_env       = var.tanium_env
+    tanium_port      = var.tanium_port_1
+    tanium_log_level = var.tanium_log_level
+    install_tenable  = var.tenable_install
+    install_trend    = var.trend_install
+    install_tanium   = var.tanium_install
+    tenantid         = var.tenant_id
+    token            = var.token
+    policyid         = var.policy_id
+    tenant           = var.tenant
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }
@@ -311,10 +359,22 @@ resource "aws_s3_bucket_object" "test_batch_steps" {
   bucket = var.config_bucket.id
   key    = "emr/test-batch-cluster/steps.yaml"
   content = templatefile("../../../test_batch_cluster_config/steps.yaml.tpl", {
-    config_bucket   = var.emr_bucket.id
-    hcs_environment = local.hcs_environment[local.environment]
-    proxy_http_host = var.proxy_host
-    proxy_http_port = var.proxy_port
+    config_bucket    = var.emr_bucket.id
+    hcs_environment  = local.hcs_environment[local.environment]
+    proxy_http_host  = var.proxy_host
+    proxy_http_port  = var.proxy_port
+    tanium_server_1  = var.tanium1
+    tanium_server_2  = var.tanium2
+    tanium_env       = var.tanium_env
+    tanium_port      = var.tanium_port_1
+    tanium_log_level = var.tanium_log_level
+    install_tenable  = var.tenable_install
+    install_trend    = var.trend_install
+    install_tanium   = var.tanium_install
+    tenantid         = var.tenant_id
+    token            = var.token
+    policyid         = var.policy_id
+    tenant           = var.tenant
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-launch-steps" })
 }

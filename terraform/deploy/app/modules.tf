@@ -42,6 +42,19 @@ module "emr" {
   logging_bucket                    = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
   name_prefix                       = local.name
 
+  tenable_install  = local.tenable_install[local.environment]
+  trend_install    = local.trend_install[local.environment]
+  tanium_install   = local.tanium_install[local.environment]
+  tanium1          = local.tanium1
+  tanium2          = local.tanium2
+  tanium_env       = local.tanium_env[local.environment]
+  tanium_log_level = local.tanium_log_level[local.environment]
+  tenant           = local.tenant
+  tenant_id        = local.tenantid
+  token            = local.token
+  policy_id        = local.policy_id[local.environment]
+  tanium_prefix    = local.tanium_prefix[local.environment]
+
 
   use_mysql_hive_metastore     = local.use_mysql_hive_metastore[local.environment]
   hive_metastore_endpoint      = data.terraform_remote_state.internal_compute.outputs.hive_metastore_v2.rds_cluster.endpoint
@@ -198,6 +211,18 @@ module "launcher" {
   hive_max_reducers                     = var.emr_hive_max_reducers[local.environment]
   alarm_sns_arn                         = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
   alarm_on_failure                      = local.emr_launcher_failure_alert[local.environment]
+  tenable_install                       = local.tenable_install[local.environment]
+  trend_install                         = local.trend_install[local.environment]
+  tanium_install                        = local.tanium_install[local.environment]
+  tanium1                               = local.tanium1
+  tanium2                               = local.tanium2
+  tanium_env                            = local.tanium_env[local.environment]
+  tanium_log_level                      = local.tanium_log_level[local.environment]
+  tenant                                = local.tenant
+  tenant_id                             = local.tenantid
+  token                                 = local.token
+  policy_id                             = local.policy_id[local.environment]
+  tanium_prefix                         = local.tanium_prefix[local.environment]
 }
 
 module "emrfs_lambda" {

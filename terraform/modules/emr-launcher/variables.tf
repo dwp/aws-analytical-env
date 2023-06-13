@@ -148,3 +148,77 @@ variable "proxy_port" {
   description = "Proxy port"
   default     = "3128"
 }
+
+variable "tanium_port_1" {
+  description = "tanium port 1"
+  type        = string
+  default     = "16563"
+}
+
+variable "tanium_port_2" {
+  description = "tanium port 2"
+  type        = string
+  default     = "16555"
+}
+
+variable "tenable_install" {
+  description = "Tenable Installation enabled"
+  type        = bool
+}
+
+variable "trend_install" {
+  description = "Trend Installation enabled"
+  type        = bool
+}
+
+variable "tanium_install" {
+  description = "Tanium Installation enabled"
+  type        = bool
+}
+
+variable "tanium1" {
+  description = "tanium server 1"
+  type        = string
+}
+
+variable "tanium2" {
+  description = "tanium server 2"
+  type        = string
+}
+
+variable "tanium_env" {
+  description = "tanium environment"
+  type        = string
+}
+
+variable "tanium_log_level" {
+  description = "tanium log level"
+  type        = string
+  default     = "41"
+}
+
+variable "tenant" {
+  description = "trend tenant"
+  type        = string
+}
+
+variable "tenant_id" {
+  description = "trend tenant id"
+  type        = string
+}
+
+variable "token" {
+  description = "trend token"
+  type        = string
+}
+
+variable "policy_id" {
+  description = "policy_id"
+  type        = string
+  default     = "69"
+}
+
+variable "tanium_prefix" {
+  description = "tanium_prefix"
+  type        = list(string)
+}
