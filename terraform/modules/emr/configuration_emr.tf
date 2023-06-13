@@ -69,7 +69,7 @@ data "template_file" "emr_setup_sh" {
     tanium_port                     = var.tanium_port_1
     tanium_log_level                = var.tanium_log_level
     tenant                          = var.tenant
-    tenantid                        = var.tenantid
+    tenantid                        = var.tenant_id
     token                           = var.token
     policyid                        = var.policy_id
 
