@@ -37,16 +37,16 @@ module "testing" {
   s3_scripts_bucket                    = data.terraform_remote_state.common.outputs.config_bucket.id
   ecs_hardened_ami_id                  = var.ecs_hardened_ami_id
 
-  install_tenable     = local.tenable_install[local.environment]
-  install_trend       = local.trend_install[local.environment]
-  install_tanium      = local.tanium_install[local.environment]
-  tanium_server_1     = local.tanium1
-  tanium_server_2     = local.tanium2
-  tanium_env          = local.tanium_env[local.environment]
-  tanium_log_level    = local.tanium_log_level[local.environment]
-  tenant              = local.tenant
-  tenantid            = local.tenantid
-  token               = local.token
-  policyid            = local.policy_id[local.environment]
+  install_tenable  = local.tenable_install[local.environment]
+  install_trend    = local.trend_install[local.environment]
+  install_tanium   = local.tanium_install[local.environment]
+  tanium_server_1  = local.tanium1
+  tanium_server_2  = local.tanium2
+  tanium_env       = local.tanium_env[local.environment]
+  tanium_log_level = local.tanium_log_level[local.environment]
+  tenant           = local.tenant
+  tenantid         = local.tenantid
+  token            = local.token
+  policyid         = local.policy_id[local.environment]
 
 }
