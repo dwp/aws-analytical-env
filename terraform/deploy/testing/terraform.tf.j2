@@ -56,6 +56,10 @@ data "aws_secretsmanager_secret_version" "terraform_secrets" {
   secret_id = "/concourse/dataworks/terraform"
 }
 
+data "aws_ec2_managed_prefix_list" "list" {
+  name = "dwp-*-aws-cidrs-*"
+}
+
 data "terraform_remote_state" "aws_analytical_environment_infra" {
   backend   = "s3"
   workspace = terraform.workspace
