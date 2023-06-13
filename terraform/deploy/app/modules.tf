@@ -222,7 +222,6 @@ module "launcher" {
   tenant_id                             = local.tenantid
   token                                 = local.token
   policy_id                             = local.policy_id[local.environment]
-  tanium_prefix                         = local.tanium_prefix
 }
 
 module "emrfs_lambda" {
