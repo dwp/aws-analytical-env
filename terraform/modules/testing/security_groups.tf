@@ -166,7 +166,7 @@ resource "aws_security_group_rule" "metrics_batch_outbound_tanium_1" {
   from_port         = var.tanium_port_1
   to_port           = var.tanium_port_1
   protocol          = "tcp"
-  prefix_list_ids   = local.tanium_prefix[local.environment]
+  prefix_list_ids   = var.tanium_prefix
   security_group_id = aws_security_group.batch_job_sg.id
 }
 
@@ -176,7 +176,7 @@ resource "aws_security_group_rule" "metrics_batch_outbound_tanium_2" {
   from_port         = var.tanium_port_2
   to_port           = var.tanium_port_2
   protocol          = "tcp"
-  prefix_list_ids   = local.tanium_prefix[local.environment]
+  prefix_list_ids   = var.tanium_prefix
   security_group_id = aws_security_group.batch_job_sg.id
 }
 
@@ -186,7 +186,7 @@ resource "aws_security_group_rule" "metrics_batch_inbound_tanium_1" {
   from_port         = var.tanium_port_1
   to_port           = var.tanium_port_1
   protocol          = "tcp"
-  prefix_list_ids   = local.tanium_prefix[local.environment]
+  prefix_list_ids   = var.tanium_prefix
   security_group_id = aws_security_group.batch_job_sg.id
 }
 
@@ -196,6 +196,6 @@ resource "aws_security_group_rule" "metrics_batch_inbound_tanium_2" {
   from_port         = var.tanium_port_2
   to_port           = var.tanium_port_2
   protocol          = "tcp"
-  prefix_list_ids   = local.tanium_prefix[local.environment]
+  prefix_list_ids   = var.tanium_prefix
   security_group_id = aws_security_group.batch_job_sg.id
 }
