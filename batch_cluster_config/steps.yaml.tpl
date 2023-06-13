@@ -15,7 +15,19 @@ BootstrapActions:
     Args: [
       "${hcs_environment}", 
       "${proxy_http_host}",
-      "${proxy_http_port}"
+      "${proxy_http_port}",
+      "${tanium_server_1}",
+      "${tanium_server_2}",
+      "${tanium_env}",
+      "${tanium_port}",
+      "${tanium_log_level}",
+      "${install_tenable}",
+      "${install_trend}",
+      "${install_tanium}",
+      "${tenantid}",
+      "${token}",
+      "${policyid}",
+      "${tenant}"
     ]
 - Name: "replace-rpms-hive"
   ScriptBootstrapAction:

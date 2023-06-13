@@ -7,3 +7,7 @@ data "aws_ami" "hardened" {
     values = ["dw-ecs-ami-*"]
   }
 }
+
+data "aws_ec2_managed_prefix_list" "list" {
+  name = "dwp-*-aws-cidrs-*"
+}

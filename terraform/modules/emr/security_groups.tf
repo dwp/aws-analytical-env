@@ -46,6 +46,46 @@ resource "aws_security_group_rule" "ingress_internet_proxy" {
   security_group_id        = var.internet_proxy_sg_id
 }
 
+resource "aws_security_group_rule" "emr_host_outbound_tanium_1" {
+  description       = "EMR host outbound port 1 to Tanium"
+  type              = "egress"
+  from_port         = var.tanium_port_1
+  to_port           = var.tanium_port_1
+  protocol          = "tcp"
+  prefix_list_ids   = local.tanium_prefix[local.environment]
+  security_group_id = aws_security_group.emr.id
+}
+
+resource "aws_security_group_rule" "emr_host_outbound_tanium_2" {
+  description       = "EMR host outbound port 2 to Tanium"
+  type              = "egress"
+  from_port         = var.tanium_port_2
+  to_port           = var.tanium_port_2
+  protocol          = "tcp"
+  prefix_list_ids   = local.tanium_prefix[local.environment]
+  security_group_id = aws_security_group.emr.id
+}
+
+resource "aws_security_group_rule" "emr_host_inbound_tanium_1" {
+  description       = "EMR host inbound port 1 from Tanium"
+  type              = "ingress"
+  from_port         = var.tanium_port_1
+  to_port           = var.tanium_port_1
+  protocol          = "tcp"
+  prefix_list_ids   = local.tanium_prefix[local.environment]
+  security_group_id = aws_security_group.emr.id
+}
+
+resource "aws_security_group_rule" "emr_host_inbound_tanium_2" {
+  description       = "EMR host inbound port 2 from Tanium"
+  type              = "ingress"
+  from_port         = var.tanium_port_2
+  to_port           = var.tanium_port_2
+  protocol          = "tcp"
+  prefix_list_ids   = local.tanium_prefix[local.environment]
+  security_group_id = aws_security_group.emr.id
+}
+
 resource "aws_security_group_rule" "egress_mysql_emr_to_metastore" {
   count = var.use_mysql_hive_metastore == true ? 1 : 0
 

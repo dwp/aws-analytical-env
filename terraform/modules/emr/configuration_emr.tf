@@ -60,6 +60,18 @@ data "template_file" "emr_setup_sh" {
     hcs_environment                 = local.hcs_environment[local.environment]
     http_proxy_host                 = var.internet_proxy_dns_name
     http_proxy_port                 = var.proxy_port
+    install_tenable                 = var.tenable_install
+    install_trend                   = var.trend_install
+    install_tanium                  = var.tanium_install
+    tanium_server_1                 = var.tanium1
+    tanium_server_2                 = var.tanium2
+    tanium_env                      = var.tanium_env
+    tanium_port                     = var.tanium_port_1
+    tanium_log_level                = var.tanium_log_level
+    tenant                          = var.tenant
+    tenantid                        = var.tenantid
+    token                           = var.token
+    policyid                        = var.policy_id
 
     azkaban_chunk_environment_sh    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_chunk_environment.key)
     azkaban_metadata_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metadata_environment.key)

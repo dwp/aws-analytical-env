@@ -64,6 +64,18 @@ resource "aws_launch_template" "create_metrics_data_environment" {
     cwa_disk_io_metrics_collection_interval          = var.cw_agent_disk_io_metrics_collection_interval
     cwa_mem_metrics_collection_interval              = var.cw_agent_mem_metrics_collection_interval
     cwa_netstat_metrics_collection_interval          = var.cw_agent_netstat_metrics_collection_interval
+    install_tenable                                  = var.tenable_install
+    install_trend                                    = var.trend_install
+    install_tanium                                   = var.tanium_install
+    tanium_server_1                                  = var.tanium1
+    tanium_server_2                                  = var.tanium2
+    tanium_env                                       = var.tanium_env
+    tanium_port                                      = var.tanium_port_1
+    tanium_log_level                                 = var.tanium_log_level
+    tenant                                           = var.tenant
+    tenantid                                         = var.tenantid
+    token                                            = var.token
+    policyid                                         = var.policy_id
 
   }))
 
