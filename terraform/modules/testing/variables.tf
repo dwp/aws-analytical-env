@@ -307,5 +307,4 @@ variable "policy_id" {
 variable "tanium_prefix" {
   description = "tanium_prefix"
   type        = list(string)
-  default     = ["dwp-*-aws-cidrs-*"]
 }

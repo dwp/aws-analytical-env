@@ -446,15 +446,15 @@ locals {
   }
 
   ## Tanium prefix list for TGW for Security Group rules
-  # tanium_prefix = {
-  #   development    = [data.aws_ec2_managed_prefix_list.list.id]
-  #   qa             = [data.aws_ec2_managed_prefix_list.list.id]
-  #   integration    = [data.aws_ec2_managed_prefix_list.list.id]
-  #   preprod        = [data.aws_ec2_managed_prefix_list.list.id]
-  #   production     = [data.aws_ec2_managed_prefix_list.list.id]
-  #   management-dev = [data.aws_ec2_managed_prefix_list.list.id]
-  #   management     = [data.aws_ec2_managed_prefix_list.list.id]
-  # }
+  tanium_prefix = {
+    development    = [data.aws_ec2_managed_prefix_list.list.id]
+    qa             = [data.aws_ec2_managed_prefix_list.list.id]
+    integration    = [data.aws_ec2_managed_prefix_list.list.id]
+    preprod        = [data.aws_ec2_managed_prefix_list.list.id]
+    production     = [data.aws_ec2_managed_prefix_list.list.id]
+    management-dev = [data.aws_ec2_managed_prefix_list.list.id]
+    management     = [data.aws_ec2_managed_prefix_list.list.id]
+  }
 
   tanium_log_level = {
     development    = "41"
