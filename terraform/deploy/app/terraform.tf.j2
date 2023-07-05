@@ -395,7 +395,7 @@ locals {
     preprod     = 2
     production  = 2
   }
-  
+
   hive_scratch_dir_patch_files_s3_prefix = "non_source_control_large_files/emr_patches/hive_scratch_dir/"
 
   tenable_install = {
@@ -419,13 +419,13 @@ locals {
   }
 
   tanium_install = {
-    development    = "false"
-    qa             = "false"
-    integration    = "false"
-    preprod        = "false"
-    production     = "false"
-    management-dev = "false"
-    management     = "false"
+    development    = "true"
+    qa             = "true"
+    integration    = "true"
+    preprod        = "true"
+    production     = "true"
+    management-dev = "true"
+    management     = "true"
   }
 
 
@@ -472,12 +472,12 @@ locals {
   token    = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).trend.token
 
   policy_id = {
-    development    = "69"
-    qa             = "69"
-    integration    = "69"
-    preprod        = "69"
-    production     = "69"
-    management-dev = "69"
-    management     = "69"
+    development    = "1651"
+    qa             = "1651"
+    integration    = "1651"
+    preprod        = "1651"
+    production     = "1651"
+    management-dev = "1651"
+    management     = "1651"
   }
 }
