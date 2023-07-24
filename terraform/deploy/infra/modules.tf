@@ -71,6 +71,7 @@ module "networking" {
   dks_subnet          = data.terraform_remote_state.crypto.outputs.dks_subnet
   dks_route_table     = data.terraform_remote_state.crypto.outputs.dks_route_table
   region              = var.region
+  tanium_service_name = local.tanium_service_name[local.environment]
 }
 
 module "waf" {
