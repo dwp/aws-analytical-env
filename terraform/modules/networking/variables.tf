@@ -48,3 +48,7 @@ variable "dks_route_table" {
   type        = map(string)
 }
 
+variable "tanium_service_name" {
+  description = "Tanium VPC Endpoint Service name"
+  type        = string
+}

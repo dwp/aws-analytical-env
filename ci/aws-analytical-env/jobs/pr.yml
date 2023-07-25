@@ -17,9 +17,11 @@ jobs:
           path: aws-analytical-env
           status: pending
       - .: (( inject meta.plan.terraform-bootstrap ))
+        task: terraform-bootstrap-infra
         params:
           DEPLOY_PATH: infra
       - .: (( inject meta.plan.terraform-plan ))
+        task: terraform-plan-infra
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/infra'
@@ -27,9 +29,11 @@ jobs:
           TF_WORKSPACE: 'qa'
           TF_CLI_ARGS_plan: -lock-timeout=300s # overwrite removes -detailed-exitcode
       - .: (( inject meta.plan.terraform-bootstrap ))
+        task: terraform-bootstrap-app
         params:
           DEPLOY_PATH: app
       - .: (( inject meta.plan.terraform-plan ))
+        task: terraform-plan-app
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/app'
@@ -42,9 +46,11 @@ jobs:
           TF_CLI_ARGS_plan: -lock-timeout=300s # overwrite removes -detailed-exitcode
           TF_VAR_emp_dir_path: ../../../../emp-release
       - .: (( inject meta.plan.terraform-bootstrap ))
+        task: terraform-bootstrap-testing
         params:
           DEPLOY_PATH: testing
       - .: (( inject meta.plan.terraform-plan ))
+        task: terraform-plan-testing
         config:
           run:
             dir: 'aws-analytical-env/terraform/deploy/testing'
