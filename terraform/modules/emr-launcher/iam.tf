@@ -45,6 +45,7 @@ data "aws_iam_policy_document" "aws_analytical_env_emr_launcher_runjobflow_polic
       "elasticmapreduce:RunJobFlow",
       "elasticmapreduce:DescribeSecurityConfiguration",
       "elasticmapreduce:CreateSecurityConfiguration",
+      "elasticmapreduce:AddTags",
     ]
     resources = [
       "*"
