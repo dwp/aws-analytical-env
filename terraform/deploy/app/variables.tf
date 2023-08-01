@@ -50,7 +50,7 @@ variable "uc_lab_core_instance_count" {
     development = "1"
     qa          = "1"
     integration = "1"
-    preprod     = "3"
+    preprod     = "6"
     production  = "10"
   }
 }
