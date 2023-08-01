@@ -115,6 +115,24 @@ variable "instance_type_core_three" {
   default     = "m5d.2xlarge"
 }
 
+variable "uc_lab_instance_type_core_one" {
+  type        = string
+  description = "(Optional) instance type1 of core node"
+  default     = "m5.2xlarge"
+}
+
+variable "uc_lab_instance_type_core_two" {
+  type        = string
+  description = "(Optional) instance type2 of core node"
+  default     = "m5a.2xlarge"
+}
+
+variable "uc_lab_instance_type_core_three" {
+  type        = string
+  description = "(Optional) instance type3 of core node"
+  default     = "m5d.2xlarge"
+}
+
 variable "hive_compaction_threads" {
   type        = string
   description = "Number of compaction threads"

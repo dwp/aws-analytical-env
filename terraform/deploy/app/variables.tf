@@ -50,10 +50,11 @@ variable "uc_lab_core_instance_count" {
     development = "1"
     qa          = "1"
     integration = "1"
-    preprod     = "6"
+    preprod     = "3"
     production  = "10"
   }
 }
+
 variable "test_core_instance_count" {
   default = {
     development = "1"
@@ -109,6 +110,35 @@ variable "emr_instance_type_core_three" {
     qa          = "m5d.2xlarge"
     integration = "m5d.2xlarge"
     preprod     = "m5d.8xlarge"
+    production  = "m5d.12xlarge"
+  }
+}
+
+variable "uc_lab_emr_instance_type_core_one" {
+  default = {
+    development = "m5.2xlarge"
+    qa          = "m5.2xlarge"
+    integration = "m5.2xlarge"
+    preprod     = "m5.16xlarge"
+    production  = "m5.12xlarge"
+  }
+}
+variable "uc_lab_emr_instance_type_core_two" {
+  default = {
+    development = "m5a.2xlarge"
+    qa          = "m5a.2xlarge"
+    integration = "m5a.2xlarge"
+    preprod     = "m5a.16xlarge"
+    production  = "m5a.12xlarge"
+  }
+}
+
+variable "uc_lab_emr_instance_type_core_three" {
+  default = {
+    development = "m5d.2xlarge"
+    qa          = "m5d.2xlarge"
+    integration = "m5d.2xlarge"
+    preprod     = "m5d.16xlarge"
     production  = "m5d.12xlarge"
   }
 }
