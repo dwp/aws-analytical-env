@@ -185,9 +185,9 @@ resource "aws_s3_bucket_object" "uc_labs_instances" {
     subnet_ids               = join(",", var.subnet_ids)
     core_instance_count      = var.uc_lab_core_instance_count
     instance_type_master     = var.instance_type_master
-    instance_type_core_one   = var.instance_type_core_one
-    instance_type_core_two   = var.instance_type_core_two
-    instance_type_core_three = var.instance_type_core_three
+    instance_type_core_one   = var.uc_lab_instance_type_core_one
+    instance_type_core_two   = var.uc_lab_instance_type_core_two
+    instance_type_core_three = var.uc_lab_instance_type_core_three
   })
   tags = merge(var.common_tags, { Name : "${var.name_prefix}-uc-labs-emr-launch-instances" })
 }
