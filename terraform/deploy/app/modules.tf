@@ -195,9 +195,6 @@ module "launcher" {
   subnet_ids                            = data.terraform_remote_state.aws_analytical_environment_infra.outputs.vpc.aws_subnets_private.*.id
   core_instance_count                   = var.emr_core_instance_count[local.environment]
   uc_lab_core_instance_count            = var.uc_lab_core_instance_count[local.environment]
-  uc_lab_instance_type_core_one         = var.emr_instance_type_core_one[local.environment]
-  uc_lab_instance_type_core_two         = var.emr_instance_type_core_two[local.environment]
-  uc_lab_instance_type_core_three       = var.emr_instance_type_core_three[local.environment]
   test_core_instance_count              = var.test_core_instance_count[local.environment]
   payment_timelines_core_instance_count = var.payment_timelines_core_instance_count[local.environment]
   environment                           = local.environment
@@ -209,6 +206,9 @@ module "launcher" {
   instance_type_core_one                = var.emr_instance_type_core_one[local.environment]
   instance_type_core_two                = var.emr_instance_type_core_two[local.environment]
   instance_type_core_three              = var.emr_instance_type_core_three[local.environment]
+  uc_lab_instance_type_core_one         = var.uc_lab_emr_instance_type_core_one[local.environment]
+  uc_lab_instance_type_core_two         = var.uc_lab_emr_instance_type_core_two[local.environment]
+  uc_lab_instance_type_core_three       = var.uc_lab_emr_instance_type_core_three[local.environment]
   hive_compaction_threads               = var.emr_hive_compaction_threads[local.environment]
   hive_tez_sessions_per_queue           = var.emr_hive_tez_sessions_per_queue[local.environment]
   hive_max_reducers                     = var.emr_hive_max_reducers[local.environment]
