@@ -51,7 +51,7 @@ variable "uc_lab_core_instance_count" {
     qa          = "1"
     integration = "1"
     preprod     = "3"
-    production  = "10"
+    production  = "15"
   }
 }
 
@@ -119,7 +119,7 @@ variable "uc_lab_emr_instance_type_core_one" {
     development = "m5.2xlarge"
     qa          = "m5.2xlarge"
     integration = "m5.2xlarge"
-    preprod     = "r5.8xlarge"
+    preprod     = "m5.8xlarge"
     production  = "m5.12xlarge"
   }
 }
@@ -128,7 +128,7 @@ variable "uc_lab_emr_instance_type_core_two" {
     development = "m5a.2xlarge"
     qa          = "m5a.2xlarge"
     integration = "m5a.2xlarge"
-    preprod     = "r5a.8xlarge"
+    preprod     = "m5a.8xlarge"
     production  = "m5a.12xlarge"
   }
 }
@@ -138,7 +138,7 @@ variable "uc_lab_emr_instance_type_core_three" {
     development = "m5d.2xlarge"
     qa          = "m5d.2xlarge"
     integration = "m5d.2xlarge"
-    preprod     = "r5d.8xlarge"
+    preprod     = "m5d.8xlarge"
     production  = "m5d.12xlarge"
   }
 }
