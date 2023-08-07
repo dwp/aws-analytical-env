@@ -116,6 +116,7 @@ Configurations:
 - Classification: "emrfs-site"
   Properties:
     "fs.s3.maxRetries": "20"
+    "fs.s3.maxConnections": "10000"
 - Classification: "tez-site"
   Properties:
     "tez.aux.uris": "/libs/"
