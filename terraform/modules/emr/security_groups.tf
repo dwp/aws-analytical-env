@@ -47,43 +47,43 @@ resource "aws_security_group_rule" "ingress_internet_proxy" {
 }
 
 resource "aws_security_group_rule" "emr_host_outbound_tanium_1" {
-  description       = "EMR host outbound port 1 to Tanium"
-  type              = "egress"
-  from_port         = var.tanium_port_1
-  to_port           = var.tanium_port_1
-  protocol          = "tcp"
-  prefix_list_ids   = var.tanium_prefix
-  security_group_id = aws_security_group.emr.id
+  description              = "EMR host outbound port 1 to Tanium"
+  type                     = "egress"
+  from_port                = var.tanium_port_1
+  to_port                  = var.tanium_port_1
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.emr.id
+  source_security_group_id = var.tanium_vpce_sg
 }
 
 resource "aws_security_group_rule" "emr_host_outbound_tanium_2" {
-  description       = "EMR host outbound port 2 to Tanium"
-  type              = "egress"
-  from_port         = var.tanium_port_2
-  to_port           = var.tanium_port_2
-  protocol          = "tcp"
-  prefix_list_ids   = var.tanium_prefix
-  security_group_id = aws_security_group.emr.id
+  description              = "EMR host outbound port 2 to Tanium"
+  type                     = "egress"
+  from_port                = var.tanium_port_2
+  to_port                  = var.tanium_port_2
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.emr.id
+  source_security_group_id = var.tanium_vpce_sg
 }
 
 resource "aws_security_group_rule" "emr_host_inbound_tanium_1" {
-  description       = "EMR host inbound port 1 from Tanium"
-  type              = "ingress"
-  from_port         = var.tanium_port_1
-  to_port           = var.tanium_port_1
-  protocol          = "tcp"
-  prefix_list_ids   = var.tanium_prefix
-  security_group_id = aws_security_group.emr.id
+  description              = "EMR host inbound port 1 from Tanium"
+  type                     = "ingress"
+  from_port                = var.tanium_port_1
+  to_port                  = var.tanium_port_1
+  protocol                 = "tcp"
+  security_group_id        = var.tanium_vpce_sg 
+  source_security_group_id = aws_security_group.emr.id
 }
 
 resource "aws_security_group_rule" "emr_host_inbound_tanium_2" {
-  description       = "EMR host inbound port 2 from Tanium"
-  type              = "ingress"
-  from_port         = var.tanium_port_2
-  to_port           = var.tanium_port_2
-  protocol          = "tcp"
-  prefix_list_ids   = var.tanium_prefix
-  security_group_id = aws_security_group.emr.id
+  description              = "EMR host inbound port 2 from Tanium"
+  type                     = "ingress"
+  from_port                = var.tanium_port_2
+  to_port                  = var.tanium_port_2
+  protocol                 = "tcp"
+  security_group_id        = var.tanium_vpce_sg 
+  source_security_group_id = aws_security_group.emr.id
 }
 
 resource "aws_security_group_rule" "egress_mysql_emr_to_metastore" {

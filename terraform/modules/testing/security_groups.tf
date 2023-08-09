@@ -161,41 +161,41 @@ resource "aws_security_group_rule" "metrics_batch_from_internet_proxy" {
 }
 
 resource "aws_security_group_rule" "metrics_batch_outbound_tanium_1" {
-  description       = "Metrics batch outbound port 1 to Tanium"
-  type              = "egress"
-  from_port         = var.tanium_port_1
-  to_port           = var.tanium_port_1
-  protocol          = "tcp"
-  prefix_list_ids   = var.tanium_prefix
-  security_group_id = aws_security_group.batch_job_sg.id
+  description              = "Metrics batch outbound port 1 to Tanium"
+  type                     = "egress"
+  from_port                = var.tanium_port_1
+  to_port                  = var.tanium_port_1
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.batch_job_sg.id
+  source_security_group_id = var.tanium_vpce_sg
 }
 
 resource "aws_security_group_rule" "metrics_batch_outbound_tanium_2" {
-  description       = "Metrics batch outbound port 2 to Tanium"
-  type              = "egress"
-  from_port         = var.tanium_port_2
-  to_port           = var.tanium_port_2
-  protocol          = "tcp"
-  prefix_list_ids   = var.tanium_prefix
-  security_group_id = aws_security_group.batch_job_sg.id
+  description              = "Metrics batch outbound port 2 to Tanium"
+  type                     = "egress"
+  from_port                = var.tanium_port_2
+  to_port                  = var.tanium_port_2
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.batch_job_sg.id
+  source_security_group_id = var.tanium_vpce_sg
 }
 
 resource "aws_security_group_rule" "metrics_batch_inbound_tanium_1" {
-  description       = "Metrics batch inbound port 1 from Tanium"
-  type              = "ingress"
-  from_port         = var.tanium_port_1
-  to_port           = var.tanium_port_1
-  protocol          = "tcp"
-  prefix_list_ids   = var.tanium_prefix
-  security_group_id = aws_security_group.batch_job_sg.id
+  description              = "Metrics batch inbound port 1 from Tanium"
+  type                     = "ingress"
+  from_port                = var.tanium_port_1
+  to_port                  = var.tanium_port_1
+  protocol                 = "tcp"
+  security_group_id        = var.tanium_vpce_sg
+  source_security_group_id = aws_security_group.batch_job_sg.id
 }
 
 resource "aws_security_group_rule" "metrics_batch_inbound_tanium_2" {
-  description       = "Metrics batch inbound port 2 from Tanium"
-  type              = "ingress"
-  from_port         = var.tanium_port_2
-  to_port           = var.tanium_port_2
-  protocol          = "tcp"
-  prefix_list_ids   = var.tanium_prefix
-  security_group_id = aws_security_group.batch_job_sg.id
+  description              = "Metrics batch inbound port 2 from Tanium"
+  type                     = "ingress"
+  from_port                = var.tanium_port_2
+  to_port                  = var.tanium_port_2
+  protocol                 = "tcp"
+  security_group_id        = var.tanium_vpce_sg
+  source_security_group_id = aws_security_group.batch_job_sg.id
 }
