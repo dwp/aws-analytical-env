@@ -72,7 +72,7 @@ resource "aws_security_group_rule" "emr_host_inbound_tanium_1" {
   from_port                = var.tanium_port_1
   to_port                  = var.tanium_port_1
   protocol                 = "tcp"
-  security_group_id        = var.tanium_vpce_sg 
+  security_group_id        = var.tanium_vpce_sg
   source_security_group_id = aws_security_group.emr.id
 }
 
@@ -82,7 +82,7 @@ resource "aws_security_group_rule" "emr_host_inbound_tanium_2" {
   from_port                = var.tanium_port_2
   to_port                  = var.tanium_port_2
   protocol                 = "tcp"
-  security_group_id        = var.tanium_vpce_sg 
+  security_group_id        = var.tanium_vpce_sg
   source_security_group_id = aws_security_group.emr.id
 }
 
