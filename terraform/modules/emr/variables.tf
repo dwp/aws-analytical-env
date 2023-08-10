@@ -419,3 +419,8 @@ variable "tanium_prefix" {
   description = "tanium_prefix"
   type        = list(string)
 }
+
+variable "tanium_vpce_sg" {
+  description = "tanium vpce sg"
+  type        = string
+}

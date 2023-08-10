@@ -40,7 +40,7 @@ module "testing" {
   tenable_install  = local.tenable_install[local.environment]
   trend_install    = local.trend_install[local.environment]
   tanium_install   = local.tanium_install[local.environment]
-  tanium1          = local.tanium1
+  tanium1          = data.terraform_remote_state.aws_analytical_environment_infra.outputs.tanium_service_endpoint.dns
   tanium2          = local.tanium2
   tanium_env       = local.tanium_env[local.environment]
   tanium_log_level = local.tanium_log_level[local.environment]
@@ -49,5 +49,6 @@ module "testing" {
   token            = local.token
   policy_id        = local.policy_id[local.environment]
   tanium_prefix    = local.tanium_prefix[local.environment]
+  tanium_vpce_sg   = data.terraform_remote_state.aws_analytical_environment_infra.outputs.tanium_service_endpoint.sg
 
 }
