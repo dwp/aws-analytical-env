@@ -459,3 +459,21 @@ resources:
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/dip/aws-crypto-data.git
     webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: opti-data-ipp-kpis-repo
+    type: git
+    source:
+      branch: main
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/opsmi/opti-data-ipp-kpis.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+
+  - name: opti-data-ipp-kpis-dev-repo
+    type: git
+    source:
+      branch: dev
+      username: ((dataworks.enterprise_github_username))
+      password: ((dataworks-secrets.enterprise_github_pat))
+      uri: https://((dataworks.enterprise_github_url))/opsmi/opti-data-ipp-kpis.git
+    webhook_token: ((dataworks.concourse_github_webhook_token))
