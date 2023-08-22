@@ -901,7 +901,7 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-welfare-grant
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
- 
+
   - name: mirror-git-repo-ni-payment-scan-production
     plan:
       - get: ni-payment-scan
@@ -940,4 +940,44 @@ jobs:
             - name: aws-crypto-data-repo
           params:
             S3_ROOT: component/uc_repos/aws-crypto-data/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
+
+  - name: mirror-git-repo-opti-data-ipp-kpis-production
+    plan:
+      - get: opti-data-ipp-kpis
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: production
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-data-ipp-kpis-repo
+          inputs:
+            - name: opti-data-ipp-kpis-repo
+          params:
+            S3_ROOT: component/uc_repos/opti-data-ipp-kpis/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
+
+  - name: mirror-git-repo-opti-data-ipp-kpis-dev-repo-product
+    plan:
+      - get: opti-data-ipp-kpis-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: production
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-data-ipp-kpis-dev-repo
+          inputs:
+            - name: opti-data-ipp-kpis-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/opti-data-ipp-kpis/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci

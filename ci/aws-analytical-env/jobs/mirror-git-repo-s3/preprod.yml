@@ -399,7 +399,7 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/aws-dwx-sas-extracts
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
-            
+
   - name: mirror-git-repo-aws-pdm-to-rtg-exports-preprod
     plan:
       - get: aws-pdm-to-rtg-exports
@@ -883,7 +883,7 @@ jobs:
           params:
             S3_ROOT: component/uc_repos/dev/opti-az-wca/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
-            
+
   - name: mirror-git-repo-aws-welfare-grant-preprod
     plan:
       - get: aws-welfare-grant
@@ -902,8 +902,8 @@ jobs:
             - name: aws-welfare-grant
           params:
             S3_ROOT: component/uc_repos/aws-welfare-grant
-            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci            
- 
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+
   - name: mirror-git-repo-ni-payment-scan-preprod
     plan:
       - get: ni-payment-scan
@@ -942,4 +942,44 @@ jobs:
             - name: aws-crypto-data-repo
           params:
             S3_ROOT: component/uc_repos/aws-crypto-data/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+
+  - name: mirror-git-repo-opti-data-ipp-kpis-preprod
+    plan:
+      - get: opti-data-ipp-kpis
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: preprod
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-data-ipp-kpis-repo
+          inputs:
+            - name: opti-data-ipp-kpis-repo
+          params:
+            S3_ROOT: component/uc_repos/opti-data-ipp-kpis/
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
+
+  - name: mirror-git-repo-opti-data-ipp-kpis-dev-repo-preprod
+    plan:
+      - get: opti-data-ipp-kpis-dev-repo
+        trigger: true
+      - get: aws-common-infrastructure
+        trigger: false
+      - .: (( inject meta.plan.terraform-output-common ))
+        config:
+          params:
+            TF_WORKSPACE: preprod
+      - .: (( inject meta.plan.mirror-git-repo ))
+        config:
+          run:
+            dir: opti-data-ipp-kpis-dev-repo
+          inputs:
+            - name: opti-data-ipp-kpis-dev-repo
+          params:
+            S3_ROOT: component/uc_repos/dev/opti-data-ipp-kpis/
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.preprod)):role/ci
