@@ -463,7 +463,7 @@ resources:
   - name: opti-data-ipp-kpis-repo
     type: git
     source:
-      branch: master
+      branch: main
       username: ((dataworks.enterprise_github_username))
       password: ((dataworks-secrets.enterprise_github_pat))
       uri: https://((dataworks.enterprise_github_url))/opsmi/opti-data-ipp-kpis.git
