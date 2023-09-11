@@ -61,9 +61,9 @@ Configurations:
     "hive.metastore.client.socket.timeout": "10800"
     "hive.strict.checks.cartesian.product": "false"
     "hive.mapred.mode": "nonstrict"
+    "hive.tez.container.size": "${hive_tez_container_size}"
+    "hive.tez.java.opts": "${hive_tez_java_opts}"
     %{~ if environment == "production" ~}
-    "hive.tez.container.size": "32768"
-    "hive.tez.java.opts": "-Xmx26214m"
     "hive.auto.convert.join.noconditionaltask.size": "10000000"
     "hive.exec.failure.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
     "hive.exec.post.hooks": "org.apache.hadoop.hive.ql.hooks.ATSHook"
