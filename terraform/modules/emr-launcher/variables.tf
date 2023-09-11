@@ -153,22 +153,22 @@ variable "hive_max_reducers" {
 
 variable "hive_tez_container_size" {
   description = "tez container size"
-  type = string
+  type        = string
 }
 
 variable "hive_tez_java_opts" {
   description = "tez java options"
-  type = string
+  type        = string
 }
 
 variable "uc_lab_hive_tez_container_size" {
   description = "tez container size for uc_lab"
-  type = string
+  type        = string
 }
 
 variable "uc_lab_hive_tez_java_opts" {
   description = "tez java options for uc_lab"
-  type = string
+  type        = string
 }
 
 variable "alarm_sns_arn" {

@@ -167,11 +167,11 @@ variable "hive_tez_java_opts" {
 
 variable "uc_lab_hive_tez_container_size" {
   default = {
-    development = "2184"  # 0.8(node_mem)/12 (target 2GB)
-    qa          = "2184"  # 0.8(node_mem)/12 (target 2GB)
-    integration = "2184"  # 0.8(node_mem)/12 (target 2GB)
-    preprod     = "6168"  # 0.8(node_mem)/17 (target 6GB)
-    production  = "7864"  # 0.8(node_mem)/20 (target 8GB)
+    development = "2184" # 0.8(node_mem)/12 (target 2GB)
+    qa          = "2184" # 0.8(node_mem)/12 (target 2GB)
+    integration = "2184" # 0.8(node_mem)/12 (target 2GB)
+    preprod     = "6168" # 0.8(node_mem)/17 (target 6GB)
+    production  = "7864" # 0.8(node_mem)/20 (target 8GB)
   }
 }
 
