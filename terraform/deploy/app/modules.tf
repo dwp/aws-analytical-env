@@ -227,10 +227,6 @@ module "launcher" {
   token                                 = local.token
   policy_id                             = local.policy_id[local.environment]
   tanium_prefix                         = local.tanium_prefix[local.environment]
-  hive_tez_container_size               = var.hive_tez_container_size[local.environment]
-  hive_tez_java_opts                    = var.hive_tez_java_opts[local.environment]
-  uc_lab_hive_tez_container_size        = var.uc_lab_hive_tez_container_size[local.environment]
-  uc_lab_hive_tez_java_opts             = var.uc_lab_hive_tez_java_opts[local.environment]
 }
 
 module "emrfs_lambda" {
