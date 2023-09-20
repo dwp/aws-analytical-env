@@ -45,7 +45,7 @@ module "emr" {
   tenable_install  = local.tenable_install[local.environment]
   trend_install    = local.trend_install[local.environment]
   tanium_install   = local.tanium_install[local.environment]
-  tanium1          = local.tanium1
+  tanium1          = data.terraform_remote_state.aws_analytical_environment_infra.outputs.tanium_service_endpoint.dns
   tanium2          = local.tanium2
   tanium_env       = local.tanium_env[local.environment]
   tanium_log_level = local.tanium_log_level[local.environment]
@@ -54,6 +54,7 @@ module "emr" {
   token            = local.token
   policy_id        = local.policy_id[local.environment]
   tanium_prefix    = local.tanium_prefix[local.environment]
+  tanium_vpce_sg   = data.terraform_remote_state.aws_analytical_environment_infra.outputs.tanium_service_endpoint.sg
 
 
   use_mysql_hive_metastore     = local.use_mysql_hive_metastore[local.environment]
@@ -206,6 +207,9 @@ module "launcher" {
   instance_type_core_one                = var.emr_instance_type_core_one[local.environment]
   instance_type_core_two                = var.emr_instance_type_core_two[local.environment]
   instance_type_core_three              = var.emr_instance_type_core_three[local.environment]
+  uc_lab_instance_type_core_one         = var.uc_lab_emr_instance_type_core_one[local.environment]
+  uc_lab_instance_type_core_two         = var.uc_lab_emr_instance_type_core_two[local.environment]
+  uc_lab_instance_type_core_three       = var.uc_lab_emr_instance_type_core_three[local.environment]
   hive_compaction_threads               = var.emr_hive_compaction_threads[local.environment]
   hive_tez_sessions_per_queue           = var.emr_hive_tez_sessions_per_queue[local.environment]
   hive_max_reducers                     = var.emr_hive_max_reducers[local.environment]
@@ -214,7 +218,7 @@ module "launcher" {
   tenable_install                       = local.tenable_install[local.environment]
   trend_install                         = local.trend_install[local.environment]
   tanium_install                        = local.tanium_install[local.environment]
-  tanium1                               = local.tanium1
+  tanium1                               = data.terraform_remote_state.aws_analytical_environment_infra.outputs.tanium_service_endpoint.dns
   tanium2                               = local.tanium2
   tanium_env                            = local.tanium_env[local.environment]
   tanium_log_level                      = local.tanium_log_level[local.environment]

@@ -270,7 +270,7 @@ groups:
       - mirror-git-kds-rnd-repo-qa
       - mirror-git-kds-rnd-repo-preprod
       - mirror-git-kds-rnd-repo-production
-  
+
   - name: aws-json-to-csv
     jobs:
       - mirror-git-repo-json-to-csv-repo-development
@@ -362,14 +362,14 @@ groups:
   - name: update-pipeline
     jobs:
       - update-pipeline
-      
+
   - name: aws-welfare-grant
     jobs:
       - mirror-git-repo-aws-welfare-grant-development
       - mirror-git-repo-aws-welfare-grant-qa
       - mirror-git-repo-aws-welfare-grant-integration
       - mirror-git-repo-aws-welfare-grant-preprod
-      - mirror-git-repo-aws-welfare-grant-production      
+      - mirror-git-repo-aws-welfare-grant-production
 
   - name: ni-payment-scan
     jobs:
@@ -394,4 +394,20 @@ groups:
       - mirror-apache-maven-integration
       - mirror-apache-maven-preprod
       - mirror-apache-maven-production
-      
+
+  - name: opti-data-ipp-kpis
+    jobs:
+      - mirror-git-repo-opti-data-ipp-kpis-development
+      - mirror-git-repo-opti-data-ipp-kpis-qa
+      - mirror-git-repo-opti-data-ipp-kpis-integration
+      - mirror-git-repo-opti-data-ipp-kpis-preprod
+      - mirror-git-repo-opti-data-ipp-kpis-production
+
+
+  - name: opti-data-ipp-kpis-dev
+    jobs:
+      - mirror-git-repo-opti-data-ipp-kpis-dev-repo-development
+      - mirror-git-repo-opti-data-ipp-kpis-dev-repo-qa
+      - mirror-git-repo-opti-data-ipp-kpis-dev-repo-integration
+      - mirror-git-repo-opti-data-ipp-kpis-dev-repo-preprod
+      - mirror-git-repo-opti-data-ipp-kpis-dev-repo-production

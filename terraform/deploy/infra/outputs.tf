@@ -2,6 +2,10 @@ output "vpc" {
   value = module.networking.outputs
 }
 
+output "tanium_service_endpoint" {
+  value = module.networking.tanium_service_endpoint
+}
+
 output "alb" {
   value = {
     name = module.alb.lb.name

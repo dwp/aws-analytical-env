@@ -72,6 +72,7 @@ data "template_file" "emr_setup_sh" {
     tenantid                        = var.tenant_id
     token                           = var.token
     policyid                        = var.policy_id
+    tanium_vpce_sg                  = var.tanium_vpce_sg
 
     azkaban_chunk_environment_sh    = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_chunk_environment.key)
     azkaban_metadata_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_metadata_environment.key)
