@@ -123,6 +123,7 @@ variable "uc_lab_emr_instance_type_core_one" {
     production  = "m5.12xlarge"
   }
 }
+
 variable "uc_lab_emr_instance_type_core_two" {
   default = {
     development = "m5a.2xlarge"
