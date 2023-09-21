@@ -151,6 +151,8 @@ resource "aws_s3_bucket_object" "batch_configurations" {
     hive_compaction_threads      = var.hive_compaction_threads
     hive_tez_sessions_per_queue  = var.hive_tez_sessions_per_queue
     hive_max_reducers            = var.hive_max_reducers
+    hive_tez_container_size      = var.hive_tez_container_size
+    hive_tez_java_opts           = var.hive_tez_java_opts
   })
   tags = merge(var.common_tags, { Name : "batch-emr-launch-config" })
 }
@@ -232,6 +234,8 @@ resource "aws_s3_bucket_object" "uc_labs_configurations" {
     hive_compaction_threads      = var.hive_compaction_threads
     hive_tez_sessions_per_queue  = var.hive_tez_sessions_per_queue
     hive_max_reducers            = var.hive_max_reducers
+    hive_tez_container_size      = var.uc_lab_hive_tez_container_size
+    hive_tez_java_opts           = var.uc_lab_hive_tez_java_opts
   })
   tags = merge(var.common_tags, { Name : "batch-emr-launch-config" })
 }
@@ -313,6 +317,8 @@ resource "aws_s3_bucket_object" "payment_timelines_configurations" {
     hive_compaction_threads      = var.hive_compaction_threads
     hive_tez_sessions_per_queue  = var.hive_tez_sessions_per_queue
     hive_max_reducers            = var.hive_max_reducers
+    hive_tez_container_size      = var.hive_tez_container_size
+    hive_tez_java_opts           = var.hive_tez_java_opts
   })
   tags = merge(var.common_tags, { Name : "batch-emr-launch-config" })
 }
