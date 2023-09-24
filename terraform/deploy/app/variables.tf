@@ -123,6 +123,7 @@ variable "uc_lab_emr_instance_type_core_one" {
     production  = "m5.12xlarge"
   }
 }
+
 variable "uc_lab_emr_instance_type_core_two" {
   default = {
     development = "m5a.2xlarge"
@@ -142,6 +143,48 @@ variable "uc_lab_emr_instance_type_core_three" {
     production  = "m5d.12xlarge"
   }
 }
+
+variable "hive_tez_container_size" {
+  description = "default container size maintains previous configuration of 6 containers per node in prod"
+  default = {
+    development = "5120"
+    qa          = "5120"
+    integration = "5120"
+    preprod     = "21508"
+    production  = "32768"
+  }
+}
+
+variable "hive_tez_java_opts" {
+  default = { # 0.8(tez_container_size)
+    development = "-Xmx4096m"
+    qa          = "-Xmx4096m"
+    integration = "-Xmx4096m"
+    preprod     = "-Xmx17206m"
+    production  = "-Xmx26214m"
+  }
+}
+
+variable "uc_lab_hive_tez_container_size" {
+  default = {
+    development = "2184" # 0.8(node_mem)/12 (target 2GB)
+    qa          = "2184" # 0.8(node_mem)/12 (target 2GB)
+    integration = "2184" # 0.8(node_mem)/12 (target 2GB)
+    preprod     = "6168" # 0.8(node_mem)/17 (target 6GB)
+    production  = "7864" # 0.8(node_mem)/20 (target 8GB)
+  }
+}
+
+variable "uc_lab_hive_tez_java_opts" {
+  default = { # 0.8(tez_container_size)
+    development = "-Xmx1714m"
+    qa          = "-Xmx1714m"
+    integration = "-Xmx1714m"
+    preprod     = "-Xmx4924m"
+    production  = "-Xmx6291m"
+  }
+}
+
 
 variable "emr_al2_ami_id" {
   description = "ID of AMI to be used for EMR clusters"

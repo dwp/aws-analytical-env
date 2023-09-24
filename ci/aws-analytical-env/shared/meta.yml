@@ -680,9 +680,9 @@ meta:
             tag: ((dataworks.terraform_version))
         params:
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
-          GIT_USERNAME: ((dataworks.concourse_github_username))
-          GIT_EMAIL: ((dataworks.concourse_github_email))
-          GITHUB_TOKEN: ((dataworks-secrets.concourse_github_pat))
+          GIT_USERNAME: ((dataworks.concourse_gitlab_username))
+          GIT_EMAIL: ((dataworks.concourse_gitlab_email))
+          GITLAB_TOKEN: ((dataworks-secrets.concourse_gitlab_pat))
         run:
           path: sh
           args:
@@ -698,14 +698,14 @@ meta:
               git config --global user.name "${GIT_USERNAME}"
               git config --global user.email "${GIT_EMAIL}"
 
-              git clone https://${GITHUB_TOKEN}:x-oauth-basic@github.com/dwp/ami-builder-configs
+              git clone https://oauth2:${GITLAB_TOKEN}@gitlab.com/dwp/dataworks/aws/deployments/no-layer/ami-builder-configs
               cd ami-builder-configs/results
 
               echo "$AMI_ID $RESULT" > "$PIPELINE.test"
 
               git add "$PIPELINE.test"
               git commit -m "Updating $PIPELINE AMI test on ${DATE}"
-              git push https://${GITHUB_TOKEN}:x-oauth-basic@github.com/dwp/ami-builder-configs
+              git push https://oauth2:${GITLAB_TOKEN}@gitlab.com/dwp/dataworks/aws/deployments/no-layer/ami-builder-configs
         inputs:
           - name: meta
           - name: emr-al2-ami
@@ -722,9 +722,9 @@ meta:
             tag: ((dataworks.terraform_version))
         params:
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
-          GIT_USERNAME: ((dataworks.concourse_github_username))
-          GIT_EMAIL: ((dataworks.concourse_github_email))
-          GITHUB_TOKEN: ((dataworks-secrets.concourse_github_pat))
+          GIT_USERNAME: ((dataworks.concourse_gitlab_username))
+          GIT_EMAIL: ((dataworks.concourse_gitlab_email))
+          GITLAB_TOKEN: ((dataworks-secrets.concourse_gitlab_pat))
         run:
           path: sh
           args:
@@ -739,7 +739,7 @@ meta:
 
               git config --global user.name "${GIT_USERNAME}"
               git config --global user.email "${GIT_EMAIL}"
-              git clone https://${GITHUB_TOKEN}:x-oauth-basic@github.com/dwp/ami-builder-configs
+              git clone https://oauth2:${GITLAB_TOKEN}@gitlab.com/dwp/dataworks/aws/deployments/no-layer/ami-builder-configs
 
               if [ -f "./$PATH_TO_RESULTS/$PIPELINE.test" ]; then
                 set +e
