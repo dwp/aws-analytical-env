@@ -1,7 +1,7 @@
 resource "aws_s3_bucket_object" "get_dks_cert_sh" {
-  bucket  = aws_s3_bucket.emr.id
-  key     = "scripts/emr/get_dks_cert.sh"
-  content = templatefile(format("%s/templates/emr/get_dks_cert.sh", path.module),{
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/get_dks_cert.sh"
+  content = templatefile(format("%s/templates/emr/get_dks_cert.sh", path.module), {
     emr_bucket_path    = aws_s3_bucket.emr.id
     acm_cert_arn       = aws_acm_certificate.emr.arn
     private_key_alias  = "development"
@@ -11,8 +11,8 @@ resource "aws_s3_bucket_object" "get_dks_cert_sh" {
     full_no_proxy      = join(",", local.no_proxy_hosts)
     dks_endpoint       = var.dks_endpoint
     name               = var.emr_cluster_name
-  } )
-  tags    = merge(var.common_tags, { Name : "${var.name_prefix}-get-dks" })
+  })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-get-dks" })
 }
 
 
@@ -20,7 +20,7 @@ resource "aws_s3_bucket_object" "emr_setup_sh" {
   depends_on = [aws_s3_bucket.hive_data, aws_s3_bucket_object.hive_data_bucket_group_folders]
   bucket     = aws_s3_bucket.emr.id
   key        = "scripts/emr/setup.sh"
-  content    = templatefile(format("%s/templates/emr/setup.sh", path.module),{
+  content = templatefile(format("%s/templates/emr/setup.sh", path.module), {
     aws_default_region              = data.aws_region.current.name
     full_proxy                      = local.full_proxy
     full_no_proxy                   = join(",", local.no_proxy_hosts)
@@ -80,36 +80,36 @@ resource "aws_s3_bucket_object" "emr_setup_sh" {
     azkaban_common_console_sh     = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_common_console.key)
     azkaban_common_fs_sh          = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_common_fs.key)
     azkaban_common_environment_sh = format("s3://%s/%s", aws_s3_bucket.emr.id, aws_s3_bucket_object.azkaban_common_environment.key)
-  } )
-  tags       = merge(var.common_tags, { Name : "${var.name_prefix}-emr-setup" })
+  })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-emr-setup" })
 }
 
 resource "aws_s3_bucket_object" "trigger_s3_tagger_batch_job_sh" {
-  bucket  = aws_s3_bucket.emr.id
-  key     = "scripts/emr/trigger_s3_tagger_batch_job.sh"
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/trigger_s3_tagger_batch_job.sh"
   content = templatefile(format("%s/templates/emr/trigger_s3_tagger_batch_job.sh", path.module), {
     full_proxy          = local.full_proxy
     config_bucket       = var.config_bucket_id
     job_definition_name = var.s3_tagger_job_definition_name
   })
-  tags  = merge(var.common_tags, { Name : "${var.name_prefix}-trigger-tagger" })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-trigger-tagger" })
 }
 resource "aws_s3_bucket_object" "hdfs_setup_sh" {
-  bucket  = aws_s3_bucket.emr.id
-  key     = "scripts/emr/hdfs_setup.sh"
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/hdfs_setup.sh"
   content = templatefile(format("%s/templates/emr/hdfs_setup.sh", path.module), {
     hive_data_s3     = aws_s3_bucket.hive_data.arn
     config_bucket    = var.config_bucket_id
     published_bucket = var.dataset_s3.id
     hive_heapsize    = var.hive_heapsize
   })
-  tags    = merge(var.common_tags, { Name : "${var.name_prefix}-hdfs-setup" })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-hdfs-setup" })
 }
 
 resource "aws_s3_bucket_object" "livy_client_conf_sh" {
-  bucket  = aws_s3_bucket.emr.id
-  key     = "scripts/emr/livy_client_conf.sh"
-  content = templatefile(format("%s/templates/emr/livy_client_conf.sh", path.module),{
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/livy_client_conf.sh"
+  content = templatefile(format("%s/templates/emr/livy_client_conf.sh", path.module), {
     livy_client_http_connection_socket_timeout = "5m"
     livy_client_http_connection_timeout        = "30s"
     livy_rsc_client_connect_timeout            = "120s"
@@ -118,8 +118,8 @@ resource "aws_s3_bucket_object" "livy_client_conf_sh" {
     livy_rsc_job_cancel_trigger_interval       = "500ms"
     livy_rsc_retained_statements               = "200"
     livy_rsc_server_connect_timeout            = "360s"
-  } )
-  tags    = merge(var.common_tags, { Name : "${var.name_prefix}-livy-config" })
+  })
+  tags = merge(var.common_tags, { Name : "${var.name_prefix}-livy-config" })
 }
 
 
@@ -299,8 +299,8 @@ resource "aws_s3_bucket_object" "sft_utility_sh" {
 }
 
 resource "aws_s3_bucket_object" "hive_auth_conf_sh" {
-  bucket  = aws_s3_bucket.emr.id
-  key     = "scripts/emr/hive_auth_conf.sh"
+  bucket = aws_s3_bucket.emr.id
+  key    = "scripts/emr/hive_auth_conf.sh"
   content = templatefile(format("%s/templates/emr/hive_auth_conf.sh", path.module), {
     aws_region                = var.region
     user_pool_id              = var.cognito_user_pool_id
