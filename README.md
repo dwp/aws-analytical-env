@@ -1,3 +1,6 @@
+# DO NOT USE THIS REPO - MIGRATED TO GITLAB
+
+
 # aws-analytical-env
 Infrastucure for the AWS Analytical Environment
 
