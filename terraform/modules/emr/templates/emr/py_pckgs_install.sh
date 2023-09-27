@@ -41,6 +41,7 @@ python-Levenshtein==0.12.2
 PyDriller==2.0
 dplython==0.0.7
 dfply==0.3.3
+jellyfish==1.0.0
 EOF
 
 sudo -E pip3 install --upgrade pip setuptools || true
